@@ -1,8 +1,9 @@
+from bcrypt import checkpw, gensalt, hashpw
+
 from app import db
 
 from ..models.user import User
 
-from bcrypt import hashpw, gensalt, checkpw
 
 def add_user(username, password, email):
   encoded_pass = hash_password(password.encode('UTF-8'))

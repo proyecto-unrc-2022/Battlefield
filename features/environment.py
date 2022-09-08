@@ -1,5 +1,7 @@
 from behave import fixture, use_fixture
+
 from app import create_app
+
 
 @fixture
 def battlefield_client(context, *args, **kwargs):

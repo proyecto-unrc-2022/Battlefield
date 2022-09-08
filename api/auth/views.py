@@ -1,11 +1,13 @@
 import jwt
-from flask import request, jsonify
-from . import auth
-from app import db
-from app import secret_token
+from flask import jsonify, request
 from sqlalchemy import select
-from app.models.user import User
+
+from app import db, secret_token
 from app.daos.user_dao import check_password
+from app.models.user import User
+
+from . import auth
+
 
 @auth.route('/login', methods=["POST"])
 def login():

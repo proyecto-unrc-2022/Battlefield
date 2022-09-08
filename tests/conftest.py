@@ -4,6 +4,7 @@ from sqlalchemy import delete
 from app import create_app, db
 from app.models.user import User
 
+
 @pytest.fixture(scope="session") # function, class, module, package, session
 def flask_app():
     app = create_app('testing')

@@ -1,5 +1,6 @@
 from flask import url_for
 
+
 @given(u'we have behave installed')
 def step_impl(context):
     context.page = context.client.get(url_for("air_force.attack"))

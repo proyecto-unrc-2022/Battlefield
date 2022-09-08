@@ -1,10 +1,10 @@
 import os
 
 from flask import Flask
-from config import config, DevelopmentConfig
-
-from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
+
+from config import DevelopmentConfig, config
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -27,7 +27,6 @@ def create_app(environment='development'):
 
     from api.auth import auth as auth_blueprint
     from api.v1.air_force import air_force as air_force_blueprint
-
     from app.models.user import User
 
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
