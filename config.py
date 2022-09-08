@@ -11,6 +11,9 @@ class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = 'mysql://user@localhost/foo'
 
 class DevelopmentConfig(Config):
+    DEVELOPMENT = True
+    DEBUG = True
+    ENV = 'development'
     SECRET_KEY = os.environ.get('SECRET_KEY')
     SQLALCHEMY_DATABASE_URI = "sqlite:////tmp/foo.db"
 

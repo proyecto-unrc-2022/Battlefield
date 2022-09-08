@@ -1,5 +1,7 @@
+import os
+
 from flask import Flask
-from config import config
+from config import config, DevelopmentConfig
 
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -7,16 +9,23 @@ from flask_migrate import Migrate
 db = SQLAlchemy()
 migrate = Migrate()
 
+secret_token = None
+
 def create_app(environment='development'):
     app = Flask(__name__)
 
+    global secret_token
+
     app.config.from_object(config[environment])
+
     config[environment].init_app(app)
 
     db.init_app(app)
     migrate.init_app(app, db)
 
-    from auth import auth as auth_blueprint
+    secret_token = app.config['SECRET_KEY']
+
+    from api.auth import auth as auth_blueprint
     from api.v1.air_force import air_force as air_force_blueprint
 
     from app.models.user import User
