@@ -1,13 +1,5 @@
-from flask import Flask
+import os
+from .app import create_app
 
-app = Flask(__name__)
+app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 
-from auth import auth as auth_blueprint
-from api.v1 import air_force as air_force_blueprint
-
-app.register_blueprint(auth_blueprint, url_prefix='/auth')
-app.register_blueprint(air_force_blueprint, url_prefix='/api/v1/air_force')
-
-@app.route("/")
-def hello_world():
-    return "<p>Hello, World!</p>"
