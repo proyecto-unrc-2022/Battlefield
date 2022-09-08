@@ -3,12 +3,12 @@ from api import token_auth
 from . import air_force
 
 
-@air_force.route('/attack')
+@air_force.route("/attack")
 @token_auth.login_required
 def attack():
-    return { 'result': 'booom!!!' }
+    return {"result": "booom!!!"}
 
-@air_force.route('/flight')
+
+@air_force.route("/flight")
 def fligth():
-    return { 'a' : 'a' }
-
+    return {"a": "a"}

@@ -5,7 +5,7 @@ from app import create_app
 
 @fixture
 def battlefield_client(context, *args, **kwargs):
-    app = create_app('testing')
+    app = create_app("testing")
     app.testing = True
 
     context.client = app.test_client()
@@ -21,4 +21,3 @@ def battlefield_client(context, *args, **kwargs):
 def before_feature(context, feature):
     # -- HINT: Recreate a new flaskr client before each feature is executed.
     use_fixture(battlefield_client, context)
-

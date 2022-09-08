@@ -11,7 +11,8 @@ migrate = Migrate()
 
 secret_token = None
 
-def create_app(environment='development'):
+
+def create_app(environment="development"):
     app = Flask(__name__)
 
     global secret_token
@@ -23,14 +24,13 @@ def create_app(environment='development'):
     db.init_app(app)
     migrate.init_app(app, db)
 
-    secret_token = app.config['SECRET_KEY']
+    secret_token = app.config["SECRET_KEY"]
 
     from api.auth import auth as auth_blueprint
     from api.v1.air_force import air_force as air_force_blueprint
     from app.models.user import User
 
-    app.register_blueprint(auth_blueprint, url_prefix='/auth')
-    app.register_blueprint(air_force_blueprint, url_prefix='/api/v1/air_force')
+    app.register_blueprint(auth_blueprint, url_prefix="/auth")
+    app.register_blueprint(air_force_blueprint, url_prefix="/api/v1/air_force")
 
     return app
-

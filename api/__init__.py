@@ -8,6 +8,7 @@ from app.models.user import User
 
 token_auth = HTTPTokenAuth(scheme="Bearer")
 
+
 @token_auth.verify_token
 def verify_token(token):
     try:
@@ -24,4 +25,3 @@ def verify_token(token):
         return user
     print(f"Unknown user {username}")
     return None
-
