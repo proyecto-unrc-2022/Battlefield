@@ -4,10 +4,10 @@ A dynamic battleship game with 4 different variants: Terrestrial, Aerial, Water,
 ### install 
 
 ```sh
-python -v venv
-. venv/bin/activate
+$ python -v venv
+$ . venv/bin/activate
 
-pip install -r requirements.txt
+(env) $ pip install -r requirements.txt
 ```
 
 ### Usage
