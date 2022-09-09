@@ -3,8 +3,7 @@ name: Python Behave
 on:
   push:
     branches:
-      - 'main'
-      - 'master'
+      - '**'
 
 jobs:
   build:
