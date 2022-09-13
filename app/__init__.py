@@ -28,9 +28,11 @@ def create_app(environment="development"):
 
     from api.auth import auth as auth_blueprint
     from api.v1.air_force import air_force as air_force_blueprint
+    from api.v1.underwater import underwater as underwater_blueprint
     from app.models.user import User
 
     app.register_blueprint(auth_blueprint, url_prefix="/auth")
     app.register_blueprint(air_force_blueprint, url_prefix="/api/v1/air_force")
+    app.register_blueprint(underwater_blueprint, url_prefix="/api/v1/underwater")
 
     return app
