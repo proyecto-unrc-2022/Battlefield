@@ -27,11 +27,11 @@ def create_app(environment="development"):
 
     from api.auth import auth as auth_blueprint
     from api.v1.air_force import air_force as air_force_blueprint
-    from api.v1.underwater import underwater as underwater_blueprint
     from api.v1.infantry import infantry as infantry_blueprint
-    from app.models.user import User
     from api.v1.navy import navy as navy_blueprint
-    
+    from api.v1.underwater import underwater as underwater_blueprint
+    from app.models.user import User
+
     app.register_blueprint(navy_blueprint, url_prefix="/api/v1/navy")
     app.register_blueprint(auth_blueprint, url_prefix="/auth")
     app.register_blueprint(air_force_blueprint, url_prefix="/api/v1/air_force")
