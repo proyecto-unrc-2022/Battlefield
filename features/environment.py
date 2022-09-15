@@ -1,6 +1,6 @@
 from behave import fixture, use_fixture
 
-from app import create_app
+from app import create_app, db
 
 
 @fixture
@@ -13,7 +13,11 @@ def battlefield_client(context, *args, **kwargs):
     ctx = app.test_request_context()
     ctx.push()
 
+    db.create_all()
+
     yield context.client
+
+    db.drop_all()
 
     ctx.pop()
 
