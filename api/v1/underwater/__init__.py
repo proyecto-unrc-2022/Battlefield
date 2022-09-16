@@ -1,5 +1,5 @@
 from flask import Blueprint
 
-navy = Blueprint("navy", __name__)
+underwater = Blueprint("underwater", __name__)
 
 from . import views
