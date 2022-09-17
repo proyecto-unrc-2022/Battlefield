@@ -32,6 +32,7 @@ def create_app(environment="development"):
     from api.v1.underwater import underwater as underwater_blueprint
     from api.v1.infantry import infantry as infantry_blueprint
     from app.models.user import User
+    from app.models.underwater.uw_game import UnderGame
 
     app.register_blueprint(navy_blueprint, url_prefix="/api/v1/navy")
     app.register_blueprint(auth_blueprint, url_prefix="/auth")
