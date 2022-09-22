@@ -1,5 +1,6 @@
 Feature: All possible movements and rotations of the plane
 
+    @air_force
     Scenario: Rotation of the plane
         Given A plane on the map
         When I make the rotation
