@@ -1,8 +1,11 @@
+import dbm
 import json
 
 from flask import url_for
 
+from app import db
 from app.daos.airforce.plane_dao import add_plane
+from app.models.airforce.plane import Plane
 
 
 @given("A plane on the map")
@@ -33,4 +36,9 @@ def step_impl(context):
 @then("I should obtain a '201' response")
 def step_impl(context):
     print(context.page.status_code)
-    assert context.page.status_code is 201
+    assert context.page.status_code == 201
+    
+@then("The head is in the same place as before")
+def step_impl(context):
+    head = (context.plane.coor_x, context.plane.coor_y)
+    assert head == (7,4)
