@@ -10,3 +10,8 @@ Feature: Submarine
         Given the system is running
         When I receive a request to show the submarine options
         Then the options are returned
+
+   # Scenario: Join a game
+   # Given the user is logged in
+   # When the user joins a game with no visitors
+   # Then 
