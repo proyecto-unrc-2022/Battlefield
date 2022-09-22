@@ -1,7 +1,7 @@
 from sqlalchemy import update
 
 from app import db
-from app.models.airforce.plane import AirForceGame, Plane
+from app.models.airforce.plane import Plane
 
 
 def add_plane(name, size, speed, health, direct_of_plane, coor_x, coor_y):
@@ -22,13 +22,6 @@ def add_plane(name, size, speed, health, direct_of_plane, coor_x, coor_y):
 def get_plane(plane_id):
     plane = Plane.query.filter_by(id=plane_id).first()
     return plane
-
-
-def add_game(player_a_id, player_b_id):
-    game = AirForceGame(player_a_id=player_a_id, player_b_id=player_b_id)
-    db.session.add(game)
-    db.session.commit()
-    return game
 
 
 def update_direction(plane_id, direct_of_plane):
