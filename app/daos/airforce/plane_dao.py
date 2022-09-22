@@ -4,13 +4,13 @@ from app import db
 from app.models.airforce.plane import Plane
 
 
-def add_plane(name, size, speed, health, direct_of_plane, coor_x, coor_y):
+def add_plane(name, size, speed, health, course, coor_x, coor_y):
     plane = Plane(
         name=name,
         size=size,
         speed=speed,
         health=health,
-        direct_of_plane=direct_of_plane,
+        course=course,
         coor_x=coor_x,
         coor_y=coor_y,
     )
@@ -24,6 +24,6 @@ def get_plane(plane_id):
     return plane
 
 
-def update_direction(plane_id, direct_of_plane):
-    p = update(Plane).where(id == plane_id).values(direct_of_plane=direct_of_plane)
+def update_course(plane_id, course):
+    p = update(Plane).where(id == plane_id).values(course=course)
     return p

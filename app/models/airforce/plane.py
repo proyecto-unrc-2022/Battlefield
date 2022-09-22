@@ -11,7 +11,7 @@ class Plane(db.Model):
     size = db.Column(db.Integer, nullable=False)
     speed = db.Column(db.Integer, nullable=False)
     health = db.Column(db.Integer, nullable=False)
-    direct_of_plane = db.Column(db.String(5), nullable=False)
+    course = db.Column(db.String(5), nullable=False)
     coor_x = db.Column(db.Integer, nullable=False)
     coor_y = db.Column(db.Integer, nullable=False)
 
@@ -24,6 +24,6 @@ class PlaneSchema(SQLAlchemySchema):
     size = auto_field()
     speed = auto_field()
     health = auto_field()
-    direct_of_plane = auto_field()
+    course = auto_field()
     coor_x = auto_field()
     coor_y = auto_field()

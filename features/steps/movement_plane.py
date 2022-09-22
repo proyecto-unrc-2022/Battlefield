@@ -12,7 +12,7 @@ def step_impl(context):
         size=3,
         speed=2,
         health=40,
-        direct_of_plane="east",
+        course="east",
         coor_x=7,
         coor_y=4,
     )
@@ -22,10 +22,10 @@ def step_impl(context):
 @when("I make the rotation")
 def step_impl(context):
     plane_id = context.plane.id
-    body = {"id": plane_id, "direct_of_plane": "south"}
+    body = {"id": plane_id, "course": "south"}
     headers = {"Content-Type": "application/json"}
     context.page = context.client.put(
-        url_for("air_force.update_direction"), data=json.dumps(body), headers=headers
+        url_for("air_force.update_course"), data=json.dumps(body), headers=headers
     )
     assert context.page
 

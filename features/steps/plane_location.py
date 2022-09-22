@@ -18,7 +18,7 @@ def step_impl(context):
         "size": 2,
         "speed": 3,
         "health": 20,
-        "direct_of_plane": "north",
+        "course": "north",
         "coor_x": 10,
         "coor_y": 10,
     }
