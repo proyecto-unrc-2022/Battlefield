@@ -2,7 +2,8 @@ import json
 
 from flask import url_for
 
-from app.daos.airforce.plane_dao import add_game, add_plane
+from app.daos.airforce.air_force_game_dao import add_game
+from app.daos.airforce.plane_dao import add_plane
 
 
 @given("a map with no planes in it")
