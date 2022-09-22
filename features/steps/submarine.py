@@ -26,3 +26,20 @@ def step_impl(context):
 @then(u'an empty board with one player is returned')
 def step_impl(context):
     pass
+
+
+@given(u'the system is running')
+def step_impl(context):
+    pass
+
+
+@when(u'I receive a request to show the submarine options')
+def step_impl(context):
+    context.page = context.client.get(url_for("underwater.get_options"))
+    assert context.page
+
+
+@then(u'the options are returned')
+def step_impl(context):
+    options = json.loads(context.page.text)
+    assert "Saukko" in options
