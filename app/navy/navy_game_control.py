@@ -1,5 +1,7 @@
 import json
 
+from app.navy import navy_constants
+
 
 class NavyGameControl:
     def read_data(file_path):
@@ -16,3 +18,5 @@ class NavyGameControl:
         self.missiles = missiles
         self.id_user_1 = id_user_1
         self.id_user_2 = id_user_2
+
+         
