@@ -3,14 +3,18 @@ import json
 
 from app import db
 from app.models.underwater.uw_game import UnderGame
+from app.models.user import User
+from app.daos.user_dao import add_user
 
 @given(u'A user is logged in')
 def step_impl(context):
-    pass
+    add_user("test", "test", "test@example.com")
+    context.user = db.session.query(User).where(User.username=="test").one_or_none()
+    assert context.user
 
 @when(u'the user asks for a new underwater game')
 def step_impl(context):
-    context.page = context.client.get(url_for("underwater.new_game"))
+    context.page = context.client.get(url_for("underwater.new_game", host_id=context.user.id))
     assert context.page
 
 @then(u'A new game is registered')
