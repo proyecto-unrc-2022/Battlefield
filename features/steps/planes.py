@@ -14,7 +14,7 @@ def step_impl(context):
         size=1,
         speed=5,
         health=10,
-        course="south",
+        course=3,
         coor_x=5,
         coor_y=5,
     )
@@ -36,7 +36,7 @@ def step_impl(context):
         "size": 1,
         "speed": 5,
         "health": 10,
-        "course": "south",
+        "course": 3,
         "coor_x": 5,
         "coor_y": 5,
     }

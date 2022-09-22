@@ -15,7 +15,7 @@ def step_impl(context):
         size=3,
         speed=2,
         health=40,
-        course="east",
+        course=2,
         coor_x=7,
         coor_y=4,
     )
@@ -25,7 +25,7 @@ def step_impl(context):
 @when("I make the rotation")
 def step_impl(context):
     plane_id = context.plane.id
-    body = {"id": plane_id, "course": "south"}
+    body = {"id": plane_id, "course": 3}
     headers = {"Content-Type": "application/json"}
     context.page = context.client.put(
         url_for("air_force.update_course"), data=json.dumps(body), headers=headers
@@ -37,8 +37,9 @@ def step_impl(context):
 def step_impl(context):
     print(context.page.status_code)
     assert context.page.status_code == 201
-    
+
+
 @then("The head is in the same place as before")
 def step_impl(context):
     head = (context.plane.coor_x, context.plane.coor_y)
-    assert head == (7,4)
+    assert head == (7, 4)
