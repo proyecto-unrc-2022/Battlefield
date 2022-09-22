@@ -39,20 +39,8 @@ def update_course():
     id_plane = request.json["id"]
     new_course = request.json["course"]
     old_course = Plane.query.filter_by(id=id_plane).first().course
-    if (
-        old_course == "north"
-        and new_course == "south"
-        or old_course == "south"
-        and new_course == "north"
-    ):
-        return Response(status=404)
-    elif (
-        old_course == "east"
-        and new_course == "west"
-        or old_course == "west"
-        and new_course == "east"
-    ):
-        return Response(status=404)
+    if 2 == abs(new_course - old_course):
+        return Response(status=400)
     else:
         p = update_course_dao(id_plane, new_course)
         return Response(status=201)  # or jsonify(plane_schema.dump(p))
