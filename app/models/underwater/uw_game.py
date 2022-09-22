@@ -1,4 +1,5 @@
 from sqlalchemy.orm import relationship
+from sqlalchemy.orm import backref
 import json
 
 from app import db
@@ -11,8 +12,8 @@ class UnderGame(db.Model):
     host_id = db.Column(db.Integer, db.ForeignKey(User.id))
     visitor_id = db.Column(db.Integer, db.ForeignKey(User.id))
     
-    # host = relationship("User", uselist=False, back_populates='user')
-    # visitor = relationship("User", uselist=False, back_populates='user')
+    # host = relationship("User", uselist=False, foreign_keys="user.id")
+    # visitor = relationship("User", uselist=False, foreign_keys="user.id")
 
     def __repr__(self):
         return json.dumps({"game_id":self.id, "host_id":self.host_id, "visitor_id":self.visitor_id})
