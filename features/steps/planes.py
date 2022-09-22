@@ -9,7 +9,15 @@ from app.models.airforce.plane import Plane
 
 @given("A  plane with information")
 def step_impl(context):
-    context.plane = add_plane(name="Hawker Tempest", size=1, speed=5, health=10)
+    context.plane = add_plane(
+        name="Hawker Tempest",
+        size=1,
+        speed=5,
+        health=10,
+        course=3,
+        coor_x=5,
+        coor_y=5,
+    )
 
 
 @when("We query the plane information")
@@ -28,6 +36,9 @@ def step_impl(context):
         "size": 1,
         "speed": 5,
         "health": 10,
+        "course": 3,
+        "coor_x": 5,
+        "coor_y": 5,
     }
 
     raw_response = ast.literal_eval(context.page.text)
