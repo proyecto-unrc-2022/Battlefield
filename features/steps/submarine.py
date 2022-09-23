@@ -53,11 +53,11 @@ def step_impl(context):
     assert "Saukko" in options
 
 
-@given("the user 'player' is logged in")
-def step_impl(context):
-    add_user("player", "player", "player@example.com")
+@given("the user {player} is logged in")
+def step_impl(context, player):
+    add_user(player, player, "%r@example.com" % player)
     context.visitor = (
-        db.session.query(User).where(User.username == "player").one_or_none()
+        db.session.query(User).where(User.username == player).one_or_none()
     )
     assert context.visitor
 

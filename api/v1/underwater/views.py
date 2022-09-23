@@ -4,7 +4,7 @@ from flask import Response, jsonify, request
 
 from api import token_auth
 from app import db
-from app.daos.underwater.uw_game_dao import create_game
+from app.daos.underwater.uw_game_dao import create_game, get_game, update_game
 from app.models.underwater.uw_game import UnderGame, UnderGameSchema
 from app.models.user import User
 
@@ -29,11 +29,7 @@ def get_options():
 
 @underwater.get("/join_game")
 def join_game():
-    game = (
-        db.session.query(UnderGame)
-        .where(UnderGame.id == request.args.get("game_id"))
-        .one_or_none()
-    )
+    game = get_game(request.args.get("game_id"))
     visitor_id = request.args.get("visitor_id")
 
     if not game:
@@ -45,6 +41,6 @@ def join_game():
     if visitor_id == game.host_id:
         return Response("{'error':'you can not join to your game'}", status_code=409)
 
-    game.visitor_id = visitor_id
-    db.session.commit()
+    game = update_game(game_id=game.id, visitor_id=visitor_id)
+
     return jsonify(under_game_schema.dump(game))
