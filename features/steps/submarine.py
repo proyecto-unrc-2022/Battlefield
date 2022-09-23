@@ -3,7 +3,7 @@ import json
 from flask import url_for
 
 from app import db
-from app.daos.underwater.uw_game_dao import create_game, get_game
+from app.daos.underwater.uw_game_dao import create_game, get_game, update_game
 from app.daos.user_dao import add_user
 from app.models.underwater.uw_game import UnderGame
 from app.models.user import User
@@ -75,8 +75,33 @@ def step_impl(context, user):
     assert context.page.status_code is 200
 
 
-@then("the game is modified")
+@then("the game now has the new visitor")
 def step_impl(context):
     game = get_game(context.game.id)
     assert game
     assert game.visitor_id == context.user.id
+
+
+@given(u'the user is in an ongoing game')
+def step_impl(context):
+    add_user("visitor", "visitor", "visitor@example.com")
+    visitor = db.session.query(User).where(User.username == "visitor").one_or_none()
+    
+    game = create_game(host_id=context.user.id)
+    context.game = update_game(game_id=game.id, visitor_id=visitor.id)
+    assert context.game
+
+
+@when(u'the user chooses a submarine')
+def step_impl(context):
+    data = {
+        'game_id': context.game.id,
+        'player_id': context.user.id,
+        'submarine_id': '1'
+        }
+    context.page = context.client.post(url_for("underwater.choose_submarine", data=data))
+    assert context.page
+
+@then(u'the game bounds the user to the choosen submarine')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: Then the game bounds the user to the choosen submarine')
