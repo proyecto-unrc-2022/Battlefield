@@ -3,17 +3,10 @@ import json
 from flask import url_for
 
 from app import db
-from app.daos.underwater.uw_game_dao import create_game
+from app.daos.underwater.uw_game_dao import create_game, get_game
 from app.daos.user_dao import add_user
 from app.models.underwater.uw_game import UnderGame
 from app.models.user import User
-
-
-@given("A user is logged in")
-def step_impl(context):
-    add_user("test", "test", "test@example.com")
-    context.user = db.session.query(User).where(User.username == "test").one_or_none()
-    assert context.user
 
 
 @when("the user asks for a new underwater game")
@@ -53,13 +46,13 @@ def step_impl(context):
     assert "Saukko" in options
 
 
-@given("the user {player} is logged in")
-def step_impl(context, player):
-    add_user(player, player, "%r@example.com" % player)
-    context.visitor = (
-        db.session.query(User).where(User.username == player).one_or_none()
+@given("the user {user} is logged in")
+def step_impl(context, user):
+    add_user(user, user, "%r@example.com" % user)
+    context.user = (
+        db.session.query(User).where(User.username == user).one_or_none()
     )
-    assert context.visitor
+    assert context.user
 
 
 @given("there is a game with available slots")
@@ -70,13 +63,13 @@ def step_impl(context):
     assert context.game
 
 
-@when("the user 'player' joins that game")
-def step_impl(context):
+@when("the user {user} joins that game")
+def step_impl(context, user):
     context.page = context.client.get(
         url_for(
             "underwater.join_game",
             game_id=context.game.id,
-            visitor_id=context.visitor.id,
+            visitor_id=context.user.id,
         )
     )
     assert context.page.status_code is 200
@@ -84,8 +77,6 @@ def step_impl(context):
 
 @then("the game is modified")
 def step_impl(context):
-    game = (
-        db.session.query(UnderGame).where(UnderGame.id == context.game.id).one_or_none()
-    )
+    game = get_game(context.game.id)
     assert game
-    assert game.visitor_id == context.visitor.id
+    assert game.visitor_id == context.user.id

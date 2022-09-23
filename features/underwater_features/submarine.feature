@@ -1,7 +1,7 @@
 Feature: Submarine
 
     Scenario: Create a new game
-        Given A user is logged in
+        Given the user 'user' is logged in
         When the user asks for a new underwater game
         Then A new game is registered
         And an empty board with one player is returned
@@ -12,7 +12,7 @@ Feature: Submarine
         Then the options are returned
 
     Scenario: Join a game
-        Given the user 'player' is logged in
+        Given the user 'visitor' is logged in
         And there is a game with available slots
-        When the user 'player' joins that game
+        When the user 'visitor' joins that game
         Then the game is modified
