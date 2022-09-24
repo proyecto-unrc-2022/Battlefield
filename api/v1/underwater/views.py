@@ -4,8 +4,11 @@ from flask import Response, jsonify, request
 
 from api import token_auth
 from app import db
-from app.daos.underwater.uw_game_dao import create_game, get_game, update_game
-from app.models.underwater.uw_game import UnderGame, UnderGameSchema
+from app.daos.underwater.uw_game_dao import add_submarine, create_game, get_game
+from app.daos.underwater.uw_game_dao import get_options as get_options_dao
+from app.daos.underwater.uw_game_dao import update_game
+from app.models.underwater.under_dtos import UnderGameSchema
+from app.models.underwater.under_models import UnderGame
 from app.models.user import User
 
 from . import underwater
@@ -25,9 +28,7 @@ def new_game():
 
 @underwater.get("/get_options")
 def get_options():
-    options_json = open("app/models/underwater/options.json")
-    options = json.load(options_json)
-    return options
+    return get_options_dao()
 
 
 @underwater.get("/join_game")
@@ -51,16 +52,20 @@ def join_game():
 
 @underwater.post("/choose_submarine")
 def choose_submarine():
-    game_id = int(request.form['game_id'])
-    player_id = int(request.form['player_id'])
-    submarine_id = int(request.form['submarine_id'])
+    game_id = int(request.form["game_id"])
+    player_id = int(request.form["player_id"])
+    submarine_id = request.form["submarine_id"]
 
     submarines = json.load(open("app/models/underwater/options.json"))
 
     game = get_game(game_id=game_id)
     if not game:
-        return Response( "{'error':'game not found'}", status = "404")
+        return Response("{'error':'game not found'}", status="404")
 
     if not (game.host_id == player_id or game.visitor_id == player_id):
-        return Response( "{'error':'the game does not have the specified player'", status = "409")
-    
+        return Response(
+            "{'error':'the game does not have the specified player'", status="409"
+        )
+
+    add_submarine(game, player_id, submarine_id)
+    return jsonify(under_game_schema.dump(game))

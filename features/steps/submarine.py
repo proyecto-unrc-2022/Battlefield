@@ -5,7 +5,7 @@ from flask import url_for
 from app import db
 from app.daos.underwater.uw_game_dao import create_game, get_game, update_game
 from app.daos.user_dao import add_user
-from app.models.underwater.uw_game import UnderGame
+from app.models.underwater.under_dtos import UnderGame
 from app.models.user import User
 
 
@@ -43,15 +43,16 @@ def step_impl(context):
 @then("the options are returned")
 def step_impl(context):
     options = json.loads(context.page.text)
-    assert "Saukko" in options
+    assert "0" in options
+    assert "1" in options
+    assert "2" in options
+    assert "3" in options
 
 
 @given("the user {user} is logged in")
 def step_impl(context, user):
     add_user(user, user, "%r@example.com" % user)
-    context.user = (
-        db.session.query(User).where(User.username == user).one_or_none()
-    )
+    context.user = db.session.query(User).where(User.username == user).one_or_none()
     assert context.user
 
 
@@ -82,26 +83,27 @@ def step_impl(context):
     assert game.visitor_id == context.user.id
 
 
-@given(u'the user is in an ongoing game')
+@given("the user is in an ongoing game")
 def step_impl(context):
     add_user("visitor", "visitor", "visitor@example.com")
     visitor = db.session.query(User).where(User.username == "visitor").one_or_none()
-    
+
     game = create_game(host_id=context.user.id)
     context.game = update_game(game_id=game.id, visitor_id=visitor.id)
     assert context.game
 
 
-@when(u'the user chooses a submarine')
+@when("the user chooses a submarine")
 def step_impl(context):
-    data = {
-        'game_id': context.game.id,
-        'player_id': context.user.id,
-        'submarine_id': '1'
-        }
-    context.page = context.client.post(url_for("underwater.choose_submarine", data=data))
-    assert context.page
+    data = {"game_id": context.game.id, "player_id": context.user.id, "submarine_id": 1}
+    context.page = context.client.post(
+        url_for("underwater.choose_submarine"), data=data
+    )
+    assert context.page.status_code is 200
 
-@then(u'the game bounds the user to the choosen submarine')
+
+@then("the game bounds the user to the choosen submarine")
 def step_impl(context):
-    raise NotImplementedError(u'STEP: Then the game bounds the user to the choosen submarine')
+    game = get_game(context.game.id)
+    print(game.submarines[0].player_id)
+    assert game.submarines[0].player_id == context.user.id
