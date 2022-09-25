@@ -1,15 +1,16 @@
-from sqlalchemy.orm import relationship
-from app.navy import navy_constants
-from app.navy.navy_game_control import NavyGameControl
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, SQLAlchemySchema, auto_field
 from marshmallow_sqlalchemy.fields import Nested, fields
+from sqlalchemy.orm import relationship
+
 from app import db
+from app.models.navy.dynamic_game import Game
 from app.models.user import User
+from app.navy import navy_constants
 
 
 class DynamicShip(db.Model):
-   
-    __tablename__ = 'dynamic_ships'
+
+    __tablename__ = "dynamic_ships"
 
     id = db.Column(db.Integer, primary_key=True)
     id_game = db.Column(db.Integer, db.ForeignKey("game.id"))
@@ -20,7 +21,7 @@ class DynamicShip(db.Model):
     pos_y = db.Column(db.Integer)
     ship_type = db.Column(db.Integer)
 
-    game = relationship("Game", backref="ships",lazy=True)
+    game = relationship("Game", backref="ships", lazy=True)
 
     user = relationship("User")
 
@@ -33,8 +34,8 @@ class DynamicShip(db.Model):
         self.pos_y = pos_y
         self.ship_type = ship_type
 
-class DynamicShipSchema(SQLAlchemySchema):
 
+class DynamicShipSchema(SQLAlchemySchema):
     class Meta:
         model = DynamicShip
         include_relationships = False

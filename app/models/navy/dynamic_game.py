@@ -1,11 +1,12 @@
-from sqlalchemy.orm import relationship
-from app.navy import navy_constants
+from __future__ import annotations
 
-from app.navy.navy_game_control import NavyGameControl
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, SQLAlchemySchema, auto_field
 from marshmallow_sqlalchemy.fields import Nested, fields
+from sqlalchemy.orm import relationship
+
 from app import db
 from app.models.user import User
+from app.navy import navy_constants
 
 
 class Game(db.Model):
@@ -27,17 +28,16 @@ class GameSchema(SQLAlchemySchema):
         include_relationships = True
         load_instance = True
 
-
-    cols = fields.Method('get_cols')
-    rows = fields.Method('get_rows')
-    data = fields.Method('get_data')
+    cols = fields.Method("get_cols")
+    rows = fields.Method("get_rows")
+    data = fields.Method("get_data")
 
     def get_ships_static_data(self):
+        from app.daos.navy.game_dao import read_data
+
         dict = {
-            "ships" : 
-            NavyGameControl.read_data(navy_constants.PATH_TO_START)['ships_available'],
-           "missiles" :
-            NavyGameControl.read_data(navy_constants.PATH_TO_START)['missiles_available'] 
+            "ships": read_data(navy_constants.PATH_TO_START)["ships_available"],
+            "missiles": read_data(navy_constants.PATH_TO_START)["missiles_available"],
         }
         return dict
 
@@ -48,18 +48,24 @@ class GameSchema(SQLAlchemySchema):
         return navy_constants.COLS
 
     def get_dynamic_data(self):
-        from .dynamic_ship  import DynamicShip, DynamicShipSchema
-        from .dynamic_missile import DynamicMissile, DynamicMissileSchema
+        from app.daos.navy.dynamic_missile_dao import get_missiles
+        from app.daos.navy.dynamic_ship_dao import get_ships
+
+        from .dynamic_missile import DynamicMissileSchema
+        from .dynamic_ship import DynamicShipSchema
+
         dict = {
-        "ships" : DynamicShipSchema(many=True).dump(DynamicShip.query.filter_by(id_game=self.Meta.model.id).all()),
-          "missiles" : DynamicMissileSchema(many=True).dump(DynamicMissile.query.filter_by(id_game=self.Meta.model.id).all())    
+            "ships": DynamicShipSchema(many=True).dump(get_ships(self.Meta.model.id)),
+            "missiles": DynamicMissileSchema(many=True).dump(
+                get_missiles(self.Meta.model.id)
+            ),
         }
         return dict
 
     def get_data(self, obj):
         dict = {
-            "static_data" : self.get_ships_static_data(),
-            "dynamic_data" : self.get_dynamic_data()
+            "static_data": self.get_ships_static_data(),
+            "dynamic_data": self.get_dynamic_data(),
         }
 
         return dict
