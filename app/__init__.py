@@ -33,7 +33,10 @@ def create_app(environment="development"):
     from api.v1.infantry import infantry as infantry_blueprint
     from app.models.underwater.uw_game import UnderGame
     from app.models.user import User
-    from app.models.navy.dynamic_navy_models import DynamicShip, DynamicMissile, Game
+    from app.models.navy.dynamic_game import Game
+    from app.models.navy.dynamic_ship import DynamicShip
+    from app.models.navy.dynamic_missile import DynamicMissile
+    
 
     app.register_blueprint(navy_blueprint, url_prefix="/api/v1/navy")
     app.register_blueprint(auth_blueprint, url_prefix="/auth")
