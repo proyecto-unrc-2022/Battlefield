@@ -11,8 +11,8 @@ class UnderGame(db.Model):
     host_id = db.Column(db.Integer, db.ForeignKey(User.id))
     visitor_id = db.Column(db.Integer, db.ForeignKey(User.id))
 
-    # host = relationship("User", uselist=False, foreign_keys="user.id")
-    # visitor = relationship("User", uselist=False, foreign_keys="user.id")
+    host = relationship("User", backref="under_game_h", foreign_keys=[host_id])
+    visitor = relationship("User", backref="under_game_v", foreign_keys=[visitor_id])
 
     submarines = relationship("Submarine", back_populates="game")
     torpedos = relationship("Torpedo", back_populates="game")
