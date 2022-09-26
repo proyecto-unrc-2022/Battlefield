@@ -9,6 +9,7 @@ from app.daos.user_dao import add_user
 from app.models.navy.dynamic_game import Game
 from app.models.user import User
 from app.navy.navy_constants import PATH_TO_START
+from app.navy.navy_utils import check_dynamic_data
 
 
 @given('I am logged in as "user1"')
@@ -93,6 +94,4 @@ def step_impl(context, ship_type, pos_x, pos_y, bow_dir):
 )
 def step_impl(context):
     data = json.loads(context.page.data)
-    assert data["data"]["dynamic_data"]["ships"][0]["pos_x"] == 2
-    assert data["data"]["dynamic_data"]["ships"][0]["pos_y"] == 3
-    assert data["data"]["dynamic_data"]["ships"][0]["direction"] == "N"
+    assert check_dynamic_data(data, 2, 3, "N")
