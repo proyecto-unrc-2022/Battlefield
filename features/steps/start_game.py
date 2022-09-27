@@ -9,7 +9,7 @@ from app.daos.user_dao import add_user
 from app.models.navy.dynamic_game import Game
 from app.models.user import User
 from app.navy.navy_constants import PATH_TO_START
-from app.navy.navy_utils import check_dynamic_data
+from app.navy.navy_utils import check_dynamic_data, get_ship_select,json_selected_options
 
 
 @given('I am logged in as "user1"')
@@ -66,20 +66,10 @@ def step_impl(context):
     "I choose a '{ship_type}' ship in ('{pos_x}', '{pos_y}') position, and '{bow_dir}' direction"
 )
 def step_impl(context, ship_type, pos_x, pos_y, bow_dir):
-    ship_selected = None
-    for ship in context.available_ships["ships_available"]:
-        if ship["name"] == ship_type:
-            ship_selected = ship
-
-    context.data = {
-        "game_id": context.game_id,
-        "id_user_1": context.user_1.id,
-        "hp": ship_selected["hp"],
-        "direction": bow_dir,
-        "pos_x": pos_x,
-        "pos_y": pos_y,
-        "ship_type": ship_selected["ship_id"],
-    }
+  
+    ship_selected = get_ship_select(context.available_ships["ships_available"],ship_type)
+    
+    context.data = json_selected_options(context.game_id,context.user_1.id,bow_dir,pos_x,pos_y, ship_selected)
 
     context.headers = {"Content-Type": "application/json"}
     context.page = context.client.post(
