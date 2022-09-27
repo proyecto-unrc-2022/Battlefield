@@ -6,6 +6,8 @@ from app.daos.navy.game_dao import add_game, get_game, read_data
 from app.models.navy.dynamic_game import Game, GameSchema
 from app.models.navy.dynamic_ship import DynamicShip
 from app.navy.navy_constants import PATH_TO_START
+from app.models.navy.start_game_request import StartGameRequest
+from marshmallow import ValidationError
 
 from . import navy
 
@@ -41,3 +43,11 @@ def start_game():
 def test():
     game_one = Game.query.filter_by(id=1).first()
     return jsonify(game_schema.dump(game_one))
+
+@navy.post("/test")
+def post_test():
+    try:
+        data = StartGameRequest().load(request.json)
+        return jsonify(data)
+    except ValidationError as err:
+        return jsonify(err.messages),400
