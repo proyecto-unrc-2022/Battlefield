@@ -62,10 +62,11 @@ def choose_submarine():
     if not game:
         return Response("{'error':'game not found'}", status="404")
 
-    if not (game.host_id == player_id or game.visitor_id == player_id):
+    if not has_user(game, player_id):
         return Response(
             "{'error':'the game does not have the specified player'", status="409"
         )
 
-    add_submarine(game, player_id, submarine_id)
+    if not add_submarine(game, player_id, submarine_id):
+        return Response("{'error':'could not add the submarine'}", status="409")
     return jsonify(under_game_schema.dump(game))
