@@ -18,6 +18,7 @@ def get_all_users():
     users = db.session.scalars(select(User)).all()
     return jsonify(user_schema.dump(users, many=True))
 
+
 @users_bp.route("/<user_id>", methods=["GET"])
 # @token_auth.login_required
 def get_user(user_id):
