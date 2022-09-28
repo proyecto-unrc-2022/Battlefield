@@ -34,6 +34,7 @@ class figure_infantry(db.Model):
     direccion = db.Column(db.Integer, nullable=False)
     pos_x = db.Column(db.Integer, nullable=False)
     pos_y = db.Column(db.Integer, nullable=False)
+    type_figure = db.Column(db.Integer, nullable=False)
 
     game = relationship("Game_Infantry", foreign_keys=[id_game])
 
@@ -41,7 +42,7 @@ class figure_infantry(db.Model):
     
     #user = relationship("User", backref=)
 
-    def __init__(self, id_user=None, id_game=None, hp=None, velocidad=None, tamaño=None, direccion=None, pos_x=None, pos_y=None):
+    def __init__(self, id_user=None, id_game=None, hp=None, velocidad=None, tamaño=None, direccion=None, pos_x=None, pos_y=None, type=None):
         self.id_user = id_user #game.user_1 preguntar como pasar  
         self.id_game = id_game #game preguntar como pasar 
         self.hp = hp
@@ -50,6 +51,7 @@ class figure_infantry(db.Model):
         self.direccion = direccion
         self.pos_x = pos_x
         self.pos_y = pos_y
+        self.type_figure = type
 
 
 
