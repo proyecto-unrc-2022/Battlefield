@@ -25,3 +25,9 @@ def battlefield_client(context, *args, **kwargs):
 def before_feature(context, feature):
     # -- HINT: Recreate a new flaskr client before each feature is executed.
     use_fixture(battlefield_client, context)
+
+
+def after_scenario(context, scenario):
+    db.session.remove()
+    db.drop_all()
+    db.create_all()

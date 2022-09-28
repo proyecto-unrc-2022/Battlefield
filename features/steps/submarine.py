@@ -5,7 +5,7 @@ from flask import url_for
 from app import db
 from app.daos.underwater.uw_game_dao import create_game, get_game, update_game
 from app.daos.user_dao import add_user
-from app.models.underwater.under_dtos import UnderGame
+from app.models.underwater.under_models import UnderGame
 from app.models.user import User
 
 
