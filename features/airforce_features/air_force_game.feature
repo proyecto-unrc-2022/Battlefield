@@ -19,3 +19,8 @@ Feature: game logic
         When new user try enter in the game
         Then exception are returned
 
+    @air_force_game
+    Scenario: User choose a plane and position at the map
+        Given a user in the game and plane in db
+        When choose a plane and his position
+        Then 201 response are returned
