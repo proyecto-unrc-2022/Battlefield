@@ -45,13 +45,12 @@ def add_submarine(game, player_id, option_id):
     options = get_options()
     choosen = options[option_id]
 
-    if not has_user(player_id, game):
+    if not has_user(game, player_id):
         return None
 
-    player = db.session.query(User).where(User.id == player_id).one()
-
-    if player.submarine: # Player already has a submarine
-        return None
+    for sub in game.submarines:
+        if sub.player_id == player_id:
+            return None # player already has a submarine
 
     sub = create_submarine(
         game.id,
@@ -69,5 +68,5 @@ def add_submarine(game, player_id, option_id):
     db.session.commit()
     return sub
 
-def has_game(game, player_id):
+def has_user(game, player_id):
     return game.host_id == player_id or game.visitor_id == player_id

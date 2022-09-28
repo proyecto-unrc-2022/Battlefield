@@ -4,20 +4,6 @@ from marshmallow_sqlalchemy.fields import Nested
 from app.models.underwater.under_models import Submarine, Torpedo, UnderGame
 
 
-class UnderGameSchema(SQLAlchemyAutoSchema):
-    class Meta:
-        model = UnderGame
-        include_relationships = True
-        load_instance = True
-
-    id = auto_field()
-    host_id = auto_field()
-    visitor_id = auto_field()
-
-    submarines = Nested(SubmarineSchema, many=True)
-    torpedos = Nested(TorpedoSchema, many=True)
-
-
 class SubmarineSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Submarine
@@ -41,7 +27,7 @@ class SubmarineSchema(SQLAlchemyAutoSchema):
 
 class TorpedoSchema(SQLAlchemyAutoSchema):
     class Meta:
-        model = Submarine
+        model = Torpedo
         include_relationships = True
         load_instance = True
 
@@ -53,3 +39,17 @@ class TorpedoSchema(SQLAlchemyAutoSchema):
     direction = auto_field()
 
     game_id = auto_field()
+
+
+class UnderGameSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = UnderGame
+        include_relationships = True
+        load_instance = True
+
+    id = auto_field()
+    host_id = auto_field()
+    visitor_id = auto_field()
+
+    submarines = Nested(SubmarineSchema, many=True)
+    torpedos = Nested(TorpedoSchema, many=True)
