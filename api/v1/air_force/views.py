@@ -8,7 +8,7 @@ from api import token_auth
 from app import db
 from app.daos.airforce.plane_dao import add_plane
 from app.daos.airforce.plane_dao import get_plane as get_plane_dao
-from app.daos.airforce.plane_dao import update_course as update_course_dao
+"""from app.daos.airforce.plane_dao import update_course as update_course_dao"""
 from app.models.airforce.air_force_game import AirForceGame
 from app.models.airforce.plane import Plane, PlaneSchema
 
@@ -31,14 +31,11 @@ def put_plane():
     size = request.json["size"]
     speed = request.json["speed"]
     health = request.json["health"]
-    course = request.json["course"]
-    coor_x = request.json["coor_x"]
-    coor_y = request.json["coor_y"]
-    p = add_plane(name, size, speed, health, course, coor_x, coor_y)
+    p = add_plane(name, size, speed, health)
     return jsonify(plane_schema.dump(p))
 
 
-@air_force.route("/updateCourse", methods=["PUT"])
+"""@air_force.route("/updateCourse", methods=["PUT"])
 def update_course():
     id_plane = request.json["id"]
     new_course = request.json["course"]
@@ -47,7 +44,7 @@ def update_course():
         return Response(status=400)
     else:
         p = update_course_dao(id_plane, new_course)
-        return Response(status=201)  # or jsonify(plane_schema.dump(p))
+        return Response(status=201)  # or jsonify(plane_schema.dump(p))"""
 
 
 @air_force.route("/<player>", methods=["PUT"])
