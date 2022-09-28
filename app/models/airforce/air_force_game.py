@@ -22,9 +22,11 @@ class AirForceGame:
 class battlefield:
     listOfObject = []
 
-    def addNewObject(player, flying_object, x, y, course):
+    @classmethod
+    def addNewObject(cls, player, flying_object, x, y, course):
         global listOfObject
-        listOfObject.extend((player, flying_object, x, y, course))
+        cls.listOfObject.extend((player, flying_object, x, y, course))
+        return cls.listOfObject
 
 
 #    def moveObject():
