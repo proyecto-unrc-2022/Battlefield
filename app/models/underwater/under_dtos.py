@@ -23,7 +23,8 @@ class SubmarineSchema(SQLAlchemyAutoSchema):
     y_position = auto_field()
     direction = auto_field()
     game_id = auto_field()
-    player_id = auto_field() 
+    player_id = auto_field()
+
 
 class TorpedoSchema(SQLAlchemyAutoSchema):
     class Meta:
