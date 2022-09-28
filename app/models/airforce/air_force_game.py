@@ -1,8 +1,32 @@
-from app import db
-from app.models.user import User
+class AirForceGame:
+    player_a = None
+    player_b = None
+    battlefield = None
+
+    def __init__(self, p_a, p_b):
+        self.player_a = p_a
+        self.player_b = p_b
+        self.battlefield = battlefield.battlefield()
+
+    @classmethod
+    def join_game(cls, new_player):
+        if cls.player_a == None:
+            cls.player_a = new_player
+        elif cls.player_b == None:
+            cls.player_b = new_player
+        else:
+            raise Exception("The game are full!")
+        return {"player_a": cls.player_a, "player_b": cls.player_b}
 
 
-class air_force_game(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    player_a_id = db.Column(db.Integer, db.ForeignKey(User.id))
-    player_b_id = db.Column(db.Integer, db.ForeignKey(User.id))
+class battlefield:
+    listOfObject = []
+
+    def addNewObject(player, flying_object, x, y, course):
+        global listOfObject
+        listOfObject.extend((player, flying_object, x, y, course))
+
+
+#    def moveObject():
+#       for obj in listOfObject:
+#          obj.x - obj.flying_object.getSpeed
