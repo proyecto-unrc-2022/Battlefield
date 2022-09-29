@@ -36,13 +36,11 @@ def step_impl(context):
 @when(u'they press play')
 def step_impl(context):
     context.page = context.client.post(url_for("infantry.start_game",user_id= 1))
-    print(context.page.status_code)
     assert context.page.status_code == 200
 
 @then(u'the game begins')
 def step_impl(context):
     context.page = context.client.post(url_for("infantry.ready_to_play",game_id= 1))
-    print(context.page.status_code)
     assert context.page.status_code == 404
 
 

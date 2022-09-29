@@ -13,7 +13,7 @@ from . import infantry
 
 @infantry.route("/game/<user_id>",methods=['POST'])
 def start_game(user_id):
-    if(create_game(user_id)):
+    if(create_game(user_id) != None):
         return Response(status=200)
     else:
         return Response(status=404)

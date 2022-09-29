@@ -24,11 +24,12 @@ def create_game(user_id):
     game = Game_Infantry(id_user1= user_id, id_user2= None)
     db.session.add(game)
     db.session.commit()
+    return db.session.query(Game_Infantry).order_by(Game_Infantry.id.desc()).first().id  
 
-    if(db.session.query(Game_Infantry).first()):
-        return True
-    else:
-        return False
+    #if(db.session.query(Game_Infantry).first() != None):
+    #    return True
+    #else:
+    #    return False
 
 #This method is used to choose the order of the players
 #def start_of_game(user_id):
