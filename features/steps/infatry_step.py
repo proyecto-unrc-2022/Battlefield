@@ -15,8 +15,8 @@ def step_impl(context):
 
 @when(u'you choose your soldier')
 def step_impl(context):
-    user1 = db.session.query(User).filter_by()
-    context.page = context.client.post(url_for("infantry.start_game",user_id= 1))
+    #user1 = db.session.query(User).filter_by()
+    context.page = context.client.post(url_for("infantry.choose_entity",entity_id= 1))
     assert context.page.status_code == 200
     
 @then(u'the soldier is created')
@@ -42,6 +42,10 @@ def step_impl(context):
 def step_impl(context):
     context.page = context.client.post(url_for("infantry.ready_to_play",game_id= 1))
     assert context.page.status_code == 404
+
+
+
+
 
 
 ######################## TERMINAR ESTOS ESCENARIOS, LUEGO DE LA OPCION #######################################33    
