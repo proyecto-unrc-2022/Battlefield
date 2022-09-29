@@ -33,11 +33,13 @@ def create_game(user_id):
 
 #This method is used to choose the order of the players
 #def start_of_game(user_id):
-#    
-#    if(db.session.query(Game_Infantry).first().id_user1 == None):
-#        Game_Infantry.id_user1 = user_id
-#    elif(db.session.query(Game_Infantry).first().id_user2 == None):
-#        Game_Infantry.id_user2 = user_id       
+    
+
+
+    #if(db.session.query(Game_Infantry).first().id_user1 == None):
+    #    Game_Infantry.id_user1 = user_id
+    #elif(db.session.query(Game_Infantry).first().id_user2 == None):
+    #    Game_Infantry.id_user2 = user_id       
     
 #This method is used to ask if both players are in the game
 def ready(game_id):
