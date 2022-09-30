@@ -19,14 +19,11 @@ class Game_Infantry(db.Model):
 
     def __init__(self, id_user1=None, id_user2=None):
         self.id_user1 = id_user1
-        self.id_user2 = id_user2    
-
-#Mayuscula
-class figure_infantry(db.Model):
-
+        self.id_user2 = id_user2  
+          
+class Figure_infantry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_user = db.Column(db.Integer, db.ForeignKey(User.id), unique=True)
-    #id_projectile = db.Column(db.Integer, unique=True) Sacar!
     id_game = db.Column(db.Integer, db.ForeignKey(Game_Infantry.id), unique=True)
     hp = db.Column(db.Integer, nullable=False)
     velocidad = db.Column(db.Integer, nullable=False)
@@ -40,8 +37,6 @@ class figure_infantry(db.Model):
 
     user = relationship("User", foreign_keys=[id_user])
     
-    #user = relationship("User", backref=)
-
     def __init__(self, id_user=None, id_game=None, hp=None, velocidad=None, tamaño=None, direccion=None, pos_x=None, pos_y=None, type=None):
         self.id_user = id_user #game.user_1 preguntar como pasar  
         self.id_game = id_game #game preguntar como pasar 
