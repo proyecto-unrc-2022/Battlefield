@@ -99,7 +99,7 @@ def step_impl(context):
     print(context.player_a)
     context.response = context.client.put(
         url_for(
-            "air_force.choise_plane_and_position",
+            "air_force.choice_plane_and_position",
             player=context.player_a,
             plane=context.plane.id,
             x=3,
@@ -118,7 +118,7 @@ def step_impl(context):
 def step_impl(context):
     context.response = context.client.put(
         url_for(
-            "air_force.choise_plane_and_position",
+            "air_force.choice_plane_and_position",
             player=context.player_a,
             plane=context.plane.id,
             x=21,
@@ -132,7 +132,7 @@ def step_impl(context):
 def step_impl(context):
     context.response = context.client.put(
         url_for(
-            "air_force.choise_plane_and_position",
+            "air_force.choice_plane_and_position",
             player=context.player_a,
             plane=context.plane.id,
             x=12,
@@ -167,7 +167,7 @@ def step_impl(context):
     print(context.player_b)
     context.response = context.client.put(
         url_for(
-            "air_force.choise_plane_and_position",
+            "air_force.choice_plane_and_position",
             player=context.player_b,
             plane=context.plane.id,
             x=1,
