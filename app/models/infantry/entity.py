@@ -9,6 +9,8 @@ class Entity(db.Model):
     hp = db.Column(db.Integer, unique=True, nullable=False)
     velocidad = db.Column(db.Integer, unique=True, nullable=False)
 
+    
+
     def __init__(self, hp=None, velocidad=None):
         self.hp = hp
         self.velocidad = velocidad

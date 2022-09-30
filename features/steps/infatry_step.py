@@ -1,6 +1,7 @@
 from app import db 
 from app.models.infantry.infantry_game import Figure_infantry, Game_Infantry
 from app.models.user import Profile
+from app.models.infantry.entity import Entity
 
 from flask import url_for
 
@@ -45,8 +46,6 @@ def step_impl(context):
     is_humvee = Figure_infantry.query.filter_by(id=2).first().type_figure == 2
     assert is_created and is_humvee
 
-
-
 @given('a user Lucas')
 def step_given(context) :
     user = User(username= "Lucas", email="Lucas@gmail.com", password="1234")
@@ -65,8 +64,6 @@ def step_then(context) :
     is_created = context.ob.id == 3
     is_tank = Figure_infantry.query.filter_by(id=3).first().type_figure == 3
     assert is_created and is_tank
-
-
   
 @given('a user Ricardo')
 def step_given(context) :
@@ -86,3 +83,22 @@ def step_then(context) :
     is_created = context.ob.id == 4
     is_artillery = Figure_infantry.query.filter_by(id=4).first().type_figure == 4
     assert is_created and is_artillery
+
+@given('the first player')
+def step_impl(context):
+    user1 = User(username= "Franco", email="Franco@gmail.com", password="123")
+    add_user(user1.username, user1.password, user1.email)
+    context.user = user1
+    assert True
+
+@when(u'they press play')
+def step_impl(context):
+    context.page = context.client.post(url_for("infantry.start_game",user_id= 1))
+    assert context.page.status_code == 200
+
+@then(u'the game begins')
+def step_impl(context):
+    ob = db.session.query(Entity).filter_by(id=2)
+    context.ob = ob
+    assert context.ob.id == 2
+    

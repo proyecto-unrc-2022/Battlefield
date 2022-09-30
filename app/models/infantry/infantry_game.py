@@ -3,7 +3,6 @@ from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, SQLAlchemySchema, auto_
 from marshmallow_sqlalchemy.fields import Nested
 from sqlalchemy.orm import relationship #investigar
 
-
 from app import db
 from app.models.user import User
 
