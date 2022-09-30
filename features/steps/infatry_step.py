@@ -1,8 +1,6 @@
 from app import db 
 from app.models.infantry.infantry_game import Figure_infantry, Game_Infantry
 from app.models.user import Profile
-from app.models.infantry.entity import Entity
-
 from flask import url_for
 
 from app.models.user import User

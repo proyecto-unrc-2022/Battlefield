@@ -1,7 +1,6 @@
 from app import db
 from ...models.user import User
 
-from ...models.infantry.entity import Entity
 from ...models.infantry.infantry_game import Game_Infantry
 
 #This method is used for the creating of game
