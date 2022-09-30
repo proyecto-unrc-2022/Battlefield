@@ -11,6 +11,7 @@ from app.daos.airforce.plane_dao import get_plane as get_plane_dao
 from app.daos.airforce.plane_dao import update_course as update_course_dao
 from app.models.airforce.air_force_game import AirForceGame, battlefield
 from app.models.airforce.plane import Plane, PlaneSchema
+from app.models.user import User
 
 from . import air_force
 
@@ -60,11 +61,15 @@ def join_in_game(player):
 
 
 @air_force.route("/<player>/<plane>/<x>/<y>/<course>", methods=["PUT"])
-def choise_plane_and_position(player, plane, x, y, course):
+def choice_plane_and_position(player, plane, x, y, course):
     plane = Plane.query.filter_by(id=plane).first()
-    battlefield.addNewObject(
-        player=player, flying_object=plane, x=x, y=y, course=course
-    )
+    try:
+        battlefield.add_new_plane(
+            player=player, flying_object=plane, x=int(x), y=int(y), course=int(course)
+        )
+    except:
+        return Response(status=400)
+
     return Response(status=201)
 
 
