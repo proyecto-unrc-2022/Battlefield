@@ -4,9 +4,7 @@ from app import db
 
 from flask import Response
 
-from app.daos.infantry.entity_dao import add_entity
-from app.models.infantry.entity import Entity
-
+from app.daos.infantry.infantry_dao import add_entity
 from . import infantry
 
 @infantry.route("/<entity_id>",methods=['POST'])
