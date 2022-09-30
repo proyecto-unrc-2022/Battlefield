@@ -1,6 +1,21 @@
-Feature: A
+Feature: Infantry
 
-    Scenario: Crear personaje
-        Given Dado personajes de infanteria existente
-        When Elije un personaje x
-        Then Se crea dicho personaje
+    Scenario: An user create an soldier
+        Given a user Ignacio
+        When you choose your soldier
+        Then the soldier is created
+
+    Scenario: An user create an soldier
+        Given a user Matias
+        When you choose your Humvee
+        Then the humvee is created
+
+    Scenario: An user create an tank
+        Given a user Lucas
+        When you choose your tank
+        Then the tank is created
+
+    Scenario: An user create an artillery
+        Given a user Ricardo
+        When you choose your artillery
+        Then the artillery is created
