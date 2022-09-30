@@ -91,14 +91,16 @@ def step_impl(context):
     context.user = user1
     assert True
 
-@when(u'they press play')
+@when('they press play')
 def step_impl(context):
     context.page = context.client.post(url_for("infantry.start_game",user_id= 1))
     assert context.page.status_code == 200
 
-@then(u'the game begins')
+@then('the game begins')
 def step_impl(context):
-    ob = db.session.query(Entity).filter_by(id=2)
+    #Verifico que el juego fue creado. 
+    #No se porque antes hacia una consulta a la tabla Entity
+    ob = db.session.query(Game_Infantry).order_by(Game_Infantry.id.desc()).first()
     context.ob = ob
-    assert context.ob.id == 2
+    assert context.ob.id == 1
     
