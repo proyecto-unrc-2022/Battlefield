@@ -19,3 +19,8 @@ Feature: Infantry
         Given a user Ricardo
         When you choose your artillery
         Then the artillery is created
+
+    Scenario: The creation of the game
+          Given the first player
+          When they press play
+          Then the game begins
