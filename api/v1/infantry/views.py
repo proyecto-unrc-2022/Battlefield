@@ -5,6 +5,7 @@ from app import db
 from flask import Response
 
 from app.daos.infantry.infantry_dao import add_entity
+from app.daos.infantry.infantry_dao import move
 from app.daos.infantry.entity_dao import create_game
 from app.daos.infantry.entity_dao import ready
 
@@ -28,6 +29,13 @@ def ready_to_play(game_id):
 @infantry.route("/<entity_id>",methods=['POST'])
 def choose_entity(entity_id):
     if (add_entity(entity_id)):
+        return Response(status=200)
+    else:
+        return Response(status=404)
+
+@infantry.route("/action/<direction>/<velocity>/<user_id>",methods=['POST'])
+def mov_action(direction, velocity, user_id):
+    if(move(user_id, direction, velocity)):
         return Response(status=200)
     else:
         return Response(status=404)
