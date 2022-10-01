@@ -19,8 +19,8 @@ class Game_Infantry(db.Model):
 
     def __init__(self, id_user1=None, id_user2=None):
         self.id_user1 = id_user1
-        self.id_user2 = id_user2    
-
+        self.id_user2 = id_user2  
+          
 class Figure_infantry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_user = db.Column(db.Integer, db.ForeignKey(User.id), unique=True)
@@ -31,13 +31,13 @@ class Figure_infantry(db.Model):
     direccion = db.Column(db.Integer, nullable=False)
     pos_x = db.Column(db.Integer, nullable=False)
     pos_y = db.Column(db.Integer, nullable=False)
-    unit_type = db.Column(db.Integer, nullable=False)
+    figure_type = db.Column(db.Integer, nullable=False)
     
     #Foreign key
     game = relationship("Game_Infantry", foreign_keys=[id_game])
     user = relationship("User", foreign_keys=[id_user])
     
-    def __init__(self, id_user=None, id_game=None, hp=None, velocidad=None, tamaño=None, direccion=None, pos_x=None, pos_y=None):
+    def __init__(self, id_user=None, id_game=None, hp=None, velocidad=None, tamaño=None, direccion=None, pos_x=None, pos_y=None, type=None):
         self.id_user = id_user #game.user_1 preguntar como pasar  
         self.id_game = id_game #game preguntar como pasar 
         self.hp = hp
@@ -46,6 +46,7 @@ class Figure_infantry(db.Model):
         self.direccion = direccion
         self.pos_x = pos_x
         self.pos_y = pos_y
+        self.figure_type = type
 
 class Projectile(db.Model):
     
@@ -68,19 +69,3 @@ class Projectile(db.Model):
         self.daño = daño
         self.direccion = direccion
 
-
-
-
-#class Personaje(db.Model):
-
-
-#class Artillería(db.Model):
-    
-
-#class Tanque(db.Model):
-
-
-#class Humvee(db.Model):
-
-
-#class Soldado(db.Model):
