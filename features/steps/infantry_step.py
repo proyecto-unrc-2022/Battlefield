@@ -22,7 +22,7 @@ def step_impl(context):
     ob = Figure_infantry.query.order_by(Figure_infantry.id.desc()).first()
     context.ob = ob
     is_created = context.ob.id == 1
-    is_soldier = Figure_infantry.query.filter_by(id=1).first().type_figure == 1
+    is_soldier = Figure_infantry.query.filter_by(id=1).first().figure_type == 1
     assert is_created and is_soldier
 
 @given('a user Matias')
@@ -41,7 +41,7 @@ def step_impl(context):
     ob = Figure_infantry.query.order_by(Figure_infantry.id.desc()).first()
     context.ob = ob
     is_created = context.ob.id == 2
-    is_humvee = Figure_infantry.query.filter_by(id=2).first().type_figure == 2
+    is_humvee = Figure_infantry.query.filter_by(id=2).first().figure_type == 2
     assert is_created and is_humvee
 
 @given('a user Lucas')
@@ -60,7 +60,7 @@ def step_then(context) :
     ob = Figure_infantry.query.order_by(Figure_infantry.id.desc()).first()
     context.ob = ob
     is_created = context.ob.id == 3
-    is_tank = Figure_infantry.query.filter_by(id=3).first().type_figure == 3
+    is_tank = Figure_infantry.query.filter_by(id=3).first().figure_type == 3
     assert is_created and is_tank
   
 @given('a user Ricardo')
@@ -79,7 +79,7 @@ def step_then(context) :
     ob = Figure_infantry.query.order_by(Figure_infantry.id.desc()).first()
     context.ob = ob
     is_created = context.ob.id == 4
-    is_artillery = Figure_infantry.query.filter_by(id=4).first().type_figure == 4
+    is_artillery = Figure_infantry.query.filter_by(id=4).first().figure_type == 4
     assert is_created and is_artillery
 
 @given('the first player')
