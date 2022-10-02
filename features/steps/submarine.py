@@ -3,7 +3,12 @@ import json
 from flask import url_for
 
 from app import db
-from app.daos.underwater.uw_game_dao import create_game, get_game, update_game
+from app.daos.underwater.uw_game_dao import (
+    add_submarine,
+    create_game,
+    get_game,
+    update_game,
+)
 from app.daos.user_dao import add_user
 from app.models.underwater.under_models import UnderGame
 from app.models.user import User
@@ -107,3 +112,29 @@ def step_impl(context):
     game = get_game(context.game.id)
     print(game.submarines[0].player_id)
     assert game.submarines[0].player_id == context.user.id
+
+
+@given("they chose '{sub_name}' submarine")
+def step_impl(context, sub_name):
+    submarines = json.load(open("app/models/underwater/options.json"))
+    for key in submarines.keys():
+        if submarines[key]["name"] == sub_name:
+            chosen_id = key
+    add_submarine(context.game, context.user.id, chosen_id)
+
+
+@when("they choose the position '{x:d}','{y:d}','{d:d}' for their submarine")
+def step_impl(context, x, y, d):
+    data = {
+        "submarine_id": context.game.submarines[0].id,
+        "x_coord": x,
+        "y_coord": y,
+        "direction": d,
+    }
+    context.page = context.client.post(url_for("underwater.place_submarine"), data=data)
+
+
+@then("the submarine is successfully placed")
+def step_impl(context):
+    print(context.page.text)
+    assert context.page.status_code is 200

@@ -22,3 +22,10 @@ Feature: Submarine
         And the user is in an ongoing game
         When the user chooses a submarine
         Then the game bounds the user to the choosen submarine
+
+    Scenario: Place a submarine
+        Given the user 'player' is logged in
+        And the user is in an ongoing game
+        And they chose 'Saukko' submarine
+        When they choose the position '2','4','0' for their submarine
+        Then the submarine is successfully placed
