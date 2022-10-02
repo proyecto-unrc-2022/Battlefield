@@ -5,7 +5,7 @@ Feature: Infantry
         When you choose your soldier
         Then the soldier is created
 
-    Scenario: An user create an soldier
+    Scenario: An user create an Humvee
         Given a user Matias
         When you choose your Humvee
         Then the humvee is created
@@ -21,6 +21,6 @@ Feature: Infantry
         Then the artillery is created
 
     Scenario: The creation of the game
-          Given the first player
-          When they press play
-          Then the game begins
+        Given the first player
+        When you create the map
+        Then it is the first player
