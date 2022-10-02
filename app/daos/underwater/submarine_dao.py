@@ -39,27 +39,30 @@ def create_submarine(
     db.session.commit()
     return sub
 
+
 def is_placed(submarine):
     return submarine.x_position or submarine.y_position or submarine.direction
-    
+
 
 def place_submarine(submarine, x_coord, y_coord, direction):
     if is_placed(submarine):
         raise Exception("submarine is already placed")
 
-    submarine.x_position = x_coord
-    submarine.y_position = x_coord
-    submarine.direction = direction
-    
     board = boards[submarine.game.id]
 
-    if not board.segment_is_empty(x_coord, y_coord, direction, submarine.size):
-        db.session.rollback()
-        raise Exception("Given position is not available")
-
+    # if not board.segment_is_empty(x_coord, y_coord, direction, submarine.size):
+    #     raise Exception("Given position is not available")
     try:
         board.place(submarine, x_coord, y_coord, direction, submarine.size)
     except Exception as e:
-        db.session.rollback()
+        raise Exception("%s" % str(e))
+
+    submarine.x_position = x_coord
+    submarine.y_position = x_coord
+    submarine.direction = direction
 
     db.session.commit()
+
+
+def get_submarine(id):
+    return db.session.query(Submarine).where(Submarine.id == id).one_or_none()

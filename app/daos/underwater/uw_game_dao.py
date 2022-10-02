@@ -1,11 +1,10 @@
 import json
 
-from app import db
-from app.models.underwater.under_models import UnderBoard, boards
-from app.models.underwater.under_dtos import UnderGame
-from app.models.user import User
-
 import app.daos.underwater.submarine_dao as sub_dao
+from app import db
+from app.models.underwater.under_dtos import UnderGame
+from app.models.underwater.under_models import UnderBoard, boards
+from app.models.user import User
 
 
 def create_game(host_id):
@@ -48,11 +47,11 @@ def add_submarine(game, player_id, option_id):
     choosen = options[str(option_id)]
 
     if not has_user(game, player_id):
-        return None
+        raise Exception("the game does not have the specified player")
 
     for sub in game.submarines:
         if sub.player_id == player_id:
-            return None  # player already has a submarine
+            raise Exception("Player already has a submarine")
 
     sub = sub_dao.create_submarine(
         game.id,
@@ -74,16 +73,6 @@ def add_submarine(game, player_id, option_id):
 def has_user(game, player_id):
     return game.host_id == player_id or game.visitor_id == player_id
 
-def place_submarine(game, submarine_id, x_coord, y_coord, direction):
-    submarine_f = filter((lambda sub : sub.id == submarine_id), game.submarines)
-    submarine = list(submarine_f)[0]
-    board = boards[game.id]
-
-    sub_dao.place_submarine(submarine, x_coord=x_coord, y_coord=y_coord, direction=direction)
-
-    if not board.segment_is_empty(x_coord, y_coord, direction):
-        return None
-    board.place(submarine, x_coord, y_coord, direction, submarine.size)
 
 def contains_submarine(game, submarine_id):
     for sub in game.submarines:
