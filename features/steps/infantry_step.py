@@ -102,12 +102,11 @@ def step_impl(context):
     context.page = context.client.post(url_for("infantry.start_game",user_id= 1))
     assert context.page.status_code == 200
 
-@then('the game begins')
+@then(u'the game begins')
 def step_impl(context):
-    ob = db.session.query(Game_Infantry).order_by(Game_Infantry.id.desc()).first()
-    context.ob = ob
     context.page = context.client.post(url_for("infantry.ready_to_play",game_id= 1))
-    assert context.ob.id == 1
+    print(context.page.status_code)
+    assert context.page.status_code == 404
 
 
 #@given('un usuario Ignacio')
