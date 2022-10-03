@@ -1,3 +1,6 @@
+from calendar import c
+
+
 class flying_object:
     player = None
     flying_obj = None
@@ -27,6 +30,15 @@ class flying_object:
             self.y = self.y - self.flying_obj.speed
         elif course == 4:
             self.x = self.x - self.flying_obj.speed
+
+    def to_dict(self):
+        return {
+            "player": self.player,
+            "flying_obj": self.flying_obj.id,
+            "x": self.x,
+            "y": self.y,
+            "course": self.course,
+        }
 
 
 class battlefield:
@@ -71,7 +83,7 @@ class battlefield:
 
         fly_obj = flying_object(player, obj, x, y, course)
         cls.flying_objects.append(fly_obj)
-        return cls.flying_objects
+        return fly_obj
 
     @classmethod
     def fligth(cls, player, course):
@@ -86,50 +98,48 @@ class battlefield:
         obj.update_position(course)
 
     @classmethod
-    def add_new_projectile(cls, player, flying_object, x, y, course):
-
+    def add_new_projectile(cls, player, obj, x, y, course):
+        fly_obj = flying_object(player, obj, x, y, course)
         if course == 1:
-            cls.listOfObject.extend((player, flying_object, (x + 1), y, course))
-            return cls.listOfObject
+            fly_obj.x + 1
         elif course == 2:
-            cls.listOfObject.extend((player, flying_object, x, (y + 1), course))
-            return cls.listOfObject
+            fly_obj.y + 1
         elif course == 3:
-            cls.listOfObject.extend((player, flying_object, (x - 1), y, course))
-            return cls.listOfObject
+            fly_obj.x - 1
+        elif course == 4:
+            fly_obj.y - 1
+        cls.flying_objects.append(fly_obj)
+        return fly_obj
 
-        cls.listOfObject.extend((player, flying_object, x, (y - 1), course))
-        return cls.listOfObject
+    # @classmethod
+    # def move_projectile(cls, player):#yo lo haria asi, total de actualizar actualizarias todos los proyectiles de un jugador de ultima en el orden de creacion
 
-    @classmethod
-    def move_projectile(cls, obj):
+    #     speed = obj.flying_object.speed
+    #     course = obj.course
 
-        speed = obj[1].get("speed")
-        course = obj[4]
+    #     if course == 1:
+    #         if obj.x + speed >= 20:
+    #             obj.clear()
+    #         else:
+    #             obj.x = obj.x + speed
+    #     elif course == 2:
+    #         if obj.y + speed >= 10:
+    #             obj.clear()
+    #         else:
+    #             obj.y = obj.y + speed
+    #     elif course == 3:
+    #         if obj.x - speed <= 0:
+    #             obj.clear()
+    #         else:
+    #             obj.x = obj.x - speed
+    #     else:
+    #         if obj.y - speed <= 0:
+    #             obj.clear()
+    #         else:
+    #             obj.y = obj.y - speed
 
-        if course == 1:
-            if obj[2] + speed >= 20:
-                obj.clear()
-            else:
-                obj[2] = obj[2] + speed
-        elif course == 2:
-            if obj[3] + speed >= 10:
-                obj.clear()
-            else:
-                obj[3] = obj[3] + speed
-        elif course == 3:
-            if obj[2] - speed <= 0:
-                obj.clear()
-            else:
-                obj[2] = obj[2] - speed
-        else:
-            if obj[3] - speed <= 0:
-                obj.clear()
-            else:
-                obj[3] = obj[3] - speed
-
-        cls.listOfObject = obj
-        return cls.listOfObject
+    #     cls.flying_objects = obj
+    #     return cls.flying_objects
 
 
 class AirForceGame:

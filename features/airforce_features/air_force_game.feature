@@ -23,14 +23,14 @@ Feature: game logic
     Scenario: Player_a choose a plane and position at the map
         Given player_a and plane in db
         When player_a choose a plane and his position
-        Then 201 response are returned
+        Then info of the new flying object are returned
 
     @air_force_game
     Scenario: Player_b choose a plane and position at the map
         Given player_b in the game and plane in db
         When player_b choose a plane and his position
-        Then 201 response are returned
-
+        Then info of the new flying object are returned
+    
     @air_force_game
     Scenario: Player_a choose a plane and position outside of map
     Given player_a and plane in db
