@@ -89,7 +89,10 @@ def step_impl(context, ship_type, pos_x, pos_y, bow_dir):
         context.game_id, context.user_1.id, bow_dir, pos_x, pos_y, ship_selected
     )
 
-    context.headers = {"Content-Type": "application/json"}
+    context.headers = {
+        "Content-Type": "application/json",
+        "Authorization": f'Bearer {context.token["token"]}',
+    }
     context.page = context.client.post(
         url_for("navy.start_game"), json=context.data, headers=context.headers
     )
