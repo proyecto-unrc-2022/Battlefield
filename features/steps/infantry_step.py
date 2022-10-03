@@ -97,17 +97,35 @@ def step_impl(context):
     context.user = user1
     assert True
 
-@when('they press play')
+@when('you create the game')
 def step_impl(context):
     context.page = context.client.post(url_for("infantry.start_game",user_id= 1))
     assert context.page.status_code == 200
 
-@then(u'the game begins')
+@then(u'it is the first player')
 def step_impl(context):
     context.page = context.client.post(url_for("infantry.ready_to_play",game_id= 1))
-    print(context.page.status_code)
     assert context.page.status_code == 404
 
+@given(u'the second player')
+def step_impl(context):
+    user2 = User(username= "Tomas", email="Tomas@gmail.com", password="123")
+    add_user(user2.username, user2.password, user2.email)
+    context.user = user2
+    assert True
+
+@when(u'he joins the game')
+def step_impl(context):
+    game = Game_Infantry(id_user1= 1, id_user2= None)
+    db.session.add(game)
+    db.session.commit()  
+    context.page = context.client.post(url_for("infantry.join_game",game_id= 1, user_id= 2))
+    assert context.page.status_code == 200
+
+@then(u'he is the second player')
+def step_impl(context):
+    game = db.session.query(Game_Infantry).order_by(Game_Infantry.id.desc()).first()
+    assert game.id_user2 == 2
 
 #@given('un usuario Ignacio')
 #def step_given(context) :
