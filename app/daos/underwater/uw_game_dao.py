@@ -7,14 +7,14 @@ from app.models.underwater.under_models import UnderBoard, boards
 from app.models.user import User
 
 
-def create_game(host_id):
+def create_game(host_id, height=10, width=20):
     if db.session.query(User).where(User.id == host_id) == None:
         return None
 
     game = UnderGame(host_id=host_id)
     db.session.add(game)
     db.session.commit()
-    boards.update({game.id: UnderBoard(game.id)})
+    boards.update({game.id: UnderBoard(game.id, height, width)})
     return game
 
 

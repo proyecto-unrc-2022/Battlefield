@@ -25,7 +25,14 @@ def new_game():
     if not request.args.get("host_id"):
         return Response("{'error':'must pass a host id'", status="409")
 
-    ng = create_game(request.args.get("host_id"))
+    height = 10
+    width = 20
+    if request.args.get("height"):
+        height = request.args.get("height")
+    if request.args.get("width"):
+        width = request.args.get("width")
+
+    ng = create_game(request.args.get("host_id"), height, width)
     return jsonify(under_game_schema.dump(ng))
 
 
