@@ -63,6 +63,52 @@ class battlefield:
         cls.listOfObject.extend((player, flying_object, x, y, course))
         return cls.listOfObject
 
+    @classmethod
+    def add_new_projectile(cls, player, flying_object, x, y, course):
+
+        if course == 1:
+            cls.listOfObject.extend((player, flying_object, (x + 1), y, course))
+            return cls.listOfObject
+        elif course == 2:
+            cls.listOfObject.extend((player, flying_object, x, (y + 1), course))
+            return cls.listOfObject
+        elif course == 3:
+            cls.listOfObject.extend((player, flying_object, (x - 1), y, course))
+            return cls.listOfObject
+
+        cls.listOfObject.extend((player, flying_object, x, (y - 1), course))
+        return cls.listOfObject
+
+    @classmethod
+    def move_projectile(cls, obj):
+
+        speed = obj[1].get("speed")
+        course = obj[4]
+
+        if course == 1:
+            if obj[2] + speed >= 20:
+                obj.clear()
+            else:
+                obj[2] = obj[2] + speed
+        elif course == 2:
+            if obj[3] + speed >= 10:
+                obj.clear()
+            else:
+                obj[3] = obj[3] + speed
+        elif course == 3:
+            if obj[2] - speed <= 0:
+                obj.clear()
+            else:
+                obj[2] = obj[2] - speed
+        else:
+            if obj[3] - speed <= 0:
+                obj.clear()
+            else:
+                obj[3] = obj[3] - speed
+
+        cls.listOfObject = obj
+        return cls.listOfObject
+
 
 #    def moveObject():
 #       for obj in listOfObject:
