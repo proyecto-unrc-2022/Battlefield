@@ -20,13 +20,20 @@ from app.navy.navy_utils import (
 def step_impl(context):
     # Falta hacer el login y obtener el token
     add_user("user1", "12345", "user1@user1.com")
+    context.body = {"username": "user1", "password": "12345"}
+    context.headers = {"Content-Type": "application/json"}
+    context.page = context.client.post(
+        url_for("auth.login"), json=context.body, headers=context.headers
+    )
     context.user_1 = User.query.filter_by(username="user1").first()
     assert context.user_1.email == "user1@user1.com"
+    assert context.page
 
 
 @given("the app has been initialized")
 def step_impl(context):
-    assert context.client
+    context.token = json.loads(context.page.text)
+    assert context.token
 
 
 @given("I have some ships available")
@@ -37,7 +44,10 @@ def step_impl(context):
 
 @when("I request to create a game")
 def step_impl(context):
-    context.headers = {"Content-Type": "application/json"}
+    context.headers = {
+        "Content-Type": "application/json",
+        "Authorization": f'Bearer {context.token["token"]}',
+    }
     context.body = {"id_user_1": context.user_1.id}
     context.page = context.client.post(
         url_for("navy.create_game"), json=context.body, headers=context.headers

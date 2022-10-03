@@ -23,7 +23,7 @@ def create_app(environment="development"):
     db.init_app(app)
     migrate.init_app(app, db)
 
-    secret_token = app.config["SECRET_KEY"]
+    secret_token = app.config["SECRET_KEY"] or "pepe"
 
     from api.auth import auth as auth_blueprint
     from api.users import users_bp as users_blueprint
