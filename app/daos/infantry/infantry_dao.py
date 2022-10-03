@@ -1,16 +1,10 @@
+from telnetlib import GA
 from turtle import left, right
 from app import db
 from app.models.user import Profile
 from ...models.infantry.infantry_game import Figure_infantry
 from ...models.infantry.infantry_game import Game_Infantry
-
-EAST = 1
-SOUTH_EAST = 2
-SOUTH = 3
-SOUTH_WEST = 4
-WEST = 5
-NORTH_WEST = 6
-NORTH = 7
+from .direction import *
 
 def  add_entity(entity_id):
     succes = True
@@ -34,42 +28,58 @@ def  add_entity(entity_id):
         succes = False
     return succes
 
-def move(user_id, direction, velocity):
-    figure = Figure_infantry.query.filter_by(id_user = user_id).first()
-    exceeded_velocity_limit = velocity <= figure.velocidad
-    succes = True
-    if(direction == EAST and exceeded_velocity_limit):
+def move_by_user(user_id, direction, velocity):
+    game_id = Game_Infantry.query.order_by(Game_Infantry.id.desc()).first().id
+    figure = Figure_infantry.query.filter_by(id_user = user_id, id_game = game_id).first()
+    exceeded_velocity_limit = (velocity <= figure.velocidad)   
+    return (mov(figure, direction, velocity) != None) and exceeded_velocity_limit
+
+def is_valid_move(figure):
+    game_id = Game_Infantry.query.order_by(Game_Infantry.id.desc()).first().id
+    user_1 = Game_Infantry.query.order_by(Game_Infantry.id.desc()).first().user_1
+    user_2 = Game_Infantry.query.order_by(Game_Infantry.id.desc()).first().user_2
+    opponent = user_1 if user_1.id != figure.id else user_2
+    figure_opponent = Figure_infantry.query.filter_by(id_user = opponent.id, id_game = game_id).first()
+    return intersection(figure, figure_opponent)
+
+def intersection(figure_1, figure_2):
+    intersection = False
+    for i in range(figure_1.tamaño):
+        aux_figure = figure_2
+        figure_1 = mov(figure_1, figure_1.direction, i)
+        for j in range(figure_2.tamaño):
+            equal_pos_x = figure_1.pos_x == aux_figure.pos_x
+            equal_pos_y = figure_1.pos_y == aux_figure.pos_y
+            intersection = equal_pos_x and equal_pos_y
+            aux_figure = mov(aux_figure, aux_figure.direction, j)
+    return intersection
+
+def mov(figure, direction, velocity):
+    if(direction == EAST):
         figure.direccion = EAST
         figure.pos_x = figure.pos_x + velocity
-        db.session.commit()
-    elif(direction == SOUTH_EAST and exceeded_velocity_limit):
+    elif(direction == SOUTH_EAST):
         figure.direccion = SOUTH_EAST
         figure.pos_x = figure.pos_x + velocity
         figure.pos_y = figure.pos_y - velocity
-        db.session.commit()
-    elif(direction == SOUTH and exceeded_velocity_limit):
+    elif(direction == SOUTH):
         figure.direccion = SOUTH
         figure.pos_y = figure.pos_y - velocity
-        db.session.commit()
-    elif(direction == SOUTH_WEST and exceeded_velocity_limit):
+    elif(direction == SOUTH_WEST):
         figure.direccion = SOUTH_WEST
         figure.pos_x = figure.pos_x - velocity
         figure.pos_y = figure.pos_y - velocity
-        db.session.commit()
-    elif(direction == WEST and exceeded_velocity_limit):
+    elif(direction == WEST):
         figure.direccion = WEST
         figure.pos_x = figure.pos_x - velocity
-        db.session.commit()
-    elif(direction == NORTH_WEST and exceeded_velocity_limit):
+    elif(direction == NORTH_WEST):
         figure.direccion = NORTH_WEST
         figure.pos_x = figure.pos_x - velocity
         figure.pos_y = figure.pos_y + velocity
-        db.session.commit()
-    elif(direction == NORTH and exceeded_velocity_limit):
+    elif(direction == NORTH):
         figure.direccion = NORTH
         figure.pos_x = figure.pos_x - velocity
         figure.pos_y = figure.pos_y + velocity
-        db.session.commit()
     else:
-        succes = False;
-    return succes
+        return None
+    return figure
