@@ -30,6 +30,9 @@ def  add_entity(entity_id):
 
 
 #Dado un user_id, una direccion y una velocidad, mueva su respectiva unidad en el juego
+#velocity seria la cantidad de casillas que se va a mover su unidad
+#verificando que no supere su velocidad maxima.
+#ej: la velocidad limite del tanque es 2, entonces su velocity no puede ser mayor a 2
 def move_by_user(user_id, direction, velocity):
     game_id = Game_Infantry.query.order_by(Game_Infantry.id.desc()).first().id
     figure = Figure_infantry.query.filter_by(id_user = user_id, id_game = game_id).first()
