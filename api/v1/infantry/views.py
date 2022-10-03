@@ -5,7 +5,6 @@ from app import db
 from flask import Response
 
 from app.daos.infantry.infantry_dao import add_entity
-from app.daos.infantry.infantry_dao import move
 from app.daos.infantry.infantry_dao import create_game
 from app.daos.infantry.infantry_dao import ready
 from app.daos.infantry.infantry_dao import join
