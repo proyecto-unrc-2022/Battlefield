@@ -4,6 +4,7 @@ import app.daos.underwater.submarine_dao as sub_dao
 from app import db
 from app.models.underwater.under_dtos import UnderGame
 from app.models.underwater.under_models import UnderBoard, boards
+from app.daos.underwater.submarine_dao import is_placed, update_position
 from app.models.user import User
 
 
@@ -72,6 +73,24 @@ def add_submarine(game, player_id, option_id):
 
 def has_user(game, player_id):
     return game.host_id == player_id or game.visitor_id == player_id
+
+
+def place_submarine(submarine, x_coord, y_coord, direction):
+    if is_placed(submarine):
+        raise Exception("submarine is already placed")
+
+    board = boards[submarine.game.id]
+
+    # if not board.segment_is_empty(x_coord, y_coord, direction, submarine.size):
+    #     raise Exception("Given position is not available")
+    try:
+        board.place(submarine, x_coord, y_coord, direction, submarine.size)
+    except Exception as e:
+        raise Exception("%s" % str(e))
+
+    update_position(submarine, x_coord, y_coord, direction)
+
+    db.session.commit()
 
 
 def contains_submarine(game, submarine_id):

@@ -171,11 +171,15 @@ def step_impl(context, username, sub_name):
 
 
 @when(
-    "they choose the position '{x:d}','{y:d}' and direction '{d:d}' for their submarine"
+    "the user '{username}' chooses the position '{x:d}','{y:d}' and direction '{d:d}'"
 )
-def step_impl(context, x, y, d):
+def step_impl(context, username, x, y, d):
+    player = context.player1 if (context.player1.username == username) else context.player2
+    submarines = context.game.submarines
+    # submarine = submarines[0] if submarines[0].player_id == player.id else submarines[1]
+    submarine = player.submarine[0]
     data = {
-        "submarine_id": context.game.submarines[0].id,
+        "submarine_id": submarine.id,
         "x_coord": x,
         "y_coord": y,
         "direction": d,
@@ -203,50 +207,3 @@ def step_impl(context):
 @Then("the system should not allow to place the submarine again")
 def step_impl(context):
     assert "submarine is already placed" in context.page.text
-
-
-# PLACE A SUBMARINE ON AN OCCUPIED POSITION
-
-# @given(u'the board is in the following state')
-# def step_impl(context):
-
-
-# @then(u'the system should not allow to place the submarine')
-# def step_impl(context):
-#     assert context.page.status_code is not 200
-
-
-# ROTATE AND MOVE SUBMARINE
-
-
-@given("the board is in the following state")
-def step_impl(context):
-    h = len(context.table)
-    w = len(context.table[0])
-    board_m = boards[context.game.id].matrix
-    for i in range(h):
-        for j in range(w):
-            if context.table[i][j] == "H":
-                assert (
-                    type(board_m[i][j]) is Submarine
-                    and board_m[i][j].x_position == i
-                    and board_m[i][j].y_position == j
-                )
-            if context.table[i][j] == "T":
-                assert board_m[i][j]
-            else:
-                assert board_m[i][j] is None
-
-
-@when("the user 'player1' rotates the submarine with direction '3'")
-def step_impl(context):
-    raise NotImplementedError(
-        "STEP: When the user 'player1' rotates the submarine with direction '3'"
-    )
-
-
-@when("the user 'player1' moves the submarine '2' positions")
-def step_impl(context):
-    raise NotImplementedError(
-        "STEP: When the user 'player1' moves the submarine '2' positions"
-    )

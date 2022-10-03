@@ -42,7 +42,7 @@ class Submarine(db.Model):
     game = relationship("UnderGame", back_populates="submarines")
 
     player_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    player = relationship("User")
+    player = relationship("User", backref="submarine")
 
 
 class Torpedo(db.Model):

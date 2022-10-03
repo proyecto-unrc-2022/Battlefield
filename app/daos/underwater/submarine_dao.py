@@ -44,23 +44,10 @@ def is_placed(submarine):
     return submarine.x_position or submarine.y_position or submarine.direction
 
 
-def place_submarine(submarine, x_coord, y_coord, direction):
-    if is_placed(submarine):
-        raise Exception("submarine is already placed")
-
-    board = boards[submarine.game.id]
-
-    # if not board.segment_is_empty(x_coord, y_coord, direction, submarine.size):
-    #     raise Exception("Given position is not available")
-    try:
-        board.place(submarine, x_coord, y_coord, direction, submarine.size)
-    except Exception as e:
-        raise Exception("%s" % str(e))
-
-    submarine.x_position = x_coord
-    submarine.y_position = x_coord
-    submarine.direction = direction
-
+def update_position(submarine, x_coord=None, y_coord=None, direction=None):
+    if x_coord: submarine.x_position = x_coord
+    if y_coord: submarine.y_position = y_coord
+    if direction: submarine.direction = direction
     db.session.commit()
 
 

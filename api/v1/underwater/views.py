@@ -6,9 +6,9 @@ from flask import Response, jsonify, request
 from api import token_auth
 from app import db
 from app.daos.underwater.submarine_dao import get_submarine, is_placed
-from app.daos.underwater.submarine_dao import place_submarine as place_sub
 from app.daos.underwater.uw_game_dao import add_submarine, create_game, get_game
 from app.daos.underwater.uw_game_dao import get_options as get_options_dao
+from app.daos.underwater.uw_game_dao import place_submarine as place_sub
 from app.daos.underwater.uw_game_dao import has_user, update_game
 from app.models.underwater.under_dtos import UnderGameSchema
 from app.models.underwater.under_models import UnderGame
