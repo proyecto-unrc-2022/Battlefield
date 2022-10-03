@@ -28,12 +28,16 @@ def  add_entity(entity_id):
         succes = False
     return succes
 
+
+#Dado un user_id, una direccion y una velocidad, mueva su respectiva unidad en el juego
 def move_by_user(user_id, direction, velocity):
     game_id = Game_Infantry.query.order_by(Game_Infantry.id.desc()).first().id
     figure = Figure_infantry.query.filter_by(id_user = user_id, id_game = game_id).first()
     exceeded_velocity_limit = (velocity <= figure.velocidad)   
     return (mov(figure, direction, velocity) != None) and exceeded_velocity_limit
 
+#Verifica que si una unidad(figure) se movio, este movimiento se valido
+#devuelve verdadero si la unidad que se movio no choca contra otra unidad
 def is_valid_move(figure):
     game_id = Game_Infantry.query.order_by(Game_Infantry.id.desc()).first().id
     user_1 = Game_Infantry.query.order_by(Game_Infantry.id.desc()).first().user_1
@@ -42,6 +46,7 @@ def is_valid_move(figure):
     figure_opponent = Figure_infantry.query.filter_by(id_user = opponent.id, id_game = game_id).first()
     return intersection(figure, figure_opponent)
 
+#Verifica si hay una interseccion entre dos figure
 def intersection(figure_1, figure_2):
     intersection = False
     for i in range(figure_1.tamaño):
@@ -54,6 +59,8 @@ def intersection(figure_1, figure_2):
             aux_figure = mov(aux_figure, aux_figure.direction, j)
     return intersection
 
+#Devuelve un figure con la direccion y velocidad que se
+#pasaron por parametros
 def mov(figure, direction, velocity):
     if(direction == EAST):
         figure.direccion = EAST
