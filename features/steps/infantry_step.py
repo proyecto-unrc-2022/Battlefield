@@ -124,7 +124,7 @@ def step_impl(context):
 
 @then(u'he is the second player')
 def step_impl(context):
-    game = db.session.query(Game_Infantry).order_by(Game_Infantry.id.desc()).first()
+    game = Game_Infantry.query.filter_by(id = 1).first()
     assert game.id_user2 == 2
 
 #@given('un usuario Ignacio')
