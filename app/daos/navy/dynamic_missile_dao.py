@@ -7,11 +7,13 @@ from app.navy.navy_utils import new_position, out_of_range
 missiles_in_game = {}
 
 
-def get_missiles(game):
-    if game:
-        missiles_in_game[game.id] = game.missiles
-        return missiles_in_game[game.id]
-    return None
+
+
+def get_missiles(id_game):
+    if id_game:
+        missiles_in_game[id_game] = DynamicMissile.query.filter_by(id_game=id_game).all()
+        return missiles_in_game[id_game]
+    return DynamicMissile.query.all()
 
 
 def exist_missile(id_game,pos_x,pos_y):
