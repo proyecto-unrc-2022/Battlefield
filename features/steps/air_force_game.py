@@ -94,7 +94,7 @@ def step_impl(context):
     )
 
 
-@when("choose a plane and his position")
+@when("player_a choose a plane and his position")
 def step_impl(context):
     print(context.player_a)
     context.response = context.client.put(
@@ -126,6 +126,11 @@ def step_impl(context):
             course=2,
         )
     )
+
+
+@then("400 response are returned")
+def step_impl(context):
+    assert context.response.status_code == 400
 
 
 @when("choose a plane and position in player_b position")
@@ -162,6 +167,20 @@ def step_impl(context):
     )
 
 
+@when("player_b choose a plane and his position")
+def step_impl(context):
+    context.response = context.client.put(
+        url_for(
+            "air_force.choice_plane_and_position",
+            player=context.player_b,
+            plane=context.plane.id,
+            x=13,
+            y=6,
+            course=4,
+        )
+    )
+
+
 @when("choose a plane and position in player_a position")
 def step_impl(context):
     print(context.player_b)
@@ -175,3 +194,24 @@ def step_impl(context):
             course=2,
         )
     )
+
+
+@given("a battlefield with player_a's plane")
+def step_impl(context):
+    context.player = AirForceGame.player_a
+
+
+@when("player_a moves his plane")
+def step_impl(context):
+    context.response = context.client.put(
+        url_for(
+            "air_force.fligth",
+            player=context.player,
+            course=2,
+        )
+    )
+
+
+@then("201 response code are returned")
+def step_impl(context):
+    assert context.response.status_code == 201

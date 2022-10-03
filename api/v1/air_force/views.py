@@ -64,8 +64,8 @@ def join_in_game(player):
 def choice_plane_and_position(player, plane, x, y, course):
     plane = Plane.query.filter_by(id=plane).first()
     try:
-        battlefield.add_new_plane(
-            player=player, flying_object=plane, x=int(x), y=int(y), course=int(course)
+        AirForceGame.battlefield.add_new_plane(
+            player=player, obj=plane, x=int(x), y=int(y), course=int(course)
         )
     except:
         return Response(status=400)
@@ -79,6 +79,7 @@ def attack():
     return {"result": "booom!!!"}
 
 
-@air_force.route("/flight")
-def fligth():
-    return {"a": "a"}
+@air_force.route("/<player>/<course>", methods=["PUT"])
+def fligth(player, course):
+    AirForceGame.battlefield.fligth(player, int(course))
+    return Response(status=201)
