@@ -8,6 +8,8 @@ from app.daos.airforce.plane_dao import add_plane
 from app.models.airforce.air_force_game import AirForceGame
 from app.models.user import User
 
+url_for_plane_position = "air_force.choice_plane_and_position"
+
 
 @given("three logged user")
 def step_impl(context):
@@ -96,36 +98,59 @@ def step_impl(context):
 
 @when("player_a choose a plane and his position")
 def step_impl(context):
-    print(context.player_a)
+    body = {
+        "player": context.player_a,
+        "plane": context.plane.id,
+        "x": 3,
+        "y": 3,
+        "course": 2,
+    }
+    headers = {"Content-Type": "application/json"}
     context.response = context.client.put(
-        url_for(
-            "air_force.choice_plane_and_position",
-            player=context.player_a,
-            plane=context.plane.id,
-            x=3,
-            y=3,
-            course=2,
-        )
+        url_for("air_force.choice_plane_and_position"),
+        data=json.dumps(body),
+        headers=headers,
     )
+    assert context.response
 
 
 @then("201 response are returned")
 def step_impl(context):
-    assert context.response.status_code == 201
+    raw_response = context.response.json
+    raw_expected = [
+        "1",
+        {
+            "coor_x": 5,
+            "coor_y": 5,
+            "course": 3,
+            "health": 10,
+            "name": "Hawker Tempest",
+            "size": 1,
+            "speed": 5,
+        },
+        3,
+        3,
+        2,
+    ]
+    response, expected = json.dumps(raw_response), json.dumps(raw_expected)
+    assert response == expected
 
 
 @when("choose a plane and position outside of map")
 def step_impl(context):
+    body = {
+        "player": context.player_a,
+        "plane": context.plane.id,
+        "x": 21,
+        "y": 11,
+        "course": 2,
+    }
+    headers = {"Conten-Type": "application/json"}
+
     context.response = context.client.put(
-        url_for(
-            "air_force.choice_plane_and_position",
-            player=context.player_a,
-            plane=context.plane.id,
-            x=21,
-            y=11,
-            course=2,
-        )
+        url_for(url_for_plane_position), data=json.dumps(body), headers=headers
     )
+    assert context.response
 
 
 @then("400 response are returned")
@@ -135,21 +160,23 @@ def step_impl(context):
 
 @when("choose a plane and position in player_b position")
 def step_impl(context):
+    body = {
+        "player": context.player_a,
+        "plane": context.plane.id,
+        "x": 12,
+        "y": 5,
+        "course": 2,
+    }
+    headers = {"Conten-Type": "application/json"}
+
     context.response = context.client.put(
-        url_for(
-            "air_force.choice_plane_and_position",
-            player=context.player_a,
-            plane=context.plane.id,
-            x=12,
-            y=5,
-            course=2,
-        )
+        url_for(url_for_plane_position), data=json.dumps(body), headers=headers
     )
+    assert context.response
 
 
 @then("Error status code are returned")
 def step_impl(context):
-    print(context.response.status_code)
     assert context.response.status_code == 400
 
 
@@ -183,17 +210,40 @@ def step_impl(context):
 
 @when("choose a plane and position in player_a position")
 def step_impl(context):
-    print(context.player_b)
+    body = {
+        "player": context.player_b,
+        "plane": context.plane.id,
+        "x": 1,
+        "y": 5,
+        "course": 2,
+    }
+    headers = {"Conten-Type": "application/json"}
+
+    context.response = context.client.put(
+        url_for(url_for_plane_position), data=json.dumps(body), headers=headers
+    )
+    assert context.response
+
+
+@given("a battlefield with player_a's plane")
+def step_impl(context):
+    context.player = AirForceGame.player_a
+
+
+@when("player_a moves his plane")
+def step_impl(context):
     context.response = context.client.put(
         url_for(
-            "air_force.choice_plane_and_position",
-            player=context.player_b,
-            plane=context.plane.id,
-            x=1,
-            y=5,
+            "air_force.fligth",
+            player=context.player,
             course=2,
         )
     )
+
+
+@then("201 response code are returned")
+def step_impl(context):
+    assert context.response.status_code == 201
 
 
 @given("a battlefield with player_a's plane")

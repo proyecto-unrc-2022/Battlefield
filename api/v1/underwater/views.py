@@ -1,11 +1,14 @@
 import json
+from os import stat_result
 
 from flask import Response, jsonify, request
 
 from api import token_auth
 from app import db
+from app.daos.underwater.submarine_dao import get_submarine, is_placed
 from app.daos.underwater.uw_game_dao import add_submarine, create_game, get_game
 from app.daos.underwater.uw_game_dao import get_options as get_options_dao
+from app.daos.underwater.uw_game_dao import place_submarine as place_sub
 from app.daos.underwater.uw_game_dao import has_user, update_game
 from app.models.underwater.under_dtos import UnderGameSchema
 from app.models.underwater.under_models import UnderGame
@@ -22,7 +25,14 @@ def new_game():
     if not request.args.get("host_id"):
         return Response("{'error':'must pass a host id'", status="409")
 
-    ng = create_game(request.args.get("host_id"))
+    height = 10
+    width = 20
+    if request.args.get("height"):
+        height = request.args.get("height")
+    if request.args.get("width"):
+        width = request.args.get("width")
+
+    ng = create_game(request.args.get("host_id"), height, width)
     return jsonify(under_game_schema.dump(ng))
 
 
@@ -62,11 +72,30 @@ def choose_submarine():
     if not game:
         return Response("{'error':'game not found'}", status="404")
 
-    if not has_user(game, player_id):
-        return Response(
-            "{'error':'the game does not have the specified player'", status="409"
-        )
+    try:
+        add_submarine(game, player_id, submarine_id)
+    except Exception as e:
+        return Response("{'error':'%s'}" % str(e), status="409")
 
-    if not add_submarine(game, player_id, submarine_id):
-        return Response("{'error':'could not add the submarine'}", status="409")
     return jsonify(under_game_schema.dump(game))
+
+
+# Takes submarine_id, x_coord, y_coord, direction
+@underwater.post("/place_submarine")
+def place_submarine():
+    submarine_id = int(request.form["submarine_id"])
+    x_coord = int(request.form["x_coord"])
+    y_coord = int(request.form["y_coord"])
+    direction = int(request.form["direction"])
+    submarine = get_submarine(submarine_id)
+
+    if not submarine:
+        return Response("{'error':'submarine not found'}", status="404")
+    if is_placed(submarine):
+        return Response("{'error':'submarine is already placed'}", status="409")
+    try:
+        place_sub(submarine, x_coord, y_coord, direction)
+    except Exception as e:
+        return Response("{'error':'%s'}" % str(e), status="409")
+
+    return Response("{'success':'submarine placed'}", status="200")
