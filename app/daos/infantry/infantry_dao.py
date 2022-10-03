@@ -83,3 +83,27 @@ def mov(figure, direction, velocity):
     else:
         return None
     return figure
+
+
+def create_game(user_id):
+
+    game = Game_Infantry(id_user1= user_id, id_user2= None)
+    db.session.add(game)
+    db.session.commit()
+    return db.session.query(Game_Infantry).order_by(Game_Infantry.id.desc()).first().id  
+
+def join(game_id, user_id):
+    
+    if (db.session.query(Game_Infantry).get(game_id)):
+        game = db.session.query(Game_Infantry).get(game_id)
+        game.id_user2 = user_id
+        return True
+    else:
+        return False
+
+def ready(game_id):
+
+    if(db.session.query(Game_Infantry).get(1).id_user1 == None or db.session.query(Game_Infantry).get(1).id_user2 == None):
+        return False
+    else:
+        return True
