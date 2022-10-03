@@ -18,7 +18,7 @@ def step_impl(context):
         url_for("air_force.get_plane", plane_id=context.plane.id)
     )
     print(context.page.status_code)
-    assert context.page.status_code is 200
+    assert context.page.status_code == 200
 
 
 @then("We see the information from the plane")
