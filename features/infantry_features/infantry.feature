@@ -22,5 +22,10 @@ Feature: Infantry
 
     Scenario: The creation of the game
         Given the first player
-        When you create the map
+        When you create the game
         Then it is the first player
+
+    Scenario: Join a game
+        Given the second player
+        When he joins the game
+        Then he is the second player
