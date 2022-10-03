@@ -11,7 +11,7 @@ from app.daos.underwater.uw_game_dao import (
     update_game,
 )
 from app.daos.user_dao import add_user
-from app.models.underwater.under_models import UnderGame, boards
+from app.models.underwater.under_models import Submarine, UnderGame, boards
 from app.models.user import User
 
 # BACKGROUND
@@ -19,11 +19,22 @@ from app.models.user import User
 
 @given("there exists two users and they are logged in")
 def step_impl(context):
-    add_user("player1", "player1", "player1@example.com")
+    # add_user("player1", "player1", "player1@example.com")
+    # context.player1 = (
+    #     db.session.query(User).where(User.username == "player1").one_or_none()
+    # )
+    # add_user("player2", "player2", "player2@example.com")
+    # context.player2 = (
+    #     db.session.query(User).where(User.username == "player2").one_or_none()
+    # )
+
+    for row in context.table:
+        add_user(row["username"], row["password"], row["email"])
+
     context.player1 = (
         db.session.query(User).where(User.username == "player1").one_or_none()
     )
-    add_user("player2", "player2", "player2@example.com")
+
     context.player2 = (
         db.session.query(User).where(User.username == "player2").one_or_none()
     )
@@ -52,12 +63,11 @@ def step_impl(context):
 
 @then("an empty board with one player is returned")
 def step_impl(context):
-    pass
-    # board = boards[context.game.id]
-    # for fila in range(len(board[0])):
-    #    for columna in range(len(board)):
-    #        assert board[fila][columna] is None
-    # assert context.game.host
+    board = boards[context.game.id]
+    for row in board.matrix:
+        for cell in row:
+            assert cell is None
+    assert context.game.host
 
 
 # JOIN A GAME
@@ -109,9 +119,9 @@ def step_impl(context):
 # CHOOSE A SUBMARINE
 
 
-@given("the user 'player1' is in a game with visitor")
-def step_impl(context):
-    game = create_game(host_id=context.player1.id)
+@given("the user 'player1' is in a game of dimension '{h:d}'x'{w:d}' with visitor")
+def step_impl(context, h, w):
+    game = create_game(context.player1.id, h, w)
     context.game = update_game(game_id=game.id, visitor_id=context.player2.id)
     assert context.game
 
@@ -148,13 +158,16 @@ def step_impl(context):
 # PLACE A SUBMARINE
 
 
-@given("they chose '{sub_name}' submarine")
-def step_impl(context, sub_name):
+@given("the user '{username}' chose '{sub_name}' submarine")
+def step_impl(context, username, sub_name):
+    player = (
+        context.player1 if (context.player1.username == username) else context.player2
+    )
     submarines = json.load(open("app/models/underwater/options.json"))
     for key in submarines.keys():
         if submarines[key]["name"] == sub_name:
             chosen_id = key
-    assert add_submarine(context.game, context.player1.id, chosen_id)
+    assert add_submarine(context.game, player.id, chosen_id)
 
 
 @when(
@@ -192,4 +205,48 @@ def step_impl(context):
     assert "submarine is already placed" in context.page.text
 
 
-#
+# PLACE A SUBMARINE ON AN OCCUPIED POSITION
+
+# @given(u'the board is in the following state')
+# def step_impl(context):
+
+
+# @then(u'the system should not allow to place the submarine')
+# def step_impl(context):
+#     assert context.page.status_code is not 200
+
+
+# ROTATE AND MOVE SUBMARINE
+
+
+@given("the board is in the following state")
+def step_impl(context):
+    h = len(context.table)
+    w = len(context.table[0])
+    board_m = boards[context.game.id].matrix
+    for i in range(h):
+        for j in range(w):
+            if context.table[i][j] == "H":
+                assert (
+                    type(board_m[i][j]) is Submarine
+                    and board_m[i][j].x_position == i
+                    and board_m[i][j].y_position == j
+                )
+            if context.table[i][j] == "T":
+                assert board_m[i][j]
+            else:
+                assert board_m[i][j] is None
+
+
+@when("the user 'player1' rotates the submarine with direction '3'")
+def step_impl(context):
+    raise NotImplementedError(
+        "STEP: When the user 'player1' rotates the submarine with direction '3'"
+    )
+
+
+@when("the user 'player1' moves the submarine '2' positions")
+def step_impl(context):
+    raise NotImplementedError(
+        "STEP: When the user 'player1' moves the submarine '2' positions"
+    )

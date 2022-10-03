@@ -1,4 +1,4 @@
-Feature: Submarine
+Feature: Init Under Game
 
     Background: Two players are logged in
         Given there exists two users and they are logged in:
@@ -21,34 +21,44 @@ Feature: Submarine
         Then the options are returned
 
     Scenario: Choose a submarine
-        Given the user 'player1' is in a game with visitor
+        Given the user 'player1' is in a game of dimension '6'x'6' with visitor
         When the user 'player1' chooses a submarine
         Then the game bounds the user to the choosen submarine successfully
 
     Scenario: Choose an extra submarine
-        Given the user 'player1' is in a game with visitor
-        And they chose 'Saukko' submarine
+        Given the user 'player1' is in a game of dimension '6'x'6' with visitor
+        And the user 'player1' chose 'Saukko' submarine
         When the user 'player1' chooses a submarine
         Then the system should not allow to have an extra submarine
 
     Scenario: Place a submarine
-        Given the user 'player1' is in a game with visitor
-        And they chose 'Saukko' submarine
+        Given the user 'player1' is in a game of dimension '6'x'6' with visitor
+        And the user 'player1' chose 'Saukko' submarine
         When they choose the position '2','4' and direction '0' for their submarine
         Then the submarine is successfully placed
 
     Scenario: Place a submarine in an invalid position
-        Given the user 'player1' is in a game with visitor
-        And they chose 'Saukko' submarine
+        Given the user 'player1' is in a game of dimension '6'x'6' with visitor
+        And the user 'player1' chose 'Saukko' submarine
         When they choose the position '-2','4' and direction '0' for their submarine
         Then the system should not allow to place the submarine in that position
     
     Scenario: Place a submarine already placed
-        Given the user 'player1' is in a game with visitor
-        And they chose 'Saukko' submarine
+        Given the user 'player1' is in a game of dimension '6'x'6' with visitor
+        And the user 'player1' chose 'Saukko' submarine
         When they choose the position '2','4' and direction '0' for their submarine
         And they choose the position '2','5' and direction '0' for their submarine
         Then the system should not allow to place the submarine again
 
         #Preguntar si este escenario estaría bien 
-    # Scenario: Place a submarine where the other user submarine is 
+    # Scenario: Place a submarine on an occupied position
+    #     Given the user 'player1' is in a game of dimension '6'x'6' with visitor
+    #     And the user 'player1' chose 'Saukko' submarine
+    #     And the board is in the following state:
+    #         | X |   |   |   |   |
+    #         |   | X |   |   |   |
+    #         |   |   | X |   |   |
+    #         |   |   |   |   |   |
+    #         |   |   |   |   |   |
+    #     When they choose the position '2','2' and direction '2' for their submarine
+    #     Then the system should not allow to place the submarine
