@@ -2,6 +2,7 @@
 PATH_TO_START = "app/navy/start.json"
 ROWS = 10
 COLS = 20
+MINIMUM_HP = 0
 
 BORDERS ={
     "top": 1,
@@ -9,14 +10,8 @@ BORDERS ={
     "left": 1,
     "right": COLS,
 }
-
-
-
-MINIMUM_HP = 0
-
 XCORD = 0
 YCORD = 1
-
 COORDS = {
     "N": (-1, 0),
     "S": (1, 0),
