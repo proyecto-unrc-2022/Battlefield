@@ -2,10 +2,6 @@ import json
 from behave import *
 from flask import url_for
 
-from app import db
-from app.daos.navy.dynamic_missile_dao import add_missile, update_missile
-from app.daos.navy.dynamic_ship_dao import add_ship
-from app.daos.navy.game_dao import get_game
 from app.daos.user_dao import add_user
 from app.models.navy.dynamic_missile import DynamicMissile
 from app.models.navy.dynamic_ship import DynamicShip
@@ -112,6 +108,7 @@ def step_impl(context, missile_x, missile_y, range, direction, damage):
         "direction": direction,
         "missile_type": 1,
     }
+    from app.daos.navy.dynamic_missile_dao import add_missile, update_missile
 
     context.missile_in_game = add_missile(missile)
 
@@ -123,6 +120,7 @@ def step_impl(context, missile_x, missile_y, range, direction, damage):
 
 @when("I move the missile")
 def step_impl(context):
+    from app.daos.navy.dynamic_missile_dao import update_missile
     update_missile(context.missile_in_game, context.data_missile)
     assert True
 
