@@ -26,6 +26,7 @@ def add_ship(data):
     db.session.commit()
 
 
+
 def re_build(dir, pos_x, pos_y, ship_type):
     ship = get_ship_select_by_id(ship_type)
     occupied_positions = [(pos_x, pos_y)]

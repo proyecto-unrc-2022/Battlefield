@@ -1,3 +1,4 @@
+import json
 from behave import *
 from flask import url_for
 
@@ -12,6 +13,7 @@ from app.models.user import User
 from app.navy.navy_constants import EMPTY_LIST, FIRST, ONE, SECOND
 from app.navy.navy_utils import (
     add_missile_to_map_game,
+    add_ship_special,
     add_ship_to_map_game,
     get_ship_select,
 )
@@ -20,18 +22,29 @@ from app.navy.navy_utils import (
 @given("Im logged as '{user}'")
 def step_impl(context, user):
     add_user(user, "12345", "user1@user1.com")
-    context.user_1 = User.query.filter_by(username="user1").first()
+    context.body = {"username": "user1", "password": "12345"}
+    context.headers = {"Content-Type": "application/json"}
+    context.page = context.client.post(
+        url_for("auth.login"), json=context.body, headers=context.headers
+    )
+    context.user_1 = User.query.filter_by(username=user).first()
     assert context.user_1.email == "user1@user1.com"
+    assert context.page
 
 
 @given("the app is initialized")
 def step_impl(context):
+    context.token = json.loads(context.page.text)
+    assert context.token
     assert context.client
 
 
 @given("the game one is started")
 def step_impl(context):
-    context.headers = {"Content-Type": "application/json"}
+    context.headers = {
+        "Content-Type": "application/json",
+        "Authorization": f'Bearer {context.token["token"]}',
+    }
     context.body = {"id_user_1": context.user_1.id}
     context.page = context.client.post(
         url_for("navy.create_game"), json=context.body, headers=context.headers
@@ -58,7 +71,8 @@ def step_impl(
 
     context.game_id = context.page.json["game_id"]
 
-    ship_one = add_ship(
+
+    ship_one = add_ship_special(
         id_game=context.game_id,
         id_user=context.user_1.id,
         pos_x=ship_one_x,
@@ -68,7 +82,7 @@ def step_impl(
         ship_type=ship_one_selected["ship_id"],
     )
 
-    ship_two = add_ship(
+    ship_two = add_ship_special(
         id_game=context.game_id,
         id_user=context.user_1.id,
         pos_x=ship_two_x,
