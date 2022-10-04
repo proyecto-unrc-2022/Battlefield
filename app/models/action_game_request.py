@@ -11,7 +11,6 @@ from marshmallow import (
     validates_schema,
 )
 
-from app.models.navy.dynamic_game import Game
 from app.models.navy.dynamic_ship import DynamicShip
 from app.models.user import User
 from app.navy.navy_constants import DIRECTIONS, FALSE, MISSILES_TYPES, SHIP_TYPES, TRUE
@@ -49,6 +48,8 @@ class ActionGameRequest(Schema):
 
     @validates("id_game")
     def validate_id_game(self, id_game):
+        from app.models.navy.dynamic_game import Game
+
         game = Game.query.filter_by(id=id_game).first()
         if not game:
             raise ValidationError("Game not found")

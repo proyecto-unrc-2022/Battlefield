@@ -1,7 +1,6 @@
 import json
 
 from app import db
-from app.daos.navy.dynamic_missile_dao import get_missiles, update_missile
 from app.models.navy.dynamic_game import Game
 from app.models.navy.dynamic_missile import DynamicMissile
 from app.navy.navy_constants import *
@@ -42,6 +41,7 @@ def update_game(id_game):
 
     missiles: list[DynamicMissile] = game.missiles
     missiles.sort(key=lambda x: x.order)
+    from app.daos.navy.dynamic_missile_dao import update_missile
 
     for misile in missiles:
         s_misil = get_missile_selected(misile.id, data["missiles_available"])

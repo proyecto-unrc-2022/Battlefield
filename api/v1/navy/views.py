@@ -38,8 +38,8 @@ def start_game():
     except ValidationError as err:
         return jsonify(err.messages),400
 
-
 @navy.post("/action")
+@token_auth.login_required
 def action():
     try:
         data = ActionGameRequest().load(request.json)
