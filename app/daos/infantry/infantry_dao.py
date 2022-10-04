@@ -1,5 +1,5 @@
 from telnetlib import GA
-from turtle import left, right
+#from turtle import left, right
 from app import db
 from app.models.user import Profile
 from ...models.infantry.infantry_game import Figure_infantry
@@ -258,6 +258,8 @@ def join(game_id, user_id):
     if (db.session.query(Game_Infantry).get(game_id)):
         game = db.session.query(Game_Infantry).get(game_id)
         game.id_user2 = user_id
+        db.session.add(game)
+        db.session.commit()
         return True
     else:
         return False
