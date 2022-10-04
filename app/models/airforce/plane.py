@@ -41,3 +41,23 @@ class ProjectileSchema(SQLAlchemyAutoSchema):
 
     speed = auto_field()
     damage = auto_field()
+    
+class Machine_gun(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    damage_1 = db.Column(db.Integer, nullable=False)
+    damage_2 = db.Column(db.Integer, nullable=False)
+    damage_3 = db.Column(db.Integer, nullable=False)
+    x1 = db.Column(db.Integer)
+    y1 = db.Column(db.Integer)
+    course = db.Column(db.Integer)
+    
+class Machine_gunSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Machine_gun
+        
+        damage_1 = auto_field() # Mas cercano
+        damage_2 = auto_field() # Medio
+        damage_3 = auto_field() # Mas lejano
+        x1 = auto_field()
+        y1 = auto_field()
+        course = auto_field()

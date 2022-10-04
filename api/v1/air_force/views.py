@@ -10,6 +10,7 @@ from app import db
 from app.daos.airforce.plane_dao import add_plane
 from app.daos.airforce.plane_dao import get_plane as get_plane_dao
 from app.daos.airforce.plane_dao import get_projectile
+from app.daos.airforce.plane_dao import get_machine_gun
 from app.daos.airforce.plane_dao import update_course as update_course_dao
 from app.models.airforce.air_force_game import AirForceGame, battlefield
 from app.models.airforce.plane import Plane, PlaneSchema, ProjectileSchema
