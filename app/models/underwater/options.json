@@ -1,5 +1,6 @@
 {
-    "Saukko": {
+    "0": {
+        "name": "Saukko",
         "size": 2,
         "speed": 5,
         "visibility": 5,
@@ -8,7 +9,8 @@
         "torpedo_speed": 5,
         "torpedo_damage": 5
     },
-    "Nautilus": {
+    "1": {
+        "name": "Nautilus", 
         "size": 3,
         "speed": 3,
         "visibility": 4,
@@ -17,7 +19,8 @@
         "torpedo_speed": 5,
         "torpedo_damage": 5
     },
-    "USS Sturgeon": {
+    "2": {
+        "name": "USS Sturgeon",
         "size": 3,
         "speed": 2,
         "visibility": 3,
@@ -26,7 +29,8 @@
         "torpedo_speed": 3,
         "torpedo_damage": 15
     },
-    "Surcouf": {
+    "3": {
+        "name": "Surcouf",
         "size": 4,
         "speed": 1,
         "visibility": 1,
