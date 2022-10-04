@@ -52,38 +52,30 @@ def step_impl(context):
 # ----------------------------------------------------------------------------------------------------------------
 
 
-@given("a projectile in some place of the map")
-def step_impl(context):
+# @given("a projectile in some place of the map")
+# def step_impl(context):
 
-    context.user1 = User(username="Carlos", email="carlito@gmail.com", password="1234")
-    db.session.add(context.user1)
-    db.session.commit()
+#     context.user1 = User(username="Carlos", email="carlito@gmail.com", password="1234")
+#     db.session.add(context.user1)
+#     db.session.commit()
 
-    context.projectile = add_projectile(speed=5, damage=10)
-    context.get_proj = get_projectile(projectile_id=context.projectile.id)
+#     context.projectile = add_projectile(speed=5, damage=10)
+#     context.get_proj = get_projectile(projectile_id=context.projectile.id)
 
-    context.object = battlefield.add_new_projectile(
-        player=context.user1.id,
-        flying_object=proj_scehma.dump(context.get_proj),
-        x=6,
-        y=5,
-        course=1,
-    )
+# @when("a new shift starts")
+# def step_impl(context):
+#     body = {"projectile": context.projectile.id,
+#             "player": context.user1
+#             }
+#     headers = {"Content-Type": "application/json"}
 
-
-@when("a new shift starts")
-def step_impl(context):
-
-    body = {"object": context.object}
-    headers = {"Content-Type": "application/json"}
-
-    context.response = context.client.put(
-        url_for("air_force.update_location_projectile"),
-        data=json.dumps(body),
-        headers=headers,
-    )
+#     context.response = context.client.put(
+#         url_for("air_force.update_location_projectile"),
+#         data=body,
+#         headers=headers,
+#     )
 
 
-@then("the projectile moved the speed corresponding")
-def step_impl(context):
-    assert context.response.status_code == 200
+# @then("the projectile moved the speed corresponding")
+# def step_impl(context):
+#     assert context.response.status_code == 200
