@@ -1,7 +1,7 @@
 from flask import jsonify
 
 from app.models.navy.dynamic_missile import DynamicMissile
-from app.navy.navy_constants import BORDERS, COORDS, XCORD, YCORD
+from app.navy.navy_constants import BORDERS, COORDS, PATH_TO_START, XCORD, YCORD
 
 
 def check_dynamic_data(data, pos_x, pos_y, dir):
@@ -12,25 +12,53 @@ def check_dynamic_data(data, pos_x, pos_y, dir):
     )
 
 
-def get_ship_select(ships, ship_type):
+def get_ship_select(ships=None, ship_type=None):
+    from app.daos.navy.game_dao import read_data
+
+    if not ships:
+        ships = read_data(PATH_TO_START)["ships_available"]
+
     for ship in ships:
         if ship["name"] == ship_type:
             return ship
     return None
 
-def get_missile_selected(misiles,id_misil):
-    for m in misiles: 
-        if m['missile_id'] == id_misil:
+
+def get_ship_select_by_id(id_ship, ships=None):
+    from app.daos.navy.game_dao import read_data
+
+    if not ships:
+        ships = read_data(PATH_TO_START)["ships_available"]
+    for ship in ships:
+        if ship["ship_id"] == id_ship:
+            return ship
+    return None
+
+
+def get_missile_selected(id_misil, misiles=None):
+    if misiles is None:
+        from app.daos.navy.game_dao import read_data
+
+        misiles = read_data(PATH_TO_START)["missiles_available"]
+    for m in misiles:
+        if m["missile_id"] == id_misil:
             return m
     return None
 
-def new_position(dir,pos_x, pos_y):
+
+def new_position(dir, pos_x, pos_y):
     if dir in COORDS:
         return (pos_x + COORDS[dir][XCORD], pos_y + COORDS[dir][YCORD])
     return None
 
+
 def out_of_range(pos_x, pos_y):
-    return pos_x < BORDERS['top'] or pos_x > BORDERS['bottom'] or pos_y < BORDERS['left'] or pos_y > BORDERS['right']
+    return (
+        pos_x < BORDERS["top"]
+        or pos_x > BORDERS["bottom"]
+        or pos_y < BORDERS["left"]
+        or pos_y > BORDERS["right"]
+    )
 
 
 def json_selected_options(game_id, id_user_1, direction, pos_x, pos_y, ship_selected):
@@ -43,3 +71,17 @@ def json_selected_options(game_id, id_user_1, direction, pos_x, pos_y, ship_sele
         "pos_y": pos_y,
         "ship_type": ship_selected["ship_id"],
     }
+
+
+# MISSILES TEST-CHEAT FUNCTIONS
+def add_missile_to_map_game(id_game, missiles):
+    from app.daos.navy.dynamic_missile_dao import set_missile_in_game
+
+    set_missile_in_game(id_game, missiles)
+
+
+# SHIPS TEST-CHEAT FUNCTIONS
+def add_ship_to_map_game(id_game, ships):
+    from app.daos.navy.dynamic_ship_dao import set_ships_in_game
+
+    set_ships_in_game(id_game, ships)
