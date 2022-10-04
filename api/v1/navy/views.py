@@ -1,5 +1,6 @@
 from flask import jsonify, request
 
+from api import token_auth
 from app import db
 from app.daos.navy.dynamic_ship_dao import add_ship
 from app.daos.navy.game_dao import add_game, get_game, read_data
@@ -15,6 +16,7 @@ game_schema = GameSchema()
 
 
 @navy.post("/create")
+@token_auth.login_required
 def create_game():
     id_game = add_game(request.json["id_user_1"])
     json_resp = read_data(PATH_TO_START)
@@ -24,6 +26,7 @@ def create_game():
 
 
 @navy.post("/start")
+@token_auth.login_required
 def start_game():
     try:
         data = StartGameRequest().load(request.json)
