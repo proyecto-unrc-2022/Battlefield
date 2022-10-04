@@ -58,7 +58,7 @@ def missil_move(missile, vel, danger, dir):
         if ship_intercepted:
             from app.daos.navy.dynamic_ship_dao import update_hp
 
-            update_hp(ship_intercepted, ship_intercepted.hp - danger)
+            update_hp(ship=ship_intercepted, new_hp=ship_intercepted.hp - danger)
             delete_missile(missile)
             return None
 
