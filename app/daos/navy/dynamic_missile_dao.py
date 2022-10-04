@@ -6,8 +6,14 @@ from app.navy.navy_utils import new_position, out_of_range
 
 missiles_in_game = {}
 
+def add_missile(data):
+    missile = DynamicMissile(**data)
+    db.session.add(missile)
+    db.session.commit()
+    return missile
 
-
+def set_missile_in_game(id_game, missiles):
+    missiles_in_game[id_game] = missiles
 
 def get_missiles(id_game):
     if id_game:
@@ -26,7 +32,6 @@ def exist_missile(id_game,pos_x,pos_y):
             return m
     return None
             
-
 def delete_missile(missile :DynamicMissile):
     db.session.delete(missile)
     db.session.commit()
@@ -34,7 +39,7 @@ def delete_missile(missile :DynamicMissile):
 
 
 
-def missil_move(missile,vel,danger):
+def missil_move(missile,vel,danger,dir):
     for i in range(vel):
         pos_x, pos_y = new_position(dir,missile.pos_x,missile.pos_y)
         if out_of_range(pos_x,pos_y):
@@ -46,6 +51,7 @@ def missil_move(missile,vel,danger):
             delete_missile(missile)
             return None
         ship_intercepted = exist_ship(missile.id_game,pos_x,pos_y)
+        print("Esta todo bien")
         if  ship_intercepted:
             from app.daos.navy.dynamic_ship_dao import update_hp
             update_hp(ship_intercepted,ship_intercepted.hp - danger)
@@ -58,11 +64,12 @@ def missil_move(missile,vel,danger):
     return missile
 
 
-def update_missile(missile : DynamicMissile,data):
+def update_missile(missile,data):
+    print(missile)
     dir = missile.direction
     vel = data['speed'] #refactor
     danger = data['danger']
-    missile_moved = missil_move(missile,vel,danger)
+    missile_moved = missil_move(missile,vel,danger,dir)
     
     if missile_moved:
         db.session.add(missile_moved)
