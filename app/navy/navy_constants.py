@@ -4,6 +4,11 @@ ROWS = 10
 COLS = 20
 MINIMUM_HP = 0
 
+FIRST = 0
+SECOND = 1
+ZERO = 0
+
+
 BORDERS ={
     "top": 1,
     "bottom": ROWS,
