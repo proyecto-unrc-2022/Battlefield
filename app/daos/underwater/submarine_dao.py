@@ -1,5 +1,5 @@
 from app import db
-from app.models.underwater.under_models import Submarine
+from app.models.underwater.under_models import Submarine, boards
 
 
 def create_submarine(
@@ -38,3 +38,18 @@ def create_submarine(
     db.session.add(sub)
     db.session.commit()
     return sub
+
+
+def is_placed(submarine):
+    return submarine.x_position or submarine.y_position or submarine.direction
+
+
+def update_position(submarine, x_coord=None, y_coord=None, direction=None):
+    if x_coord: submarine.x_position = x_coord
+    if y_coord: submarine.y_position = y_coord
+    if direction: submarine.direction = direction
+    db.session.commit()
+
+
+def get_submarine(id):
+    return db.session.query(Submarine).where(Submarine.id == id).one_or_none()
