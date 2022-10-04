@@ -1,4 +1,5 @@
 from ast import Raise
+from pickle import TRUE
 
 from marshmallow import (
     Schema,
@@ -13,7 +14,7 @@ from marshmallow import (
 from app.models.navy.dynamic_game import Game
 from app.models.navy.dynamic_ship import DynamicShip
 from app.models.user import User
-from app.navy.navy_constants import DIRECTIONS, MISSILES_TYPES, SHIP_TYPES
+from app.navy.navy_constants import DIRECTIONS, FALSE, MISSILES_TYPES, SHIP_TYPES, TRUE
 from app.navy.navy_utils import get_move_ship_
 
 
@@ -21,10 +22,10 @@ class ActionGameRequest(Schema):
     @validates_schema
     def check_move(self, in_data, **kwargs):
 
-        if in_data.get("attack") == 1 and in_data.get("move") != 0:
+        if in_data.get("attack") == TRUE and in_data.get("move") != FALSE:
             raise ValidationError("Invalid move")
 
-        if in_data.get("attack") == 0:
+        if in_data.get("attack") == FALSE:
             mov_ship = get_move_ship_(in_data.get("ship_type"))
 
             if in_data.get("move") > mov_ship:
@@ -62,4 +63,4 @@ class ActionGameRequest(Schema):
     id_ship = fields.Int(required=True)
     move = fields.Int(required=True)
     ship_type = fields.Int(validate=validate.OneOf(SHIP_TYPES), required=True)
-    attack = fields.Integer(validate=validate.OneOf([0, 1]), required=True)
+    attack = fields.Integer(validate=validate.OneOf([TRUE, FALSE]), required=True)
