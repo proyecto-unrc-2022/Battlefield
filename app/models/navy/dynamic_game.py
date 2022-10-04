@@ -56,9 +56,9 @@ class GameSchema(SQLAlchemySchema):
 
         dict = {
             "ships": DynamicShipSchema(many=True).dump(get_ships(self.Meta.model.id)),
-            "missiles": DynamicMissileSchema(many=True).dump
-             (get_missiles(self.Meta.model.id)),
-             
+            "missiles": DynamicMissileSchema(many=True).dump(
+                get_missiles(self.Meta.model.id)
+            ),
         }
         return dict
 

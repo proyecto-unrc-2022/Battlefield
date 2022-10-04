@@ -7,9 +7,10 @@ MINIMUM_HP = 0
 FIRST = 0
 SECOND = 1
 ZERO = 0
+ONE = 1
+EMPTY_LIST = []
 
-
-BORDERS ={
+BORDERS = {
     "top": 1,
     "bottom": ROWS,
     "left": 1,
@@ -27,4 +28,3 @@ COORDS = {
     "SE": (1, 1),
     "SW": (1, -1),
 }
-
