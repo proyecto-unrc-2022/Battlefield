@@ -1,4 +1,3 @@
-from tkinter.tix import ROW
 from marshmallow import fields, Schema, validates, ValidationError, validate
 from app.models.navy.dynamic_game import Game
 from app.models.user import User

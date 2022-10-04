@@ -7,10 +7,12 @@ from app.models.navy.dynamic_missile import DynamicMissile
 from app.navy.navy_constants import *
 from app.navy.navy_utils import get_missile_selected
 
-
 data = None
+
+
 def get_data():
     return data
+
 
 def read_data(file_path):
     global data
@@ -30,21 +32,17 @@ def get_game(id_game):
     game = Game.query.filter_by(id=id_game).first()
     return game
 
+
 def update_game(id_game):
     global data
     if not data:
         data = read_data(PATH_TO_START)
-    
-    game :Game = get_game(id_game)
-    
-    s_misil = get_missile_selected(data['missiles_available'])
-    missiles :list[DynamicMissile] = game.missiles
-    missiles.sort(key = lambda x: x.order)
-    
+
+    game: Game = get_game(id_game)
+
+    missiles: list[DynamicMissile] = game.missiles
+    missiles.sort(key=lambda x: x.order)
+
     for misile in missiles:
-        update_missile(misile,s_misil)
-    
-
-
-    
-
+        s_misil = get_missile_selected(misile.id, data["missiles_available"])
+        update_missile(misile, s_misil)
