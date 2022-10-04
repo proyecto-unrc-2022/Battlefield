@@ -29,35 +29,6 @@ def create_game():
 @navy.post("/start")
 @token_auth.login_required
 def start_game():
-<<<<<<< HEAD
-    game_id = request.json["game_id"]
-    add_ship(
-        game_id,
-        request.json["id_user_1"],
-        request.json["hp"],
-        request.json["direction"],
-        request.json["pos_x"],
-        request.json["pos_y"],
-        request.json["ship_type"],
-    )
-    game_one = get_game(game_id)
-    return jsonify(game_schema.dump(game_one))
-
-
-@navy.get("/test")
-def test():
-    game_one = Game.query.filter_by(id=1).first()
-    return jsonify(game_schema.dump(game_one))
-
-
-@navy.post("/action")
-def action():
-    try:
-        data = ActionGameRequest().load(request.json)
-        return jsonify(data)
-    except ValidationError as err:
-        return jsonify(err.messages), 400
-=======
     try:
         data = StartGameRequest().load(request.json)
         game_id = data["game_id"]
@@ -66,7 +37,6 @@ def action():
         return jsonify(game_schema.dump(game_one))
     except ValidationError as err:
         return jsonify(err.messages),400
->>>>>>> develop
 
 
 @navy.post("/action")
