@@ -15,21 +15,9 @@ class flying_object:
         self.y = y
         self.course = course
 
-    @classmethod
     def check_course(self, course):
+        #        raise Exception(self.course)
         return abs(self.course - course) == 2
-
-    def update_position(self, course):
-        if self.check_course(course):
-            raise ValueError("New course cant be 180 degrees deference")
-        if course == 1:
-            self.y = self.y + self.flying_obj.speed
-        elif course == 2:
-            self.x = self.x + self.flying_obj.speed
-        elif course == 3:
-            self.y = self.y - self.flying_obj.speed
-        elif course == 4:
-            self.x = self.x - self.flying_obj.speed
 
     def to_dict(self):
         return {
@@ -94,8 +82,8 @@ class battlefield:
                 cls.flying_objects,
             )
         )[0]
-        print(obj.flying_obj)
-        obj.update_position(course)
+        cls.update_position(course, obj)
+        return obj
 
     @classmethod
     def add_new_projectile(cls, player, obj, x, y, course):
@@ -110,6 +98,24 @@ class battlefield:
             fly_obj.y - 1
         cls.flying_objects.append(fly_obj)
         return fly_obj
+
+    @classmethod
+    def update_position(cls, course, fly_obj):
+        if fly_obj.check_course(course):
+            raise ValueError("New course cant be 180 degrees deference")
+        fly_obj.course = course
+        if course == 1:
+            new_y = fly_obj.y + fly_obj.flying_obj.speed
+            fly_obj.y = new_y if new_y <= cls.max_y else cls.max_y
+        elif course == 2:
+            new_x = fly_obj.x + fly_obj.flying_obj.speed
+            fly_obj.x = new_x if new_x <= cls.max_x else cls.max_x
+        elif course == 3:
+            new_y = fly_obj.y - fly_obj.flying_obj.speed
+            fly_obj.y = new_y if new_y >= 0 else 0
+        elif course == 4:
+            new_x = fly_obj.x - fly_obj.flying_obj.speed
+            fly_obj.x = new_x if new_x >= 0 else 0
 
     # @classmethod
     # def move_projectile(cls, player):#yo lo haria asi, total de actualizar actualizarias todos los proyectiles de un jugador de ultima en el orden de creacion

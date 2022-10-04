@@ -234,19 +234,84 @@ def step_impl(context):
 @given("a battlefield with player_a's plane")
 def step_impl(context):
     context.player = AirForceGame.player_a
+    context.plane = 1
 
 
-@when("player_a moves his plane")
+@when("player_a moves his plane in th same course")
 def step_impl(context):
+    context.expected_x = 8
+    context.expected_y = 3
+    context.course = 2
+
     context.response = context.client.put(
         url_for(
             "air_force.fligth",
             player=context.player,
-            course=2,
+            course=context.course,
+        )
+    )
+
+
+@when("player_a moves his plane in new valid course")
+def step_impl(context):
+    context.expected_x = 8
+    context.expected_y = 8
+    context.course = 1
+    context.response = context.client.put(
+        url_for(
+            "air_force.fligth",
+            player=context.player,
+            course=1,
+        )
+    )
+
+
+@when("player_a moves his plane and colition with a limit")
+def step_impl(context):
+    context.expected_x = 8
+    context.expected_y = 10
+    context.course = 1
+    context.response = context.client.put(
+        url_for(
+            "air_force.fligth",
+            player=context.player,
+            course=context.course,
         )
     )
 
 
 @then("201 response code are returned")
 def step_impl(context):
-    assert context.response.status_code == 201
+    # print(json.dumps(context.response.json))
+    raw_response = context.response.json
+    raw_expected = {
+        "player": context.player,
+        "flying_obj": context.plane,
+        "x": context.expected_x,
+        "y": context.expected_y,
+        "course": context.course,
+    }
+    response, expected = json.dumps(raw_response, sort_keys=True), json.dumps(
+        raw_expected, sort_keys=True
+    )
+    print(response)
+    print(expected)
+    assert response == expected
+    # assert context.response.status_code == 201
+
+
+@when("player_a moves his plane in invalid course")
+def step_impl(context):
+    context.response = context.client.put(
+        url_for(
+            "air_force.fligth",
+            player=context.player,
+            course=3,
+        )
+    )
+
+
+@then("400 response code are returned")
+def step_impl(context):
+    print(json.dumps(context.response.json))
+    assert context.response.status_code == 400

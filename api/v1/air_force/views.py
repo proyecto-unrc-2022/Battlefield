@@ -54,7 +54,7 @@ def update_course():
         return Response(status=201)  # or jsonify(plane_schema.dump(p))
 
 
-@air_force.route("/<player>", methods=["PUT"])
+@air_force.route("/join/<player>", methods=["PUT"])
 def join_in_game(player):
     try:
         game = AirForceGame.join_game(new_player=player)
@@ -120,5 +120,9 @@ def attack():
 
 @air_force.route("/<player>/<course>", methods=["PUT"])
 def fligth(player, course):
-    AirForceGame.battlefield.fligth(player, int(course))
-    return Response(status=201)
+    try:
+        obj = AirForceGame.battlefield.fligth(player, int(course))
+    except:
+        return Response(status=400)
+    #    return Response(status=201)
+    return jsonify(obj.to_dict())
