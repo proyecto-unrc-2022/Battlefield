@@ -27,3 +27,17 @@ class PlaneSchema(SQLAlchemySchema):
     course = auto_field()
     coor_x = auto_field()
     coor_y = auto_field()
+
+
+class Projectile(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    speed = db.Column(db.Integer, nullable=False)
+    damage = db.Column(db.Integer, nullable=False)
+
+
+class ProjectileSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Projectile
+
+    speed = auto_field()
+    damage = auto_field()
