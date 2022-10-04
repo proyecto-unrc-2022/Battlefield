@@ -14,7 +14,7 @@ class DynamicShip(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     id_game = db.Column(db.Integer, db.ForeignKey("game.id"))
-    id_user = db.Column(db.Integer, db.ForeignKey(User.id), unique=True)
+    id_user = db.Column(db.Integer, db.ForeignKey(User.id))
     hp = db.Column(db.Integer)
     direction = db.Column(db.String(2))
     pos_x = db.Column(db.Integer)
