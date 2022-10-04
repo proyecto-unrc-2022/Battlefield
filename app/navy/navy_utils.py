@@ -17,12 +17,19 @@ def get_ship_select(ships, ship_type):
 
     return None
 
+def get_ship_selected_by_id(ships, ship_id):
+
+    for ship in ships:
+        if ship["ship_id"] == ship_id:
+            return ship
+
+    return None
+
 
 def json_selected_options(game_id, id_user_1, direction, pos_x, pos_y, ship_selected):
     return {
         "game_id": game_id,
-        "id_user_1": id_user_1,
-        "hp": ship_selected["hp"],
+        "id_user": id_user_1,
         "direction": direction,
         "pos_x": pos_x,
         "pos_y": pos_y,
