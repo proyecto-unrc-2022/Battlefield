@@ -59,7 +59,6 @@ def step_impl(context):
 
 @then("I should see an error message '{error_msj}' about the '{game}'")
 def step_impl(context, error_msj,game):
-    assert context.page.json[EXPECTED_ERRORS[game]] == error_msj
+    assert context.page.status_code == 400
 
-#-------------------------------------
 
