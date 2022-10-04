@@ -2,7 +2,7 @@ from api import token_auth
 
 from app import db
 
-from flask import Response
+from flask import Response, request
 
 from app.daos.infantry.infantry_dao import add_entity
 from app.daos.infantry.infantry_dao import create_game
@@ -16,6 +16,7 @@ from . import infantry
 
 @infantry.route("/game/<user_id>",methods=['POST'])
 def start_game(user_id):
+
     if(create_game(user_id) != None):
         return Response(status=200)
     else:
@@ -36,9 +37,9 @@ def join_game(game_id, user_id):
     else:
         return Response(status=404)        
 
-@infantry.route("/<entity_id>",methods=['POST'])
-def choose_entity(entity_id):
-    if (add_entity(entity_id)):
+@infantry.route("/create_entity/<user_id>/<entity_id>",methods=['POST'])
+def choose_entity(user_id ,entity_id):
+    if (add_entity(user_id ,entity_id)):
         return Response(status=200)
     else:
         return Response(status=404)
