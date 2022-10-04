@@ -24,6 +24,14 @@ def get_missile_selected(misiles,id_misil):
             return m
     return None
 
+def get_ship_selected_by_id(ships, ship_id):
+
+    for ship in ships:
+        if ship["ship_id"] == ship_id:
+            return ship
+
+    return None
+
 def new_position(dir,pos_x, pos_y):
     if dir in COORDS:
         return (pos_x + COORDS[dir][XCORD], pos_y + COORDS[dir][YCORD])
@@ -36,8 +44,7 @@ def out_of_range(pos_x, pos_y):
 def json_selected_options(game_id, id_user_1, direction, pos_x, pos_y, ship_selected):
     return {
         "game_id": game_id,
-        "id_user_1": id_user_1,
-        "hp": ship_selected["hp"],
+        "id_user": id_user_1,
         "direction": direction,
         "pos_x": pos_x,
         "pos_y": pos_y,
