@@ -1,18 +1,14 @@
 from app import db
 from app.models.navy.dynamic_ship import DynamicShip
 from app.navy.navy_constants import FIRST, MINIMUM_HP, PATH_TO_START
-from app.navy.navy_utils import get_ship_select, get_ship_select_by_id, new_position
+from app.navy.navy_utils import get_ship_select, get_ship_select_by_id, get_ship_selected_by_id, new_position
 
 ships_in_game = {}
 
 
 def set_ships_in_game(id_game, ships):
     ships_in_game[id_game] = ships
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> 9dc0ef8 (Update dynamic_ship dao)
 def add_ship(data):
     from app.daos.navy.game_dao import read_data
     ships = read_data(PATH_TO_START)['ships_available']
@@ -28,25 +24,6 @@ def add_ship(data):
     )
     db.session.add(dynamicShip)
     db.session.commit()
-<<<<<<< HEAD
-
-=======
->>>>>>> 9dc0ef8 (Update dynamic_ship dao)
-
-def add_ship(id_game, id_user, hp, direction, pos_x, pos_y, ship_type):
-    dynamicShip = DynamicShip(
-        id_game=data['game_id'],
-        id_user=data['id_user'],
-        hp=ship_selected['hp'],
-        direction=data['direction'],
-        pos_x=data['pos_x'],
-        pos_y=data['pos_y'],
-        ship_type=data['ship_type'],
-    )
-    db.session.add(dynamicShip)
-    db.session.commit()
-
-    return dynamicShip
 
 
 def re_build(dir, pos_x, pos_y, ship_type):
