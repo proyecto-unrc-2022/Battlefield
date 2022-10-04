@@ -46,7 +46,7 @@ def choose_entity(user_id ,entity_id):
 
 @infantry.route("/action/<direction>/<velocity>/<user_id>",methods=['POST'])
 def mov_action(direction, velocity, user_id):
-    if(is_valid_move(move_by_user(user_id, direction, velocity))):
+    if(move_by_user(user_id, direction, velocity)):
         return Response(status=200)
     else:
         return Response(status=404)
