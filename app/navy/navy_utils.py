@@ -1,5 +1,8 @@
 from flask import jsonify
 
+from app.daos.navy.game_dao import read_data
+from app.navy.navy_constants import PATH_TO_START
+
 
 def check_dynamic_data(data, pos_x, pos_y, dir):
     return (
@@ -14,6 +17,16 @@ def get_ship_select(ships, ship_type):
     for ship in ships:
         if ship["name"] == ship_type:
             return ship
+
+    return None
+
+
+def get_move_ship_(ship_type):
+
+    ships = read_data(PATH_TO_START)
+    for ship in ships["ships_available"]:
+        if ship["ship_id"] == ship_type:
+            return ship["speed"]
 
     return None
 
