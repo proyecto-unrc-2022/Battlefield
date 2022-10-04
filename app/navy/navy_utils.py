@@ -23,6 +23,12 @@ def get_ship_select(ships=None, ship_type=None):
             return ship
     return None
 
+def get_ship_selected_by_id(ships,ship_id):
+    for ship in ships:
+        if ship["ship_id"] == ship_id:
+            return ship
+    return None
+
 
 def get_ship_select_by_id(id_ship, ships=None):
     from app.daos.navy.game_dao import read_data
