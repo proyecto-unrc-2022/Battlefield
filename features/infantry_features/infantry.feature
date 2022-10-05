@@ -24,3 +24,9 @@ Feature: Infantry
         Given un usuario Franco
         When elige mover su unidad hacia el este
         Then entonces la unidad se mueve hacia el este
+
+    Scenario: A user shoots
+        Given a user Nicolas
+        When Shoot
+        Then create the projectile
+    
