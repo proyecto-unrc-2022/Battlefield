@@ -109,7 +109,7 @@ def mov(figure, direction, velocity):
 #Si el disparo se puede realizar, pregunta cual es la figure y dependiendo cual es crea su respectivo proyectil. 
 def shoot(direction,user_id,game_id):
 
-    figure = db.session.query(Figure_infantry).filter_by(id_user= user_id).id
+    figure = db.session.query(Figure_infantry).filter_by(id_user= user_id)
     if (shoot_valid(direction)):
         if(figure == "1"):
             projectile = Projectile(id_game= game_id, pos_x=None, pos_y=None, velocidad=0, daño=5, direccion= direction)
@@ -123,7 +123,7 @@ def shoot(direction,user_id,game_id):
             projectile = Projectile(id_game= game_id, pos_x=None, pos_y=None, velocidad=3, daño=15, direccion= direction)
             db.session.add(projectile)
             db.session.commit()
-        elif(figure == "3"):
+        elif(figure == "4"):
             projectile = Projectile(id_game= game_id, pos_x=None, pos_y=None, velocidad=20, daño=30, direccion= direction)
             db.session.add(projectile)
             db.session.commit()
