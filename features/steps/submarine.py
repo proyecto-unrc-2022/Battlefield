@@ -4,7 +4,7 @@ from behave import *
 from flask import url_for
 
 from app import db
-from app.daos.underwater.uw_game_dao import (
+from app.daos.underwater.under_game_dao import (
     add_submarine,
     create_game,
     get_game,
