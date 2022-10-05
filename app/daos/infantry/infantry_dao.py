@@ -35,24 +35,24 @@ def  add_entity(game_id, user_id ,entity_id):
 #velocity seria la cantidad de casillas que se va a mover su unidad
 #verificando que no supere su velocidad maxima.
 #ej: la velocidad limite del tanque es 2, entonces su velocity no puede ser mayor a 2
-def move_by_user(user_id, direction, velocity):
-    game_id = Game_Infantry.query.order_by(Game_Infantry.id.desc()).first().id
+def move_by_user(game_id, user_id, direction, velocity):
     figure = Figure_infantry.query.filter_by(id_user = user_id, id_game = game_id).first()
-    exceeded_velocity_limit = (int(velocity) <= figure.velocidad)   
+    exceeded_velocity_limit = (int(velocity) > figure.velocidad)
     figure = mov(figure, int(direction), int(velocity))
     is_valid = False if figure == None else is_valid_move(figure)
-    if is_valid : db.session.commit(figure) 
-    return is_valid and exceeded_velocity_limit
+    if is_valid : db.session.commit() 
+    return is_valid and not(exceeded_velocity_limit)
 
 #Verifica que si una unidad(figure) se movio, este movimiento se valido
 #devuelve verdadero si la unidad que se movio no choca contra otra unidad
 def is_valid_move(figure):
-    game_id = Game_Infantry.query.order_by(Game_Infantry.id.desc()).first().id
-    user_1 = Game_Infantry.query.order_by(Game_Infantry.id.desc()).first().user_1
-    user_2 = Game_Infantry.query.order_by(Game_Infantry.id.desc()).first().user_2
+    game_id = Figure_infantry.query.filter_by(id_game = figure.id_game).first().id_game
+    game = Game_Infantry.query.filter_by(id = game_id).first()
+    user_1 = game.user_1
+    user_2 = game.user_2
     opponent = user_1 if user_1.id != figure.id else user_2
     figure_opponent = Figure_infantry.query.filter_by(id_user = opponent.id, id_game = game_id).first()
-    return intersection(figure, figure_opponent)
+    return not(intersection(figure, figure_opponent))
 
 #Verifica si hay una interseccion entre dos figure
 def intersection(figure_1, figure_2):
