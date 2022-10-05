@@ -9,7 +9,7 @@ from ...models.user import User
 from .direction import *
 
 def  add_entity(game_id, user_id ,entity_id):
-    
+
     succes = True
     if("1" == entity_id):
         soldier = Figure_infantry(id_game= game_id, id_user= user_id, hp=10, velocidad=3, tamaño=1, direccion=0,pos_x=0, pos_y=0, type=1)
@@ -115,19 +115,23 @@ def shoot(direction,user_id,game_id):
             projectile = Projectile(id_game= game_id, pos_x=None, pos_y=None, velocidad=0, daño=5, direccion= direction)
             db.session.add(projectile)
             db.session.commit()
+            return True
         elif(figure == "2"):
             projectile = Projectile(id_game= game_id, pos_x=None, pos_y=None, velocidad=5, daño=5, direccion= direction)
             db.session.add(projectile)
             db.session.commit()
+            return True
         elif(figure == "3"):
             projectile = Projectile(id_game= game_id, pos_x=None, pos_y=None, velocidad=3, daño=15, direccion= direction)
             db.session.add(projectile)
             db.session.commit()
+            return True
         elif(figure == "4"):
             projectile = Projectile(id_game= game_id, pos_x=None, pos_y=None, velocidad=20, daño=30, direccion= direction)
             db.session.add(projectile)
             db.session.commit()
-        return True
+            return True
+        return False
     else:
         return False
 
