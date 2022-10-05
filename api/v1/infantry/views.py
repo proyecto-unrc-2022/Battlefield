@@ -44,9 +44,9 @@ def choose_entity(game_id, user_id ,entity_id):
     else:
         return Response(status=404)
 
-@infantry.route("/action/course/<direction>/velocity/<velocity>/user/<user_id>",methods=['POST'])
-def mov_action(direction, velocity, user_id):
-    if(move_by_user(user_id, direction, velocity)):
+@infantry.route("/action/game/<game_id>/course/<direction>/velocity/<velocity>/user/<user_id>",methods=['POST'])
+def mov_action(direction, velocity, user_id, game_id):
+    if(move_by_user(game_id, user_id, direction, velocity)):
         return Response(status=200)
     else:
         return Response(status=404)
