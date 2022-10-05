@@ -9,6 +9,7 @@ from ...models.user import User
 from .direction import *
 
 def  add_entity(game_id, user_id ,entity_id):
+    
     succes = True
     if("1" == entity_id):
         soldier = Figure_infantry(id_game= game_id, id_user= user_id, hp=10, velocidad=3, tamaño=1, direccion=0,pos_x=0, pos_y=0, type=1)
@@ -36,6 +37,7 @@ def  add_entity(game_id, user_id ,entity_id):
 #verificando que no supere su velocidad maxima.
 #ej: la velocidad limite del tanque es 2, entonces su velocity no puede ser mayor a 2
 def move_by_user(game_id, user_id, direction, velocity):
+
     figure = Figure_infantry.query.filter_by(id_user = user_id, id_game = game_id).first()
     exceeded_velocity_limit = (int(velocity) > figure.velocidad)
     figure = mov(figure, int(direction), int(velocity))
@@ -46,6 +48,7 @@ def move_by_user(game_id, user_id, direction, velocity):
 #Verifica que si una unidad(figure) se movio, este movimiento se valido
 #devuelve verdadero si la unidad que se movio no choca contra otra unidad
 def is_valid_move(figure):
+
     game_id = Figure_infantry.query.filter_by(id_game = figure.id_game).first().id_game
     game = Game_Infantry.query.filter_by(id = game_id).first()
     user_1 = game.user_1
@@ -56,6 +59,7 @@ def is_valid_move(figure):
 
 #Verifica si hay una interseccion entre dos figure
 def intersection(figure_1, figure_2):
+
     intersection = False
     for i in range(figure_1.tamaño):
         aux_figure = figure_2
@@ -70,6 +74,7 @@ def intersection(figure_1, figure_2):
 #Devuelve un figure con la direccion y velocidad que se
 #pasaron por parametros
 def mov(figure, direction, velocity):
+
     if(direction == EAST):
         figure.direccion = EAST
         figure.pos_x = figure.pos_x + velocity
@@ -99,156 +104,41 @@ def mov(figure, direction, velocity):
         return None
     return figure
 
-#def shoot(direction,user_id):
-#    user = db.session.query(User).filter_by(id= user_id)
-#    game = db.session.query(Game_Infantry).filter_by(id_user= user_id)
-#    figure = db.session.query(Figure_infantry).filter_by(id_user= user)
-#    if(direction == EAST and figure == "Soldier"):
-#        figure.direction=EAST
-#        projectile = Projectile(id_game= game, pos_x= , pos_y=, velocidad=0, daño=5, direccion=EAST)
-#        db.session.add(projectile)
-#        db.session.commit()
-#    elif(direction == EAST and figure == "Humvee"):
-#        figure.direction=EAST
-#        projectile = Projectile(id_game= game, pos_x= , pos_y=, velocidad=5, daño=5, direccion=EAST)
-#        db.session.add(projectile)
-#        db.session.commit()
-#    elif(direction == EAST and figure == "Tank"):
-#        figure.direction=EAST
-#        projectile = Projectile(id_game= game, pos_x= , pos_y=, velocidad=3, daño=15, direccion=EAST)
-#        db.session.add(projectile)
-#        db.session.commit()
-#    elif(direction == EAST and figure == "Artillery"):
-#        figure.direction=EAST
-#        projectile = Projectile(id_game= game, pos_x= , pos_y=, velocidad=3, daño=30, direccion=EAST)
-#        db.session.add(projectile)
-#        db.session.commit()
-#    elif(direction == SOUTH and figure == "Soldier"):
-#        figure.direction=SOUTH
-#        projectile = Projectile(id_game= game, pos_x= , pos_y=, velocidad=0, daño=5, direccion=SOUTH)
-#        db.session.add(projectile)
-#        db.session.commit()
-#    elif(direction == SOUTH and figure == "Humvee"):
-#        figure.direction=SOUTH
-#        projectile = Projectile(id_game= game, pos_x= , pos_y=, velocidad=5, daño=5, direccion=SOUTH)
-#        db.session.add(projectile)
-#        db.session.commit()
-#    elif(direction == SOUTH and figure == "Tank"):
-#        figure.direction=SOUTH
-#        projectile = Projectile(id_game= game, pos_x= , pos_y=, velocidad=3, daño=15, direccion=SOUTH)
-#        db.session.add(projectile)
-#        db.session.commit()
-#    elif(direction == SOUTH and figure == "Artillery"):
-#        figure.direction=SOUTH
-#        projectile = Projectile(id_game= game, pos_x= , pos_y=, velocidad=3, daño=30, direccion=SOUTH)
-#        db.session.add(projectile)
-#        db.session.commit()
-#    elif(direction == SOUTH_EAST and figure == "Soldier"):
-#        figure.direction=SOUTH_EAST
-#        projectile = Projectile(id_game= game, pos_x= , pos_y=, velocidad=0, daño=5, direccion=SOUTH_EAST)
-#        db.session.add(projectile)
-#        db.session.commit()
-#    elif(direction == SOUTH_EAST and figure == "Humvee"):
-#        figure.direction=SOUTH_EAST
-#        projectile = Projectile(id_game= game, pos_x= , pos_y=, velocidad=5, daño=5, direccion=SOUTH_EAST)
-#        db.session.add(projectile)
-#        db.session.commit()
-#    elif(direction == SOUTH_EAST and figure == "Tank"):
-#        figure.direction=SOUTH_EAST
-#        projectile = Projectile(id_game= game, pos_x= , pos_y=, velocidad=3, daño=15, direccion=SOUTH_EAST)
-#        db.session.add(projectile)
-#        db.session.commit()
-#    elif(direction == SOUTH_EAST and figure == "Artillery"):
-#        figure.direction=SOUTH_EAST
-#        projectile = Projectile(id_game= game, pos_x= , pos_y=, velocidad=3, daño=30, direccion=SOUTH_EAST)
-#        db.session.add(projectile)
-#        db.session.commit()
-#    elif(direction == SOUTH_WEST and figure == "Soldier"):
-#        figure.direction=SOUTH_WEST
-#        projectile = Projectile(id_game= game, pos_x= , pos_y=, velocidad=0, daño=5, direccion=SOUTH_WEST)
-#        db.session.add(projectile)
-#        db.session.commit()
-#    elif(direction == SOUTH_WEST and figure == "Humvee"):
-#        figure.direction=SOUTH_WEST
-#        projectile = Projectile(id_game= game, pos_x= , pos_y=, velocidad=5, daño=5, direccion=SOUTH_WEST)
-#        db.session.add(projectile)
-#        db.session.commit()
-#    elif(direction == SOUTH_WEST and figure == "Tank"):
-#        figure.direction=SOUTH_WEST
-#        projectile = Projectile(id_game= game, pos_x= , pos_y=, velocidad=3, daño=15, direccion=SOUTH_WEST)
-#        db.session.add(projectile)
-#        db.session.commit()
-#    elif(direction == SOUTH_WEST and figure == "Artillery"):
-#        figure.direction=SOUTH_WEST
-#        projectile = Projectile(id_game= game, pos_x= , pos_y=, velocidad=3, daño=30, direccion=SOUTH_WEST)
-#        db.session.add(projectile)
-#        db.session.commit()
-#     elif(direction == WEST and figure == "Soldier"):
-#        figure.direction=WEST
-#        projectile = Projectile(id_game= game, pos_x= , pos_y=, velocidad=0, daño=5, direccion=WEST)
-#        db.session.add(projectile)
-#        db.session.commit()
-#    elif(direction == WEST and figure == "Humvee"):
-#        figure.direction=WEST
-#        projectile = Projectile(id_game= game, pos_x= , pos_y=, velocidad=5, daño=5, direccion=WEST)
-#        db.session.add(projectile)
-#        db.session.commit()
-#    elif(direction == WEST and figure == "Tank"):
-#        figure.direction=WEST
-#        projectile = Projectile(id_game= game, pos_x= , pos_y=, velocidad=3, daño=15, direccion=WEST)
-#        db.session.add(projectile)
-#        db.session.commit()
-#    elif(direction == WEST and figure == "Artillery"):
-#        figure.direction=WEST
-#        projectile = Projectile(id_game= game, pos_x= , pos_y=, velocidad=3, daño=30, direccion=WEST)
-#        db.session.add(projectile)
-#        db.session.commit()
-#    elif(direction == NORTH_WEST and figure == "Soldier"):
-#        figure.direction=NORTH_WEST
-#        projectile = Projectile(id_game= game, pos_x= , pos_y=, velocidad=0, daño=5, direccion=NORTH_WEST)
-#        db.session.add(projectile)
-#        db.session.commit()
-#    elif(direction == NORTH_WEST and figure == "Humvee"):
-#        figure.direction=NORTH_WEST
-#        projectile = Projectile(id_game= game, pos_x= , pos_y=, velocidad=5, daño=5, direccion=NORTH_WEST)
-#        db.session.add(projectile)
-#        db.session.commit()
-#    elif(direction == NORTH_WEST and figure == "Tank"):
-#        figure.direction=NORTH_WEST
-#        projectile = Projectile(id_game= game, pos_x= , pos_y=, velocidad=3, daño=15, direccion=NORTH_WEST)
-#        db.session.add(projectile)
-#        db.session.commit()
-#    elif(direction == NORTH_WEST and figure == "Artillery"):
-#        figure.direction=NORTH_WEST
-#        projectile = Projectile(id_game= game, pos_x= , pos_y=, velocidad=3, daño=30, direccion=NORTH_WEST)
-#        db.session.add(projectile)
-#        db.session.commit()
-#    elif(direction == NORTH and figure == "Soldier"):
-#        figure.direction=NORTH
-#        projectile = Projectile(id_game= game, pos_x= , pos_y=, velocidad=0, daño=5, direccion=NORTH)
-#        db.session.add(projectile)
-#        db.session.commit()
-#    elif(direction == NORTH and figure == "Humvee"):
-#        figure.direction=NORTH
-#        projectile = Projectile(id_game= game, pos_x= , pos_y=, velocidad=5, daño=5, direccion=NORTH)
-#        db.session.add(projectile)
-#        db.session.commit()
-#    elif(direction == NORTH and figure == "Tank"):
-#        figure.direction=NORTH
-#        projectile = Projectile(id_game= game, pos_x= , pos_y=, velocidad=3, daño=15, direccion=NORTH)
-#        db.session.add(projectile)
-#        db.session.commit()
-#    elif(direction == NORTH and figure == "Artillery"):
-#        figure.direction=NORTH
-#        projectile = Projectile(id_game= game, pos_x= , pos_y=, velocidad=3, daño=30, direccion=NORTH)
-#        db.session.add(projectile)
-#        db.session.commit()
-        
-    
-        
+#Primero busca en la tabla Figura el personaje del usuario.
+#Luego pregunta si la direccion que quiere disparar es verdadero o no.
+#Si el disparo se puede realizar, pregunta cual es la figure y dependiendo cual es crea su respectivo proyectil. 
+def shoot(direction,user_id,game_id):
 
+    figure = db.session.query(Figure_infantry).filter_by(id_user= user_id).id
+    if (shoot_valid(direction)):
+        if(figure == "1"):
+            projectile = Projectile(id_game= game_id, pos_x=None, pos_y=None, velocidad=0, daño=5, direccion= direction)
+            db.session.add(projectile)
+            db.session.commit()
+        elif(figure == "2"):
+            projectile = Projectile(id_game= game_id, pos_x=None, pos_y=None, velocidad=5, daño=5, direccion= direction)
+            db.session.add(projectile)
+            db.session.commit()
+        elif(figure == "3"):
+            projectile = Projectile(id_game= game_id, pos_x=None, pos_y=None, velocidad=3, daño=15, direccion= direction)
+            db.session.add(projectile)
+            db.session.commit()
+        elif(figure == "3"):
+            projectile = Projectile(id_game= game_id, pos_x=None, pos_y=None, velocidad=20, daño=30, direccion= direction)
+            db.session.add(projectile)
+            db.session.commit()
+        return True
+    else:
+        return False
 
+#Este metodo nos devuelve si la direccion es valida.
+def shoot_valid(direction):
 
+    if(direction == EAST or direction == SOUTH_EAST or direction == SOUTH_WEST or direction == NORTH or direction == NORTH_EAST or direction == NORTH_WEST or direction == SOUTH or direction == WEST):
+        return True
+    else:
+        return False
+           
 def create_game(user_id):
 
     game = Game_Infantry(id_user1= user_id, id_user2= None)
