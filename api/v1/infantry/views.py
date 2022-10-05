@@ -9,7 +9,7 @@ from app.daos.infantry.infantry_dao import create_game
 from app.daos.infantry.infantry_dao import ready
 from app.daos.infantry.infantry_dao import join
 from app.daos.infantry.infantry_dao import move_by_user
-from app.daos.infantry.infantry_dao import is_valid_move
+from app.daos.infantry.infantry_dao import shoot
 
 
 from . import infantry
@@ -50,6 +50,14 @@ def mov_action(direction, velocity, user_id, game_id):
         return Response(status=200)
     else:
         return Response(status=404)
+
+@infantry.route("/shoot/<figure_id>/<user_id>/<game_id>",methods=['POST'])
+def shoot_entity(figure_id,user_id,game_id):
+    if(shoot(figure_id, user_id, game_id)):
+        return Response(status=200)
+    else:
+        return Response(status=404)
+
 
 
     
