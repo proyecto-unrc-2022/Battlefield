@@ -8,8 +8,7 @@ from ...models.infantry.infantry_game import Projectile
 from ...models.user import User
 from .direction import *
 
-def  add_entity(user_id ,entity_id):
-    game_id = db.session.query(Game_Infantry).get(user_id).id
+def  add_entity(game_id, user_id ,entity_id):
     succes = True
     if("1" == entity_id):
         soldier = Figure_infantry(id_game= game_id, id_user= user_id, hp=10, velocidad=3, tamaño=1, direccion=0,pos_x=0, pos_y=0, type=1)
@@ -39,8 +38,8 @@ def  add_entity(user_id ,entity_id):
 def move_by_user(user_id, direction, velocity):
     game_id = Game_Infantry.query.order_by(Game_Infantry.id.desc()).first().id
     figure = Figure_infantry.query.filter_by(id_user = user_id, id_game = game_id).first()
-    exceeded_velocity_limit = (velocity <= figure.velocidad)   
-    figure = mov(figure, direction, velocity)
+    exceeded_velocity_limit = (int(velocity) <= figure.velocidad)   
+    figure = mov(figure, int(direction), int(velocity))
     is_valid = False if figure == None else is_valid_move(figure)
     if is_valid : db.session.commit(figure) 
     return is_valid and exceeded_velocity_limit
@@ -60,12 +59,12 @@ def intersection(figure_1, figure_2):
     intersection = False
     for i in range(figure_1.tamaño):
         aux_figure = figure_2
-        figure_1 = mov(figure_1, figure_1.direction, i)
+        figure_1 = mov(figure_1, figure_1.direccion, i)
         for j in range(figure_2.tamaño):
             equal_pos_x = figure_1.pos_x == aux_figure.pos_x
             equal_pos_y = figure_1.pos_y == aux_figure.pos_y
             intersection = equal_pos_x and equal_pos_y
-            aux_figure = mov(aux_figure, aux_figure.direction, j)
+            aux_figure = mov(aux_figure, aux_figure.direccion, j)
     return intersection
 
 #Devuelve un figure con la direccion y velocidad que se

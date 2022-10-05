@@ -37,14 +37,14 @@ def join_game(game_id, user_id):
     else:
         return Response(status=404)        
 
-@infantry.route("/create_entity/<user_id>/<entity_id>",methods=['POST'])
-def choose_entity(user_id ,entity_id):
-    if (add_entity(user_id ,entity_id)):
+@infantry.route("/create_entity/<game_id>/<user_id>/<entity_id>",methods=['POST'])
+def choose_entity(game_id, user_id ,entity_id):
+    if (add_entity(game_id, user_id ,entity_id)):
         return Response(status=200)
     else:
         return Response(status=404)
 
-@infantry.route("/action/<direction>/<velocity>/<user_id>",methods=['POST'])
+@infantry.route("/action/course/<direction>/velocity/<velocity>/user/<user_id>",methods=['POST'])
 def mov_action(direction, velocity, user_id):
     if(move_by_user(user_id, direction, velocity)):
         return Response(status=200)

@@ -24,8 +24,8 @@ class Game_Infantry(db.Model):
           
 class Figure_infantry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    id_user = db.Column(db.Integer, db.ForeignKey(User.id), unique=True)
-    id_game = db.Column(db.Integer, db.ForeignKey(Game_Infantry.id), unique=True)
+    id_user = db.Column(db.Integer, db.ForeignKey(User.id))
+    id_game = db.Column(db.Integer, db.ForeignKey(Game_Infantry.id))
     hp = db.Column(db.Integer, nullable=False)
     velocidad = db.Column(db.Integer, nullable=False)
     tamaño = db.Column(db.Integer, nullable=False)
