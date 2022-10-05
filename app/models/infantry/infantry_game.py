@@ -52,7 +52,7 @@ class Figure_infantry(db.Model):
 class Projectile(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
-    id_game = db.Column(db.Integer, db.ForeignKey(Game_Infantry.id), unique=True)
+    id_game = db.Column(db.Integer, db.ForeignKey(Game_Infantry.id))
     pos_x = db.Column(db.Integer, nullable=False)
     pos_y = db.Column(db.Integer, nullable=False)
     velocidad = db.Column(db.Integer, nullable=False)

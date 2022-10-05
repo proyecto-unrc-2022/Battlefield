@@ -51,9 +51,10 @@ def mov_action(direction, velocity, user_id, game_id):
     else:
         return Response(status=404)
 
-@infantry.route("/shoot/<direction>/<figure_id>/<user_id>/<game_id>",methods=['POST'])
-def shoot_entity(direction, figure_id, user_id, game_id):
-    if(shoot(direction, figure_id, user_id, game_id)):
+@infantry.route("/shoot/<direction>/<figure_id>/<game_id>",methods=['POST'])
+def shoot_entity(direction, figure_id, game_id):
+
+    if(shoot(direction, figure_id, game_id)):
         return Response(status=200)
     else:
         return Response(status=404)

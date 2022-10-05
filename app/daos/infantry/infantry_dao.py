@@ -107,7 +107,7 @@ def mov(figure, direction, velocity):
 #Primero busca en la tabla Figura el personaje del usuario.
 #Luego pregunta si la direccion que quiere disparar es verdadero o no.
 #Si el disparo se puede realizar, pregunta cual es la figure y dependiendo cual es crea su respectivo proyectil. 
-def shoot(direction,figure_id,user_id,game_id):
+def shoot(direction,figure_id,game_id):
  
     if (direction):
         if(figure_valid(figure_id,direction,game_id)):
