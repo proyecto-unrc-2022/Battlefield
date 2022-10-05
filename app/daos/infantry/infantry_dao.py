@@ -107,31 +107,38 @@ def mov(figure, direction, velocity):
 #Primero busca en la tabla Figura el personaje del usuario.
 #Luego pregunta si la direccion que quiere disparar es verdadero o no.
 #Si el disparo se puede realizar, pregunta cual es la figure y dependiendo cual es crea su respectivo proyectil. 
-def shoot(direction,user_id,game_id):
-
-    figure = db.session.query(Figure_infantry).filter_by(id_user= user_id)
-    if (shoot_valid(direction)):
-        if(figure == "1"):
-            projectile = Projectile(id_game= game_id, pos_x=None, pos_y=None, velocidad=0, daño=5, direccion= direction)
-            db.session.add(projectile)
-            db.session.commit()
+def shoot(direction,figure_id,user_id,game_id):
+ 
+    if (direction):
+        if(figure_valid(figure_id,direction,game_id)):
             return True
-        elif(figure == "2"):
-            projectile = Projectile(id_game= game_id, pos_x=None, pos_y=None, velocidad=5, daño=5, direccion= direction)
-            db.session.add(projectile)
-            db.session.commit()
-            return True
-        elif(figure == "3"):
-            projectile = Projectile(id_game= game_id, pos_x=None, pos_y=None, velocidad=3, daño=15, direccion= direction)
-            db.session.add(projectile)
-            db.session.commit()
-            return True
-        elif(figure == "4"):
-            projectile = Projectile(id_game= game_id, pos_x=None, pos_y=None, velocidad=20, daño=30, direccion= direction)
-            db.session.add(projectile)
-            db.session.commit()
-            return True
+        else:
+            return False
+    else:
         return False
+
+#Este metodo verifica si la firura es valida.
+def figure_valid(figure,direction,game_id):
+    if(figure == "1"):
+        projectile = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=0, daño=5, direccion= direction)
+        db.session.add(projectile)
+        db.session.commit()
+        return True
+    elif(figure == "2"):
+        projectile = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=5, daño=5, direccion= direction)
+        db.session.add(projectile)
+        db.session.commit()
+        return True
+    elif(figure == "3"):
+        projectile = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=3, daño=15, direccion= direction)
+        db.session.add(projectile)
+        db.session.commit()
+        return True
+    elif(figure == "4"):
+        projectile = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=20, daño=30, direccion= direction)
+        db.session.add(projectile)
+        db.session.commit()
+        return True
     else:
         return False
 
