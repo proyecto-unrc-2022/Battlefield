@@ -3,9 +3,8 @@ from sqlalchemy.orm import relationship
 from app import db
 from app.models.user import User
 
-
 class UnderGame(db.Model):
-    __tablename__ = "under_games"
+    __tablename__ = "under_game"
     id = db.Column(db.Integer, primary_key=True)
 
     host_id = db.Column(db.Integer, db.ForeignKey(User.id))
@@ -22,39 +21,52 @@ class UnderGame(db.Model):
     #         {"game_id": self.id, "host_id": self.host_id, "visitor_id": self.visitor_id}
     #     )
 
-
-class Submarine(db.Model):
-    __tablename__ = "submarines"
+class FloatingBody(db.Model):
+    __tablename__ = "floating_body"
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50))
+    x_position = db.Column(db.Integer)
+    y_position = db.Column(db.Integer)
+    direction = db.Column(db.Integer, db.CheckConstraint("direction between 0 and 7"))
     size = db.Column(db.Integer, nullable=False)
     speed = db.Column(db.Integer, nullable=False)
+    type = db.Column(db.String(50))
+
+    game_id = db.Column(db.Integer, db.ForeignKey("under_game.id"))
+
+    __mapper_args__ = {
+        "polymorphic_identity": "floating_body",
+        "polymorphic_on": type
+    }
+
+class Submarine(FloatingBody):
+    __tablename__ = "submarine"
+    id = db.Column(db.Integer, db.ForeignKey("floating_body.id"), primary_key=True)
+    name = db.Column(db.String(50))
     visibility = db.Column(db.Integer, nullable=False)
     radar_scope = db.Column(db.Integer, nullable=False)
     health = db.Column(db.Float, nullable=False)
     torpedo_speed = db.Column(db.Integer, nullable=False)
     torpedo_damage = db.Column(db.Float, nullable=False)
-    x_position = db.Column(db.Integer)
-    y_position = db.Column(db.Integer)
-    direction = db.Column(db.Integer, db.CheckConstraint("direction between 0 and 7"))
 
-    game_id = db.Column(db.Integer, db.ForeignKey("under_games.id"))
     game = relationship("UnderGame", back_populates="submarines")
 
     player_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     player = relationship("User", backref="submarine")
 
+    __mapper_args__ = {
+        "polymorphic_identity": "submarine"
+    }
 
-class Torpedo(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    speed = db.Column(db.Integer, nullable=False)
+
+class Torpedo(FloatingBody):
+    id = db.Column(db.Integer, db.ForeignKey("floating_body.id"), primary_key=True)
     damage = db.Column(db.Integer, nullable=False)
-    x_position = db.Column(db.Integer)
-    y_position = db.Column(db.Integer)
-    direction = db.Column(db.Integer, db.CheckConstraint("direction between 0 and 7"))
 
-    game_id = db.Column(db.Integer, db.ForeignKey("under_games.id"))
     game = relationship("UnderGame", back_populates="torpedos")
+
+    __mapper_args__ = {
+        "polymorphic_identity": "torpedo"
+    }
 
 
 class UnderBoard:
