@@ -41,7 +41,7 @@ def put_plane():
     return jsonify(plane_schema.dump(p))
 
 
-"""@air_force.route("/updateCourse", methods=["PUT"])
+@air_force.route("/updateCourse", methods=["PUT"])
 def update_course():
     id_plane = request.json["id"]
     new_course = request.json["course"]

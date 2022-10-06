@@ -21,7 +21,7 @@ def get_plane(plane_id):
     return plane
 
 
-"""def update_course(plane_id, course):
+def update_course(plane_id, course):
     p = update(Plane).where(id == plane_id).values(course=course)
     return p
    
