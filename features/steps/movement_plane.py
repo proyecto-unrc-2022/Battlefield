@@ -8,16 +8,13 @@ from app.daos.airforce.plane_dao import add_plane
 from app.models.airforce.plane import Plane
 
 
-@given("A plane on the map")
+"""@given("A plane on the map")
 def step_impl(context):
     context.plane = add_plane(
         name="Douglas A-20 Havoc",
         size=3,
         speed=2,
-        health=40,
-        course=2,
-        coor_x=7,
-        coor_y=4,
+        health=40
     )
     return context.plane
 
@@ -41,5 +38,5 @@ def step_impl(context):
 
 @then("The head is in the same place as before")
 def step_impl(context):
-    head = (context.plane.coor_x, context.plane.coor_y)
-    assert head == (7, 4)
+    pass
+    """
