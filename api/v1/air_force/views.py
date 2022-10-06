@@ -75,7 +75,9 @@ def choice_plane_and_position():
     plane = Plane.query.filter_by(id=flying_object).first()
 
     try:
-        obj = battlefield.add_new_plane(player, plane, int(x), int(y), int(course))
+        obj = AirForceGame.battlefield.add_new_plane(
+            player, plane, int(x), int(y), int(course)
+        )
     except:
         return Response(status=400)
     return jsonify(obj.to_dict())
@@ -91,7 +93,7 @@ def create_projectile():
     course = request.json["course"]
 
     proj = get_projectile(projectile_id=flying_object)
-    obj = battlefield.add_new_projectile(
+    obj = AirForceGame.battlefield.add_new_projectile(
         player,
         proj,
         int(x),
@@ -107,7 +109,7 @@ def update_location_projectile():
     projectile = request.json["projectile"]
     player = request.json["player"]
 
-    move = battlefield.move_projectile(projectile, player)
+    move = AirForceGame.battlefield.move_projectile(projectile, player)
 
     return jsonify(move.to_dict())
 

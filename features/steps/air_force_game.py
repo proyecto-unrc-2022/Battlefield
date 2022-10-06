@@ -117,6 +117,23 @@ def step_impl(context):
     assert context.response
 
 
+@when("player_a choose try add new plane")
+def step_impl(context):
+    body = {
+        "player": context.player,
+        "plane": context.plane.id,
+        "x": context.x,
+        "y": context.y,
+        "course": context.course,
+    }
+    headers = {"Content-Type": "application/json"}
+    context.response = context.client.put(
+        url_for("air_force.choice_plane_and_position"),
+        data=json.dumps(body),
+        headers=headers,
+    )
+
+
 @when("player_b choose a plane and his position")
 def step_impl(context):
     body = {
@@ -315,3 +332,51 @@ def step_impl(context):
 def step_impl(context):
     print(json.dumps(context.response.json))
     assert context.response.status_code == 400
+
+
+@given("a battlefield with player_a's and player_b's plane")
+def step_impl(context):
+    context.player_a = AirForceGame.player_a
+    context.player_b = AirForceGame.player_b
+
+    context.player_a_plane = AirForceGame.battlefield.get_player_plane(
+        context.player_a
+    )[0]
+    context.player_b_plane = AirForceGame.battlefield.get_player_plane(
+        context.player_b
+    )[0]
+
+    context.player_b_plane.x = 10
+    context.player_b_plane.y = 5
+    context.player_b_plane.course = 4
+    context.player_a_plane.x = 6
+    context.player_a_plane.y = 5
+    context.player_a_plane.course = 2
+    context.player_b_plane.flying_obj.health = 10
+    print(context.player_b_plane.flying_obj.health)
+    # print(context.player_a_plane.to_dict())
+
+
+@when("player b moves his plane and crash with player_a planes")
+def step_impl(context):
+    context.response = context.client.put(
+        url_for(
+            "air_force.fligth",
+            player=context.player_b,
+            course=context.player_b_plane.course,
+        )
+    )
+
+
+@then("battlefield are returned")
+def step_impl(context):
+    print(
+        "player_b",
+        context.player_b_plane.flying_obj.health,
+        "player_a",
+        context.player_a_plane.flying_obj.health,
+    )
+    assert (
+        context.player_b_plane.flying_obj.health == 10
+        and context.player_a_plane.flying_obj.health == 0
+    )

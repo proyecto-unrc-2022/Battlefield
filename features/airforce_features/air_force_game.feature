@@ -26,6 +26,12 @@ Feature: game logic
         Then info of the new flying object are returned
 
     @air_force_game
+    Scenario: Player_a choose an other plane try to add in the battlefield
+        Given player_a and plane in db
+        When player_a choose try add new plane
+        Then 400 response are returned
+
+    @air_force_game
     Scenario: Player_b choose a plane and position at the map
         Given player_b in the game and plane in db
         When player_b choose a plane and his position
@@ -73,4 +79,8 @@ Feature: game logic
     When player_a moves his plane in invalid course
     Then 400 response code are returned
 
-    
+    @air_force_game
+    Scenario: Player_b move his plane and crash with player_a planes
+    Given a battlefield with player_a's and player_b's plane
+    When player b moves his plane and crash with player_a planes
+    Then battlefield are returned
