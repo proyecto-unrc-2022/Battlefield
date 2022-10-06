@@ -9,10 +9,10 @@ from app.models.airforce.plane import PlaneSchema, Projectile, ProjectileSchema
 from app.models.user import User
 
 plane_schema = PlaneSchema()
-proj_scehma = ProjectileSchema()
+proj_schema = ProjectileSchema()
 
 
-@given("a plane in a valid position")
+@given("a player who has a plane and a launched projectile in the battlefield")
 def step_impl(context):
     context.user1 = User(
         username="Carlitos", email="carlitos@gmail.com", password="1234"
@@ -21,8 +21,9 @@ def step_impl(context):
     db.session.commit()
 
     context.plane = add_plane(
-        name="Hawk Tempest", size=1, speed=5, health=10, course=2, coor_x=5, coor_y=7
+        name="Hawk Tempest", size=1, speed=5, health=10, course=2, coor_x=17, coor_y=7
     )
+
     assert context.plane
 
 
@@ -46,36 +47,36 @@ def step_impl(context):
 
 @then("'200' response")
 def step_impl(context):
+    print(context.page.json)
     assert context.page.status_code == 200
 
 
 # ----------------------------------------------------------------------------------------------------------------
 
 
-# @given("a projectile in some place of the map")
-# def step_impl(context):
-
-#     context.user1 = User(username="Carlos", email="carlito@gmail.com", password="1234")
-#     db.session.add(context.user1)
-#     db.session.commit()
-
-#     context.projectile = add_projectile(speed=5, damage=10)
-#     context.get_proj = get_projectile(projectile_id=context.projectile.id)
-
-# @when("a new shift starts")
-# def step_impl(context):
-#     body = {"projectile": context.projectile.id,
-#             "player": context.user1
-#             }
-#     headers = {"Content-Type": "application/json"}
-
-#     context.response = context.client.put(
-#         url_for("air_force.update_location_projectile"),
-#         data=body,
-#         headers=headers,
-#     )
+@given("a new projectile created and new shift begin")
+def step_impl(context):
+    context.projectile = add_projectile(speed=5, damage=10)
+    context.flying_o = AirForceGame.battlefield.add_new_projectile(
+        player=1,
+        obj=context.projectile,
+        x=10,
+        y=7,
+        course=2,
+    )
 
 
-# @then("the projectile moved the speed corresponding")
-# def step_impl(context):
-#     assert context.response.status_code == 200
+@when("a new shift starts")
+def step_impl(context):
+    context.response = context.client.put(
+        url_for(
+            "air_force.move_projectile",
+            player_projectile=1,
+            course=2,
+        )
+    )
+
+
+@then("the projectiles move the speed corresponding")
+def step_impl(context):
+    assert context.response.status_code == 200
