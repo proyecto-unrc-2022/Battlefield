@@ -1,8 +1,8 @@
 from flask import jsonify
 from app import db
-from app.models.navy.dynamic_missile import DynamicMissile
 from app.models.navy.dynamic_ship import DynamicShip
 from app.navy.navy_constants import BORDERS, COORDS, PATH_TO_START, XCORD, YCORD
+from app.navy.navy_constants import PATH_TO_START
 
 
 def check_dynamic_data(data, pos_x, pos_y, dir):
@@ -98,6 +98,16 @@ def out_of_range(pos_x, pos_y):
         or pos_y < BORDERS["left"]
         or pos_y > BORDERS["right"]
     )
+
+
+def get_move_ship_(ship_type):
+    from app.daos.navy.game_dao import read_data
+    ships = read_data(PATH_TO_START)
+    for ship in ships["ships_available"]:
+        if ship["ship_id"] == ship_type:
+            return ship["speed"]
+
+    return None
 
 
 def json_selected_options(game_id, id_user_1, direction, pos_x, pos_y, ship_selected):
