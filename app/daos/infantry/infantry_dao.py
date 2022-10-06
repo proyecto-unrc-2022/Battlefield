@@ -10,7 +10,7 @@ from sqlalchemy import update
 from .direction import *
 import copy
 
-def  add_entity(game_id, user_id ,entity_id):
+def  add_figure(game_id, user_id ,entity_id):
 
     succes = True
     if("1" == entity_id):
