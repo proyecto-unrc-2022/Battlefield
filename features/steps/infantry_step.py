@@ -174,7 +174,6 @@ def step_given(context):
 @when('Shoot')
 def step_when(context):
     user2 = User(username= "Ignacio", email="Ignacio@gmail.com", password="123")
-    add_user(user2.username, user2.password, user2.email)
     Figure_infantry(id_game= 1, id_user= 2, hp=10, velocidad=3, tamaño=1, direccion=0,pos_x=0, pos_y=0, type=1)
     game = Game_Infantry(id_user1= context.user, id_user2= user2.id)
     context.page = context.client.post(url_for("infantry.shoot_entity",direction= 1, figure_id=1, user_id= 2, game_id= 1))
@@ -182,7 +181,7 @@ def step_when(context):
     assert context.page.status_code == 200
 
   
-
+@then(u'create the projectile')
 def step_then(context) :
     #figure = Figure_infantry.query.filter_by(id_game = 1, id_user = 1).first()
     #assert figure.pos_x == 1
