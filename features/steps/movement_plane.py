@@ -8,7 +8,7 @@ from app.daos.airforce.plane_dao import add_plane
 from app.models.airforce.plane import Plane
 
 
-"""@given("A plane on the map")
+@given("A plane on the map")
 def step_impl(context):
     context.plane = add_plane(
         name="Douglas A-20 Havoc",
@@ -39,4 +39,4 @@ def step_impl(context):
 @then("The head is in the same place as before")
 def step_impl(context):
     pass
-    """
+    

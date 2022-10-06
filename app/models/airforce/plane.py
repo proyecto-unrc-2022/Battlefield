@@ -11,6 +11,9 @@ class Plane(db.Model):
     size = db.Column(db.Integer, nullable=False)
     speed = db.Column(db.Integer, nullable=False)
     health = db.Column(db.Integer, nullable=False)
+    course = db.Column(db.Integer, nullable=False)
+    coor_x = db.Column(db.Integer, nullable=False)
+    coor_y = db.Column(db.Integer, nullable=False)
 
 
 

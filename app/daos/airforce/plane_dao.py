@@ -4,12 +4,15 @@ from app import db
 from app.models.airforce.plane import Plane, Projectile, Machine_gun
 
 
-def add_plane(name, size, speed, health):
+def add_plane(name, size, speed, health, course, coor_x, coor_y):
     plane = Plane(
         name=name,
         size=size,
         speed=speed,
-        health=health
+        health=health, 
+        course=course,
+        coor_x=coor_x,
+        coor_y=coor_y
     )
     db.session.add(plane)
     db.session.commit()
