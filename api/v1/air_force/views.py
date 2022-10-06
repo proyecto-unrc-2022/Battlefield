@@ -75,7 +75,9 @@ def choice_plane_and_position():
     plane = Plane.query.filter_by(id=flying_object).first()
 
     try:
-        obj = battlefield.add_new_plane(player, plane, int(x), int(y), int(course))
+        obj = battlefield.add_new_plane(
+            player, flying_object, int(x), int(y), int(course)
+        )
     except:
         return Response(status=400)
     return jsonify(obj.to_dict())
@@ -101,15 +103,12 @@ def create_projectile():
     return jsonify(obj.to_dict())
 
 
-@air_force.route("/update_location_projectile", methods=["PUT"])
-def update_location_projectile():
-
-    projectile = request.json["projectile"]
-    player = request.json["player"]
-
-    move = battlefield.move_projectile(projectile, player)
-
-    return jsonify(move.to_dict())
+@air_force.route("/<player_projectile>/<course>", methods=["PUT"])
+def move_projectile(player_projectile, course):
+    move = AirForceGame.battlefield.move_projectile(
+        player=int(player_projectile), course=int(course)
+    )
+    return jsonify(move)
 
 
 @air_force.route("/attack")
@@ -118,7 +117,7 @@ def attack():
     return {"result": "booom!!!"}
 
 
-@air_force.route("/<player>/<course>", methods=["PUT"])
+@air_force.route("/<player>/<course>/", methods=["PUT"])
 def fligth(player, course):
-    AirForceGame.battlefield.fligth(player, int(course))
+    battlefield.fligth(player, int(course))
     return Response(status=201)
