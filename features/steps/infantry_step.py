@@ -128,14 +128,41 @@ def step_given(context) :
 
 @when('elige mover su unidad hacia el este')
 def step_when(context) :
-    context.page = context.client.post(url_for("infantry.mov_action", game_id = 1, user_id = 1, velocity = 1, direction = EAST))
-    assert context.page.status_code == 200
-    
+    context.page = context.client.post(url_for("infantry.mov_action", game_id = 1, user_id = 1, velocity = 2, direction = EAST))
+    assert context.page.status_code == 200    
 
 @then('entonces la unidad se mueve hacia el este')
 def step_then(context) :
     figure = Figure_infantry.query.filter_by(id_game = 1, id_user = 1).first()
-    assert figure.pos_x == 1
+    assert figure.pos_x == 2 and figure.pos_y == 0
+    
+@given('un usuario Tomas')
+def step_given(context) :
+    user = User.query.filter_by(username = "Tomas").first()
+    assert not(user == None)
+    
+@when('elige mover su unidad hacia el oeste')
+def step_when(context) :
+    figure = Figure_infantry.query.filter_by(id_game = 1, id_user = 2).first()
+    context.page = context.client.post(url_for("infantry.mov_action", game_id = 1, user_id = 2, velocity = 2, direction = NORTH))
+    assert context.page.status_code == 200
+    
+@then('entonces la unidad se mueve hacia el oeste')
+def step_then(context) :
+    figure = Figure_infantry.query.filter_by(id_game = 1, id_user = 2).first()
+    assert figure.pos_y == 2 and figure.pos_x == 0
+
+@when('elige un movimiento invalido')
+def step_when(context) :
+    figure = Figure_infantry.query.filter_by(id_game = 1, id_user = 2).first()
+  
+    context.page = context.client.post(url_for("infantry.mov_action", game_id = 1, user_id = 2, velocity = 2, direction = SOUTH_EAST))
+    assert context.page.status_code == 404
+
+@then('la unidad no se mueve')
+def step_then(context) :
+    figure = Figure_infantry.query.filter_by(id_game = 1, id_user = 2).first()
+    assert figure.pos_y == 2 and figure.pos_x == 0
 
 @given('a user Nicolas')
 def step_given(context):
@@ -143,7 +170,6 @@ def step_given(context):
     add_user(user.username, user.password, user.email)
     context.user = user
     assert True
-
 
 @when('Shoot')
 def step_when(context):
@@ -154,10 +180,11 @@ def step_when(context):
     context.page = context.client.post(url_for("infantry.shoot_entity",direction= 1, figure_id=1, user_id= 2, game_id= 1))
     print(context.page.status_code)
     assert context.page.status_code == 200
-    
 
-@then('create the projectile')
+  
+
 def step_then(context) :
     #figure = Figure_infantry.query.filter_by(id_game = 1, id_user = 1).first()
     #assert figure.pos_x == 1
     pass
+ 
