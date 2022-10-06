@@ -13,7 +13,10 @@ def step_impl(context):
         name="Hawker Tempest",
         size=1,
         speed=5,
-        health=10
+        health=10,
+        course=3,
+        coor_x=3,
+        coor_y=3
     )
 
 
@@ -32,7 +35,10 @@ def step_impl(context):
         "name": "Hawker Tempest",
         "size": 1,
         "speed": 5,
-        "health": 10
+        "health": 10,
+        "course": 3,
+        "coor_x": 3,
+        "coor_y":3
     }
 
     raw_response = ast.literal_eval(context.page.text)
