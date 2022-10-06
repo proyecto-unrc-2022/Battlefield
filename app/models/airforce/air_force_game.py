@@ -83,6 +83,7 @@ class battlefield:
 
         fly_obj = flying_object(player, obj, x, y, course)
         cls.flying_objects.append(fly_obj)
+        print(cls.flying_objects)
         return fly_obj
 
     @classmethod
@@ -93,23 +94,48 @@ class battlefield:
                 and x.flying_obj.__class__.__name__ == "Plane",
                 cls.flying_objects,
             )
-        )[0]
-        print(obj.flying_obj)
+        )
+        print(obj)
         obj.update_position(course)
 
     @classmethod
     def add_new_projectile(cls, player, obj, x, y, course):
         fly_obj = flying_object(player, obj, x, y, course)
         if course == 1:
-            fly_obj.x + 1
+            fly_obj.x = fly_obj.x + 1
         elif course == 2:
-            fly_obj.y + 1
+            fly_obj.y = fly_obj.y + 1
         elif course == 3:
-            fly_obj.x - 1
+            fly_obj.x = fly_obj.x - 1
         elif course == 4:
-            fly_obj.y - 1
+            fly_obj.y = fly_obj.y - 1
         cls.flying_objects.append(fly_obj)
         return fly_obj
+
+    @classmethod
+    def move_projectile(cls, player, course):
+        list_of_dict = []
+        obj = list(
+            filter(
+                lambda x: x.player == player
+                and x.flying_obj.__class__.__name__ == "Projectile",
+                cls.flying_objects,
+            )
+        )
+        for x in range(len(obj)):
+            obj[x].update_position(course)
+
+        for y in range(len(obj)):
+            list_of_dict.append(obj[y].to_dict())
+            if list_of_dict[y].get("x") >= 20 or list_of_dict[y].get("x") <= 0:
+                list_of_dict[y].clear()
+            elif list_of_dict[y].get("y") >= 10 or list_of_dict[y].get("y") <= 0:
+                list_of_dict[y].clear()
+
+        print(list_of_dict)
+        return list_of_dict
+
+        # obj.update_projectile(course)
 
     # @classmethod
     # def move_projectile(cls, player):#yo lo haria asi, total de actualizar actualizarias todos los proyectiles de un jugador de ultima en el orden de creacion
