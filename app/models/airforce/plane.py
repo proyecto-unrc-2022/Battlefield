@@ -11,9 +11,7 @@ class Plane(db.Model):
     size = db.Column(db.Integer, nullable=False)
     speed = db.Column(db.Integer, nullable=False)
     health = db.Column(db.Integer, nullable=False)
-    course = db.Column(db.Integer, nullable=False)  # 1 north, 2 east, 3 south, 4 west
-    coor_x = db.Column(db.Integer, nullable=False)
-    coor_y = db.Column(db.Integer, nullable=False)
+
 
 
 class PlaneSchema(SQLAlchemySchema):
@@ -61,3 +59,4 @@ class Machine_gunSchema(SQLAlchemyAutoSchema):
         x1 = auto_field()
         y1 = auto_field()
         course = auto_field()
+
