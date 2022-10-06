@@ -7,7 +7,7 @@ from sqlalchemy import insert, select, update
 
 from api import token_auth
 from app import db
-from app.daos.airforce.plane_dao import add_plane
+from app.daos.airforce.plane_dao import add_machine_gun, add_plane
 from app.daos.airforce.plane_dao import get_plane as get_plane_dao
 from app.daos.airforce.plane_dao import get_projectile
 from app.daos.airforce.plane_dao import get_machine_gun
@@ -123,3 +123,13 @@ def attack():
 def fligth(player, course):
     AirForceGame.battlefield.fligth(player, int(course))
     return Response(status=201)
+
+
+@air_force.route("/machine_gun", methods=["POST"])
+def create_machine_gun():
+    damage_1 = request.json["damage_1"]
+    damage_2 = request.json["damage_2"]
+    damage_3 = request.json["damage_3"]
+    
+    m = add_machine_gun(damage_1, damage_2, damage_3)
+    return jsonify(plane_schema.dump(m))

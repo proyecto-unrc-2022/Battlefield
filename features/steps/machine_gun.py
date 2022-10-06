@@ -29,6 +29,9 @@ def step_impl(context):
     body = {
         "player": context.user1.id,
         "machine_gun": context.machine_gun.id,
+        "damage_1": context.machine_gun.damage_1,
+        "damage_2": context.machine_gun.damage_2,
+        "damage_3": context.machine_gun.damage_3,
         "x1": context.plane.coor_x,
         "y1": context.plane.coor_y,
         "course": context.plane.course,
@@ -38,6 +41,6 @@ def step_impl(context):
         url_for("air_force.create_machine_gun"), data=json.dumps(body), headers=headers
     )
 
-@then("'200' response")
+@then("'200' resp.")
 def step_impl(context):
     assert context.page.status_code == 200
