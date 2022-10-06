@@ -105,9 +105,7 @@ def step_impl(context):
 
 @given("the user 'player1' is in a game of dimension '{h:d}'x'{w:d}' with visitor")
 def step_impl(context, h, w):
-    # game_dao = UnderGameDao.create(context.player1.id, h, w)
-    # game_dao.update(game_id=game.id, visitor_id=context.player2.id)
-    context.game_dao = UnderGameDao(context.player1.id, context.player2.id, h, w)
+    context.game_dao = UnderGameDao.create(context.player1.id, context.player2.id, h, w)
     assert context.game_dao
 
 
@@ -125,9 +123,12 @@ def step_impl(context):
 
 @then("the game bounds the user to the choosen submarine successfully")
 def step_impl(context):
-    game_dao = UnderGameDao.get(context.game.id)
-    assert game.submarines[0].player_id == context.player1.id
-    assert context.game
+    # game_dao = UnderGameDao.get(context.game.id)
+    # assert game_dao..submarines[0].player_id == context.player1.id
+    # assert context.game
+    submarines = context.game_dao.get_submarines()
+    print(submarines)
+    assert submarines[0].player_id == context.player1.id
     assert context.page.status_code is 200
 
 
@@ -153,7 +154,7 @@ def step_impl(context, username, sub_name):
     for key in submarines.keys():
         if submarines[key]["name"] == sub_name:
             chosen_id = key
-    assert add_submarine(context.game, player.id, chosen_id)
+    assert context.game_dao.add_submarine(player.id, chosen_id)
 
 
 @when(
@@ -163,8 +164,6 @@ def step_impl(context, username, x, y, d):
     player = (
         context.player1 if (context.player1.username == username) else context.player2
     )
-    submarines = context.game.submarines
-    # submarine = submarines[0] if submarines[0].player_id == player.id else submarines[1]
     submarine = player.submarine[0]
     data = {
         "submarine_id": submarine.id,
@@ -177,7 +176,6 @@ def step_impl(context, username, x, y, d):
 
 @then("the submarine is successfully placed")
 def step_impl(context):
-    print(context.page.text)
     assert context.page.status_code is 200
 
 
@@ -194,4 +192,5 @@ def step_impl(context):
 
 @Then("the system should not allow to place the submarine again")
 def step_impl(context):
+    print(context.page.text)
     assert "submarine is already placed" in context.page.text

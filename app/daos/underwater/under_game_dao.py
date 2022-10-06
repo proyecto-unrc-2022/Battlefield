@@ -2,8 +2,9 @@ import json
 
 from flask import jsonify
 
-import app.daos.underwater.submarine_dao as SubmarineDao
 from app import db
+from app.daos.underwater.floating_body_dao import FloatingBodyDao
+from app.daos.underwater.submarine_dao import SubmarineDao
 from app.models.underwater.under_dtos import UnderGameSchema
 from app.models.underwater.under_models import UnderBoard, UnderGame, boards
 from app.models.user import User
@@ -58,7 +59,7 @@ class UnderGameDao:
             if sub.player_id == player_id:
                 raise Exception("Player already has a submarine")
 
-        sub = sub_dao.create_submarine(
+        sub = SubmarineDao.create_submarine(
             self.game.id,
             player_id,
             choosen["name"],
@@ -70,7 +71,7 @@ class UnderGameDao:
             int(choosen["torpedo_speed"]),
             float(choosen["torpedo_damage"]),
         )
-        self.game.submarines.append(sub)
+        self.game.submarines.append(sub.get_submarine())
         db.session.commit()
         return sub
 
@@ -78,7 +79,8 @@ class UnderGameDao:
         return self.game.host_id == player_id or self.game.visitor_id == player_id
 
     def place(self, obj, x_coord, y_coord, direction):
-        if obj.is_placed():
+        obj_dao = FloatingBodyDao.get(obj.id)
+        if obj_dao.is_placed():
             raise Exception("submarine is already placed")
 
         board = boards[obj.game.id]
@@ -90,7 +92,7 @@ class UnderGameDao:
         except Exception as e:
             raise Exception("%s" % str(e))
 
-        obj.update_position(x_coord, y_coord, direction)
+        obj_dao.update_position(x_coord, y_coord, direction)
 
         db.session.commit()
 
@@ -114,4 +116,5 @@ class UnderGameDao:
         return self.game.id
 
     def get_submarines(self):
-        return SubmarineDao.create_all(self.game.submarines)
+        # return SubmarineDao.create_all(self.game.submarines)
+        return self.game.submarines

@@ -45,7 +45,9 @@ def join_game():
     visitor_id = int(request.args.get("visitor_id"))
 
     if game_dao.get_visitor():
-        return Response( "{'error':'game does not have an available slot'}", status="409")
+        return Response(
+            "{'error':'game does not have an available slot'}", status="409"
+        )
 
     if visitor_id == game_dao.get_host().id:
         return Response("{'error':'you can not join to your game'}", status="409")
@@ -91,9 +93,9 @@ def place_submarine():
 
     if submarine_dao.is_placed():
         return Response("{'error':'submarine is already placed'}", status="409")
-        
+
     try:
-        game_dao = submarine_dao.get_game()
+        game_dao = UnderGameDao.get(submarine_dao.get_game().id)
         game_dao.place(submarine_dao.submarine, x_coord, y_coord, direction)
     except Exception as e:
         return Response("{'error':'%s'}" % str(e), status="409")
