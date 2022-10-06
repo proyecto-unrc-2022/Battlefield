@@ -52,7 +52,7 @@ def step_impl(context):
 
 @when('you choose your soldier')
 def step_impl(context):
-    context.page = context.client.post(url_for("infantry.choose_entity", game_id = 1, user_id = 1, entity_id= 1))
+    context.page = context.client.post(url_for("infantry.choose_figure", game_id = 1, user_id = 1, entity_id= 1))
     assert context.page.status_code == 200
     
 @then('the soldier is created')
@@ -70,7 +70,7 @@ def step_impl(context):
 
 @when('you choose your Humvee')
 def step_impl(context):
-    context.page = context.client.post(url_for("infantry.choose_entity", game_id = 1, user_id = 2, entity_id= 2))
+    context.page = context.client.post(url_for("infantry.choose_figure", game_id = 1, user_id = 2, entity_id= 2))
     assert context.page.status_code == 200
     
 @then('the humvee is created')
