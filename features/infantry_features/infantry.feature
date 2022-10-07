@@ -20,20 +20,20 @@ Feature: Infantry
         When you choose your Humvee
         Then the humvee is created
     
-    Scenario: Una unidad se mueve hacia el este
-        Given un usuario Franco
-        When elige mover su unidad hacia el este
-        Then entonces la unidad se mueve hacia el este
+    Scenario: One unit moves east
+        Given a user Franco
+        When you choose to move your unit east
+        Then the unit moves east
     
-    Scenario: Una unidad se mueve hacia el oeste
-        Given un usuario Tomas
-        When elige mover su unidad hacia el oeste
-        Then entonces la unidad se mueve hacia el oeste
+    Scenario: One unit moves west
+        Given a user Tomas
+        When you choose to move your unit west
+        Then the unit moves west
 
-    Scenario: Una unidad hace un movimiento invalido
-        Given un usuario Tomas
-        When elige un movimiento invalido
-        Then la unidad no se mueve
+    Scenario: A unit makes an invalid move
+        Given a user Tomas
+        When choose an invalid move
+        Then the unit does not move
 
     Scenario: A user shoots
         Given a user Nicolas

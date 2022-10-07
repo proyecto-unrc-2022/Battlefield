@@ -52,7 +52,7 @@ def step_impl(context):
 
 @when('you choose your soldier')
 def step_impl(context):
-    context.page = context.client.post(url_for("infantry.choose_figure", game_id = 1, user_id = 1, entity_id= 1))
+    context.page = context.client.post(url_for("infantry.choose_figure", game_id = 1, user_id = 1, figure_id= 1))
     assert context.page.status_code == 200
     
 @then('the soldier is created')
@@ -70,7 +70,7 @@ def step_impl(context):
 
 @when('you choose your Humvee')
 def step_impl(context):
-    context.page = context.client.post(url_for("infantry.choose_figure", game_id = 1, user_id = 2, entity_id= 2))
+    context.page = context.client.post(url_for("infantry.choose_figure", game_id = 1, user_id = 2, figure_id= 2))
     assert context.page.status_code == 200
     
 @then('the humvee is created')
@@ -121,17 +121,17 @@ def step_impl(context):
 
 
 
-@given('un usuario Franco')
+@given('a user Franco')
 def step_given(context) :
     user = User.query.filter_by(username = "Franco").first()
     assert not(user == None)
 
-@when('elige mover su unidad hacia el este')
+@when('you choose to move your unit east')
 def step_when(context) :
     context.page = context.client.post(url_for("infantry.mov_action", game_id = 1, user_id = 1, velocity = 2, direction = EAST))
     assert context.page.status_code == 200    
 
-@then('entonces la unidad se mueve hacia el este')
+@then('the unit moves east')
 def step_then(context) :
     figure = Figure_infantry.query.filter_by(id_game = 1, id_user = 1).first()
     assert figure.pos_x == 2 and figure.pos_y == 0
@@ -141,25 +141,24 @@ def step_given(context) :
     user = User.query.filter_by(username = "Tomas").first()
     assert not(user == None)
     
-@when('elige mover su unidad hacia el oeste')
+@when('you choose to move your unit west')
 def step_when(context) :
     figure = Figure_infantry.query.filter_by(id_game = 1, id_user = 2).first()
     context.page = context.client.post(url_for("infantry.mov_action", game_id = 1, user_id = 2, velocity = 2, direction = NORTH))
     assert context.page.status_code == 200
     
-@then('entonces la unidad se mueve hacia el oeste')
+@then('the unit moves west')
 def step_then(context) :
     figure = Figure_infantry.query.filter_by(id_game = 1, id_user = 2).first()
     assert figure.pos_y == 2 and figure.pos_x == 0
 
-@when('elige un movimiento invalido')
+@when('choose an invalid move')
 def step_when(context) :
     figure = Figure_infantry.query.filter_by(id_game = 1, id_user = 2).first()
-  
     context.page = context.client.post(url_for("infantry.mov_action", game_id = 1, user_id = 2, velocity = 2, direction = SOUTH_EAST))
     assert context.page.status_code == 404
 
-@then('la unidad no se mueve')
+@then('the unit does not move')
 def step_then(context) :
     figure = Figure_infantry.query.filter_by(id_game = 1, id_user = 2).first()
     assert figure.pos_y == 2 and figure.pos_x == 0
