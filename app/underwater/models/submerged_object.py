@@ -1,5 +1,7 @@
-from app import db
 from sqlalchemy.orm import relationship
+
+from app import db
+
 
 class SubmergedObject(db.Model):
     __tablename__ = "submerged_object"
@@ -19,5 +21,56 @@ class SubmergedObject(db.Model):
 
     __mapper_args__ = {
         "polymorphic_identity": "submerged_object",
-        "polymorphic_on": type
+        "polymorphic_on": type,
     }
+
+    def set_position(self, x_position=None, y_position=None, direction=None):
+        if x_position:
+            self.x_position = x_position
+        if y_position:
+            self.y_position = y_position
+        if direction:
+            self.direction = direction
+
+    def get_positions(self, direction=None):
+        if not direction:
+            direction = self.direction
+        x = self.x_position
+        y = self.y_position
+        i = self.size
+        d = direction
+        positions = []
+
+        while i > 0:
+            positions.append((x, y))
+            x, y = self.move_pointer(x, y, d + 4)
+            i = i - 1
+
+        return positions
+
+    def get_tail_positions(self, direction=None):
+        if not direction:
+            direction = self.direction
+        return self.get_positions(direction)[1:]
+
+    @staticmethod
+    def move_pointer(x, y, direction):
+        d = direction % 8
+        if d == 0:
+            return x - 1, y
+        elif d == 1:
+            return x - 1, y + 1
+        elif d == 2:
+            return x, y + 1
+        elif d == 3:
+            return x + 1, y + 1
+        elif d == 4:
+            return x + 1, y
+        elif d == 5:
+            return x + 1, y - 1
+        elif d == 6:
+            return x, y - 1
+        elif d == 7:
+            return x - 1, y - 1
+        else:
+            raise TypeError("direction must be an integer")
