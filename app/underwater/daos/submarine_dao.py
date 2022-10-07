@@ -1,4 +1,5 @@
 from app import db
+
 from ..models.submarine import Submarine
 
 
@@ -10,14 +11,7 @@ class SubmarineDAO:
     def create_submarine(
         game_id,
         player_id,
-        name,
-        size,
-        speed,
-        visibility,
-        radar_scope,
-        health,
-        torpedo_speed,
-        torpedo_damage,
+        stats,
         x_position=None,
         y_position=None,
         direction=None,
@@ -25,14 +19,14 @@ class SubmarineDAO:
         sub = Submarine(
             game_id=game_id,
             player_id=player_id,
-            name=name,
-            size=size,
-            speed=speed,
-            visibility=visibility,
-            radar_scope=radar_scope,
-            health=health,
-            torpedo_speed=torpedo_speed,
-            torpedo_damage=torpedo_damage,
+            name=stats["name"],
+            size=stats["size"],
+            speed=stats["speed"],
+            visibility=stats["visibility"],
+            radar_scope=stats["radar_scope"],
+            health=stats["health"],
+            torpedo_speed=stats["torpedo_speed"],
+            torpedo_damage=stats["torpedo_damage"],
         )
         if x_position:
             sub.x_position = x_position
@@ -70,8 +64,7 @@ class SubmarineDAO:
         return SubmarineDAO(sub)
 
     def get_game(self):
-        return self.submarine.game  # esta bien que retorne el juego?
-        # return UnderGameDao(self.submarine.game.id)
+        return self.submarine.game
 
     def get_submarine(self):
         return self.submarine
