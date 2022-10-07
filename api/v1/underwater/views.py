@@ -5,9 +5,9 @@ from flask import Response, jsonify, request
 
 from api import token_auth
 from app import db
-from app.daos.underwater.submarine_dao import SubmarineDao
-from app.daos.underwater.under_game_dao import UnderGameDao
-from app.models.underwater.under_models import UnderGame
+from app.underwater.daos.submarine_dao import SubmarineDAO
+from app.underwater.daos.under_game_dao import UnderGameDAO
+from app.underwater.models.under_game import UnderGame
 from app.models.user import User
 
 from . import underwater
@@ -26,19 +26,19 @@ def new_game():
     if request.args.get("width"):
         width = request.args.get("width")
 
-    ng_dao = UnderGameDao.create(request.args.get("host_id"), height, width)
+    ng_dao = UnderGameDAO.create(request.args.get("host_id"), height, width)
     return ng_dao.jsonify()
 
 
 @underwater.get("/get_options")
 def get_options():
-    return UnderGameDao.get_options()
+    return UnderGameDAO.get_options()
 
 
 @underwater.get("/join_game")
 def join_game():
     try:
-        game_dao = UnderGameDao.get(request.args.get("game_id"))
+        game_dao = UnderGameDAO.get(request.args.get("game_id"))
     except Exception as e:
         return Response("{'error':%s" % str(e), status="404")
 
@@ -63,10 +63,10 @@ def choose_submarine():
     player_id = int(request.form["player_id"])
     submarine_id = request.form["submarine_id"]
 
-    submarines = json.load(open("app/models/underwater/options.json"))
+    submarines = json.load(open("app/underwater/options.json"))
 
     try:
-        game_dao = UnderGameDao.get(game_id)
+        game_dao = UnderGameDAO.get(game_id)
     except Exception:
         return Response("{'error':'game not found'}", status="404")
 
@@ -87,7 +87,7 @@ def place_submarine():
     direction = int(request.form["direction"])
 
     try:
-        submarine_dao = SubmarineDao.get(submarine_id)
+        submarine_dao = SubmarineDAO.get(submarine_id)
     except Exception:
         return Response("{'error':'submarine not found'}", status="404")
 
@@ -95,7 +95,7 @@ def place_submarine():
         return Response("{'error':'submarine is already placed'}", status="409")
 
     try:
-        game_dao = UnderGameDao.get(submarine_dao.get_game().id)
+        game_dao = UnderGameDAO.get(submarine_dao.get_game().id)
         game_dao.place(submarine_dao.submarine, x_coord, y_coord, direction)
     except Exception as e:
         return Response("{'error':'%s'}" % str(e), status="409")

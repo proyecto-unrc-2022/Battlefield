@@ -1,21 +1,21 @@
 from app import db
-from app.models.underwater.under_models import FloatingBody
+from ..models.submerged_object import SubmergedObject
 
 
-class FloatingBodyDao:
+class SubmergedObjectDAO:
     def __init__(self, obj):
         self.obj = obj
 
     @staticmethod
     def get(obj_id):
         obj = (
-            db.session.query(FloatingBody)
-            .where(FloatingBody.id == obj_id)
+            db.session.query(SubmergedObject)
+            .where(SubmergedObject.id == obj_id)
             .one_or_none()
         )
         if not obj:
             raise ValueError("no floating body found with id %s" % obj_id)
-        return FloatingBodyDao(obj)
+        return SubmergedObjectDAO(obj)
 
     def update_position(self, x_position=None, y_position=None, direction=None):
         if x_position:
