@@ -120,12 +120,6 @@ def step_impl(context):
 #     assert is_created and is_artillery
 
 
-
-@given('a user Franco')
-def step_given(context) :
-    user = User.query.filter_by(username = "Franco").first()
-    assert not(user == None)
-
 @when('you choose to move your unit east')
 def step_when(context) :
     context.page = context.client.post(url_for("infantry.mov_action", game_id = 1, user_id = 1, velocity = 2, direction = EAST))
@@ -135,11 +129,6 @@ def step_when(context) :
 def step_then(context) :
     figure = Figure_infantry.query.filter_by(id_game = 1, id_user = 1).first()
     assert figure.pos_x == 2 and figure.pos_y == 0
-    
-@given('un usuario Tomas')
-def step_given(context) :
-    user = User.query.filter_by(username = "Tomas").first()
-    assert not(user == None)
     
 @when('you choose to move your unit west')
 def step_when(context) :
