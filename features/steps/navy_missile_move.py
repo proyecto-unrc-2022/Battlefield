@@ -1,4 +1,5 @@
 import json
+
 from behave import *
 from flask import url_for
 
@@ -67,7 +68,6 @@ def step_impl(
 
     context.game_id = context.page.json["game_id"]
 
-
     ship_one = add_ship_special(
         id_game=context.game_id,
         id_user=context.user_1.id,
@@ -121,6 +121,7 @@ def step_impl(context, missile_x, missile_y, range, direction, damage):
 @when("I move the missile")
 def step_impl(context):
     from app.daos.navy.dynamic_missile_dao import update_missile
+
     update_missile(context.missile_in_game, context.data_missile)
     assert True
 

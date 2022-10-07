@@ -107,15 +107,14 @@ def step_impl(context):
     data = json.loads(context.page.data)
     assert check_dynamic_data(data, 2, 3, "N")
 
-@when(u'I try to start a game which doesn\'t exist')
+
+@when("I try to start a game which doesn't exist")
 def step_impl(context):
     ship_selected = get_ship_selected_by_id(
         context.available_ships["ships_available"], 1
     )
 
-    context.data = json_selected_options(
-        4, context.user_1.id, "N", 1, 1, ship_selected 
-    )
+    context.data = json_selected_options(4, context.user_1.id, "N", 1, 1, ship_selected)
 
     context.headers = {
         "Content-Type": "application/json",
@@ -128,39 +127,20 @@ def step_impl(context):
     assert context.page
 
 
-@then(u'I should get an error message about the game')
+@then("I should get an error message about the game")
 def step_impl(context):
     assert "game_id" in context.page.text
     assert context.page.status_code == 400
 
-@when(u'I try to start a game with an incorrect data type in game_id field')
+
+@when("I try to start a game with an incorrect data type in game_id field")
 def step_impl(context):
     ship_selected = get_ship_selected_by_id(
         context.available_ships["ships_available"], 1
     )
 
     context.data = json_selected_options(
-        "123", context.user_1.id, "N", 1, 1, ship_selected 
-    )
-
-    context.headers = {
-        "Content-Type": "application/json",
-        "Authorization": f'Bearer {context.token["token"]}',
-    }
-    context.page = context.client.post(
-        url_for("navy.start_game"), json=context.data, headers=context.headers
-    )
-
-    assert context.page
-
-@when(u'I try to start a game with an user who doesn\'t exist')
-def step_impl(context):
-    ship_selected = get_ship_selected_by_id(
-        context.available_ships["ships_available"], 1
-    )
-
-    context.data = json_selected_options(
-        context.game_id, 4, "N", 1, 1, ship_selected 
+        "123", context.user_1.id, "N", 1, 1, ship_selected
     )
 
     context.headers = {
@@ -174,39 +154,39 @@ def step_impl(context):
     assert context.page
 
 
-@then(u'I should get an error message about the user')
+@when("I try to start a game with an user who doesn't exist")
+def step_impl(context):
+    ship_selected = get_ship_selected_by_id(
+        context.available_ships["ships_available"], 1
+    )
+
+    context.data = json_selected_options(context.game_id, 4, "N", 1, 1, ship_selected)
+
+    context.headers = {
+        "Content-Type": "application/json",
+        "Authorization": f'Bearer {context.token["token"]}',
+    }
+    context.page = context.client.post(
+        url_for("navy.start_game"), json=context.data, headers=context.headers
+    )
+
+    assert context.page
+
+
+@then("I should get an error message about the user")
 def step_impl(context):
     assert "id_user" in context.page.text
     assert context.page.status_code == 400
 
-@when(u'I try to start a game with an incorrect data type in id_user field')
+
+@when("I try to start a game with an incorrect data type in id_user field")
 def step_impl(context):
     ship_selected = get_ship_selected_by_id(
         context.available_ships["ships_available"], 1
     )
 
     context.data = json_selected_options(
-        context.game_id, "123", "N", 1, 1, ship_selected 
-    )
-
-    context.headers = {
-        "Content-Type": "application/json",
-        "Authorization": f'Bearer {context.token["token"]}',
-    }
-    context.page = context.client.post(
-        url_for("navy.start_game"), json=context.data, headers=context.headers
-    )
-
-    assert context.page
-
-@when(u'I try to start a game with an incorrect direction')
-def step_impl(context):
-    ship_selected = get_ship_selected_by_id(
-        context.available_ships["ships_available"], 1
-    )
-
-    context.data = json_selected_options(
-        context.game_id, context.user_1.id, "H", 1, 1, ship_selected 
+        context.game_id, "123", "N", 1, 1, ship_selected
     )
 
     context.headers = {
@@ -220,12 +200,34 @@ def step_impl(context):
     assert context.page
 
 
-@then(u'I should get an error message about the direction')
+@when("I try to start a game with an incorrect direction")
+def step_impl(context):
+    ship_selected = get_ship_selected_by_id(
+        context.available_ships["ships_available"], 1
+    )
+
+    context.data = json_selected_options(
+        context.game_id, context.user_1.id, "H", 1, 1, ship_selected
+    )
+
+    context.headers = {
+        "Content-Type": "application/json",
+        "Authorization": f'Bearer {context.token["token"]}',
+    }
+    context.page = context.client.post(
+        url_for("navy.start_game"), json=context.data, headers=context.headers
+    )
+
+    assert context.page
+
+
+@then("I should get an error message about the direction")
 def step_impl(context):
     assert "direction" in context.page.text
     assert context.page.status_code == 400
 
-@when(u'I try to start a game with an incorrect ship type')
+
+@when("I try to start a game with an incorrect ship type")
 def step_impl(context):
 
     context.data = {
@@ -248,19 +250,20 @@ def step_impl(context):
     assert context.page
 
 
-@then(u'I should get an error message about the ship type')
+@then("I should get an error message about the ship type")
 def step_impl(context):
     assert "ship_type" in context.page.text
     assert context.page.status_code == 400
 
-@when(u'I try to start a game with a position out of range in x')
+
+@when("I try to start a game with a position out of range in x")
 def step_impl(context):
     ship_selected = get_ship_selected_by_id(
         context.available_ships["ships_available"], 1
     )
 
     context.data = json_selected_options(
-        context.game_id, context.user_1.id, "N", -1, 1, ship_selected 
+        context.game_id, context.user_1.id, "N", -1, 1, ship_selected
     )
 
     context.headers = {
@@ -274,20 +277,20 @@ def step_impl(context):
     assert context.page
 
 
-@then(u'I should get an error message about the position in x')
+@then("I should get an error message about the position in x")
 def step_impl(context):
     assert "pos_x" in context.page.text
     assert context.page.status_code == 400
 
 
-@when(u'I try to start a game with a position out of range in y')
+@when("I try to start a game with a position out of range in y")
 def step_impl(context):
     ship_selected = get_ship_selected_by_id(
         context.available_ships["ships_available"], 1
     )
 
     context.data = json_selected_options(
-        context.game_id, context.user_1.id, "N", 1, -1, ship_selected 
+        context.game_id, context.user_1.id, "N", 1, -1, ship_selected
     )
 
     context.headers = {
@@ -301,8 +304,7 @@ def step_impl(context):
     assert context.page
 
 
-@then(u'I should get an error message about the position in y')
+@then("I should get an error message about the position in y")
 def step_impl(context):
     assert "pos_y" in context.page.text
     assert context.page.status_code == 400
-

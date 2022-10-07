@@ -111,7 +111,7 @@ def execute_action(ship, action):
     else:
         for i in range(action.move):
             pos_x, pos_y = new_position(dir, ship.pos_x, ship.pos_y)
-
+            # falta chequear lo del mov cuando estás en el rango
             missile = exist_missile(ship.id_game, pos_x, pos_y)
             if missile:
                 update_hp(ship.hp - missile.danger, ship)

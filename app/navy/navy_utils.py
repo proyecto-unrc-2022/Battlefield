@@ -1,8 +1,8 @@
 from flask import jsonify
+
 from app import db
 from app.models.navy.dynamic_ship import DynamicShip
 from app.navy.navy_constants import BORDERS, COORDS, PATH_TO_START, XCORD, YCORD
-from app.navy.navy_constants import PATH_TO_START
 
 
 def check_dynamic_data(data, pos_x, pos_y, dir):
@@ -24,35 +24,28 @@ def get_ship_select(ships=None, ship_type=None):
             return ship
     return None
 
-def get_ship_selected_by_id(ships,ship_id):
+
+def get_ship_selected_by_id(ships, ship_id):
     for ship in ships:
         if ship["ship_id"] == ship_id:
             return ship
     return None
 
-def add_ship_special(
-    id_game,
-    id_user,
-    pos_x,
-    pos_y,
-    hp,
-    direction,
-    ship_type
-    ):
+
+def add_ship_special(id_game, id_user, pos_x, pos_y, hp, direction, ship_type):
     ship = DynamicShip(
-        id_game = id_game,
-        id_user = id_user,
-        pos_x = pos_x,
-        pos_y = pos_y,
-        hp = hp,
-        direction = direction,
-        ship_type = ship_type
+        id_game=id_game,
+        id_user=id_user,
+        pos_x=pos_x,
+        pos_y=pos_y,
+        hp=hp,
+        direction=direction,
+        ship_type=ship_type,
     )
     db.session.add(ship)
     db.session.commit()
 
     return ship
-
 
 
 def get_ship_select_by_id(id_ship, ships=None):
@@ -85,7 +78,8 @@ def get_ship_selected_by_id(ships, ship_id):
 
     return None
 
-def new_position(dir,pos_x, pos_y):
+
+def new_position(dir, pos_x, pos_y):
     if dir in COORDS:
         return (pos_x + COORDS[dir][XCORD], pos_y + COORDS[dir][YCORD])
     return None
@@ -102,6 +96,7 @@ def out_of_range(pos_x, pos_y):
 
 def get_move_ship_(ship_type):
     from app.daos.navy.game_dao import read_data
+
     ships = read_data(PATH_TO_START)
     for ship in ships["ships_available"]:
         if ship["ship_id"] == ship_type:
