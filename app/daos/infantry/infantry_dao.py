@@ -39,12 +39,15 @@ def  add_figure(game_id, user_id ,entity_id):
 #verificando que no supere su velocidad maxima.
 #ej: la velocidad limite del tanque es 2, entonces su velocity no puede ser mayor a 2
 def move_by_user(game_id, user_id, direction, velocity):
-
     figure = Figure_infantry.query.filter_by(id_user = user_id, id_game = game_id).first()
+    aux_figure = copy.copy(figure)
     exceeded_velocity_limit = (int(velocity) > figure.velocidad)
-    mov(figure, int(direction), int(velocity))
-    is_valid = False if figure == None else is_valid_move(copy.copy(figure))
-    #if is_valid : #db.session.commit() 
+    move(aux_figure, int(direction), int(velocity))
+    is_valid = False if aux_figure == None else is_valid_move(aux_figure)
+    if is_valid : 
+        figure.pos_x = Figure_infantry.pos_x + aux_figure.pos_x
+        figure.pos_y = Figure_infantry.pos_y + aux_figure.pos_y
+        db.session.commit() 
     print(is_valid)
     return is_valid and not(exceeded_velocity_limit)
 
@@ -58,7 +61,7 @@ def is_valid_move(figure):
     user_2 = game.user_2
     opponent = user_1 if user_1.id != figure.id else user_2
     figure_opponent = Figure_infantry.query.filter_by(id_user = opponent.id, id_game = game_id).first()
-    return not(intersection(figure, copy.copy(figure_opponent)))
+    return not(intersection(copy.copy(figure), copy.copy(figure_opponent)))
 
 #Verifica si hay una interseccion entre dos figure
 def intersection(figure_1, figure_2):
@@ -70,13 +73,13 @@ def intersection(figure_1, figure_2):
             equal_pos_x = figure_1.pos_x == aux_figure.pos_x
             equal_pos_y = figure_1.pos_y == aux_figure.pos_y
             intersection = equal_pos_x and equal_pos_y
-            aux_figure = mov(aux_figure, aux_figure.direccion, j)
-        figure_1 = mov(figure_1, figure_1.direccion, i)
+            aux_figure = move(aux_figure, aux_figure.direccion, j)
+        figure_1 = move(figure_1, figure_1.direccion, i)
     return intersection
 
 #Devuelve un figure con la direccion y velocidad que se
 #pasaron por parametros
-def mov(figure, direction, velocity):
+def move(figure, direction, velocity):
     if(direction == EAST):
         figure.direccion = EAST
         figure.pos_x = figure.pos_x + velocity
@@ -100,7 +103,6 @@ def mov(figure, direction, velocity):
         figure.pos_y = figure.pos_y + velocity
     elif(direction == NORTH):
         figure.direccion = NORTH
-        
         figure.pos_y = figure.pos_y + velocity
     else:
         return None
