@@ -163,18 +163,23 @@ def create_game(user_id):
 
 def join(game_id, user_id):
     
-    if (db.session.query(Game_Infantry).get(game_id)):
+    user = db.session.query(Game_Infantry).filter_by(id = game_id).first()
+
+    if (user.id_user2 == user_id or user.id_user2 == None):
+
         game = db.session.query(Game_Infantry).get(game_id)
         game.id_user2 = user_id
         db.session.add(game)
         db.session.commit()
         return True
-    else:
-        return False
+    
+    return False
 
+#Tira error 500 cuando entra al
 def ready(game_id):
 
-    if(db.session.query(Game_Infantry).get(game_id).id_user1 == None or db.session.query(Game_Infantry).get(game_id).id_user2 == None):
-        return False
-    else:
+    if((db.session.query(Game_Infantry).get(game_id).id_user1 != None) or (db.session.query(Game_Infantry).get(game_id).id_user2 != None)):
         return True
+    
+    
+    return False

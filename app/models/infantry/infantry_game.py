@@ -1,4 +1,5 @@
 #from turtle import back
+from pyexpat import model
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, SQLAlchemySchema, auto_field
 from marshmallow_sqlalchemy.fields import Nested
 from sqlalchemy.orm import relationship #investigar
@@ -10,8 +11,8 @@ class Game_Infantry(db.Model):
     __tablename__ = "game_infantry"
 
     id = db.Column(db.Integer, primary_key=True)
-    id_user1 = db.Column(db.Integer, db.ForeignKey(User.id))
-    id_user2 = db.Column(db.Integer, db.ForeignKey(User.id))
+    id_user1 = db.Column(db.Integer, db.ForeignKey(User.id), unique=True)
+    id_user2 = db.Column(db.Integer, db.ForeignKey(User.id), unique=True)
     turn = db.Column(db.Integer, db.ForeignKey(User.id))
     
     #Foreign key
@@ -70,3 +71,42 @@ class Projectile(db.Model):
         self.daño = daño
         self.direccion = direccion
 
+class Game_Infantry_Schema(SQLAlchemySchema):
+    class Meta:
+        model= Game_Infantry
+        include_relationships = True
+        load_instance = True
+
+    id_user1 = auto_field()
+    id_user2 = auto_field()
+    #turno = auto_field()
+
+class Figure_Infantry_Schema(SQLAlchemySchema):
+    class Meta:
+        model= Figure_infantry
+        include_relationships = True
+        load_instance = True
+
+    id_user = auto_field()
+    id_game = auto_field()
+    hp = auto_field()
+    velocidad = auto_field()
+    tamaño = auto_field()
+    direccion = auto_field()
+    pos_x = auto_field()
+    pos_y = auto_field()
+    figure_type = auto_field()
+
+
+class Projectile_Infantry_Schema(SQLAlchemySchema):
+    class Meta:
+        model= Projectile
+        include_relationships = True
+        load_instance = True
+
+    id_game = auto_field()
+    pos_x = auto_field()
+    pos_y = auto_field()
+    velocidad = auto_field()
+    daño = auto_field()
+    direccion = auto_field()
