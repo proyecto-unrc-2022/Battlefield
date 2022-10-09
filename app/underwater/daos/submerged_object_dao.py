@@ -4,28 +4,18 @@ from ..models.submerged_object import SubmergedObject
 
 
 class SubmergedObjectDAO:
-    def __init__(self, obj):
-        self.obj = obj
+    def __init__(self, model):
+        self.model = model
 
-    @staticmethod
-    def get(obj_id):
-        obj = (
-            db.session.query(SubmergedObject)
-            .where(SubmergedObject.id == obj_id)
-            .one_or_none()
-        )
-        if not obj:
-            raise ValueError("no floating body found with id %s" % obj_id)
-        return SubmergedObjectDAO(obj)
-
-    def update_position(self, x_position=None, y_position=None, direction=None):
-        if x_position:
-            self.obj.x_position = x_position
-        if y_position:
-            self.obj.y_position = y_position
-        if direction:
-            self.obj.direction = direction
+    def save(self, obj):
+        db.session.add(obj)
         db.session.commit()
 
-    def is_placed(self):
-        return self.obj.x_position != None
+    def get_by_id(self, obj_id):
+        sub = db.session.get(self.model, obj_id)
+        if not sub:
+            raise ValueError("no submerged object found with id %s" % sub_id)
+        return sub
+
+
+submerged_object_dao = SubmergedObjectDAO(SubmergedObject)

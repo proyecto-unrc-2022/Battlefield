@@ -26,15 +26,15 @@ class SubmergedObject(db.Model):
     }
 
     def set_position(self, x_position=None, y_position=None, direction=None):
-        if x_position:
+        if x_position is not None:  # Needed for when direction=0 (evaluates to False)
             self.x_position = x_position
-        if y_position:
+        if y_position is not None:
             self.y_position = y_position
-        if direction:
+        if direction is not None:
             self.direction = direction
 
     def get_positions(self, direction=None):
-        if not direction:
+        if direction is None:
             direction = self.direction
         x = self.x_position
         y = self.y_position
@@ -50,7 +50,7 @@ class SubmergedObject(db.Model):
         return positions
 
     def get_tail_positions(self, direction=None):
-        if not direction:
+        if direction is None:
             direction = self.direction
         return self.get_positions(direction)[1:]
 

@@ -23,7 +23,8 @@ class UnderBoard:
 
     def place_object(self, obj):
         for pos in obj.get_positions():
-            self.place(obj, pos)
+            if self.valid(pos):
+                self.place(obj, pos)
 
     def get_cell_content(self, p):
         if not self.valid(p):
@@ -48,7 +49,8 @@ class UnderBoard:
 
     def clear_all(self, pair_list):
         for (x, y) in pair_list:
-            self.matrix[x][y] = None
+            if self.valid((x, y)):
+                self.matrix[x][y] = None
 
     def clear(self, p):
         if self.valid(p):
@@ -78,6 +80,6 @@ class UnderBoard:
     def objects_in_positions(self, pos_list):
         ret_list = []
         for (x, y) in pos_list:
-            if self.matrix[x][y]:
+            if self.valid((x, y)) and self.matrix[x][y]:
                 ret_list.append(self.matrix[x][y])
         return None if ret_list == [] else ret_list

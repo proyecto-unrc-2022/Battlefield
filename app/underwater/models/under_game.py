@@ -11,7 +11,7 @@ from app.underwater.models.submerged_object import SubmergedObject
 from app.underwater.models.torpedo import Torpedo
 from app.underwater.under_board import UnderBoard
 
-from ..daos.submarine_dao import SubmarineDAO
+from ..daos.submarine_dao import sub_dao
 
 
 class UnderGame(db.Model):
@@ -29,10 +29,11 @@ class UnderGame(db.Model):
     submerged_objects = relationship("SubmergedObject", back_populates="game")
 
     def __init__(self, host_id, height=10, width=20):
-        self.board = UnderBoard(height, width)
+        self.board = UnderBoard(self.id, height, width)
         self.host_id = host_id
-        boards.update({self.id: self.board})
         self.state = GameState.PREGAME
+        self.height = height
+        self.width = width
 
     # submarines = relationship("Submarine", back_populates="game")
     # torpedos = relationship("Torpedo", back_populates="game")
@@ -67,8 +68,7 @@ class UnderGame(db.Model):
             if obj.player_id == player_id:
                 raise Exception("Player already has a submarine")
 
-        sub = SubmarineDAO.create_submarine(self.id, player_id, sub_stats)
-        self.submerged_objects.append(sub)
+        sub = sub_dao.create_submarine(self.id, player_id, sub_stats)
         self.place(sub, x_coord, y_coord, direction)
         return sub
 

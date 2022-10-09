@@ -14,7 +14,8 @@ class UnderGameDAO:
         if db.session.query(User).where(User.id == host_id) == None:
             return None
 
-        game = UnderGame(host_id=host_id)
+        game = UnderGame(host_id=host_id, height=height, width=width)
+        game.board.id = game.id
         if visitor_id:
             if db.session.query(User).where(User.id == visitor_id) == None:
                 return None
@@ -22,7 +23,7 @@ class UnderGameDAO:
 
         db.session.add(game)
         db.session.commit()
-        boards.update({game.id: UnderBoard(game.id, height, width)})
+        boards.update({game.id: game.board})
         return game
 
     def get_by_id(self, game_id):
