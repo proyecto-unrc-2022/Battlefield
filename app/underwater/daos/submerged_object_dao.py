@@ -1,4 +1,5 @@
 from app import db
+
 from ..models.submerged_object import SubmergedObject
 
 

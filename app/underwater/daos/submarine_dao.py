@@ -36,9 +36,9 @@ class SubmarineDAO:
             sub.direction = direction
         db.session.add(sub)
         db.session.commit()
-        return sub 
+        return sub
 
-    def update_position(self,sub):
+    def update_position(self, sub):
         db.session.add(sub)
         db.session.commit()
 
@@ -47,5 +47,6 @@ class SubmarineDAO:
         if not sub:
             raise ValueError("no submarine found with id %s" % sub_id)
         return sub
+
 
 sub_dao = SubmarineDAO(Submarine)

@@ -8,11 +8,11 @@ class UnderBoard:
             self.matrix.append([None] * width)
 
     def valid(self, p):
-        x,y = p
+        x, y = p
         return x >= 0 and x < self.height and y >= 0 and y < self.width
 
     def place(self, obj, pos):
-        x,y = pos
+        x, y = pos
         if not self.valid(pos):
             raise Exception("Invalid coordinates (%s,%s)" % (x, y))
 
@@ -20,7 +20,6 @@ class UnderBoard:
             raise Exception("Position (%s,%s) is not available" % (x, y))
 
         self.matrix[x][y] = obj
-
 
     def place_object(self, obj):
         for pos in obj.get_positions():
@@ -30,11 +29,11 @@ class UnderBoard:
         if not self.valid(p):
             raise ValueError("Invalid coordinates")
 
-        x,y = p
+        x, y = p
         return self.matrix[x][y]
 
     def is_empty(self, pos):
-        x,y = pos
+        x, y = pos
 
         if not self.valid(pos):
             raise Exception("Invalid coordinates (%s,%s)" % (x, y))
@@ -48,12 +47,12 @@ class UnderBoard:
         return True
 
     def clear_all(self, pair_list):
-        for (x,y) in pair_list:
+        for (x, y) in pair_list:
             self.matrix[x][y] = None
 
     def clear(self, p):
         if self.valid(p):
-            x,y = p
+            x, y = p
             self.matrix[x][y] = None
 
     def __str__(self):
@@ -76,10 +75,9 @@ class UnderBoard:
             print("")
         print("-" * (w * 4 + 1))
 
-
     def objects_in_positions(self, pos_list):
         ret_list = []
-        for (x,y) in pos_list:
-            if self.matrix[x][y]: 
+        for (x, y) in pos_list:
+            if self.matrix[x][y]:
                 ret_list.append(self.matrix[x][y])
         return None if ret_list == [] else ret_list

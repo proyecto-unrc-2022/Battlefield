@@ -5,10 +5,10 @@ from flask import Response, jsonify, request
 
 from api import token_auth
 from app import db
+from app.models.user import User
 from app.underwater.daos.submarine_dao import SubmarineDAO
 from app.underwater.daos.under_game_dao import UnderGameDAO
 from app.underwater.models.under_game import UnderGame
-from app.models.user import User
 
 from . import underwater
 

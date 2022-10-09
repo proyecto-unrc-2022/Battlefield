@@ -55,7 +55,9 @@ class SubmergedObject(db.Model):
         return self.get_positions(direction)[1:]
 
     def get_next_position(self):
-        return SubmergedObject.move_pointer(self.x_position, self.y_position, self.direction)
+        return SubmergedObject.move_pointer(
+            self.x_position, self.y_position, self.direction
+        )
 
     @staticmethod
     def move_pointer(x, y, direction):
@@ -82,11 +84,9 @@ class SubmergedObject(db.Model):
     def is_placed(self):
         return self.x_position != None
 
-
     def get_game(self):
         return self.game
 
-    
     def advance(self, n):
         if n > self.speed:
             raise Exception("Speed (%s) exceeded" % self.speed)

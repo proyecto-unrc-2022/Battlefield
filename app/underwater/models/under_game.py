@@ -123,7 +123,7 @@ class UnderGame(db.Model):
 
     def advance_object_one(self, obj):
         next_cell = obj.get_next_position()
-        x,y = next_cell
+        x, y = next_cell
 
         if not self.board.valid(next_cell):
             raise Exception("Object cannot move forward")
