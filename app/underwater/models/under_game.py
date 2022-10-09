@@ -5,6 +5,7 @@ from sqlalchemy.orm import relationship
 from app import db
 from app.models.user import User
 from app.underwater import boards
+from app.underwater.game_state import GameState
 from app.underwater.models.submarine import Submarine
 from app.underwater.models.submerged_object import SubmergedObject
 from app.underwater.models.torpedo import Torpedo
@@ -31,6 +32,7 @@ class UnderGame(db.Model):
         self.board = UnderBoard(height, width)
         self.host_id = host_id
         boards.update({self.id: self.board})
+        self.state = GameState.PREGAME
 
     # submarines = relationship("Submarine", back_populates="game")
     # torpedos = relationship("Torpedo", back_populates="game")
@@ -75,7 +77,7 @@ class UnderGame(db.Model):
             raise Exception("submarine is already placed")
 
         obj.set_position(x_coord, y_coord, direction)
-        self.board.place(obj)
+        self.board.place_object(obj)
 
     def contains_object(self, obj_id):
         for obj in self.submerged_objects:
@@ -110,10 +112,27 @@ class UnderGame(db.Model):
             return
 
         new_cells = obj.get_tail_positions(direction=direction)
-        for (x, y) in new_cells:
-            if self.board.matrix[x][y]:
-                self.run_conflict(obj, self.board.matrix[x][y])
+        found_objects = self.board.objects_in_positions(new_cells)
+        if found_objects:
+            self.run_conflict(obj, found_objects[0])
 
-        self.board.clear(obj.get_positions())
-        obj.set_position(direction=direction)
-        self.board.place(obj)
+        if not self.state == GameState.FINISHED:
+            self.board.clear_all(obj.get_positions())
+            obj.set_position(direction=direction)
+            self.board.place_object(obj)
+
+    def advance_object_one(self, obj):
+        next_cell = obj.get_next_position()
+        x,y = next_cell
+
+        if not self.board.valid(next_cell):
+            raise Exception("Object cannot move forward")
+
+        if not self.board.is_empty(next_cell):
+            self.run_conflict(obj, self.board.get_cell_content(next_cell))
+
+        if not self.state == GameState.FINISHED:
+            old_cells = obj.get_positions()
+            self.board.clear(old_cells[-1])
+            self.board.place(obj, next_cell)
+            obj.set_position(x_position=x, y_position=y)

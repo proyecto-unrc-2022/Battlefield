@@ -26,7 +26,7 @@ class UnderGameDAO:
         return game
 
     def get_by_id(self, game_id):
-        game = db.session.query(UnderGame).where(UnderGame.id == game_id).one_or_none()
+        game = db.session.get(UnderGame, game_id)
         if not game:
             raise ValueError("no game found with id %s" % game_id)
         return game

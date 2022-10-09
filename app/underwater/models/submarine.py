@@ -15,9 +15,4 @@ class Submarine(SubmergedObject):
     torpedo_speed = db.Column(db.Integer, nullable=False)
     torpedo_damage = db.Column(db.Float, nullable=False)
 
-    # game = relationship("UnderGame", back_populates="submarines")
-
     __mapper_args__ = {"polymorphic_identity": "submarine"}
-
-    def is_placed(self):
-        return self.x_position != None

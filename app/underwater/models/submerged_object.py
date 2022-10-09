@@ -1,6 +1,7 @@
 from sqlalchemy.orm import relationship
 
 from app import db
+from app.underwater.game_state import GameState
 
 
 class SubmergedObject(db.Model):
@@ -53,6 +54,9 @@ class SubmergedObject(db.Model):
             direction = self.direction
         return self.get_positions(direction)[1:]
 
+    def get_next_position(self):
+        return SubmergedObject.move_pointer(self.x_position, self.y_position, self.direction)
+
     @staticmethod
     def move_pointer(x, y, direction):
         d = direction % 8
@@ -74,3 +78,19 @@ class SubmergedObject(db.Model):
             return x - 1, y - 1
         else:
             raise TypeError("direction must be an integer")
+
+    def is_placed(self):
+        return self.x_position != None
+
+
+    def get_game(self):
+        return self.game
+
+    
+    def advance(self, n):
+        if n > self.speed:
+            raise Exception("Speed (%s) exceeded" % self.speed)
+
+        while n > 0 and self.game.state == GameState.ONGOING:
+            self.game.advance_object_one(self)
+            n -= 1
