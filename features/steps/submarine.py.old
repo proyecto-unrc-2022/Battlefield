@@ -12,19 +12,14 @@ from app.models.user import User
 # BACKGROUND
 
 
-@given("there exists two users and they are logged in")
+@given("there exist two users and they are logged in")
 def step_impl(context):
 
     for row in context.table:
         add_user(row["username"], row["password"], row["email"])
 
-    context.player1 = (
-        db.session.query(User).where(User.username == "player1").one_or_none()
-    )
-
-    context.player2 = (
-        db.session.query(User).where(User.username == "player2").one_or_none()
-    )
+    context.player1 = (db.session.query(User).where(User.username == "player1").one_or_none())
+    context.player2 = (db.session.query(User).where(User.username == "player2").one_or_none())
     assert context.player1
     assert context.player2
 
@@ -43,7 +38,7 @@ def step_impl(context):
 @then("A new game is registered")
 def step_impl(context):
     data = json.loads(context.page.text)
-    context.game_dao = UnderGameDao.get(data["id"])
+    context.game = UnderGameDao.get_by(data["id"])
     assert context.game_dao
 
 
