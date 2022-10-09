@@ -1,10 +1,25 @@
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, auto_field
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, SQLAlchemySchema, auto_field
 from marshmallow_sqlalchemy.fields import Nested
 
 # from app.underwater.models.under_models import Submarine, Torpedo, UnderGame
 from app.underwater.models.submarine import Submarine
+from app.underwater.models.submerged_object import SubmergedObject
 from app.underwater.models.torpedo import Torpedo
 from app.underwater.models.under_game import UnderGame
+
+# class SmartNested(Nested):
+#     def serialize(self,attr,obj,accessor=None):
+#         if type(attr) is Submarine:
+#             return super(SubmarineSchema, many=False)
+#         else:
+#             return super(TorpedoSchema, many=False)
+
+
+class SubmergedObjectSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = SubmergedObject
+        include_relationships = True
+        load_instance = True
 
 
 class SubmarineSchema(SQLAlchemyAutoSchema):
@@ -13,21 +28,6 @@ class SubmarineSchema(SQLAlchemyAutoSchema):
         include_relationships = True
         load_instance = True
 
-    id = auto_field()
-    name = auto_field()
-    size = auto_field()
-    speed = auto_field()
-    visibility = auto_field()
-    radar_scope = auto_field()
-    health = auto_field()
-    torpedo_speed = auto_field()
-    torpedo_damage = auto_field()
-    x_position = auto_field()
-    y_position = auto_field()
-    direction = auto_field()
-    game_id = auto_field()
-    player_id = auto_field()
-
 
 class TorpedoSchema(SQLAlchemyAutoSchema):
     class Meta:
@@ -35,17 +35,8 @@ class TorpedoSchema(SQLAlchemyAutoSchema):
         include_relationships = True
         load_instance = True
 
-    id = auto_field()
-    speed = auto_field()
-    damage = auto_field()
-    x_position = auto_field()
-    y_position = auto_field()
-    direction = auto_field()
 
-    game_id = auto_field()
-
-
-class UnderGameSchema(SQLAlchemyAutoSchema):
+class UnderGameSchema(SQLAlchemySchema):
     class Meta:
         model = UnderGame
         include_relationships = True
@@ -55,5 +46,10 @@ class UnderGameSchema(SQLAlchemyAutoSchema):
     host_id = auto_field()
     visitor_id = auto_field()
 
-    submarines = Nested(SubmarineSchema, many=True)
-    torpedos = Nested(TorpedoSchema, many=True)
+    # submarines = Nested(SubmarineSchema, many=True)
+    # torpedos = Nested(TorpedoSchema, many=True)
+
+    submerged_objects = Nested(SubmergedObjectSchema, many=True)
+
+
+game_dto = UnderGameSchema()

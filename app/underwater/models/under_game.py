@@ -21,6 +21,10 @@ class UnderGame(db.Model):
     host_id = db.Column(db.Integer, db.ForeignKey(User.id))
     visitor_id = db.Column(db.Integer, db.ForeignKey(User.id))
 
+    height = db.Column(db.Integer)
+    width = db.Column(db.Integer)
+    state = db.Column(db.Integer)
+
     host = relationship("User", backref="under_game_host", foreign_keys=[host_id])
     visitor = relationship(
         "User", backref="under_game_visitor", foreign_keys=[visitor_id]
@@ -31,9 +35,9 @@ class UnderGame(db.Model):
     def __init__(self, host_id, height=10, width=20):
         self.board = UnderBoard(self.id, height, width)
         self.host_id = host_id
-        self.state = GameState.PREGAME
         self.height = height
         self.width = width
+        self.state = GameState.PREGAME
 
     # submarines = relationship("Submarine", back_populates="game")
     # torpedos = relationship("Torpedo", back_populates="game")

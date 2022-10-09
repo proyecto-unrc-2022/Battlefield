@@ -1,7 +1,4 @@
-from enum import Enum
-
-
-class GameState(Enum):
+class GameState:
     PREGAME = 0
     ONGOING = 1
     FINISHED = 2
