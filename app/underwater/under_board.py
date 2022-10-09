@@ -1,3 +1,6 @@
+from app.underwater.models.submarine import Submarine
+
+
 class UnderBoard:
     def __init__(self, id, height=10, width=20):
         self.id = id
@@ -69,7 +72,10 @@ class UnderBoard:
                 if self.matrix[i][j]:
                     o = self.matrix[i][j]
                     if (o.x_position, o.y_position) == (i, j):
-                        print(" H |", end="")
+                        if type(o) is Submarine:
+                            print(" %s |" % o.player_id, end="")
+                        else:
+                            print(" * |", end="")
                     else:
                         print(" 0 |", end="")
                 else:

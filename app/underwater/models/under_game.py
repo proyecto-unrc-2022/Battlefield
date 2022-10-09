@@ -136,3 +136,17 @@ class UnderGame(db.Model):
             self.board.clear(old_cells[-1])
             self.board.place(obj, next_cell)
             obj.set_position(x_position=x, y_position=y)
+
+    def attack(self, sub):
+        next_cell = sub.get_next_position()
+        x, y = next_cell
+
+        if not self.board.valid(next_cell):
+            return  # Que hacemos en este caso??
+
+        new_torpedo = sub.create_torpedo()
+
+        if not self.board.is_empty(next_cell):
+            self.run_conflict(new_torpedo, self.board.get_cell_content(next_cell))
+        else:
+            self.board.place(new_torpedo, next_cell)
