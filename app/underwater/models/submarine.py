@@ -1,6 +1,7 @@
 from sqlalchemy.orm import relationship
 
 from app import db
+from app.underwater.torpedo_launcher import t_launcher
 
 from .submerged_object import SubmergedObject
 
@@ -16,3 +17,6 @@ class Submarine(SubmergedObject):
     torpedo_damage = db.Column(db.Float, nullable=False)
 
     __mapper_args__ = {"polymorphic_identity": "submarine"}
+
+    def create_torpedo(self):
+        return t_launcher.create_torpedo(self)
