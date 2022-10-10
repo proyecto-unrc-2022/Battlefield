@@ -1,5 +1,6 @@
 # File for constants used in the navy app
 PATH_TO_START = "app/navy/start.json"
+PATH_TO_SHIP_TYPES = "app/navy/ship_types.json"
 ROWS = 10
 COLS = 20
 DIRECTIONS = ["N", "S", "E", "W", "SE", "SW", "NE", "NW"]
