@@ -5,7 +5,7 @@ class NavyGameService:
 
   def add(request):
     navy_game_request_validator = NavyGameRequestValidator()
-    navy_game = navy_game_request_validator.dump(request)
+    navy_game = navy_game_request_validator.load(request)
     navy_game_dao.add_or_update(navy_game)
     return navy_game
 
