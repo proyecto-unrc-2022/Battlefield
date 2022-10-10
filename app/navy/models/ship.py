@@ -13,11 +13,11 @@ class Ship(db.Model):
     size = db.Column(db.Integer, nullable=False)
     speed = db.Column(db.Integer, nullable=False)
     visibility = db.Column(db.Integer, nullable=False)
-    missile_type_id = db.Column(db.Integer)
+    missile_type_id = db.Column(db.Integer, nullable=False)
 
-    pos_x = db.Column(db.Integer)
-    pos_y = db.Column(db.Integer)
-    course = db.Column(db.String(2))
+    pos_x = db.Column(db.Integer, nullable=False)
+    pos_y = db.Column(db.Integer, nullable=False)
+    course = db.Column(db.String(2), nullable=False)
 
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     navy_game_id = db.Column(db.Integer, db.ForeignKey("navy_games.id"))
@@ -34,11 +34,11 @@ class Ship(db.Model):
         speed,
         visibility,
         missile_type_id,
+        pos_x,
+        pos_y,
+        course,
         user_id,
         navy_game_id,
-        pos_x=None,
-        pos_y=None,
-        course=None,
     ):
         self.name = name
         self.hp = hp
