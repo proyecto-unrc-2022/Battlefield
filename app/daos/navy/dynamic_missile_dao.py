@@ -68,7 +68,7 @@ def missil_move(missile, vel, danger, dir):
     return missile
 
 
-def update_missile(missile, data):
+def update_missile(missile :DynamicMissile, data):
     print(missile)
     dir = missile.direction
     vel = data["speed"]  # refactor
