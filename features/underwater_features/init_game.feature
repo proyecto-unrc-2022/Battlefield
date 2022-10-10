@@ -1,10 +1,11 @@
 Feature: Initialize a game
 
-    Background: Two players are logged in
+    Background: Some players are logged in
     Given there exist some users and they are logged in:
         |username   |password   |email              |
         |player1    |player1    |player1@example.com|
         |player2    |player2    |player2@example.com|
+        |player3    |player3    |player3@example.com|
 
     
     Scenario: Create a new game
@@ -24,3 +25,13 @@ Feature: Initialize a game
         And a game with 'player1' is returned
         And a game with 'player2' is returned
 
+    Scenario: Join a game of my own
+        Given the user 'player1' is in a game of id '1'
+        When the user 'player1' asks to join the game of id '1'
+        Then the system informs failure with code '409'
+
+    Scenario: Join a game without slots
+        Given the user 'player1' is in a game of id '1'
+        When the user 'player2' asks to join the game of id '1'
+        And the user 'player3' asks to join the game of id '1'
+        Then the system informs failure with code '409'
