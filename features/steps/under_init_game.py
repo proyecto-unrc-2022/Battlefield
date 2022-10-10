@@ -53,12 +53,33 @@ def step_impl(context):
 # PLAYER OF A GAME TRIES TO CREATE ANOTHER
 
 
-@given("the user '{username}' is in a game")
-def step_impl(context, username):
+@given("the user '{username}' is in a game of id '{id:d}'")
+def step_impl(context, username, id):
     player = context.players[username]
     context.game = game_dao.create(player.id)
+    context.game.id = id
 
 
-@then("the system informs failure")
+@then("the system informs failure with code '{code:d}'")
+def step_impl(context, code):
+    print (context.page.status_code)
+    assert context.page.status_code == code
+
+
+@when(u'the user \'{username}\' asks to join the game of id \'{id:d}\'')
+def step_impl(context, username, id):
+    player = context.players[username]
+    context.page = context.client.get(url_for("underwater.join_game", game_id=id, visitor_id=player.id))
+    assert context.page
+
+
+@then(u'the system informs success')
 def step_impl(context):
-    assert context.page.status_code == 409
+    assert context.page.status_code == 200
+
+
+@then(u'a game with \'{username}\' is returned')
+def step_impl(context, username):
+    data = json.loads(context.page.text)
+    player = context.players[username]
+    assert data["host_id"] == player.id or data["visitor_id"] == player.id

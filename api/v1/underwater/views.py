@@ -27,7 +27,10 @@ def new_game():
     if request.args.get("width"):
         width = request.args.get("width")
 
-    new_game = game_dao.create(request.args.get("host_id"), height=height, width=width)
+    try: 
+        new_game = game_dao.create(request.args.get("host_id"), height=height, width=width)
+    except Exception as e:
+        return Response("{'error':%s}" % str(e), status=409)
     return game_dto.dump(new_game)
 
 
@@ -38,24 +41,21 @@ def get_options():
 
 @underwater.get("/join_game")
 def join_game():
-    try:
-        game_dao = UnderGameDAO.get(request.args.get("game_id"))
-    except Exception as e:
-        return Response("{'error':%s" % str(e), status="404")
-
     visitor_id = int(request.args.get("visitor_id"))
+    game = game_dao.get_by_id(request.args.get("game_id"))
 
-    if game_dao.get_visitor():
+    if game.visitor_id is not None:
         return Response(
-            "{'error':'game does not have an available slot'}", status="409"
+            "{'error':'game does not have an available slot'}", status=409
         )
 
-    if visitor_id == game_dao.get_host().id:
-        return Response("{'error':'you can not join to your game'}", status="409")
+    if visitor_id == game.host_id:
+        return Response("{'error':'you cannot be a visitor to your own game'}", status=409)
 
-    game_dao.update(visitor_id=visitor_id)
+    game.visitor_id = visitor_id
+    game_dao.save(game)
 
-    return game_dao.jsonify()
+    return game_dto.dumps(game)
 
 
 @underwater.post("/choose_submarine")
