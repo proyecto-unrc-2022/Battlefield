@@ -40,6 +40,7 @@ def create_app(environment="development"):
     from app.navy.models.missile import Missile
     from app.navy.models.action import Action
     from app.models.user import User
+    
 
     app.register_blueprint(navy_blueprint, url_prefix="/api/v1/navy")
     app.register_blueprint(auth_blueprint, url_prefix="/auth")

@@ -1,0 +1,18 @@
+{
+    "1": {
+        "danger": 20,
+        "speed": 5
+    },
+    "2": {
+        "danger": 40,
+        "speed": 4
+    },
+    "3": {
+        "danger": 15,
+        "speed": 3
+    },
+    "4": {
+        "danger": 60,
+        "speed": 4
+    }
+}
