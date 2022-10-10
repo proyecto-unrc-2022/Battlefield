@@ -1,8 +1,5 @@
-
-
 import json
-from app.navy.navy_constants import PATH_TO_SHIP_TYPES, PATH_TO_START
-
+from app.navy.navy_constants import PATH_TO_SHIP_TYPES
 
 class ShipTypeDAO:
 
