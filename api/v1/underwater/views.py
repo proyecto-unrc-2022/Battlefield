@@ -36,7 +36,7 @@ def new_game():
 
 @underwater.get("/get_options")
 def get_options():
-    return UnderGameDAO.get_options()
+    return UnderGame.get_options()
 
 
 @underwater.get("/join_game")
@@ -60,23 +60,25 @@ def join_game():
 
 @underwater.post("/choose_submarine")
 def choose_submarine():
-    game_id = int(request.form["game_id"])
-    player_id = int(request.form["player_id"])
-    submarine_id = request.form["submarine_id"]
+    game_id = request.form.get('game_id', type=int)
+    player_id = request.form.get('player_id', type=int)
+    submarine_id = request.form.get('submarine_id', type=int)
+    x_position = request.form.get('x_position', type=int)
+    y_position = request.form.get('y_position', type=int)
+    direction = request.form.get('direction', type=int)
+    game = game_dao.get_by_id(game_id)
 
     submarines = json.load(open("app/underwater/options.json"))
 
-    try:
-        game_dao = UnderGameDAO.get(game_id)
-    except Exception:
+    if not game:
         return Response("{'error':'game not found'}", status="404")
 
     try:
-        game_dao.add_submarine(player_id, submarine_id)
+        game.add_submarine(player_id, submarine_id, x_position, y_position, direction)
     except Exception as e:
         return Response("{'error':'%s'}" % str(e), status="409")
 
-    return game_dao.jsonify()
+    return game_dto.dump(game)
 
 
 # Takes submarine_id, x_coord, y_coord, direction

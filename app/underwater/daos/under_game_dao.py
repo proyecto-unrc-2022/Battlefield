@@ -31,10 +31,7 @@ class UnderGameDAO:
         return game
 
     def get_by_id(self, game_id):
-        game = db.session.get(UnderGame, game_id)
-        if not game:
-            raise ValueError("no game found with id %s" % game_id)
-        return game
+        return db.session.get(UnderGame, game_id)
 
     def save(self, game):
         db.session.add(game)
