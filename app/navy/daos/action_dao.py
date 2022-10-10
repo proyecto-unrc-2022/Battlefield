@@ -15,7 +15,7 @@ class ActionDAO:
         db.session.delete(action)
         db.session.commit()
 
-    def get_by_user(user_id, navy_game_id):
+    def get_by_user(self,user_id, navy_game_id):
         return db.session.execute(db.select(Action).filter_by(user_id=user_id,navy_game_id=navy_game_id)).one()
             
 

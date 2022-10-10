@@ -4,12 +4,12 @@ from api import token_auth
 from app import db
 from app.daos.navy.dynamic_ship_dao import add_ship
 from app.daos.navy.game_dao import add_game, get_game, read_data
-from app.models.action_game_request import ActionGameRequest
 from app.models.navy.dynamic_game import Game, GameSchema
 from app.models.navy.dynamic_ship import DynamicShip
 from app.navy.navy_constants import PATH_TO_START
 from app.models.navy.start_game_request import StartGameRequest
 from marshmallow import ValidationError
+from app.navy.services.action_service import ActionService
 
 from . import navy
 
@@ -42,7 +42,8 @@ def start_game():
 @token_auth.login_required
 def action():
     try:
-        data = ActionGameRequest().load(request.json)
-        return jsonify(data)
+        data =  ActionService.validate_action(request.json)
+        ActionService.update_action(data)
+        return jsonify(data), 201
     except ValidationError as err:
         return jsonify(err.messages), 400
