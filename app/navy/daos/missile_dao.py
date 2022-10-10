@@ -16,8 +16,8 @@ class MissileDAO:
         return db.session.execute(db.select(self.model).filter_by(id=id)).scalar_one()
 
     def get_missiles_by(self,id_missile=None, id_ship=None, id_navy_game=None):
-        db.session.execute(db.select(self.model).filter_by(id=id_missile, ship_id=id_ship, navy_game_id=id_navy_game)).scalar_one()
-        
+        return db.session.execute(db.select(self.model).filter_by(id=id_missile, ship_id=id_ship, navy_game_id=id_navy_game)).scalar_one()
+
     def delete_missile(self,missile):
         db.session.delete(missile)
         db.session.commit()
