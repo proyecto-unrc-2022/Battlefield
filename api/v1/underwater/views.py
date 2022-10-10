@@ -7,7 +7,8 @@ from api import token_auth
 from app import db
 from app.models.user import User
 from app.underwater.daos.submarine_dao import SubmarineDAO
-from app.underwater.daos.under_game_dao import UnderGameDAO
+from app.underwater.daos.under_game_dao import game_dao
+from app.underwater.under_dtos import game_dto
 from app.underwater.models.under_game import UnderGame
 
 from . import underwater
@@ -26,8 +27,8 @@ def new_game():
     if request.args.get("width"):
         width = request.args.get("width")
 
-    ng_dao = UnderGameDAO.create(request.args.get("host_id"), height, width)
-    return ng_dao.jsonify()
+    new_game = game_dao.create(request.args.get("host_id"), height=height, width=width)
+    return game_dto.dump(new_game)
 
 
 @underwater.get("/get_options")

@@ -26,14 +26,14 @@ def step_impl(context):
 @when("the user '{username}' asks for a new game")
 def step_impl(context, username):
     player = context.players[username]
-    context.page = context.client.get(url_for("undergame.new_game", host_id=player.id))
+    context.page = context.client.get(url_for("underwater.new_game", host_id=player.id))
 
     assert context.page
 
 
 @then("a new game with host '{username}' is registered")
 def step_impl(context, username):
-    data = json.dumps(context.page.text)
+    data = json.loads(context.page.text)
     player = context.players[username]
 
     assert data["host_id"] == player.id
@@ -46,7 +46,7 @@ def step_impl(context):
     #     for j in range(board.width):
     #         assert(board.is_empty((i,j)))
 
-    data = json.dumps(context.page.text)
+    data = json.loads(context.page.text)
     assert data["submerged_objects"] == []
 
 
