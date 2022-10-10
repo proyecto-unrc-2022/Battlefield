@@ -25,5 +25,5 @@ class Missile(db.model):
     
     navy_game = db.relationship("NavyGame", back_populates="missiles")
     ship = db.relationship("Ship", back_populates="missiles")
-
+    
 
