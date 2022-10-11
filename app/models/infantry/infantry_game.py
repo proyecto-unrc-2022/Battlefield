@@ -58,7 +58,8 @@ class Projectile(db.Model):
     pos_y = db.Column(db.Integer, nullable=False)
     velocidad = db.Column(db.Integer, nullable=False)
     daño = db.Column(db.Integer, nullable=False)
-    direccion = db.Column(db.Integer, nullable=False)
+    direction = db.Column(db.Integer, nullable=False)
+    
     
     #Foreign key
     game = relationship("Game_Infantry", foreign_keys=[id_game])
@@ -70,6 +71,8 @@ class Projectile(db.Model):
         self.velocidad = velocidad
         self.daño = daño
         self.direccion = direccion
+        
+
 
 class Game_Infantry_Schema(SQLAlchemySchema):
     class Meta:
