@@ -123,30 +123,31 @@ def shoot(direction,figure_id,game_id):
 
 #Este metodo verifica si la firura es valida.
 #Falta cambiar las posiciones de los tres projectiles
+#TODO: Cambiar pos_x y pos_y
 def figure_valid(figure,direction,game_id):
     if(figure == "1"):
-        projectile1 = Projectile(id_game= game_id, pos_x=figure.pos_x + 1, pos_y=figure.pos_y + 1, velocidad=0, daño=5, direccion= direction, type= 1)
+        projectile1 = Projectile(id_game= game_id, pos_x=None, pos_y=None, velocidad=0, daño=5, direccion= direction, type= 1)
         db.session.add(projectile1)
         db.session.commit()
-        projectile2 = Projectile(id_game= game_id, pos_x=figure.pos_x + 1, pos_y=figure.pos_y + 1, velocidad=0, daño=5, direccion= direction, type= 1)
+        projectile2 = Projectile(id_game= game_id, pos_x=None, pos_y=None, velocidad=0, daño=5, direccion= direction, type= 1)
         db.session.add(projectile2)
         db.session.commit()
-        projectile3 = Projectile(id_game= game_id, pos_x=figure.pos_x + 1, pos_y=figure.pos_y + 1, velocidad=0, daño=5, direccion= direction, type= 1)
+        projectile3 = Projectile(id_game= game_id, pos_x=None, pos_y=None, velocidad=0, daño=5, direccion= direction, type= 1)
         db.session.add(projectile3)
         db.session.commit()
         return True
     elif(figure == "2"):
-        projectile = Projectile(id_game= game_id, pos_x=figure.pos_x + 1, pos_y=figure.pos_y + 1, velocidad=5, daño=5, direccion= direction, type= 2)
+        projectile = Projectile(id_game= game_id, pos_x=None, pos_y=None, velocidad=5, daño=5, direccion= direction, type= 2)
         db.session.add(projectile)
         db.session.commit()
         return True
     elif(figure == "3"):
-        projectile = Projectile(id_game= game_id, pos_x=figure.pos_x + 1, pos_y=figure.pos_y + 1, velocidad=3, daño=15, direccion= direction, type= 3)
+        projectile = Projectile(id_game= game_id, pos_x=None, pos_y=None, velocidad=3, daño=15, direccion= direction, type= 3)
         db.session.add(projectile)
         db.session.commit()
         return True
     elif(figure == "4"):
-        projectile = Projectile(id_game= game_id, pos_x=figure.pos_x + 1, pos_y=figure.pos_y + 1, velocidad=20, daño=30, direccion= direction, type= 4)
+        projectile = Projectile(id_game= game_id, pos_x=None, pos_y=None, velocidad=20, daño=30, direccion= direction, type= 4)
         db.session.add(projectile)
         db.session.commit()
         return True
