@@ -1,6 +1,14 @@
 # File for constants used in the navy app
-PATH_TO_START = "app/navy/start.json"
-PATH_TO_SHIP_TYPES = "app/navy/ship_types.json"
+
+# -- CONSTANTS FOR GAME --#
+
+PATH_TO_START = ""
+
+
+MSJE_SUCCESSFULL = "Successfull"
+MSJE_ERROR = "Error"
+
+
 ROWS = 10
 COLS = 20
 DIRECTIONS = ["N", "S", "E", "W", "SE", "SW", "NE", "NW"]

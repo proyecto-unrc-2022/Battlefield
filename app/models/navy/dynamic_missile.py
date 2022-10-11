@@ -1,9 +1,9 @@
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, SQLAlchemySchema, auto_field
 from marshmallow_sqlalchemy.fields import Nested, fields
-from app.models.navy.dynamic_game import Game
 from sqlalchemy.orm import relationship
 
 from app import db
+from app.models.navy.dynamic_game import Game
 from app.models.user import User
 
 

@@ -8,7 +8,7 @@ from app.navy.navy_utils import get_missile_selected
 
 data = None
 
-      
+
 def get_data():
     return data
 

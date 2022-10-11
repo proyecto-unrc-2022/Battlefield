@@ -1,5 +1,7 @@
-from app import db
 from sqlalchemy.orm import relationship
+
+from app import db
+
 
 class Missile(db.Model):
     __tablename__ = "missiles"
@@ -11,10 +13,14 @@ class Missile(db.Model):
     pos_x = db.Column(db.Integer)
     pos_y = db.Column(db.Integer)
     ship_id = db.Column(db.Integer, db.ForeignKey("ships.id"))
-    navy_game_id = db.Column(db.Integer, db.ForeignKey("navy_games.id"))
+    navy_game_id = db.Column(
+        db.Integer, db.ForeignKey("navy_games.id", ondelete="CASCADE")
+    )
     order = db.Column(db.Integer)
 
-    def __init__(self, speed, damage, course, pos_x, pos_y, ship_id, navy_game_id, order):
+    def __init__(
+        self, speed, damage, course, pos_x, pos_y, ship_id, navy_game_id, order
+    ):
         self.speed = speed
         self.damage = damage
         self.course = course
@@ -24,7 +30,7 @@ class Missile(db.Model):
         self.navy_game_id = navy_game_id
         self.order = order
 
+    from app.navy.models.navy_game import NavyGame
+
     navy_game = relationship("NavyGame", back_populates="missiles")
     ship = relationship("Ship", back_populates="missiles")
-    
-

@@ -174,7 +174,9 @@ def step_impl(context, username, sub_name):
     "the user '{username}' chooses the position '{x:d}','{y:d}' and direction '{d:d}'"
 )
 def step_impl(context, username, x, y, d):
-    player = context.player1 if (context.player1.username == username) else context.player2
+    player = (
+        context.player1 if (context.player1.username == username) else context.player2
+    )
     submarines = context.game.submarines
     # submarine = submarines[0] if submarines[0].player_id == player.id else submarines[1]
     submarine = player.submarine[0]

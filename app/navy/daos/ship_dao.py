@@ -1,3 +1,5 @@
+from operator import or_
+
 from app import db
 from app.navy.models.ship import Ship
 
@@ -15,18 +17,18 @@ class ShipDAO:
         db.session.commit()
 
     def get_by_id(self, ship_id):
-        return Ship.query.filter_by(id=ship_id).first()
+        return db.session.query(self.model).filter_by(id=ship_id).first()
 
-    def get_by_user(self, user_id):
-        return Ship.query.filter_by(user_id == self.model.user_id)
-
-    def get_by_game(self, navy_game_id):
-        Ship.query.filter_by(navy_game_id == self.model.navy_game_id).all()
-
-    def get_by(self, ship_id, user_id, navy_game_id):
-        if ship_id:
-            return Ship.query.filter_by(id=ship_id).first()
-        return self.get_by_user(user_id) or self.get_by_game(navy_game_id)
+    def get_by(self, user_id=None, navy_game_id=None, ship_id=None):
+        return (
+            db.session.query(self.model)
+            .filter(
+                user_id == self.model.user_id if user_id else True,
+                navy_game_id == self.model.navy_game_id if navy_game_id else True,
+                ship_id == self.model.id if ship_id else True,
+            )
+            .all()
+        )
 
 
 ship_dao = ShipDAO(Ship)

@@ -2,9 +2,9 @@ import json
 
 import app.daos.underwater.submarine_dao as sub_dao
 from app import db
+from app.daos.underwater.submarine_dao import is_placed, update_position
 from app.models.underwater.under_dtos import UnderGame
 from app.models.underwater.under_models import UnderBoard, boards
-from app.daos.underwater.submarine_dao import is_placed, update_position
 from app.models.user import User
 
 

@@ -45,9 +45,12 @@ def is_placed(submarine):
 
 
 def update_position(submarine, x_coord=None, y_coord=None, direction=None):
-    if x_coord: submarine.x_position = x_coord
-    if y_coord: submarine.y_position = y_coord
-    if direction: submarine.direction = direction
+    if x_coord:
+        submarine.x_position = x_coord
+    if y_coord:
+        submarine.y_position = y_coord
+    if direction:
+        submarine.direction = direction
     db.session.commit()
 
 
