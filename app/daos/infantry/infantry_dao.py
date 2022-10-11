@@ -217,7 +217,7 @@ def damage_user(projectile_id, figure):
         db.session.add(projectile)
         db.session.commit()
 
-#Este metodo te retorna la direcicion
+#Este metodo te retorna la direccion
 def return_direction(projectile):
     if(projectile.direction == EAST):
         projectile.pos_x = projectile.pos_x + 1 
@@ -243,11 +243,6 @@ def return_direction(projectile):
         return None
     return projectile
 
-
-
-
-
-    
 
 
 
