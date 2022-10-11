@@ -8,3 +8,6 @@ class ActionService:
 
     def add(action):
         action_dao.add_or_update(Action(**action))
+
+
+action_service = ActionService()
