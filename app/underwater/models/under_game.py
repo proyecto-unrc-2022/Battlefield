@@ -59,6 +59,12 @@ class UnderGame(db.Model):
 
         return choosen
 
+    def get_height(self):
+        return self.height
+
+    def get_width(self):
+        return self.width
+
     def has_user(self, player_id):
         return self.host_id == player_id or self.visitor_id == player_id
 
@@ -123,6 +129,7 @@ class UnderGame(db.Model):
         if not self.state == GameState.FINISHED:
             self.board.clear_all(obj.get_positions())
             obj.set_position(direction=direction)
+            sub_dao.save(obj)
             self.board.place_object(obj)
 
     def advance_object_one(self, obj):
