@@ -18,14 +18,14 @@ class UnderBoard:
         x, y = pos
         if not self.valid(pos):
             raise Exception("Invalid coordinates (%s,%s)" % (x, y))
-
-        if self.matrix[x][y]:
-            raise Exception("Position (%s,%s) is not available" % (x, y))
+        # if self.matrix[x][y]:
+        #     raise Exception("Position (%s,%s) is not available" % (x, y))
 
         self.matrix[x][y] = obj
 
     def place_object(self, obj):
-        for pos in obj.get_positions():
+        self.place(obj, obj.get_head_position())
+        for pos in obj.get_tail_positions():
             if self.valid(pos):
                 self.place(obj, pos)
 

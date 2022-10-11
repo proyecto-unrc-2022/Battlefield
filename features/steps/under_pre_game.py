@@ -1,9 +1,9 @@
 import json
+
+from behave import given, then, when
 from flask import url_for
+
 from app.underwater.daos.under_game_dao import game_dao
-
-
-# BACKGROUND
 
 
 @given("there is a game of id '{id:d}' with '{username1}' and '{username2}'")
@@ -23,22 +23,26 @@ def step_impl(context):
         context.options.update({row["name"]: row["id"]})
 
 
-@when(u'the player asks for the submarine options')
+@when("the player asks for the submarine options")
 def step_impl(context):
     context.page = context.client.get(url_for("underwater.get_options"))
     assert context.page.status_code == 200
 
 
-@when(u'the player \'{username}\' chooses \'{sub_type}\' as his submarine with position \'{x:d}\',\'{y:d}\' and direction \'{d:d}\'')
+@when(
+    "the player '{username}' chooses '{sub_type}' as his submarine with position '{x:d}','{y:d}' and direction '{d:d}'"
+)
 def step_impl(context, username, sub_type, x, y, d):
     player = context.players[username]
     choosen_id = context.options[sub_type]
     payload = {
-            "game_id": context.game.id,
-            "player_id": player.id,
-            "submarine_id": choosen_id,
-            "x_position": x,
-            "y_position": y,
-            "direction": d
-            }
-    context.page = context.client.post(url_for("underwater.choose_submarine"), data=payload)
+        "game_id": context.game.id,
+        "player_id": player.id,
+        "submarine_id": choosen_id,
+        "x_position": x,
+        "y_position": y,
+        "direction": d,
+    }
+    context.page = context.client.post(
+        url_for("underwater.choose_submarine"), data=payload
+    )

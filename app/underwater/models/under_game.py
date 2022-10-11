@@ -26,7 +26,9 @@ class UnderGame(db.Model):
     state = db.Column(db.Integer)
 
     host = relationship("User", backref="under_game_host", foreign_keys=[host_id])
-    visitor = relationship( "User", backref="under_game_visitor", foreign_keys=[visitor_id])
+    visitor = relationship(
+        "User", backref="under_game_visitor", foreign_keys=[visitor_id]
+    )
 
     submerged_objects = relationship("SubmergedObject", back_populates="game")
 
@@ -141,7 +143,6 @@ class UnderGame(db.Model):
 
     def attack(self, sub):
         next_cell = sub.get_next_position()
-        x, y = next_cell
 
         if not self.board.valid(next_cell):
             return  # Que hacemos en este caso??

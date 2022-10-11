@@ -41,11 +41,6 @@ def step_impl(context, username):
 
 @then("a game with an empty board is returned")
 def step_impl(context):
-    # board = context.game.board
-    # for i in range(board.height):
-    #     for j in range(board.width):
-    #         assert(board.is_empty((i,j)))
-
     data = json.loads(context.page.text)
     assert data["submerged_objects"] == []
 
@@ -60,25 +55,30 @@ def step_impl(context, username, id):
     context.game.id = id
 
 
-@then("the system informs failure with code '{code:d}'")
-def step_impl(context, code):
-    print (context.page.status_code)
-    assert context.page.status_code == code
-
-
-@when(u'the user \'{username}\' asks to join the game of id \'{id:d}\'')
+@when("the user '{username}' asks to join the game of id '{id:d}'")
 def step_impl(context, username, id):
     player = context.players[username]
-    context.page = context.client.get(url_for("underwater.join_game", game_id=id, visitor_id=player.id))
+    context.page = context.client.get(
+        url_for("underwater.join_game", game_id=id, visitor_id=player.id)
+    )
     assert context.page
 
 
-@then(u'the system informs success')
+@then("the system informs failure with code '{code:d}'")
+def step_impl(context, code):
+    print(context.page.status_code)
+    assert context.page.status_code == code
+
+
+# JOIN A GAME
+
+
+@then("the system informs success")
 def step_impl(context):
     assert context.page.status_code == 200
 
 
-@then(u'a game with \'{username}\' is returned')
+@then("a game with '{username}' is returned")
 def step_impl(context, username):
     data = json.loads(context.page.text)
     player = context.players[username]

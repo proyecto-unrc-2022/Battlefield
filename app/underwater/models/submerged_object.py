@@ -59,6 +59,9 @@ class SubmergedObject(db.Model):
             self.x_position, self.y_position, self.direction
         )
 
+    def get_head_position(self):
+        return (self.x_position, self.y_position)
+
     @staticmethod
     def move_pointer(x, y, direction):
         d = direction % 8
