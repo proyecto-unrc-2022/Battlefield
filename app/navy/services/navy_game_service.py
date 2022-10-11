@@ -1,6 +1,5 @@
 from app.navy.daos.navy_game_dao import navy_game_dao
 from app.navy.validators.navy_game_request_validator import NavyGameRequestValidator
-from app.navy.services.missile_service import missile_service
 from app.navy.models.navy_game import NavyGame
 
 
@@ -16,6 +15,7 @@ class NavyGameService:
         return navy_game
 
     def update_game(self,navy_game_id,actions):
+        from app.navy.services.missile_service import missile_service
         game  = navy_game_dao.get_by_id(navy_game_id)
         missiles = missile_service.get(navy_game_id)
         self.state_game[navy_game_id] = {
