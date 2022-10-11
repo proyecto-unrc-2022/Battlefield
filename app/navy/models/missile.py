@@ -1,5 +1,6 @@
 from app import db
 from sqlalchemy.orm import relationship
+from app.navy.models.navy_game import NavyGame
 
 class Missile(db.Model):
     __tablename__ = "missiles"

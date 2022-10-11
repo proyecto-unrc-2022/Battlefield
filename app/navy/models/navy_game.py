@@ -1,6 +1,5 @@
 from app import db 
 from sqlalchemy.orm import relationship
-from app.navy.models.ship import Ship
 
 class NavyGame(db.Model):
 
