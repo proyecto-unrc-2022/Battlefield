@@ -58,7 +58,7 @@ class Projectile(db.Model):
     pos_y = db.Column(db.Integer, nullable=False)
     velocidad = db.Column(db.Integer, nullable=False)
     daño = db.Column(db.Integer, nullable=False)
-    direction = db.Column(db.Integer, nullable=False)
+    direccion = db.Column(db.Integer, nullable=False)
     
     
     #Foreign key
