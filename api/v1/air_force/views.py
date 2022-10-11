@@ -53,7 +53,7 @@ def update_course():
         return Response(status=201)  # or jsonify(plane_schema.dump(p))"""
 
 
-@air_force.route("/<player>", methods=["PUT"])
+@air_force.route("/join/<player>", methods=["PUT"])
 def join_in_game(player):
     try:
         game = AirForceGame.join_game(new_player=player)
@@ -74,7 +74,9 @@ def choice_plane_and_position():
     plane = Plane.query.filter_by(id=flying_object).first()
 
     try:
-        obj = battlefield.add_new_plane(player, plane, int(x), int(y), int(course))
+        obj = AirForceGame.battlefield.add_new_plane(
+            player, plane, int(x), int(y), int(course)
+        )
     except:
         return Response(status=400)
     return jsonify(obj.to_dict())
@@ -90,7 +92,7 @@ def create_projectile():
     course = request.json["course"]
 
     proj = get_projectile(projectile_id=flying_object)
-    obj = battlefield.add_new_projectile(
+    obj = AirForceGame.battlefield.add_new_projectile(
         player,
         proj,
         int(x),
@@ -106,7 +108,7 @@ def update_location_projectile():
     projectile = request.json["projectile"]
     player = request.json["player"]
 
-    move = battlefield.move_projectile(projectile, player)
+    move = AirForceGame.battlefield.move_projectile(projectile, player)
 
     return jsonify(move.to_dict())
 
@@ -119,11 +121,17 @@ def attack():
 
 @air_force.route("/<player>/<course>", methods=["PUT"])
 def fligth(player, course):
+
     AirForceGame.battlefield.fligth(player, int(course))
     return Response(status=201)
-
-
-@air_force.route("/machine_gun", methods=["POST"])
+    try:
+        obj = AirForceGame.battlefield.fligth(player, int(course))
+    except:
+        return Response(status=400)
+    #    return Response(status=201)
+    return jsonify(obj.to_dict())
+    
+    @air_force.route("/machine_gun", methods=["POST"])
 def create_machine_gun():
     damage_1 = request.json["damage_1"]
     damage_2 = request.json["damage_2"]
@@ -131,3 +139,4 @@ def create_machine_gun():
     
     m = add_machine_gun(damage_1, damage_2, damage_3)
     return jsonify(plane_schema.dump(m))
+

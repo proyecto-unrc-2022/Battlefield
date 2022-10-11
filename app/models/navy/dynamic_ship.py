@@ -1,11 +1,9 @@
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, SQLAlchemySchema, auto_field
+from marshmallow_sqlalchemy import  SQLAlchemySchema, auto_field
 from marshmallow_sqlalchemy.fields import Nested, fields
 from sqlalchemy.orm import relationship
-
-from app import db
 from app.models.navy.dynamic_game import Game
+from app import db
 from app.models.user import User
-from app.navy import navy_constants
 
 
 class DynamicShip(db.Model):
@@ -14,7 +12,7 @@ class DynamicShip(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     id_game = db.Column(db.Integer, db.ForeignKey("game.id"))
-    id_user = db.Column(db.Integer, db.ForeignKey(User.id), unique=True)
+    id_user = db.Column(db.Integer, db.ForeignKey(User.id))
     hp = db.Column(db.Integer)
     direction = db.Column(db.String(2))
     pos_x = db.Column(db.Integer)
