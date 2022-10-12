@@ -11,7 +11,7 @@ from app.underwater.models.submerged_object import SubmergedObject
 from app.underwater.models.torpedo import Torpedo
 from app.underwater.under_board import UnderBoard
 
-from ..daos.submarine_dao import sub_dao
+from ..daos.submarine_dao import submarine_dao
 
 
 class UnderGame(db.Model):
@@ -78,8 +78,10 @@ class UnderGame(db.Model):
             if obj.player_id == player_id:
                 raise Exception("Player already has a submarine")
 
-        sub = sub_dao.create_submarine(self.id, player_id, sub_stats)
+        sub = submarine_dao.create_submarine(self.id, player_id, sub_stats)
         self.place(sub, x_coord, y_coord, direction)
+        if len(self.submerged_objects) == 2:
+            self.state = GameState.ONGOING
         return sub
 
     def place(self, obj, x_coord, y_coord, direction):
@@ -129,7 +131,7 @@ class UnderGame(db.Model):
         if not self.state == GameState.FINISHED:
             self.board.clear_all(obj.get_positions())
             obj.set_position(direction=direction)
-            sub_dao.save(obj)
+            submarine_dao.save(obj)
             self.board.place_object(obj)
 
     def advance_object_one(self, obj):

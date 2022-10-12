@@ -1,4 +1,4 @@
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import backref, relationship
 
 from app import db
 from app.underwater.torpedo_launcher import t_launcher
@@ -15,6 +15,8 @@ class Submarine(SubmergedObject):
     health = db.Column(db.Float, nullable=False)
     torpedo_speed = db.Column(db.Integer, nullable=False)
     torpedo_damage = db.Column(db.Float, nullable=False)
+
+    player = relationship("User", backref=backref("submarine", uselist=False))
 
     __mapper_args__ = {"polymorphic_identity": "submarine"}
 

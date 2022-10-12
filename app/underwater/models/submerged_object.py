@@ -1,4 +1,4 @@
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import backref, relationship
 
 from app import db
 from app.underwater.game_state import GameState
@@ -18,7 +18,6 @@ class SubmergedObject(db.Model):
     game = relationship("UnderGame", back_populates="submerged_objects")
 
     player_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    player = relationship("User", backref="submerged_object")
 
     __mapper_args__ = {
         "polymorphic_identity": "submerged_object",

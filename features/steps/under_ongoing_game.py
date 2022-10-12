@@ -1,6 +1,7 @@
 from behave import given, then, when
+from flask import url_for
 
-from app.underwater.daos.submarine_dao import sub_dao
+from app.underwater.daos.submarine_dao import submarine_dao
 from app.underwater.daos.under_game_dao import game_dao
 from app.underwater.models.submarine import Submarine
 from app.underwater.models.torpedo import Torpedo
@@ -27,11 +28,38 @@ def step_impl(context):
         d = int(row["direction"])
         sub = context.game.add_submarine(player.id, option_id, x, y, d)
         sub.set_health(int(row["health"]))
-        sub_dao.save(sub)
+        submarine_dao.save(sub)
 
 
 @given("the board is in the following state")
 def step_impl(context):
+    compare_board(context)
+
+
+@when(
+    "the user '{username}' rotates the submarine with direction '{d:d}' and moves '{n:d}' positions"
+)
+def step_impl(context, username, d, n):
+    player = context.players[username]
+    payload = {
+        "game_id": context.game.id,
+        "submarine_id": player.submarine.id,
+        "direction": d,
+        "steps": n,
+    }
+    context.page = context.client.post(
+        url_for("underwater.rotate_and_advance"), data=payload
+    )
+    assert context.page
+
+
+@then("the board is in the following state")
+def step_impl(context):
+    print(context.page.text)
+    compare_board(context)
+
+
+def compare_board(context):
     board = context.game.board.matrix
     for i in range(context.game.get_height()):
         for j in range(context.game.get_width()):
@@ -46,18 +74,3 @@ def step_impl(context):
                 assert type(board[i][j] is Submarine)
             elif context.table[i][j] == "*":
                 assert type(board[i][j]) is Torpedo
-
-
-@when("the user 'player1' rotates the submarine with direction '7'")
-def step_impl(context):
-    pass
-
-
-@then("the board is in the following state")
-def step_impl(context):
-    pass
-
-
-@then("the submarines are in the following state")
-def step_impl(context):
-    pass

@@ -46,4 +46,4 @@ class SubmarineDAO(SubmergedObjectDAO):
         return sub
 
 
-sub_dao = SubmarineDAO(Submarine)
+submarine_dao = SubmarineDAO(Submarine)

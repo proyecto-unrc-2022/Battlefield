@@ -1,4 +1,4 @@
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import backref, relationship
 
 from app import db
 
@@ -9,6 +9,8 @@ class Torpedo(SubmergedObject):
     __tablename__ = "torpedo"
     id = db.Column(db.Integer, db.ForeignKey("submerged_object.id"), primary_key=True)
     damage = db.Column(db.Integer, nullable=False)
+
+    player = relationship("User", backref=backref("torpedos"))
 
     # game = relationship("UnderGame", back_populates="torpedos")
 
