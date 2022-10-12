@@ -8,8 +8,8 @@ from app import db
 from app.models.user import User
 from app.underwater.daos.submarine_dao import SubmarineDAO
 from app.underwater.daos.under_game_dao import game_dao
-from app.underwater.under_dtos import game_dto
 from app.underwater.models.under_game import UnderGame
+from app.underwater.under_dtos import game_dto
 
 from . import underwater
 
@@ -27,8 +27,10 @@ def new_game():
     if request.args.get("width"):
         width = request.args.get("width")
 
-    try: 
-        new_game = game_dao.create(request.args.get("host_id"), height=height, width=width)
+    try:
+        new_game = game_dao.create(
+            request.args.get("host_id"), height=height, width=width
+        )
     except Exception as e:
         return Response("{'error':%s}" % str(e), status=409)
     return game_dto.dump(new_game)
@@ -45,12 +47,12 @@ def join_game():
     game = game_dao.get_by_id(request.args.get("game_id"))
 
     if game.visitor_id is not None:
-        return Response(
-            "{'error':'game does not have an available slot'}", status=409
-        )
+        return Response("{'error':'game does not have an available slot'}", status=409)
 
     if visitor_id == game.host_id:
-        return Response("{'error':'you cannot be a visitor to your own game'}", status=409)
+        return Response(
+            "{'error':'you cannot be a visitor to your own game'}", status=409
+        )
 
     game.visitor_id = visitor_id
     game_dao.save(game)
@@ -60,12 +62,12 @@ def join_game():
 
 @underwater.post("/choose_submarine")
 def choose_submarine():
-    game_id = request.form.get('game_id', type=int)
-    player_id = request.form.get('player_id', type=int)
-    submarine_id = request.form.get('submarine_id', type=int)
-    x_position = request.form.get('x_position', type=int)
-    y_position = request.form.get('y_position', type=int)
-    direction = request.form.get('direction', type=int)
+    game_id = request.form.get("game_id", type=int)
+    player_id = request.form.get("player_id", type=int)
+    submarine_id = request.form.get("submarine_id", type=int)
+    x_position = request.form.get("x_position", type=int)
+    y_position = request.form.get("y_position", type=int)
+    direction = request.form.get("direction", type=int)
     game = game_dao.get_by_id(game_id)
 
     submarines = json.load(open("app/underwater/options.json"))
