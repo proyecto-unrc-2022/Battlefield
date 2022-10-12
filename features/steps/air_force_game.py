@@ -3,6 +3,7 @@ import json
 
 from flask import url_for
 
+from api.v1.air_force import views
 from app import db
 from app.daos.airforce.plane_dao import add_plane
 from app.models.airforce.air_force_game import AirForceGame
@@ -10,9 +11,12 @@ from app.models.user import User
 
 url_for_plane_position = "air_force.choice_plane_and_position"
 
+air_force_game = AirForceGame()
+
 
 @given("three logged user")
 def step_impl(context):
+    views.air_force_game = air_force_game
     user_a = User(username="Jhon", email="jhon@email", password="pass")
     db.session.add(user_a)
     user_b = User(username="Peter", email="Peter@email", password="pass")
@@ -65,7 +69,6 @@ def step_impl(context):
     )
     print(response)
     print(expected)
-
     assert response == expected
 
 
@@ -84,7 +87,8 @@ def step_impl(context):
 
 @given("player_a and plane in db")
 def step_impl(context):
-    context.player = AirForceGame.player_a
+    # views.air_force_game = air_force_game
+    context.player = views.air_force_game.player_a
     context.plane = add_plane(
         name="Hawker Tempest",
         size=1,
@@ -216,7 +220,7 @@ def step_impl(context):
 
 @given("player_b in the game and plane in db")
 def step_impl(context):
-    context.player = AirForceGame.player_b
+    context.player = views.air_force_game.player_b
     context.plane = add_plane(
         name="Hawker Tempest",
         size=1,
@@ -250,7 +254,7 @@ def step_impl(context):
 
 @given("a battlefield with player_a's plane")
 def step_impl(context):
-    context.player = AirForceGame.player_a
+    context.player = views.air_force_game.player_a
     context.plane = 1
 
 
@@ -336,13 +340,13 @@ def step_impl(context):
 
 @given("a battlefield with player_a's and player_b's plane")
 def step_impl(context):
-    context.player_a = AirForceGame.player_a
-    context.player_b = AirForceGame.player_b
+    context.player_a = views.air_force_game.player_a
+    context.player_b = views.air_force_game.player_b
 
-    context.player_a_plane = AirForceGame.battlefield.get_player_plane(
+    context.player_a_plane = views.air_force_game.battlefield.get_player_plane(
         context.player_a
     )[0]
-    context.player_b_plane = AirForceGame.battlefield.get_player_plane(
+    context.player_b_plane = views.air_force_game.battlefield.get_player_plane(
         context.player_b
     )[0]
 
@@ -370,12 +374,6 @@ def step_impl(context):
 
 @then("battlefield are returned")
 def step_impl(context):
-    print(
-        "player_b",
-        context.player_b_plane.flying_obj.health,
-        "player_a",
-        context.player_a_plane.flying_obj.health,
-    )
     assert (
         context.player_b_plane.flying_obj.health == 10
         and context.player_a_plane.flying_obj.health == 0
