@@ -42,6 +42,8 @@ def step_impl(context):
     response, expected = json.dumps(raw_expected, sort_keys=True), json.dumps(
         raw_response, sort_keys=True
     )
+    print(response)
+    print(expected)
     assert response == expected
 
 
@@ -155,8 +157,9 @@ def step_impl(context):
 @then("info of the new flying object are returned")
 def step_impl(context):
     raw_response = context.response.json
+    context.player
     raw_expected = {
-        "player": context.player,
+        "player": int(context.player),
         "flying_obj": context.plane.id,
         "x": context.x,
         "y": context.y,
@@ -302,7 +305,7 @@ def step_impl(context):
     # print(json.dumps(context.response.json))
     raw_response = context.response.json
     raw_expected = {
-        "player": context.player,
+        "player": int(context.player),
         "flying_obj": context.plane,
         "x": context.expected_x,
         "y": context.expected_y,
@@ -340,10 +343,10 @@ def step_impl(context):
     context.player_b = AirForceGame.player_b
 
     context.player_a_plane = AirForceGame.battlefield.get_player_plane(
-        context.player_a
+        int(context.player_a)
     )[0]
     context.player_b_plane = AirForceGame.battlefield.get_player_plane(
-        context.player_b
+        int(context.player_b)
     )[0]
 
     context.player_b_plane.x = 10

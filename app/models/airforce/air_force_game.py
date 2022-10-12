@@ -4,8 +4,8 @@ from calendar import c
 class flying_object:
     player = None
     flying_obj = None
-    x = -1
-    y = -1
+    x: int = -1
+    y: int = -1
     course = -1  # course 1 north, 2 east, 3 south, 4 west
 
     def __init__(self, player, flying_obj, x, y, course):
@@ -18,6 +18,18 @@ class flying_object:
     def check_course(self, course):
         #        raise Exception(self.course)
         return abs(self.course - course) == 2
+
+    def update_position(self, course):
+        if self.check_course(course):
+            raise ValueError("New course cant be 180 degrees deference")
+        if course == 1:
+            self.y = self.y + self.flying_obj.speed
+        elif course == 2:
+            self.x = self.x + self.flying_obj.speed
+        elif course == 3:
+            self.y = self.y - self.flying_obj.speed
+        elif course == 4:
+            self.x = self.x - self.flying_obj.speed
 
     def to_dict(self):
         return {
@@ -94,32 +106,37 @@ class battlefield:
     def add_new_projectile(self, player, obj, x, y, course):
         fly_obj = flying_object(player, obj, x, y, course)
         if course == 1:
-            fly_obj.x + 1
+            fly_obj.y = fly_obj.y + 1
         elif course == 2:
-            fly_obj.y + 1
+            fly_obj.x = fly_obj.x + 1
         elif course == 3:
-            fly_obj.x - 1
+            fly_obj.y = fly_obj.y - 1
         elif course == 4:
-            fly_obj.y - 1
+            fly_obj.x = fly_obj.x - 1
         self.flying_objects.append(fly_obj)
         return fly_obj
 
-    def update_position(self, course, fly_obj):
-        if fly_obj.check_course(course):
-            raise ValueError("New course cant be 180 degrees deference")
-        fly_obj.course = course
-        if course == 1:
-            new_y = fly_obj.y + fly_obj.flying_obj.speed
-            fly_obj.y = new_y if new_y <= self.max_y else self.max_y
-        elif course == 2:
-            new_x = fly_obj.x + fly_obj.flying_obj.speed
-            fly_obj.x = new_x if new_x <= self.max_x else self.max_x
-        elif course == 3:
-            new_y = fly_obj.y - fly_obj.flying_obj.speed
-            fly_obj.y = new_y if new_y >= 0 else 0
-        elif course == 4:
-            new_x = fly_obj.x - fly_obj.flying_obj.speed
-            fly_obj.x = new_x if new_x >= 0 else 0
+    def move_projectile(self, player, course):
+        list_of_dict = []
+        obj = list(
+            filter(
+                lambda x: x.player == player
+                and x.flying_obj.__class__.__name__ == "Projectile",
+                self.flying_objects,
+            )
+        )
+        for x in range(len(obj)):
+            obj[x].update_position(course)
+
+        for y in range(len(obj)):
+            list_of_dict.append(obj[y].to_dict())
+            if list_of_dict[y].get("x") >= 20 or list_of_dict[y].get("x") <= 0:
+                list_of_dict[y].clear()
+            elif list_of_dict[y].get("y") >= 10 or list_of_dict[y].get("y") <= 0:
+                list_of_dict[y].clear()
+        return list_of_dict
+
+        # obj.update_projectile(course)
 
     def update_plane_position(self, course, fly_obj):
         if fly_obj.check_course(course):
