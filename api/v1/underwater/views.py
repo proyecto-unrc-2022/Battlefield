@@ -94,3 +94,17 @@ def rotate_and_advance():
     submarine.advance(data["steps"])
 
     return game_dto.dump(game)
+
+
+@underwater.post("/rotate_and_attack")
+def rotate_and_attack():
+    data = request.form.to_dict()
+    for key in data:
+        data[key] = int(data[key])
+
+    game = game_dao.get_by_id(data["game_id"])
+    submarine = submarine_dao.get_by_id(data["submarine_id"])
+    game.rotate_object(submarine, data["direction"])
+    game.attack(submarine)
+
+    return game_dto.dump(game)
