@@ -4,8 +4,8 @@ from calendar import c
 class flying_object:
     player = None
     flying_obj = None
-    x = -1
-    y = -1
+    x: int = -1
+    y: int = -1
     course = -1  # course 1 north, 2 east, 3 south, 4 west
 
     def __init__(self, player, flying_obj, x, y, course):
@@ -96,9 +96,7 @@ class battlefield:
                 and x.flying_obj.__class__.__name__ == "Plane",
                 self.flying_objects,
             )
-        )[0]
-        print(obj.flying_obj)
-        obj.update_position(course)
+        )
 
     def fligth(self, player, course):
         obj = self.get_player_plane(player)[0]
@@ -108,24 +106,23 @@ class battlefield:
     def add_new_projectile(self, player, obj, x, y, course):
         fly_obj = flying_object(player, obj, x, y, course)
         if course == 1:
-            fly_obj.x = fly_obj.x + 1
-        elif course == 2:
             fly_obj.y = fly_obj.y + 1
+        elif course == 2:
+            fly_obj.x = fly_obj.x + 1
         elif course == 3:
-            fly_obj.x = fly_obj.x - 1
-        elif course == 4:
             fly_obj.y = fly_obj.y - 1
+        elif course == 4:
+            fly_obj.x = fly_obj.x - 1
         self.flying_objects.append(fly_obj)
         return fly_obj
 
-    @classmethod
-    def move_projectile(cls, player, course):
+    def move_projectile(self, player, course):
         list_of_dict = []
         obj = list(
             filter(
                 lambda x: x.player == player
                 and x.flying_obj.__class__.__name__ == "Projectile",
-                cls.flying_objects,
+                self.flying_objects,
             )
         )
         for x in range(len(obj)):
@@ -137,8 +134,6 @@ class battlefield:
                 list_of_dict[y].clear()
             elif list_of_dict[y].get("y") >= 10 or list_of_dict[y].get("y") <= 0:
                 list_of_dict[y].clear()
-
-        print(list_of_dict)
         return list_of_dict
 
         # obj.update_projectile(course)
