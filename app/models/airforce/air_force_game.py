@@ -125,16 +125,93 @@ class battlefield:
                 self.flying_objects,
             )
         )
-        for x in range(len(obj)):
-            obj[x].update_position(course)
+        print(len(self.flying_objects))
+        for n in range(len(obj)):
+            print(obj[n].to_dict())
+            if course == 2 or course == 4:
+                tupl = self.collision_x_projectile(obj[n], course)
+                if tupl != ():
+                    self.flying_objects.remove(tupl[0])
+                    self.flying_objects.remove(tupl[1])
+                else:
+                    obj[n].update_position(course)
+                    if obj[n].x >= 20 or obj[n].x <= 0:
+                        self.flying_objects.remove(obj[n])
+            if course == 1 or course == 3:
+                tupl = self.collision_y_projectile(obj[n], course)
+                if tupl != ():
+                    self.flying_objects.remove(tupl[0])
+                    self.flying_objects.remove(tupl[1])
+                else:
+                    obj[n].update_position(course)
+                    if obj[n].y >= 10 or obj[n].y <= 0:
+                        self.flying_objects.remove(obj[n])
 
-        for y in range(len(obj)):
-            list_of_dict.append(obj[y].to_dict())
-            if list_of_dict[y].get("x") >= 20 or list_of_dict[y].get("x") <= 0:
-                list_of_dict[y].clear()
-            elif list_of_dict[y].get("y") >= 10 or list_of_dict[y].get("y") <= 0:
-                list_of_dict[y].clear()
-        return list_of_dict
+        print(len(self.flying_objects))
+
+    def collision_x_projectile(self, fly_obj, course):
+        position = fly_obj.x
+        speed = fly_obj.flying_obj.speed if course == 2 else -fly_obj.flying_obj.speed
+        if course == 2:
+            projectile_coll = list(
+                filter(
+                    lambda p: p.y == fly_obj.y
+                    and p.x > position
+                    and p.x <= position + speed,
+                    self.flying_objects,
+                )
+            )
+            if projectile_coll != []:
+                min_distance = min(projectile_coll, key=lambda p: p.x)
+                return (fly_obj, min_distance)
+
+        else:
+            projectile_coll = list(
+                filter(
+                    lambda p: p.y == fly_obj.y
+                    and p.x < position
+                    and p.x >= position + speed,
+                    self.flying_objects,
+                )
+            )
+
+            if projectile_coll != []:
+                min_distance = min(projectile_coll, key=lambda p: p.x)
+                return (fly_obj, min_distance)
+
+        return ()
+
+    def collision_y_projectile(self, fly_obj, course):
+        position = fly_obj.y
+        speed = fly_obj.flying_obj.speed if course == 1 else -fly_obj.flying_obj.speed
+        if course == 1:
+            projectile_coll = list(
+                filter(
+                    lambda p: p.x == fly_obj.x
+                    and p.y > position
+                    and p.y <= position + speed,
+                    self.flying_objects,
+                )
+            )
+            if projectile_coll != []:
+                min_distance = min(projectile_coll, key=lambda p: p.y)
+                return (fly_obj, min_distance)
+
+        else:
+            projectile_coll = list(
+                filter(
+                    lambda p: p.x == fly_obj.x
+                    and p.y < position
+                    and p.y >= position + speed,
+                    self.flying_objects,
+                )
+            )
+
+            if projectile_coll != []:
+                min_distance = min(projectile_coll, key=lambda p: p.y)
+                return (fly_obj, min_distance)
+
+        return ()
 
         # obj.update_projectile(course)
 
