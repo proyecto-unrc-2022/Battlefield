@@ -25,5 +25,8 @@ class Submarine(SubmergedObject):
     def create_torpedo(self):
         return t_launcher.create_torpedo(self)
 
+    def get_health(self):
+        return self.health
+
     def set_health(self, health):
         self.health = health

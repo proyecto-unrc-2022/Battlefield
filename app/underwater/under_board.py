@@ -62,23 +62,25 @@ class UnderBoard:
         h = len(m)
         w = len(m[0])
 
-        print("-" * (w * 4 + 1))
+        str = ""
+        str += "-" * (w * 4 + 1) + "\n"
         for i in range(h):
-            print("|", end="")
+            str += "|"
             for j in range(w):
                 if self.matrix[i][j]:
                     o = self.matrix[i][j]
                     if (o.x_position, o.y_position) == (i, j):
                         if type(o) is Submarine:
-                            print(" %s |" % o.player_id, end="")
+                            str += " %s |" % o.player_id
                         else:
-                            print(" * |", end="")
+                            str += " * |"
                     else:
-                        print(" 0 |", end="")
+                        str += " 0 |"
                 else:
-                    print("   |", end="")
-            print("")
-        print("-" * (w * 4 + 1))
+                    str += "   |"
+            str += "\n"
+        str += ("-" * (w * 4 + 1)) + "\n"
+        return str
 
     def objects_in_positions(self, pos_list):
         ret_list = []

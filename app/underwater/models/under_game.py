@@ -136,61 +136,121 @@ class UnderGame(db.Model):
         new_cells = obj.get_tail_positions(direction=direction)
         found_objects = self.board.objects_in_positions(new_cells)
         if found_objects:
-            self.run_conflict(obj, found_objects[0])
+            self.solve_conflict(obj, found_objects[0])
 
         if not self.state == GameState.FINISHED:
             self.board.clear_all(obj.get_positions())
             obj.set_position(direction=direction)
             self.board.place_object(obj)
 
+    # def advance_object(self, obj, n=None):
+    #     if type(obj) is Submarine:
+    #         self.__advance_submarine(obj, n)
+    #     else:
+    #         self.__advance_torpedo(obj)
+
     def advance_object(self, obj, n=None):
-        if type(obj) is Submarine:
-            self.__advance_submarine(obj, n)
-        else:
-            self.__advance_torpedo(obj)
+        if isinstance(obj, Torpedo):
+            n = obj.get_speed()
 
-    def __advance_submarine(self, sub, n):
-        if n > sub.get_speed():
-            raise Exception("Speed (%s) exceeded" % sub.get_speed())
+        if n > obj.get_speed():
+            raise Exception("Speed (%s) exceeded" % obj.get_speed())
 
-        while n > 0 and self.is_ongoing():
-            if not self.board.valid(sub.get_next_position()):
-                break
-            self.__advance_object_one(sub)
-            n -= 1
-
-    def __advance_torpedo(self, torp):
-        n = torp.get_speed()
-        while n > 0 and self.is_ongoing():
-            if self.board.valid(torp.get_next_position()):
-                self.__advance_object_one(torp)
+        while n > 0 and self.is_ongoing() and obj.in_game():
+            if self.board.valid(obj.get_next_position()):
+                self.__advance_object_one(obj)
+                n -= 1
             else:
-                self.__destroy_torpedo(torp)
+                self.__destroy_object(obj)
+                break
+
+    # def __advance_submarine(self, sub, n):
+    #     if n > sub.get_speed():
+    #         raise Exception("Speed (%s) exceeded" % sub.get_speed())
+
+    #     while n > 0 and self.is_ongoing():
+    #         if not self.board.valid(sub.get_next_position()):
+    #             break
+    #         self.__advance_object_one(sub)
+    #         n -= 1
+
+    # def __advance_torpedo(self, torp):
+    #     n = torp.get_speed()
+    #     while n > 0 and self.is_ongoing():
+    #         if self.board.valid(torp.get_next_position()):
+    #             self.__advance_object_one(torp)
+    #         else:
+    #             self.__destroy_torpedo(torp)
+    #             break
 
     def __advance_object_one(self, obj):
         x, y = next_cell = obj.get_next_position()
 
         if not self.board.is_empty(next_cell):
-            self.run_conflict(obj, self.board.get_cell_content(next_cell))
+            self.solve_conflict(obj, self.board.get_cell_content(next_cell))
 
-        if not self.state == GameState.FINISHED:
+        if self.is_ongoing() and obj.in_game():
             self.board.clear(obj.get_last_position())
             self.board.place(obj, next_cell)
             obj.set_position(x_position=x, y_position=y)
 
-    def __destroy_torpedo(self, torp):
-        self.board.clear(torp.get_head_position())
-        self.torpedos.remove(torp)
+    def __destroy_object(self, obj):
+        self.board.clear_all(obj.get_positions())
+
+        if isinstance(obj, Torpedo):
+            self.torpedos.remove(obj)
+
+        elif isinstance(obj, Submarine):
+            self.submarines.remove(obj)
+            if len(self.get_submarines()) < 2:
+                self.set_state(GameState.FINISHED)
 
     def attack(self, sub):
         next_cell = sub.get_next_position()
 
-        if not self.board.valid(next_cell):
-            return  # Que hacemos en este caso??
-
         new_torpedo = sub.create_torpedo()
 
         if not self.board.is_empty(next_cell):
-            self.run_conflict(new_torpedo, self.board.get_cell_content(next_cell))
-        else:
+            self.solve_conflict(new_torpedo, self.board.get_cell_content(next_cell))
+        elif self.board.valid(next_cell):
             self.board.place(new_torpedo, next_cell)
+
+    def solve_conflict(self, obj1, obj2):
+        # Conflict types = "s-s, s-t, t-t"
+        if isinstance(obj1, Submarine):
+            if isinstance(obj2, Submarine):
+                self.__solve_submarine_crash(obj1, obj2)
+            elif isinstance(obj2, Torpedo):
+                self.__solve_submarine_torpedo(obj1, obj2)
+        elif isinstance(obj1, Torpedo):
+            if isinstance(obj2, Submarine):
+                self.__solve_submarine_torpedo(obj2, obj1)
+            elif isinstance(obj2, Torpedo):
+                self.__solve_torpedo_crash(obj1, obj2)
+
+    def __solve_submarine_crash(self, collider=None, collided=None):
+        sub1_h = collider.get_health()
+        sub2_h = collided.get_health()
+
+        collider.set_health(max(0, sub1_h - sub2_h))
+        collided.set_health(max(0, sub2_h - sub1_h))
+
+        loser = collider if collider.get_health() == 0 else collided
+        self.__destroy_object(loser)
+
+    def __solve_submarine_torpedo(self, sub, tor):
+        new_health = sub.get_health() - tor.get_damage()
+        sub.set_health(max(0, new_health))
+        self.__destroy_object(tor)
+        if sub.get_health() == 0:
+            self.__destroy_object(sub)
+
+    def __solve_torpedo_crash(self, tor1, tor2):
+        self.__destroy_object(tor1)
+        self.__destroy_object(tor2)
+
+    def set_state(self, state):
+        self.state = state
+
+    def __str__(self):
+        return self.board.__str__()

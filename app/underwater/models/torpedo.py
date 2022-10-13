@@ -17,3 +17,6 @@ class Torpedo(SubmergedObject):
     # game = relationship("UnderGame", back_populates="torpedos")
 
     __mapper_args__ = {"polymorphic_identity": "torpedo"}
+
+    def get_damage(self):
+        return self.damage

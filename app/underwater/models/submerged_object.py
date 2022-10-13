@@ -101,3 +101,6 @@ class SubmergedObject(db.Model):
 
     def get_speed(self):
         return self.speed
+
+    def in_game(self):
+        return self.game is not None
