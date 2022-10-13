@@ -33,8 +33,3 @@ class NavyGame(db.Model):
         self.user1_played = False
         self.user2_played = False
 
-    def get_state_game(self):
-        return self.state_game
-
-    def set_state_game(self, state_game):
-        self.state_game = state_game

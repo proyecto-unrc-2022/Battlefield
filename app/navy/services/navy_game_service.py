@@ -2,7 +2,9 @@ import functools
 
 from app.navy.daos.navy_game_dao import navy_game_dao
 from app.navy.models.navy_game import NavyGame
-from app.navy.validators.navy_game_request_validator import NavyGameRequestValidator
+from app.navy.validators.navy_game_post_validator import NavyGamePostValidator
+from app.navy.validators.navy_game_patch_validator import NavyGamePatchValidator
+from app.navy.services.ship_service import ship_service
 
 
 class NavyGameService:
@@ -14,12 +16,38 @@ class NavyGameService:
         # }
     }
 
-    def add(self, request):
-        navy_game_request_validator = NavyGameRequestValidator()
-        validated_navy_game = navy_game_request_validator.load(request)
-        navy_game = NavyGame(10, 20, validated_navy_game["user1_id"])
-        navy_game_dao.add_or_update(navy_game)
-        return navy_game
+    def validate_post_request(self, request):
+        validated_data = NavyGamePostValidator().load(request)
+        return validated_data
+
+    def validate_patch_request(self, request):
+        validated_data = NavyGamePatchValidator().load(request)
+        return validated_data
+
+    def add(self, data):
+        new_game = NavyGame(10, 20, data["user1_id"])
+        navy_game_dao.add_or_update(new_game)
+        return new_game
+
+    def join_second_player(self, data, id):
+        game = navy_game_dao.get_by_id(id)
+        game.user2_id = data["user2_id"]
+        navy_game_dao.add_or_update(game)
+        return game 
+
+    def get_all(self, user_id=None):
+        if user_id:
+            return navy_game_dao.get_by_user(user_id)
+        else:
+            return navy_game_dao.get()
+
+    def get_by_id(self, id):
+        return navy_game_dao.get_by_id(id) 
+
+    def delete(self, id):
+        game = navy_game_dao.get_by_id(id)
+        navy_game_dao.delete(game)
+        return game
 
     def update_game(self, navy_game_id, actions):
         # --------------- 1. IMPORTS SECTIONS ---------------#

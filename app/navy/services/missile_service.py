@@ -1,4 +1,4 @@
-from ast import match_case
+#from ast import match_case
 
 from app.navy.daos.missile_dao import missile_dao
 from app.navy.models.missile import Missile
@@ -14,13 +14,13 @@ class MissileService:
         missiles = missile_dao.get_by_navy_game_id(navy_game_id)
         return missiles.sort(key=lambda x: x.order)
 
-    def action_on_contact(self, missile, entity: Ship | Missile):
-        match entity:
+    def action_on_contact(self, missile, entity):
+        """ match entity:
             case Ship():
                 self.action_on_contact_ship(missile, entity)
             case Missile():
                 self.action_on_contact_missile(missile, entity)
-
+ """
     def action_on_contact_ship(self, missile, ship):
         # TODO:
         return missile
