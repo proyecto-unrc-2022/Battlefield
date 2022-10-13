@@ -6,11 +6,11 @@ class Action(db.Model):
     __tablename__ = "actions"
 
     id = db.Column(db.Integer, primary_key=True)
-    navy_game_id = db.Column(db.Integer)
+    navy_game_id = db.Column(db.Integer(), db.ForeignKey("navy_games.id"))
     ship_id = db.Column(db.Integer)
     course = db.Column(db.String(2))
     move = db.Column(db.Integer())
-    attack = db.Column(db.Integer())
+    attack = db.Column(db.Boolean())
     missile_type_id = db.Column(db.Integer())
     user_id = db.Column(db.Integer(), db.ForeignKey("user.id"))
 

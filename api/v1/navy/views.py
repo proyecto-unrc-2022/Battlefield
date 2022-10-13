@@ -1,5 +1,4 @@
-from flask import jsonify, request
-from app.navy.utils.navy_response import NavyResponse
+from flask import Response, jsonify, request
 from marshmallow import ValidationError
 
 from api import token_auth
@@ -11,7 +10,7 @@ from app.models.navy.dynamic_ship import DynamicShip
 from app.models.navy.start_game_request import StartGameRequest
 from app.navy.navy_constants import PATH_TO_START
 from app.navy.services.action_service import action_service
-from flask import Response
+from app.navy.utils.navy_response import NavyResponse
 
 from . import navy
 
@@ -41,11 +40,12 @@ def start_game():
         return jsonify(err.messages), 400
 
 
-@navy.post("/action")
+@navy.post("/actions")
+# @token_auth.login_required
 def action():
     try:
         data = action_service.validate_request(request.json)
         action_service.add(data)
-        return NavyResponse(201,data=data, message="Action added").to_json(), 201
+        return NavyResponse(201, data=data, message="Action added").to_json(), 201
     except ValidationError as err:
         return jsonify(err.messages), 400

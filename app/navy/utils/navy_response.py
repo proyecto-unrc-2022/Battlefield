@@ -5,11 +5,7 @@ class NavyResponse:
         self.data = data
 
     def to_json(self):
-        return {
-            'status': self.status,
-            'message': self.message,
-            'data': self.data
-        }
+        return {"status": self.status, "message": self.message, "data": self.data}
 
     def __str__(self):
         return str(self.to_json())
