@@ -27,13 +27,13 @@ class MissileService:
         missile_dao.delete(missile)
         missile_dao.delete(missile_contact)
 
-    def a(a :int):
+    def a(a: int):
         a + "a"
         pass
 
     def move(self, missile):
         for _ in range(missile.speed):
-            x,y = utils.get_next_position(missile.x, missile.y, missile.course)  
+            x, y = utils.get_next_position(missile.x, missile.y, missile.course)
             entity = navy_game_service.exist_any(missile.navy_game_id, x, y)
             if entity:
                 self.action_on_contact(missile, entity)
