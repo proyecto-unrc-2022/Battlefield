@@ -1,4 +1,3 @@
-import ast
 import json
 
 from flask import url_for
@@ -86,7 +85,9 @@ def step_impl(context):
 
 @given("player_a and plane in db")
 def step_impl(context):
-    context.player = AirForceGame.player_a
+    players = context.client.get(url_for("air_force.get_players"))
+    players = players.json
+    context.player = players.get("player_a")
     context.plane = add_plane(
         name="Hawker Tempest",
         size=1,
@@ -219,7 +220,9 @@ def step_impl(context):
 
 @given("player_b in the game and plane in db")
 def step_impl(context):
-    context.player = AirForceGame.player_b
+    players = context.client.get(url_for("air_force.get_players"))
+    players = players.json
+    context.player = players.get("player_b")
     context.plane = add_plane(
         name="Hawker Tempest",
         size=1,
@@ -253,7 +256,9 @@ def step_impl(context):
 
 @given("a battlefield with player_a's plane")
 def step_impl(context):
-    context.player = AirForceGame.player_a
+    players = context.client.get(url_for("air_force.get_players"))
+    players = players.json
+    context.player = players.get("player_a")
     context.plane = 1
 
 
@@ -339,8 +344,10 @@ def step_impl(context):
 
 @given("a battlefield with player_a's and player_b's plane")
 def step_impl(context):
-    context.player_a = AirForceGame.player_a
-    context.player_b = AirForceGame.player_b
+    players = context.client.get(url_for("air_force.get_players"))
+    players = players.json
+    context.player_a = players.get("player_a")
+    context.player_b = players.get("player_b")
 
     context.player_a_plane = AirForceGame.battlefield.get_player_plane(
         int(context.player_a)
