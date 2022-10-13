@@ -1,5 +1,4 @@
-from flask import jsonify, request
-from app.navy.utils.navy_response import NavyResponse
+from flask import Response, jsonify, request
 from marshmallow import ValidationError
 
 from api import token_auth
@@ -11,7 +10,8 @@ from app.models.navy.dynamic_ship import DynamicShip
 from app.models.navy.start_game_request import StartGameRequest
 from app.navy.navy_constants import PATH_TO_START
 from app.navy.services.action_service import action_service
-from flask import Response
+from app.navy.services.ship_service import ship_service
+from app.navy.utils.navy_response import NavyResponse
 
 from . import navy
 
@@ -34,8 +34,8 @@ def start_game():
     try:
         data = StartGameRequest().load(request.json)
         game_id = data["game_id"]
-        add_ship(data)
-        game_one = get_game(game_id)
+        add_ship(data)  # debería redirigir a /ships y hacer la selección?
+        game_one = get_game(game_id)  # debería ser current_game
         return jsonify(game_schema.dump(game_one))
     except ValidationError as err:
         return jsonify(err.messages), 400
@@ -46,6 +46,16 @@ def action():
     try:
         data = action_service.validate_request(request.json)
         action_service.add(data)
-        return NavyResponse(201,data=data, message="Action added").to_json(), 201
+        return NavyResponse(201, data=data, message="Action added").to_json(), 201
+    except ValidationError as err:
+        return jsonify(err.messages), 400
+
+
+@navy.post("/ships")
+def new_ship():
+    try:
+        data = ship_service.validate_request(request.json)
+        ship_service.add(data)
+        return NavyResponse(201, data=data, message="Ship added").to_json(), 201
     except ValidationError as err:
         return jsonify(err.messages), 400
