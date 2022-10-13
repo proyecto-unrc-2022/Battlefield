@@ -40,6 +40,25 @@ class flying_object:
             "course": self.course,
         }
 
+class Weapons:
+    player = None
+    x1 = -1
+    y1 = -1
+    course = 0
+    damage_1 = 0
+    damage_2 = 0
+    damage_3 = 0
+    
+    def __init__(player, x1, y1, course, damage_1, damage_2, damage_3):
+        
+        player = player
+        x1 = x1
+        y1 = y1
+        course = course
+        damage_1 = damage_1
+        damage_2 = damage_2
+        damage_3 = damage_3
+        
 
 class battlefield:
     flying_objects = []
@@ -115,6 +134,7 @@ class battlefield:
             fly_obj.x = fly_obj.x - 1
         self.flying_objects.append(fly_obj)
         return fly_obj
+    
 
     def move_projectile(self, player, course):
         list_of_dict = []

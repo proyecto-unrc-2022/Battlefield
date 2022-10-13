@@ -7,13 +7,15 @@ from sqlalchemy import insert, select, update
 
 from api import token_auth
 from app import db
-from app.daos.airforce.plane_dao import add_plane
+from app.daos.airforce.plane_dao import add_machine_gun, add_plane
 from app.daos.airforce.plane_dao import get_plane as get_plane_dao
 from app.daos.airforce.plane_dao import get_projectile
+from app.daos.airforce.plane_dao import get_machine_gun
 from app.daos.airforce.plane_dao import update_course as update_course_dao
 from app.models.airforce.air_force_game import AirForceGame, battlefield
 from app.models.airforce.plane import Plane, PlaneSchema, ProjectileSchema
 from app.models.user import User
+
 
 from . import air_force
 
@@ -35,10 +37,7 @@ def put_plane():
     size = request.json["size"]
     speed = request.json["speed"]
     health = request.json["health"]
-    course = request.json["course"]
-    coor_x = request.json["coor_x"]
-    coor_y = request.json["coor_y"]
-    p = add_plane(name, size, speed, health, course, coor_x, coor_y)
+    p = add_plane(name, size, speed, health)
     return jsonify(plane_schema.dump(p))
 
 
@@ -51,7 +50,7 @@ def update_course():
         return Response(status=400)
     else:
         p = update_course_dao(id_plane, new_course)
-        return Response(status=201)  # or jsonify(plane_schema.dump(p))
+        return Response(status=201)  # or jsonify(plane_schema.dump(p))"""
 
 
 @air_force.route("/join/<player>", methods=["PUT"])
@@ -118,9 +117,22 @@ def attack():
 
 @air_force.route("/<player>/<course>/", methods=["PUT"])
 def fligth(player, course):
+
+    AirForceGame.battlefield.fligth(player, int(course))
+    return Response(status=201)
     try:
         obj = AirForceGame.battlefield.fligth(int(player), int(course))
     except:
         return Response(status=400)
     #    return Response(status=201)
     return jsonify(obj.to_dict())
+    
+    @air_force.route("/machine_gun", methods=["POST"])
+def create_machine_gun():
+    damage_1 = request.json["damage_1"]
+    damage_2 = request.json["damage_2"]
+    damage_3 = request.json["damage_3"]
+    
+    m = add_machine_gun(damage_1, damage_2, damage_3)
+    return jsonify(plane_schema.dump(m))
+

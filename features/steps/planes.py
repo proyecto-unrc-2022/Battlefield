@@ -15,8 +15,8 @@ def step_impl(context):
         speed=5,
         health=10,
         course=3,
-        coor_x=5,
-        coor_y=5,
+        coor_x=3,
+        coor_y=3
     )
 
 
@@ -37,8 +37,8 @@ def step_impl(context):
         "speed": 5,
         "health": 10,
         "course": 3,
-        "coor_x": 5,
-        "coor_y": 5,
+        "coor_x": 3,
+        "coor_y":3
     }
 
     raw_response = ast.literal_eval(context.page.text)
