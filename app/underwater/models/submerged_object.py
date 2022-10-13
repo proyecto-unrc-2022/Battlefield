@@ -61,6 +61,9 @@ class SubmergedObject(db.Model):
     def get_head_position(self):
         return (self.x_position, self.y_position)
 
+    def get_last_position(self):
+        return self.get_positions()[-1]
+
     @staticmethod
     def move_pointer(x, y, direction):
         d = direction % 8
@@ -96,3 +99,6 @@ class SubmergedObject(db.Model):
         while n > 0 and self.game.state == GameState.ONGOING:
             self.game.advance_object_one(self)
             n -= 1
+
+    def get_speed(self):
+        return self.speed
