@@ -66,6 +66,9 @@ class UnderGame(db.Model):
 
         return choosen
 
+    def is_ongoing(self):
+        return self.state == GameState.ONGOING
+
     def get_height(self):
         return self.height
 
@@ -138,24 +141,46 @@ class UnderGame(db.Model):
         if not self.state == GameState.FINISHED:
             self.board.clear_all(obj.get_positions())
             obj.set_position(direction=direction)
-            submarine_dao.save(obj)
             self.board.place_object(obj)
 
-    def advance_object_one(self, obj):
-        next_cell = obj.get_next_position()
-        x, y = next_cell
+    def advance_object(self, obj, n=None):
+        if type(obj) is Submarine:
+            self.__advance_submarine(obj, n)
+        else:
+            self.__advance_torpedo(obj)
 
-        if not self.board.valid(next_cell):
-            raise Exception("Object cannot move forward")
+    def __advance_submarine(self, sub, n):
+        if n > sub.get_speed():
+            raise Exception("Speed (%s) exceeded" % sub.get_speed())
+
+        while n > 0 and self.is_ongoing():
+            if not self.board.valid(sub.get_next_position()):
+                break
+            self.__advance_object_one(sub)
+            n -= 1
+
+    def __advance_torpedo(self, torp):
+        n = torp.get_speed()
+        while n > 0 and self.is_ongoing():
+            if self.board.valid(torp.get_next_position()):
+                self.__advance_object_one(torp)
+            else:
+                self.__destroy_torpedo(torp)
+
+    def __advance_object_one(self, obj):
+        x, y = next_cell = obj.get_next_position()
 
         if not self.board.is_empty(next_cell):
             self.run_conflict(obj, self.board.get_cell_content(next_cell))
 
         if not self.state == GameState.FINISHED:
-            old_cells = obj.get_positions()
-            self.board.clear(old_cells[-1])
+            self.board.clear(obj.get_last_position())
             self.board.place(obj, next_cell)
             obj.set_position(x_position=x, y_position=y)
+
+    def __destroy_torpedo(self, torp):
+        self.board.clear(torp.get_head_position())
+        self.torpedos.remove(torp)
 
     def attack(self, sub):
         next_cell = sub.get_next_position()
