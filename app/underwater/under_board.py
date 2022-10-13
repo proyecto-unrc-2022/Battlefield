@@ -85,6 +85,10 @@ class UnderBoard:
     def objects_in_positions(self, pos_list):
         ret_list = []
         for (x, y) in pos_list:
-            if self.valid((x, y)) and self.matrix[x][y]:
+            if (
+                self.valid((x, y))
+                and self.matrix[x][y]
+                and self.matrix[x][y] not in ret_list
+            ):
                 ret_list.append(self.matrix[x][y])
-        return None if ret_list == [] else ret_list
+        return ret_list

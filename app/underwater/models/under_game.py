@@ -135,10 +135,11 @@ class UnderGame(db.Model):
 
         new_cells = obj.get_tail_positions(direction=direction)
         found_objects = self.board.objects_in_positions(new_cells)
-        if found_objects:
-            self.solve_conflict(obj, found_objects[0])
+        for other in found_objects:
+            if self.is_ongoing():
+                self.solve_conflict(obj, other)
 
-        if not self.state == GameState.FINISHED:
+        if obj.in_game():
             self.board.clear_all(obj.get_positions())
             obj.set_position(direction=direction)
             self.board.place_object(obj)
