@@ -15,7 +15,6 @@ class SubmergedObject(db.Model):
     type = db.Column(db.String(50))
 
     game_id = db.Column(db.Integer, db.ForeignKey("under_game.id"))
-    game = relationship("UnderGame", back_populates="submerged_objects")
 
     player_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 

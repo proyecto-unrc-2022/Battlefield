@@ -16,6 +16,8 @@ class Submarine(SubmergedObject):
     torpedo_speed = db.Column(db.Integer, nullable=False)
     torpedo_damage = db.Column(db.Float, nullable=False)
 
+    game = relationship("UnderGame", back_populates="submarines")
+
     player = relationship("User", backref=backref("submarine", uselist=False))
 
     __mapper_args__ = {"polymorphic_identity": "submarine"}

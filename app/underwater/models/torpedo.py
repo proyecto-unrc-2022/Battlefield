@@ -10,6 +10,8 @@ class Torpedo(SubmergedObject):
     id = db.Column(db.Integer, db.ForeignKey("submerged_object.id"), primary_key=True)
     damage = db.Column(db.Integer, nullable=False)
 
+    game = relationship("UnderGame", back_populates="torpedos")
+
     player = relationship("User", backref=backref("torpedos"))
 
     # game = relationship("UnderGame", back_populates="torpedos")

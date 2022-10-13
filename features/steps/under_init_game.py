@@ -42,7 +42,8 @@ def step_impl(context, username):
 @then("a game with an empty board is returned")
 def step_impl(context):
     data = json.loads(context.page.text)
-    assert data["submerged_objects"] == []
+    assert data["submarines"] == []
+    assert data["torpedos"] == []
 
 
 # PLAYER OF A GAME TRIES TO CREATE ANOTHER

@@ -1,6 +1,6 @@
 import json
 
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import backref, relationship
 
 from app import db
 from app.models.user import User
@@ -25,12 +25,19 @@ class UnderGame(db.Model):
     width = db.Column(db.Integer)
     state = db.Column(db.Integer)
 
-    host = relationship("User", backref="under_game_host", foreign_keys=[host_id])
+    host = relationship(
+        "User",
+        backref=backref("under_game_host", uselist=False),
+        foreign_keys=[host_id],
+    )
     visitor = relationship(
-        "User", backref="under_game_visitor", foreign_keys=[visitor_id]
+        "User",
+        backref=backref("under_game_visitor", uselist=False),
+        foreign_keys=[visitor_id],
     )
 
-    submerged_objects = relationship("SubmergedObject", back_populates="game")
+    submarines = relationship("Submarine", back_populates="game")
+    torpedos = relationship("Torpedo", back_populates="game")
 
     def __init__(self, host_id, height=10, width=20):
         self.board = UnderBoard(self.id, height, width)
@@ -74,13 +81,13 @@ class UnderGame(db.Model):
         if not self.has_user(player_id):
             raise ValueError("the game does not have the specified player")
 
-        for obj in self.submerged_objects:
-            if obj.player_id == player_id:
+        for sub in self.submarines:
+            if sub.player_id == player_id:
                 raise Exception("Player already has a submarine")
 
         sub = submarine_dao.create_submarine(self.id, player_id, sub_stats)
         self.place(sub, x_coord, y_coord, direction)
-        if len(self.submerged_objects) == 2:
+        if len(self.submarines) == 2:
             self.state = GameState.ONGOING
         return sub
 
@@ -108,16 +115,16 @@ class UnderGame(db.Model):
 
     def get_submerged_objects(self, model=SubmergedObject):
         ret_list = []
-        for obj in self.submerged_objects:
-            if isinstance(obj, model):
-                ret_list.append(obj)
+        for sub in self.submarines + self.torpedos:
+            if isinstance(sub, model):
+                ret_list.append(sub)
         return ret_list
 
     def get_submarines(self):
-        return self.get_submerged_objects(Submarine)
+        return self.submarines
 
     def get_torpedos(self):
-        return self.get_submerged_objects(Torpedo)
+        return self.torpedos
 
     def rotate_object(self, obj, direction):
         if direction == obj.direction:

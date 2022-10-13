@@ -14,8 +14,8 @@ class UnderGameDAO:
         if db.session.query(User).where(User.id == host_id) == None:
             return None
 
-        host = db.session.get(User,host_id)
-        if host.under_game_host != [] or host.under_game_visitor != []:
+        host = db.session.get(User, host_id)
+        if host.under_game_host or host.under_game_visitor:
             raise Exception("User of id %s is in another game" % host_id)
 
         game = UnderGame(host_id=host_id, height=height, width=width)
