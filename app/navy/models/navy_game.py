@@ -25,8 +25,6 @@ class NavyGame(db.Model):
         "Missile", back_populates="navy_game", cascade="all, delete"
     )
 
-    state_game = {}
-
     def __init__(self, board_rows, board_colums, user1_id, user2_id=None):
         self.board_colums = board_colums
         self.board_rows = board_rows
