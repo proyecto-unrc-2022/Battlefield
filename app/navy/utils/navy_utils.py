@@ -37,8 +37,4 @@ class NavyUtils:
     # ---------- END OF CLASS METHODS --------- #
 
 
-<<<<<<< HEAD
-navy_utils = NavyUtils()
-=======
 utils = NavyUtils()
->>>>>>> 913b5044f626adfe938918f94fe18b314d4f829b
