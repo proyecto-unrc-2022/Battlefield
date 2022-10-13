@@ -13,6 +13,8 @@ class NavyGameDTO(SQLAlchemySchema):
         load_instances = True
 
     id = auto_field()
+    user1_id = auto_field()
+    user2_id = auto_field()
     board_rows = auto_field()
     board_colums = auto_field()
     winner = auto_field()
