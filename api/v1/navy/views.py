@@ -12,14 +12,14 @@ from app.navy.dtos.navy_game_dto import NavyGameDTO
 from . import navy
 
 
-@navy.post("/actions")
+""" @navy.post("/actions")
 def action():
     try:
         data = action_service.validate_request(request.json)
         action_service.add(data)
         return NavyResponse(201, data=data, message="Action added").to_json(), 201
     except ValidationError as err:
-        return jsonify(err.messages), 400
+        return jsonify(err.messages), 400 """
 
 
 @navy.post("/ships")
@@ -65,6 +65,16 @@ def action():
         validated_data = navy_game_service.validate_patch_request(request.json)
         game = navy_game_service.join_second_player(validated_data, id)
         return NavyResponse(200,  data=NavyGameDTO().dump(game), message="Game updated.").to_json(), 200
+    except ValidationError as err:
+        return jsonify(err.messages), 400
+
+@navy.patch("/navy_games/<id>")
+@token_auth.login_required
+def update_navy_game(id):
+    try:
+        validated_data = navy_game_service.validate_patch_request(request.json)
+        game = navy_game_service.join_second_player(validated_data, id)
+        return NavyResponse(200, data=NavyGameDTO().dump(game), message="Game updated.").to_json(), 200
     except ValidationError as err:
         return jsonify(err.messages), 400
 
