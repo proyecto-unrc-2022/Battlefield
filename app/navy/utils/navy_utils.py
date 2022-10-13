@@ -1,7 +1,3 @@
-TRUE = 1
-FALSE = 0
-
-
 class NavyUtils:
     # ---------- CLASS CONSTANTS --------- #
     COMPASS = {
@@ -15,7 +11,22 @@ class NavyUtils:
         "SW": (1, -1),
     }
     X, Y = 0, 1
+    ZERO, ONE = 0, 1
+    ROWS, COLS = 10, 20
+    TRUE, FALSE = 1, 0
 
+    INVERSE_COORDS = {
+        "N": "S",
+        "S": "N",
+        "W": "E",
+        "E": "W",
+        "SE": "NW",
+        "NW": "SE",
+        "SW": "NE",
+        "NE": "SW",
+    }
+
+    DIRECTIONS = ["N", "S", "E", "W", "SE", "SW", "NE", "NW"]
     # ---------- CLASS METHODS --------- #
     def get_next_position(self, x, y, course):
         if course in self.COMPASS:
@@ -26,4 +37,8 @@ class NavyUtils:
     # ---------- END OF CLASS METHODS --------- #
 
 
+<<<<<<< HEAD
 navy_utils = NavyUtils()
+=======
+utils = NavyUtils()
+>>>>>>> 913b5044f626adfe938918f94fe18b314d4f829b

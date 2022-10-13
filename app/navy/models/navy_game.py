@@ -12,8 +12,6 @@ class NavyGame(db.Model):
     board_colums = db.Column(db.Integer)
     turn = db.Column(db.Integer)
     round = db.Column(db.Integer)
-    user1_played = db.Column(db.Boolean)
-    user2_played = db.Column(db.Boolean)
     winner = db.Column(db.Integer)
     user1_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     user2_id = db.Column(db.Integer, db.ForeignKey("user.id"))
@@ -25,8 +23,6 @@ class NavyGame(db.Model):
         "Missile", back_populates="navy_game", cascade="all, delete"
     )
 
-    state_game = {}
-
     def __init__(self, board_rows, board_colums, user1_id, user2_id=None):
         self.board_colums = board_colums
         self.board_rows = board_rows
@@ -37,8 +33,3 @@ class NavyGame(db.Model):
         self.user1_played = False
         self.user2_played = False
 
-    def get_state_game(self):
-        return self.state_game
-
-    def set_state_game(self, state_game):
-        self.state_game = state_game

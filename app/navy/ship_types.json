@@ -1,7 +1,7 @@
 {
     "Destroyer" : {
         "hp" : 60,
-        "missile_id": [1],
+        "missile_type_id": [1],
         "ship_id": 1,
         "size": 3,
         "speed": 3,
@@ -9,7 +9,7 @@
     },
     "Cruiser" : {
         "hp" : 100,
-        "missile_id":[2],
+        "missile_type_id":[2],
         "ship_id": 2,
         "size": 3,
         "speed": 4,
@@ -17,7 +17,7 @@
     },
     "Battleship" : {
         "hp" : 80,
-        "missile_id":[4],
+        "missile_type_id":[4],
         "ship_id": 4,
         "size": 4,
         "speed": 2,
@@ -25,7 +25,7 @@
     },
     "Corvette" : {
         "hp" : 40,
-        "missile_id":[3],
+        "missile_type_id":[3],
         "ship_id": 3,
         "size": 2,
         "speed": 4,

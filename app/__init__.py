@@ -31,9 +31,6 @@ def create_app(environment="development"):
     from api.v1.infantry import infantry as infantry_blueprint
     from api.v1.navy import navy as navy_blueprint
     from api.v1.underwater import underwater as underwater_blueprint
-    from app.models.navy.dynamic_game import Game
-    from app.models.navy.dynamic_missile import DynamicMissile
-    from app.models.navy.dynamic_ship import DynamicShip
     from app.models.underwater.under_models import Submarine, Torpedo, UnderGame
     from app.models.user import User
     from app.navy.models.action import Action
