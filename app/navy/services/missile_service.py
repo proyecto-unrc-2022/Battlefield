@@ -4,7 +4,7 @@ from app.navy.daos.missile_dao import missile_dao
 from app.navy.models.missile import Missile
 from app.navy.models.ship import Ship
 from app.navy.services.navy_game_service import navy_game_service
-from app.navy.utils.navy_utils import navy_utils
+from app.navy.utils.navy_utils import utils
 
 
 class MissileService:
@@ -31,7 +31,7 @@ class MissileService:
 
     def move(self, missile):
         for _ in range(missile.speed):
-            x, y = navy_utils.get_next_position(missile.x, missile.y, missile.course)
+            x, y = utils.get_next_position(missile.x, missile.y, missile.course)
             entity = navy_game_service.exist_any(missile.navy_game_id, x, y)
             if entity:
                 self.action_on_contact(missile, entity)

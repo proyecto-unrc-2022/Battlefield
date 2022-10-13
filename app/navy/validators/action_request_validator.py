@@ -11,19 +11,18 @@ from app import db
 from app.models.user import User
 from app.navy.daos.ship_type_dao import ship_type_dao
 from app.navy.models.ship import Ship
-from app.navy.navy_constants import DIRECTIONS, SHIP_TYPES
 from app.navy.services.missile_service import missile_service
-from app.navy.utils.navy_utils import FALSE, TRUE
+from app.navy.utils.navy_utils import utils
 
 
 class ActionRequestValidator(Schema):
     @validates_schema
     def check_move(self, in_data, **kwargs):
 
-        if in_data.get("attack") == TRUE and in_data.get("move") != FALSE:
+        if in_data.get("attack") == utils.TRUE and in_data.get("move") != utils.FALSE:
             raise ValidationError("Invalid move")
 
-        if in_data.get("attack") == FALSE:
+        if in_data.get("attack") == utils.FALSE:
             ship = db.session.query(Ship).filter_by(id=in_data.get("ship_id")).first()
 
             mov_ship = ship_type_dao.get_by(ship.name)["speed"]
@@ -61,7 +60,9 @@ class ActionRequestValidator(Schema):
     )
     user_id = fields.Integer(required=True)
     navy_game_id = fields.Integer(required=True)
-    course = fields.Str(validate=validate.OneOf(DIRECTIONS), required=True)
+    #   course = fields.Str(validate=validate.OneOf(DIRECTIONS), required=True)
     ship_id = fields.Int(required=True)
     move = fields.Int(required=True)
-    attack = fields.Integer(validate=validate.OneOf([TRUE, FALSE]), required=True)
+
+
+#  attack = fields.Integer(validate=validate.OneOf([TRUE, FALSE]), required=True)

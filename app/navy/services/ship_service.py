@@ -1,4 +1,3 @@
-from app.daos.navy.dynamic_ship_dao import delete_ship
 from app.navy.daos.ship_dao import ship_dao
 from app.navy.daos.ship_type_dao import ship_type_dao
 from app.navy.models.ship import Ship
