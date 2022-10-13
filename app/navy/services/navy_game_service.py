@@ -2,13 +2,9 @@ import functools
 
 from app.navy.daos.navy_game_dao import navy_game_dao
 from app.navy.models.navy_game import NavyGame
-<<<<<<< HEAD
-from app.navy.validators.navy_game_request_validator import NavyGameRequestValidator
-=======
 from app.navy.validators.navy_game_post_validator import NavyGamePostValidator
 from app.navy.validators.navy_game_patch_validator import NavyGamePatchValidator
 from app.navy.services.ship_service import ship_service
->>>>>>> 913b5044f626adfe938918f94fe18b314d4f829b
 
 
 class NavyGameService:
