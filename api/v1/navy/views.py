@@ -41,7 +41,7 @@ def start_game():
         return jsonify(err.messages), 400
 
 
-@navy.post("/action")
+@navy.post("/actions")
 def action():
     try:
         data = action_service.validate_request(request.json)

@@ -12,8 +12,6 @@ class NavyGame(db.Model):
     board_colums = db.Column(db.Integer)
     turn = db.Column(db.Integer)
     round = db.Column(db.Integer)
-    user1_played = db.Column(db.Boolean)
-    user2_played = db.Column(db.Boolean)
     winner = db.Column(db.Integer)
     user1_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     user2_id = db.Column(db.Integer, db.ForeignKey("user.id"))

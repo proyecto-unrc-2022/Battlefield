@@ -48,5 +48,14 @@ class ShipService:
     def update_hp(self, ship, damage):
         pass
 
+    def re_build(self, ship):
+        from app.navy.utils.navy_utils import utils
+
+        res = []
+        for _ in range(utils.ONE, ship.size):
+            x, y = utils.get_next_position(x, y, utils.INVERSE_COORDS[ship.course])
+            res.append((x, y))
+        return res
+
 
 ship_service = ShipService()

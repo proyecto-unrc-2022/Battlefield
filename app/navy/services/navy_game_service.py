@@ -21,7 +21,7 @@ class NavyGameService:
         navy_game_dao.add_or_update(navy_game)
         return navy_game
 
-    def update_game(self, navy_game_id):
+    def update_game(self, navy_game_id, actions):
         # --------------- 1. IMPORTS SECTIONS ---------------#
         from app.navy.dtos.navy_game_dto import NavyGameDTO
         from app.navy.models.action import Action
@@ -34,9 +34,6 @@ class NavyGameService:
         map(
             missile_service.move, missiles
         )  # Note: missiles already sorted by 'order' field
-        actions = action_service.get(
-            navy_game_id
-        )  # TODO: refactor, (In this point actions could come from the parameters)
 
         for (
             action
@@ -53,7 +50,7 @@ class NavyGameService:
             )
 
         # --------------- 4. Return the game ---------------#
-        return NavyGameDTO().dump(navy_game_dao.get(navy_game_id))
+        # return NavyGameDTO().dump(navy_game_dao.get(navy_game_id))
 
     def load_game_to_map(self, navy_game_id):
         from app.navy.services.missile_service import missile_service
@@ -64,17 +61,18 @@ class NavyGameService:
         ships = ship_service.get(navy_game_id)
 
         # --------------- 2. Load missiles and ships to map ---------------#
-        """  
-       self.state_game[navy_game_id] = {
-            (missile.x,missile.y):missile for missile in missiles
-            (x,y): ship for NavyUtils.re_build(ship) in ships
-        } """
-
-        # --------------- 3. Returned them ---------------#
         return missiles, ships
 
-    def exist_any(self, navy_game_id):
-        entity = self.games[navy_game_id]
+    """  
+      self.state_game[navy_game_id] = {
+            (missile.x,missile.y):missile for missile in missiles
+            (x,y): ship for NavyUtils.re_build(ship) in ships
+        } 
+        """
+    # --------------- 3. Returned them ---------------#
+
+    def exist_any(self, navy_game_id, x, y):
+        entity = self.games[navy_game_id][(x, y)]
         return entity is not None
 
     """ 
