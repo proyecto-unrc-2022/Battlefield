@@ -3,9 +3,9 @@ import json
 from flask import url_for
 
 from app import db
-from app.daos.airforce.plane_dao import add_plane, add_projectile, get_projectile
-from app.models.airforce.air_force_game import AirForceGame, battlefield
-from app.models.airforce.plane import PlaneSchema, Projectile, ProjectileSchema
+from app.daos.airforce.plane_dao import add_plane, add_projectile
+from app.models.airforce.air_force_game import AirForceGame
+from app.models.airforce.plane import PlaneSchema, ProjectileSchema
 from app.models.user import User
 
 plane_schema = PlaneSchema()
