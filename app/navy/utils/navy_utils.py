@@ -37,12 +37,14 @@ class NavyUtils:
     def is_out_of_bounds(self, x, y):
         return x < self.ONE or x > self.ROWS or y < self.ONE or y > self.COLS
 
-    def free_valid_poisition(self,x,y,navy_game_id):
+    def free_valid_poisition(self, x, y, navy_game_id):
         from app.navy.services.navy_game_service import navy_game_service
-        return not self.is_out_of_bounds(x,y) and not navy_game_service.get_from_map(navy_game_id,x,y)
+
+        return not self.is_out_of_bounds(x, y) and not navy_game_service.get_from_map(
+            navy_game_id, x, y
+        )
 
     # ---------- END OF CLASS METHODS --------- #
-
 
 
 utils = NavyUtils()

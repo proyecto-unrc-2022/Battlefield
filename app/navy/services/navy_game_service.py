@@ -1,9 +1,9 @@
 from app.navy.daos.navy_game_dao import navy_game_dao
 from app.navy.models.navy_game import NavyGame
-from app.navy.validators.navy_game_post_validator import NavyGamePostValidator
-from app.navy.validators.navy_game_patch_validator import NavyGamePatchValidator
 from app.navy.services.ship_service import ship_service
 from app.navy.utils.navy_utils import utils
+from app.navy.validators.navy_game_patch_validator import NavyGamePatchValidator
+from app.navy.validators.navy_game_post_validator import NavyGamePostValidator
 
 """ Navy Game Service
 
@@ -34,19 +34,21 @@ from app.navy.utils.navy_utils import utils
 
 """
 
+
 class NavyGameService:
 
     games = {}
-    
-    #region Validation's Logic
+
+    # region Validation's Logic
     def validate_post_request(self, request):
         return NavyGamePostValidator().load(request)
 
     def validate_patch_request(self, request):
         return NavyGamePatchValidator().load(request)
-    #endregion         
 
-    #region Game's Logic Methods for BD
+    # endregion
+
+    # region Game's Logic Methods for BD
     def add(self, data):
         new_game = NavyGame(utils.ROWS, utils.COLS, data["user1_id"])
         navy_game_dao.add_or_update(new_game)
@@ -56,7 +58,7 @@ class NavyGameService:
         game = navy_game_dao.get_by_id(id)
         game.user2_id = data["user2_id"]
         navy_game_dao.add_or_update(game)
-        return game 
+        return game
 
     def get_all(self, user_id=None):
         if user_id:
@@ -65,15 +67,16 @@ class NavyGameService:
             return navy_game_dao.get()
 
     def get_by_id(self, id):
-        return navy_game_dao.get_by_id(id) 
+        return navy_game_dao.get_by_id(id)
 
     def delete(self, id):
         game = navy_game_dao.get_by_id(id)
         navy_game_dao.delete(game)
         return game
-    #endregion
 
-    #region Game's Logic Methods for memory map "self.games"
+    # endregion
+
+    # region Game's Logic Methods for memory map "self.games"
     def load_game_to_map(self, navy_game_id):
         from app.navy.services.missile_service import missile_service
         from app.navy.utils.navy_utils import NavyUtils
@@ -81,108 +84,100 @@ class NavyGameService:
         # --------------- 1.Get missiles and ships from DB ---------------#
         missiles = missile_service.get(navy_game_id)
         ships = ship_service.get(navy_game_id)
-        
-        
-       # --------------- 2. Load missiles and ships to map ---------------#
+
+        # --------------- 2. Load missiles and ships to map ---------------#
         self.state_game[navy_game_id] = {
-            (missile.pos_x,missile.pos_y):missile for missile in missiles   
-         } 
+            (missile.pos_x, missile.pos_y): missile for missile in missiles
+        }
 
         for ship in ships:
             ship_positions = ship_service.build(ship)
-            self.state_game.update({(x,y):ship for x,y in ship_positions})
-   
+            self.state_game.update({(x, y): ship for x, y in ship_positions})
 
         # --------------- 3. Returned them ---------------#
         return missiles
 
-
     def delete_from_map(self, navy_game_id, x, y):
         del self.games[navy_game_id][(x, y)]
-    
+
     def add_in_map(self, navy_game_id, x, y, entity):
         self.games[navy_game_id][(x, y)] = entity
 
+    def get_from_map(self, navy_game_id, x, y):
+        return self.games[navy_game_id].get((x, y))
 
-    def get_from_map(self,navy_game_id,x,y):
-        return self.games[navy_game_id].get((x,y))
-    #endregion
+    # endregion
 
     def update_game(self, navy_game_id, actions):
-        #region:  --------------- 1. Neccesary Imports ---------------#
+        # region:  --------------- 1. Neccesary Imports ---------------#
+        from app.navy.services.action_service import action_service
         from app.navy.services.missile_service import missile_service
-        from app.navy.services.action_service  import action_service
-        #endregion
-       
-        #region: --------------- 2. Get game,missiles and ships ---------------#
+
+        # endregion
+        # region: --------------- 2. Get game,missiles and ships ---------------#
         missiles = self.load_game_to_map(navy_game_id)
         game = self.get_by_id(navy_game_id)
-        #endregion
-        
-        #region: --------------- 3. Update the game - Move the missiles ---------------#
+        # endregion
+
+        # region: --------------- 3. Update the game - Move the missiles ---------------#
         for missile in missiles:
             if not missile_service.move(missile):
                 game = self.end_game(navy_game_id)
                 if game.winner:
                     return
-        #endregion
-        
-        #region: --------------- 4. Update the game - Execute Actions associated ---------------#
+        # endregion
+
+        # region: --------------- 4. Update the game - Execute Actions associated ---------------#
         actions.sort(key=lambda x: x.user_id == game.turn, reverse=True)
-    
+
         for action in actions:
             if not action_service.execute(action):
                 game = self.end_game(navy_game_id)
                 if game.winner:
                     return
-        #endregion
+        # endregion
 
-       #region: --------------- 5. Update the game - Change turn ---------------#
+        # region: --------------- 5. Update the game - Change turn ---------------#
         game = self.change_turn(game)
         navy_game_dao.add_or_update(game)
-       #endregion
 
+    # endregion
 
-    def change_turn(self, navy_game_id=None,game=None):
-        #region: --------------- 1. Logic parameter's ---------------#
+    def change_turn(self, navy_game_id=None, game=None):
+        # region: --------------- 1. Logic parameter's ---------------#
         if not game:
             game = self.get_by_id(navy_game_id)
-        #endregion
+        # endregion
 
         game.turn = game.user1_id if game.turn == game.user2_id else game.user2_id
         return game
 
-    def set_winner(self, winner,navy_game_id=None,game=None):
-        #region: --------------- 1. Logic parameter's ---------------#
+    def set_winner(self, winner, navy_game_id=None, game=None):
+        # region: --------------- 1. Logic parameter's ---------------#
         if not game:
             game = self.get_by_id(navy_game_id)
-        #endregion
+        # endregion
 
         game.winner = winner
         navy_game_dao.add_or_update(game)
         return game
 
-    def end_game(self,navy_game_id):
-        #region --------------- 1. Get Game and ship (from BD) ---------------#
+    def end_game(self, navy_game_id):
+        # region --------------- 1. Get Game and ship (from BD) ---------------#
         ships = ship_service.get(navy_game_id)
         game = self.get_by_id(navy_game_id)
-        #endregion        
-       
+        # endregion
+
         ships_user1 = filter(lambda ship: ship.user_id == game.user1_id, ships)
         ships_user2 = filter(lambda ship: ship.user_id == game.user2_id, ships)
 
-        #region --------------- 3. Check if are a Winner ---------------#
+        # region --------------- 3. Check if are a Winner ---------------#
         if not ships_user1:
-            self.set_winner(game.user2_id,game=game)
+            self.set_winner(game.user2_id, game=game)
         elif not ships_user2:
-            self.set_winner(game.user1_id,game=game)
-        #endregion
+            self.set_winner(game.user1_id, game=game)
+        # endregion
         return game
-
-
-        
-            
-    
 
 
 navy_game_service = NavyGameService()

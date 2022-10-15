@@ -32,4 +32,3 @@ class NavyGame(db.Model):
         self.round = 1
         self.user1_played = False
         self.user2_played = False
-
