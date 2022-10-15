@@ -34,6 +34,9 @@ class NavyUtils:
 
         return None
 
+    def is_out_of_bounds(self, x, y):
+        return x < self.ONE or x > self.ROWS or y < self.ONE or y > self.COLS
+
     # ---------- END OF CLASS METHODS --------- #
 
 

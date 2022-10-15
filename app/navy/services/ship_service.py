@@ -48,13 +48,26 @@ class ShipService:
     def attack(self, ship):
         pass
 
-    def update_hp(self, ship, damage):
-        pass
+    def delete_in_map(self, ship):
+        from app.navy.services.navy_game_service import navy_game_service
+        ships_positions = self.build(ship)
+        for x,y in ships_positions:
+            navy_game_service.delete_in_map(ship.navy_game_id,x,y)
 
-    def re_build(self, ship):
+    def update_hp(self, ship, damage):
+        from app.navy.utils.navy_utils import utils #Todo navyutils twice
+        if ship.hp - damage <= utils.ZERO:
+            self.delete(ship)
+            self.delete_in_map(ship)
+        
+        ship.hp -= damage
+        ship_dao.add_or_update(ship)
+   
+
+    def build(self, ship):
         from app.navy.utils.navy_utils import utils
 
-        res = []
+        res = [(ship.x,ship.y)]
         for _ in range(utils.ONE, ship.size):
             x, y = utils.get_next_position(x, y, utils.INVERSE_COORDS[ship.course])
             res.append((x, y))

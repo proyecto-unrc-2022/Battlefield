@@ -35,7 +35,3 @@ class Missile(db.Model):
 
     navy_game = relationship("NavyGame", back_populates="missiles")
     ship = relationship("Ship", back_populates="missiles")
-
-    def set_position(self, x, y):
-        self.pos_x = x
-        self.pos_y = y
