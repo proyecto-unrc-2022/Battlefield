@@ -20,7 +20,7 @@ class ShipService:
             ship_data["size"],
             ship_data["speed"],
             ship_data["visibility"],
-            ship_data["missile_type_id"],
+            ship_data["missile_type_id"][0],
             data["pos_x"],
             data["pos_y"],
             data["course"],
