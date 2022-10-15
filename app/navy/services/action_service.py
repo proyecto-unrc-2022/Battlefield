@@ -1,6 +1,7 @@
 from app.navy.daos.action_dao import action_dao
 from app.navy.models.action import Action
 from app.navy.services.navy_game_service import navy_game_service
+from app.navy.services.ship_service import ship_service
 from app.navy.validators.action_request_validator import ActionRequestValidator
 
 
@@ -24,7 +25,16 @@ class ActionService:
         return action_dao.get_by_user(user_id,navy_game_id)
 
     def execute(self,action):
-        pass
-        #ship = ship_service.get_by(action.ship_id)
+        ship = ship_service.get_by_id(action.ship_id)
+        ship.course = action.course
+        if ship_service.turn(ship):
+            if action.attack:
+                return ship_service.attack(ship)
+            return ship_service.move(ship, action)
+        else:
+            return False
+
+            
+        
 
 action_service = ActionService()

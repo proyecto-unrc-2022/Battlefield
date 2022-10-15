@@ -40,25 +40,42 @@ class MissileService:
     def delete(self, missile):
         missile_dao.delete(missile)
 
-    def add(self, navy_game_id, ship_id, missile_type, course):
+    def create(self, navy_game_id, ship_id, missile_type, course,pos_x,pos_y):
+        from app.navy.daos.missile_type_dao import missile_type_dao
+        from app.navy.daos.missile_dao import missile_dao
         #region: 1. Create the missile
-        missile = Missile(navy_game_id, ship_id, missile_type, course)
+        missile_data = missile_type_dao.get_by(missile_type)
+        missile = Missile(missile_data['speed'],missile_data['damage'],course,pos_x,pos_y,ship_id,navy_game_id,self.get_prox_order(navy_game_id))
+
         #endregion
         #region: 2. Add the missile to the DB
         missile_dao.add_or_update(missile)
         #endregion
-        
-        navy_game_service.add_to_map(missile.navy_game_id, missile.pos_x, missile.pos_y)
+        self.add_in_map(missile.navy_game_id, missile.pos_x, missile.pos_y)
+        return missile
 
-      
+    def get_prox_order(self,navy_game_id):
+        return self.max_by_order(missile_dao.get_by_navy_game_id(navy_game_id)) + 1
+        
+    def max_by_order(self, missiles):
+        temp = missiles[0]
+        for m in missiles[1:]:
+            temp = max(m.order, temp)
+        return temp
+    
+    def add_in_map(missile):
+        navy_game_service.add_to_map(missile.navy_game_id, missile.pos_x, missile.pos_y)
         
     
     #endregion
 
+    def delete_from_map(self,missile):
+        navy_game_service.delete_from_map(missile.navy_game_id, missile.pos_x, missile.pos_y)
+
     #region: Act Accordingly
     def act_accordingly(self, missile,x_conflict,y_conflict):
         #generic act, independent of the type of entity
-        navy_game_service.delete_in_map(missile.navy_game_id, missile.pos_x, missile.pos_y)
+        navy_game_service.delete_from_map(missile.navy_game_id, missile.pos_x, missile.pos_y)
         self.delete(missile)
 
         if utils.is_out_of_bounds(x_conflict, y_conflict):
@@ -75,7 +92,7 @@ class MissileService:
             
     def act_accordingly_missile(self,other_missile):
         #-- 1. Delete the missiles from the memory map -- #
-        navy_game_service.delete_in_map(other_missile.navy_game_id, other_missile.pos_x, other_missile.pos_y)
+        navy_game_service.delete_from_map(other_missile.navy_game_id, other_missile.pos_x, other_missile.pos_y)
         
         #-- 2. Delete the missiles from the DB -- #
         self.delete(other_missile)
@@ -87,25 +104,21 @@ class MissileService:
 
     #endregion
     
-    #region: Logic associated with the movement of the missile (no collision logic)
-    def mov_is_valid(self, missile, x, y):
-        if utils.is_out_of_bounds(x, y) or navy_game_service.get_from_map(missile.navy_game_id, x, y):
-            return False
-        return True
+
 
     def move(self, missile):
         old_x,old_y = missile.pos_x,missile.pos_y
         #region: 1. Move the missile
         for _ in range(missile.speed):
             x,y = utils.get_next_position(missile.pos_x,missile.pos_y, missile.course)
-            if not self.mov_is_valid(missile, x, y):
+            if not utils.free_valid_poisition(missile.navy_game_id, x, y):
                 self.act_accordingly(missile,x,y)
                 return False
             missile.pos_x , missile.pos_y = x, y
         #endregion
         #region: 2. Update the missile in the DB ( if it has moved correctly)
         else:
-            navy_game_service.delete_in_map(missile.navy_game_id, old_x, old_y)
+            navy_game_service.delete_from_map(missile.navy_game_id, old_x, old_y)
             navy_game_service.add_to_map(missile.navy_game_id, missile.pos_x, missile.pos_y)
             missile_dao.add_or_update(missile)
         #endregion

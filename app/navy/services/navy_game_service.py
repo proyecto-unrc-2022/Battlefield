@@ -97,7 +97,7 @@ class NavyGameService:
         return missiles
 
 
-    def delete_in_map(self, navy_game_id, x, y):
+    def delete_from_map(self, navy_game_id, x, y):
         del self.games[navy_game_id][(x, y)]
     
     def add_in_map(self, navy_game_id, x, y, entity):
@@ -111,6 +111,7 @@ class NavyGameService:
     def update_game(self, navy_game_id, actions):
         #region:  --------------- 1. Neccesary Imports ---------------#
         from app.navy.services.missile_service import missile_service
+        from app.navy.services.action_service  import action_service
         #endregion
        
         #region: --------------- 2. Get game,missiles and ships ---------------#
@@ -123,14 +124,17 @@ class NavyGameService:
             if not missile_service.move(missile):
                 game = self.end_game(navy_game_id)
                 if game.winner:
-                    return False
+                    return
         #endregion
         
         #region: --------------- 4. Update the game - Execute Actions associated ---------------#
         actions.sort(key=lambda x: x.user_id == game.turn, reverse=True)
+    
         for action in actions:
-            #if not action_service.execute(action):
-                return False
+            if not action_service.execute(action):
+                game = self.end_game(navy_game_id)
+                if game.winner:
+                    return
         #endregion
 
        #region: --------------- 5. Update the game - Change turn ---------------#
@@ -138,7 +142,6 @@ class NavyGameService:
         navy_game_dao.add_or_update(game)
        #endregion
 
-        return True
 
     def change_turn(self, navy_game_id=None,game=None):
         #region: --------------- 1. Logic parameter's ---------------#
