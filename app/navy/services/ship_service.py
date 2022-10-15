@@ -31,9 +31,13 @@ class ShipService:
         ship_dao.add_or_update(new_ship)
         return new_ship
 
-    def get(self, navy_game_id):
-        ships = ship_dao.get_by(navy_game_id=navy_game_id)
-        return ships
+    def get_by_id(self, ship_id):
+        return ship_dao.get_by_id(ship_id)
+
+    def get_by(self, user_id=None, navy_game_id=None, ship_id=None):
+        return ship_dao.get_by(
+            user_id=user_id, navy_game_id=navy_game_id, ship_id=ship_id
+        )
 
     def delete(self, ship):
         ship_dao.delete(ship)
