@@ -4,6 +4,7 @@ from os import stat_result
 from flask import Response, jsonify, request
 
 from api import token_auth
+from app.daos.user_dao import get_user_by_id
 from app.models.user import User
 from app.underwater.daos.submarine_dao import SubmarineDAO, submarine_dao
 from app.underwater.daos.under_game_dao import game_dao
@@ -54,8 +55,8 @@ def join_game():
         )
 
     game.visitor_id = visitor_id
-    game_dao.save(game)
 
+    game_dao.save(game)
     return game_dto.dumps(game)
 
 
@@ -68,17 +69,19 @@ def choose_submarine():
     y_position = request.form.get("y_position", type=int)
     direction = request.form.get("direction", type=int)
     game = game_dao.get_by_id(game_id)
-
-    submarines = json.load(open("app/underwater/options.json"))
+    player = get_user_by_id(player_id)
 
     if not game:
         return Response("{'error':'game not found'}", status="404")
+    if not player:
+        return Response("{'error':'player not found'}", status="404")
 
     try:
-        game.add_submarine(player_id, submarine_id, x_position, y_position, direction)
+        game.add_submarine(player, submarine_id, x_position, y_position, direction)
     except Exception as e:
         return Response("{'error':'%s'}" % str(e), status="409")
 
+    game_dao.save(game)
     return game_dto.dump(game)
 
 
@@ -93,6 +96,7 @@ def rotate_and_advance():
     game.rotate_object(submarine, data["direction"])
     game.advance_object(submarine, data["steps"])
 
+    game_dao.save(game)
     return game_dto.dump(game)
 
 
@@ -107,4 +111,5 @@ def rotate_and_attack():
     game.rotate_object(submarine, data["direction"])
     game.attack(submarine)
 
+    game_dao.save(game)
     return game_dto.dump(game)

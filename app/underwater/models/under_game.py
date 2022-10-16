@@ -74,15 +74,6 @@ class UnderGame(db.Model):
     def get_width(self):
         return self.width
 
-    def has_user(self, player_id):
-        return self.host_id == player_id or self.visitor_id == player_id
-
-    def contains_object(self, obj_id):
-        for obj in self.submerged_objects:
-            if obj.id == obj_id:
-                return True
-        return False
-
     def get_id(self):
         return self.id
 
@@ -98,6 +89,12 @@ class UnderGame(db.Model):
     def get_torpedos(self):
         return self.torpedos
 
+    def contains_object(self, obj):
+        for obj in self.submerged_objects:
+            if obj == ob:
+                return True
+        return False
+
     # def get_submerged_objects(self, model=SubmergedObject):
     #     ret_list = []
     #     for sub in self.submarines + self.torpedos:
@@ -105,17 +102,21 @@ class UnderGame(db.Model):
     #             ret_list.append(sub)
     #     return ret_list
 
-    def add_submarine(self, player_id, option_id, x_coord, y_coord, direction):
+    def has_user(self, player):
+        return self.host == player or self.visitor == player
+
+    def add_submarine(self, player, option_id, x_coord, y_coord, direction):
         sub_stats = UnderGame.get_submarine_option(option_id)
 
-        if not self.has_user(player_id):
+        if not self.has_user(player):
             raise ValueError("the game does not have the specified player")
 
         for sub in self.submarines:
-            if sub.player_id == player_id:
+            if sub.player == player:
                 raise Exception("Player already has a submarine")
 
-        sub = submarine_dao.create_submarine(self.id, player_id, sub_stats)
+        sub = Submarine(self, player, sub_stats)
+        self.submarines.append(sub)
         self.place(sub, x_coord, y_coord, direction)
 
         if len(self.submarines) == 2:

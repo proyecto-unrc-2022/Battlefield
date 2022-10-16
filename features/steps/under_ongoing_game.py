@@ -31,7 +31,7 @@ def step_impl(context):
         x = int(row["x_position"])
         y = int(row["y_position"])
         d = int(row["direction"])
-        sub = context.game.add_submarine(player.id, option_id, x, y, d)
+        sub = context.game.add_submarine(player, option_id, x, y, d)
         sub.set_health(int(row["health"]))
         submarine_dao.save(sub)
 
