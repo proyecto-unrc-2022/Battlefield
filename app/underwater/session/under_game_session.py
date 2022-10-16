@@ -1,4 +1,4 @@
-from app.daos.user_dao import get_by_id
+from app.daos.user_dao import get_user_by_id
 
 from ..command import Command, SubmarineCommand
 
@@ -54,7 +54,7 @@ class UnderGameSession:
     def get_players(self):
         players = []
         for player_id in self.__players:
-            players.append(get_by_id(player_id))
+            players.append(get_user_by_id(player_id))
         return players
 
     def get_order(self):
@@ -71,7 +71,7 @@ class UnderGameSession:
 
     def current_turn_player(self):
         player_id = self.__players[self.__turn]
-        return get_by_id(player_id)
+        return get_user_by_id(player_id)
 
     def set_turn(self, player):
         for i in range(len(self.__players)):

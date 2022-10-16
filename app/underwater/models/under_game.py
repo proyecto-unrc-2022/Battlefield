@@ -39,14 +39,13 @@ class UnderGame(db.Model):
     submarines = relationship("Submarine", back_populates="game")
     torpedos = relationship("Torpedo", back_populates="game")
 
-    def __init__(self, host_id, height=10, width=20):
+    def __init__(self, host_id, visitor_id=None, height=10, width=20):
         self.host_id = host_id
+        if visitor_id:
+            self.visitor_id = visitor_id
         self.height = height
         self.width = width
         self.state = GameState.PREGAME
-
-    # submarines = relationship("Submarine", back_populates="game")
-    # torpedos = relationship("Torpedo", back_populates="game")
 
     @staticmethod
     def get_options():
@@ -74,38 +73,6 @@ class UnderGame(db.Model):
     def get_width(self):
         return self.width
 
-    def has_user(self, player_id):
-        return self.host_id == player_id or self.visitor_id == player_id
-
-    def add_submarine(self, player_id, option_id, x_coord, y_coord, direction):
-        sub_stats = UnderGame.get_submarine_option(option_id)
-
-        if not self.has_user(player_id):
-            raise ValueError("the game does not have the specified player")
-
-        for sub in self.submarines:
-            if sub.player_id == player_id:
-                raise Exception("Player already has a submarine")
-
-        sub = submarine_dao.create_submarine(self.id, player_id, sub_stats)
-        self.place(sub, x_coord, y_coord, direction)
-        if len(self.submarines) == 2:
-            self.state = GameState.ONGOING
-        return sub
-
-    def place(self, obj, x_coord, y_coord, direction):
-        if obj.is_placed():
-            raise Exception("submarine is already placed")
-
-        obj.set_position(x_coord, y_coord, direction)
-        self.board.place_object(obj)
-
-    def contains_object(self, obj_id):
-        for obj in self.submerged_objects:
-            if obj.id == obj_id:
-                return True
-        return False
-
     def get_id(self):
         return self.id
 
@@ -115,18 +82,52 @@ class UnderGame(db.Model):
     def get_visitor(self):
         return self.visitor
 
-    def get_submerged_objects(self, model=SubmergedObject):
-        ret_list = []
-        for sub in self.submarines + self.torpedos:
-            if isinstance(sub, model):
-                ret_list.append(sub)
-        return ret_list
-
     def get_submarines(self):
         return self.submarines
 
     def get_torpedos(self):
         return self.torpedos
+
+    def contains_object(self, obj):
+        for obj in self.submerged_objects:
+            if obj == obj:
+                return True
+        return False
+
+    # def get_submerged_objects(self, model=SubmergedObject):
+    #     ret_list = []
+    #     for sub in self.submarines + self.torpedos:
+    #         if isinstance(sub, model):
+    #             ret_list.append(sub)
+    #     return ret_list
+
+    def has_user(self, player):
+        return self.host == player or self.visitor == player
+
+    def add_submarine(self, player, option_id, x_coord, y_coord, direction):
+        sub_stats = UnderGame.get_submarine_option(option_id)
+
+        if not self.has_user(player):
+            raise ValueError("the game does not have the specified player")
+
+        for sub in self.submarines:
+            if sub.player == player:
+                raise Exception("Player already has a submarine")
+
+        sub = Submarine(self, player, sub_stats)
+        self.submarines.append(sub)
+        self.place(sub, x_coord, y_coord, direction)
+
+        if len(self.submarines) == 2:
+            self.set_state(GameState.ONGOING)
+        return sub
+
+    def place(self, obj, x_coord, y_coord, direction):
+        if obj.is_placed():
+            raise Exception("submarine is already placed")
+
+        obj.set_position(x_coord, y_coord, direction)
+        self.board.place_object(obj)
 
     def rotate_object(self, obj, direction):
         if direction == obj.direction:
@@ -143,12 +144,6 @@ class UnderGame(db.Model):
             obj.set_position(direction=direction)
             self.board.place_object(obj)
 
-    # def advance_object(self, obj, n=None):
-    #     if type(obj) is Submarine:
-    #         self.__advance_submarine(obj, n)
-    #     else:
-    #         self.__advance_torpedo(obj)
-
     def advance_object(self, obj, n=None):
         if isinstance(obj, Torpedo):
             n = obj.get_speed()
@@ -162,26 +157,6 @@ class UnderGame(db.Model):
                 n -= 1
             else:
                 self.__destroy_object(obj)
-                break
-
-    # def __advance_submarine(self, sub, n):
-    #     if n > sub.get_speed():
-    #         raise Exception("Speed (%s) exceeded" % sub.get_speed())
-
-    #     while n > 0 and self.is_ongoing():
-    #         if not self.board.valid(sub.get_next_position()):
-    #             break
-    #         self.__advance_object_one(sub)
-    #         n -= 1
-
-    # def __advance_torpedo(self, torp):
-    #     n = torp.get_speed()
-    #     while n > 0 and self.is_ongoing():
-    #         if self.board.valid(torp.get_next_position()):
-    #             self.__advance_object_one(torp)
-    #         else:
-    #             self.__destroy_torpedo(torp)
-    #             break
 
     def __advance_object_one(self, obj):
         x, y = next_cell = obj.get_next_position()
@@ -219,16 +194,16 @@ class UnderGame(db.Model):
         # Conflict types = "s-s, s-t, t-t"
         if isinstance(obj1, Submarine):
             if isinstance(obj2, Submarine):
-                self.__solve_submarine_crash(obj1, obj2)
+                self.__solve_submarines_crash(obj1, obj2)
             elif isinstance(obj2, Torpedo):
                 self.__solve_submarine_torpedo(obj1, obj2)
         elif isinstance(obj1, Torpedo):
             if isinstance(obj2, Submarine):
                 self.__solve_submarine_torpedo(obj2, obj1)
             elif isinstance(obj2, Torpedo):
-                self.__solve_torpedo_crash(obj1, obj2)
+                self.__solve_torpedos_crash(obj1, obj2)
 
-    def __solve_submarine_crash(self, collider=None, collided=None):
+    def __solve_submarines_crash(self, collider=None, collided=None):
         sub1_h = collider.get_health()
         sub2_h = collided.get_health()
 
@@ -245,7 +220,7 @@ class UnderGame(db.Model):
         if sub.get_health() == 0:
             self.__destroy_object(sub)
 
-    def __solve_torpedo_crash(self, tor1, tor2):
+    def __solve_torpedos_crash(self, tor1, tor2):
         self.__destroy_object(tor1)
         self.__destroy_object(tor2)
 

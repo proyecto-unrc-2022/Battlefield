@@ -91,14 +91,6 @@ class SubmergedObject(db.Model):
     def get_game(self):
         return self.game
 
-    def advance(self, n):
-        if n > self.speed:
-            raise Exception("Speed (%s) exceeded" % self.speed)
-
-        while n > 0 and self.game.state == GameState.ONGOING:
-            self.game.advance_object_one(self)
-            n -= 1
-
     def get_speed(self):
         return self.speed
 
