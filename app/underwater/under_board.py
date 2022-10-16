@@ -10,6 +10,16 @@ class UnderBoard:
         for i in range(height):
             self.matrix.append([None] * width)
 
+    @staticmethod
+    def build_from(game):
+        board = UnderBoard(
+            game.get_id(), height=game.get_height(), width=game.get_width()
+        )
+        for obj in game.submarines + game.torpedos:
+            for (x, y) in obj.get_positions():
+                board.matrix[x][y] = obj
+        return board
+
     def valid(self, p):
         x, y = p
         return x >= 0 and x < self.height and y >= 0 and y < self.width
@@ -59,8 +69,8 @@ class UnderBoard:
 
     def __str__(self):
         m = self.matrix
-        h = len(m)
-        w = len(m[0])
+        h = self.height
+        w = self.width
 
         str = ""
         str += "-" * (w * 4 + 1) + "\n"

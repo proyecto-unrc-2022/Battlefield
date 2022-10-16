@@ -40,7 +40,6 @@ class UnderGame(db.Model):
     torpedos = relationship("Torpedo", back_populates="game")
 
     def __init__(self, host_id, height=10, width=20):
-        self.board = UnderBoard(self.id, height, width)
         self.host_id = host_id
         self.height = height
         self.width = width
@@ -252,6 +251,14 @@ class UnderGame(db.Model):
 
     def set_state(self, state):
         self.state = state
+
+    def build_board(self):
+        if self.id not in boards.keys():
+            board = UnderBoard.build_from(self)
+            boards.update({self.id: board})
+            self.board = board
+        else:
+            self.board = boards[self.id]
 
     def __str__(self):
         return self.board.__str__()
