@@ -1,9 +1,17 @@
 class Command:
-    def __init__(self, player_id):
-        self.__player_id = player_id
+    def __init__(self, game, player, **params):
+        self.game = game
+        self.player = player
+        self.params = params
 
     def execute(self):
         raise NotImplementedError()
 
-    def get_player_id(self):
-        return self.__player_id
+    def get_game(self):
+        return self.game
+
+    def get_player(self):
+        return self.player
+
+    def get_params(self):
+        return self.params

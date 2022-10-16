@@ -2,12 +2,14 @@ from .command import Command
 
 
 class TorpedoCommand(Command):
-    def __init__(self, game, torpedo, params):
-        self.__game = game
-        self.__torpedo = torpedo
-        self.__params = params
+    def __init__(self, torpedo, **params):
+        super(TorpedoCommand, self).__init__(torpedo.game, torpedo.player, **params)
+        self.torpedo = torpedo
+
+    def get_torpedo(self):
+        return self.torpedo
 
 
 class AdvanceTorpedo(TorpedoCommand):
     def execute(self):
-        __game.advance_object(self.__torpedo)
+        self.game.advance_object(self.torpedo)

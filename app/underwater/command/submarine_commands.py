@@ -2,21 +2,26 @@ from .command import Command
 
 
 class SubmarineCommand(Command):
-    def __init__(self, game, submarine, params):
-        self.__game = game
-        self.__submarine = submarine
-        self.__params = params
+    def __init__(self, game, submarine, **params):
+        super(SubmarineCommand, self).__init__(game, submarine.player, **params)
+        self.submarine = submarine
+
+    def get_submarine(self):
+        return self.submarine
 
 
 class RotateAndAdvance(SubmarineCommand):
     def execute(self):
-        self.__game.rotate_object(__submarine, __params["direction"])
-        if __submarine.in_game():
-            self.__game.advance_object(__submarine, __params["steps"])
+        self.game.rotate_object(self.submarine, self.params["direction"])
+        if self.submarine.in_game():
+            self.game.advance_object(self.submarine, self.params["steps"])
 
 
 class RotateAndAttack(SubmarineCommand):
+    def __init__(self, game, submarine, **params):
+        super(RotateAndAttack, self).__init__(game, submarine, **params)
+
     def execute(self):
-        self.__game.rotate_object(__submarine, __params["direction"])
-        if __submarine.in_game():
-            self.__game.attack(__submarine)
+        self.game.rotate_object(self.submarine, self.params["direction"])
+        if self.submarine.in_game():
+            self.game.attack(self.submarine)
