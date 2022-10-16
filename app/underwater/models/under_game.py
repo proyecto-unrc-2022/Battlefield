@@ -91,7 +91,7 @@ class UnderGame(db.Model):
 
     def contains_object(self, obj):
         for obj in self.submerged_objects:
-            if obj == ob:
+            if obj == obj:
                 return True
         return False
 
