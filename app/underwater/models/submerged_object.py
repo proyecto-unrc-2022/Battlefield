@@ -102,5 +102,14 @@ class SubmergedObject(db.Model):
     def get_speed(self):
         return self.speed
 
+    def get_x_position(self):
+        return self.x_position
+
+    def get_y_position(self):
+        return self.y_position
+
+    def get_direction(self):
+        return self.direction
+
     def in_game(self):
         return self.game is not None

@@ -67,7 +67,6 @@ def step_impl(context, username, id):
 
 @then("the system informs failure with code '{code:d}'")
 def step_impl(context, code):
-    print(context.page.status_code)
     assert context.page.status_code == code
 
 

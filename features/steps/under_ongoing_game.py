@@ -5,6 +5,7 @@ from app.underwater.daos.submarine_dao import submarine_dao
 from app.underwater.daos.under_game_dao import game_dao
 from app.underwater.models.submarine import Submarine
 from app.underwater.models.torpedo import Torpedo
+from app.underwater.session import sessions
 
 ### BACKGROUND ###
 
@@ -15,7 +16,7 @@ from app.underwater.models.torpedo import Torpedo
 def step_impl(context, h, w, username1, username2):
     host = context.players[username1]
     visitor = context.players[username2]
-    context.game = game_dao.create(host.id, visitor.id, h, w)
+    context.game = game_dao.create(host.id, visitor_id=visitor.id, height=h, width=w)
     assert context.game.host is host
     assert context.game.visitor is visitor
 
@@ -52,15 +53,17 @@ def step_impl(context, username, d, n):
         "direction": d,
         "steps": n,
     }
+    session = sessions[context.game.id]
     context.page = context.client.post(
         url_for("underwater.rotate_and_advance"), data=payload
     )
+
     assert context.page
 
 
 @then("the board is in the following state")
 def step_impl(context):
-    print(context.page.text)
+    print(context.game)
     compare_board(context)
 
 
@@ -92,7 +95,6 @@ def compare_board(context):
                     and board[i][j].y_position == j
                 )
             elif context.table[i][j] == "T":
-                print(type(board[i][j]))
                 assert type(board[i][j] is Submarine)
             elif context.table[i][j] == "*":
                 assert type(board[i][j]) is Torpedo
