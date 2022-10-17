@@ -18,6 +18,7 @@ class NavyGame(db.Model):
 
     user_1 = relationship("User", foreign_keys=[user1_id])
     user_2 = relationship("User", foreign_keys=[user2_id])
+
     ships = relationship("Ship", back_populates="navy_game", cascade="all, delete")
     missiles = relationship(
         "Missile", back_populates="navy_game", cascade="all, delete"

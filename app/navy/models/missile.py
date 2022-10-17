@@ -1,7 +1,6 @@
 from sqlalchemy.orm import relationship
 
 from app import db
-from app.navy.models.navy_game import NavyGame
 
 
 class Missile(db.Model):
@@ -30,8 +29,6 @@ class Missile(db.Model):
         self.ship_id = ship_id
         self.navy_game_id = navy_game_id
         self.order = order
-
-    from app.navy.models.navy_game import NavyGame
 
     navy_game = relationship("NavyGame", back_populates="missiles")
     ship = relationship("Ship", back_populates="missiles")

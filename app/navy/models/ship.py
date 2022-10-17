@@ -1,7 +1,6 @@
 from sqlalchemy.orm import relationship
 
 from app import db
-from app.navy.models.missile import Missile
 
 
 class Ship(db.Model):
