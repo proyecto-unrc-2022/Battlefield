@@ -83,18 +83,27 @@ class NavyGameService:
 
         # --------------- 1.Get missiles and ships from DB ---------------#
         missiles = missile_service.get(navy_game_id)
-        ships = ship_service.get(navy_game_id)
+        ships = ship_service.get_by(navy_game_id)
+
+        self.games[navy_game_id] = {}
 
         # --------------- 2. Load missiles and ships to map ---------------#
-        self.state_game[navy_game_id] = {
-            (missile.pos_x, missile.pos_y): missile for missile in missiles
-        }
 
         for ship in ships:
             ship_positions = ship_service.build(ship)
-            self.state_game.update({(x, y): ship for x, y in ship_positions})
+            self.games[navy_game_id].update({(x, y): ship for x, y in ship_positions})
 
         # --------------- 3. Returned them ---------------#
+
+        if not missiles:
+            return []
+
+        self.games[navy_game_id] = {
+            (missile.pos_x, missile.pos_y): missile for missile in missiles
+        }
+
+        print(self.games)
+
         return missiles
 
     def delete_from_map(self, navy_game_id, x, y):
@@ -108,14 +117,16 @@ class NavyGameService:
 
     # endregion
 
-    def update_game(self, navy_game_id, actions):
+    def update_game(self, navy_game_id):
         # region:  --------------- 1. Neccesary Imports ---------------#
         from app.navy.services.action_service import action_service
         from app.navy.services.missile_service import missile_service
 
         # endregion
         # region: --------------- 2. Get game,missiles and ships ---------------#
+        actions = action_service.get_by_navy_game(navy_game_id)
         missiles = self.load_game_to_map(navy_game_id)
+        print(self.games)
         game = self.get_by_id(navy_game_id)
         # endregion
 
@@ -164,7 +175,7 @@ class NavyGameService:
 
     def end_game(self, navy_game_id):
         # region --------------- 1. Get Game and ship (from BD) ---------------#
-        ships = ship_service.get(navy_game_id)
+        ships = ship_service.get_by(navy_game_id=navy_game_id)
         game = self.get_by_id(navy_game_id)
         # endregion
 
@@ -178,6 +189,12 @@ class NavyGameService:
             self.set_winner(game.user1_id, game=game)
         # endregion
         return game
+
+    def should_update(self, navy_game_id):
+        from app.navy.services.action_service import action_service
+
+        actions = action_service.get_by_navy_game(navy_game_id=navy_game_id)
+        return len(actions) == 2
 
 
 navy_game_service = NavyGameService()

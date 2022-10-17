@@ -47,7 +47,7 @@ class MissileService:
         from app.navy.daos.missile_type_dao import missile_type_dao
 
         # region: 1. Create the missile
-        missile_data = missile_type_dao.get_by(missile_type)
+        missile_data = missile_type_dao.get_by_id(str(missile_type))
         missile = Missile(
             missile_data["speed"],
             missile_data["damage"],
@@ -63,20 +63,24 @@ class MissileService:
         # region: 2. Add the missile to the DB
         missile_dao.add_or_update(missile)
         # endregion
-        self.add_in_map(missile.navy_game_id, missile.pos_x, missile.pos_y)
+        self.add_in_map(missile)
         return missile
 
     def get_prox_order(self, navy_game_id):
         return self.max_by_order(missile_dao.get_by_navy_game_id(navy_game_id)) + 1
 
     def max_by_order(self, missiles):
-        temp = missiles[0]
+        if not missiles:
+            return 0
+        temp = missiles[0].order
         for m in missiles[1:]:
             temp = max(m.order, temp)
         return temp
 
-    def add_in_map(missile):
-        navy_game_service.add_to_map(missile.navy_game_id, missile.pos_x, missile.pos_y)
+    def add_in_map(self, missile):
+        navy_game_service.add_in_map(
+            missile.navy_game_id, missile.pos_x, missile.pos_y, missile
+        )
 
     # endregion
 
@@ -125,8 +129,9 @@ class MissileService:
     def move(self, missile):
         old_x, old_y = missile.pos_x, missile.pos_y
         # region: 1. Move the missile
+        x, y = old_x, old_y
         for _ in range(missile.speed):
-            x, y = utils.get_next_position(missile.pos_x, missile.pos_y, missile.course)
+            x, y = utils.get_next_position(x, y, missile.course)
             if not utils.free_valid_poisition(missile.navy_game_id, x, y):
                 self.act_accordingly(missile, x, y)
                 return False

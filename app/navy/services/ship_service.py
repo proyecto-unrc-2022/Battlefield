@@ -50,6 +50,7 @@ class ShipService:
         from app.navy.services.navy_game_service import navy_game_service
 
         new_positions = self.build(ship)
+        self.delete_from_map(ship)
 
         for x, y in new_positions[1:]:
             entity = navy_game_service.get_from_map(ship.navy_game_id, x, y)
@@ -59,6 +60,8 @@ class ShipService:
                     return False
 
         ship_dao.add_or_update(ship)
+        for x, y in new_positions:
+            navy_game_service.add_in_map(ship.navy_game_id, x, y, ship)
         return True
 
     def act_accordingly(self, ship, entity):
@@ -99,7 +102,7 @@ class ShipService:
             ship_dao.add_or_update(ship)
             self.delete_from_map(ship)
             for x, y in self.build(ship):
-                navy_game_service.add_in_map(ship.navy_game_id, x, y)
+                navy_game_service.add_in_map(ship.navy_game_id, x, y, ship)
             return True
 
         return False
@@ -107,11 +110,11 @@ class ShipService:
     def attack(self, ship):
         from app.navy.services.missile_service import missile_service
 
-        x, y = utils.get_next_position(ship.pos_x, ship.pos_y)
+        x, y = utils.get_next_position(ship.pos_x, ship.pos_y, ship.course)
         created_missile = missile_service.create(
             ship.navy_game_id, ship.id, ship.missile_type_id, ship.course, x, y
         )
-        if not utils.free_valid_poisition(ship.navy_game_id, ship.pos_x, ship.pos_y):
+        if not utils.free_valid_poisition(x, y, ship.navy_game_id):
             missile_service.act_accordingly(created_missile, x, y)
             return False
         return True
@@ -132,7 +135,8 @@ class ShipService:
         ship_dao.add_or_update(ship)
 
     def build(self, ship):
-        res = [(ship.x, ship.y)]
+        res = [(ship.pos_x, ship.pos_y)]
+        x, y = ship.pos_x, ship.pos_y
         for _ in range(utils.ONE, ship.size):
             x, y = utils.get_next_position(x, y, utils.INVERSE_COORDS[ship.course])
             res.append((x, y))
