@@ -22,6 +22,7 @@ def action():
 
 
 @navy.post("/ships")
+@token_auth.login_required
 def new_ship():
     try:
         data = ship_service.validate_request(request.json)

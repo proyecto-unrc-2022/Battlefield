@@ -2,6 +2,7 @@ Feature: Create a navy Ship for a Navy Game.
   
   Background: Login a user and initialize the app
     Given I am logged in as "user1"
+    And another user exists as "user2"
 
 
   Scenario: Create a valid ship as user 1
