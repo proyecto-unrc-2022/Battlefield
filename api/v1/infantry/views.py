@@ -21,7 +21,7 @@ projectile_schema = Projectile_Infantry_Schema()
 #figure = db.session.query(Figure_infantry).where(Figure_infantry.id_user == user_id and Figure_infantry.id_game == game_id).one_or_none()
 
 
-@infantry.route("/game/user/<user_id>",methods=['POST'])
+@infantry.route("/create_game/user/<user_id>",methods=['POST'])
 def start_game(user_id):
 
     if(create_game(user_id) == None):
@@ -32,7 +32,7 @@ def start_game(user_id):
     return jsonify(game_schema.dump(new_game))
     
 
-@infantry.route("/start/game/<game_id>",methods=['POST'])
+@infantry.route("/ready_to_play/game/<game_id>",methods=['POST'])
 def ready_to_play(game_id):
 
     if (ready(game_id)):
@@ -46,7 +46,7 @@ def ready_to_play(game_id):
 
     
 
-@infantry.route("/start/game/<game_id>/user/<user_id>",methods=['POST'])
+@infantry.route("/join_game/game/<game_id>/user/<user_id>",methods=['POST'])
 def join_game(game_id, user_id):
 
     if (join(game_id, user_id)):
@@ -70,14 +70,18 @@ def choose_figure(game_id, user_id ,figure_id):
     else:
         return Response(status=404)
 
-@infantry.route("/action/game/<game_id>/course/<direction>/velocity/<velocity>/user/<user_id>",methods=['POST'])
+#revisar la logica de moverse 
+@infantry.route("/move/game/<game_id>/user/<user_id>/course/<direction>/velocity/<velocity>",methods=['POST'])
 def mov_action(direction, velocity, user_id, game_id):
     if(move_by_user(game_id, user_id, direction, velocity)):
-        return Response(status=200)
-    else:
-        return Response(status=404)
+        
+        move_entity = db.session.query(Figure_infantry).where(Figure_infantry.id == game_id and Figure_infantry.id_user == user_id).one_or_none()
+        
+        return jsonify(figure_schema.dump(move_entity))
+    
+    return Response(status=404)
 
-@infantry.route("/shoot/<direction>/<figure_id>/<game_id>",methods=['POST'])
+@infantry.route("/shoot/game/<game_id>/course/<direction>/figure/<figure_id>",methods=['POST'])
 def shoot_entity(direction, figure_id, game_id):
 
     if(shoot(direction, figure_id, game_id)):
