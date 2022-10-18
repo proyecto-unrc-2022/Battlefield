@@ -184,5 +184,4 @@ def step_impl(context):
 
 @then("a '200' response")
 def step_impl(context):
-    print(context.response.json)
     assert context.response.status_code != 200
