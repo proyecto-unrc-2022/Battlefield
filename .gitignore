@@ -1,5 +1,8 @@
 venv/
 env/
+entorno/
+freeze
+req.txt
 
 
 *.pyc

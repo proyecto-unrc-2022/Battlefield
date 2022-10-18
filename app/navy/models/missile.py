@@ -9,7 +9,7 @@ class Missile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     speed = db.Column(db.Integer)
     damage = db.Column(db.Integer)
-    course = db.Column(db.Integer)
+    course = db.Column(db.String(2))
     pos_x = db.Column(db.Integer)
     pos_y = db.Column(db.Integer)
     ship_id = db.Column(db.Integer, db.ForeignKey("ships.id"))

@@ -82,29 +82,20 @@ class NavyGameService:
         from app.navy.utils.navy_utils import NavyUtils
 
         # --------------- 1.Get missiles and ships from DB ---------------#
-        missiles = missile_service.get(navy_game_id)
-        ships = ship_service.get_by(navy_game_id)
-
         self.games[navy_game_id] = {}
+        missiles = missile_service.get(navy_game_id=navy_game_id)
+        ships = ship_service.get_by(navy_game_id=navy_game_id)
 
         # --------------- 2. Load missiles and ships to map ---------------#
-
         for ship in ships:
-            ship_positions = ship_service.build(ship)
-            self.games[navy_game_id].update({(x, y): ship for x, y in ship_positions})
+            ship_service.add_to_map(ship)
 
+        if missiles:
+            for missile in missiles:
+                missile_service.add_in_map(missile)
+            return missiles
+        return []
         # --------------- 3. Returned them ---------------#
-
-        if not missiles:
-            return []
-
-        self.games[navy_game_id] = {
-            (missile.pos_x, missile.pos_y): missile for missile in missiles
-        }
-
-        print(self.games)
-
-        return missiles
 
     def delete_from_map(self, navy_game_id, x, y):
         del self.games[navy_game_id][(x, y)]
@@ -149,7 +140,7 @@ class NavyGameService:
         # endregion
 
         # region: --------------- 5. Update the game - Change turn ---------------#
-        game = self.change_turn(game)
+        game = self.change_turn(game=game)
         navy_game_dao.add_or_update(game)
 
     # endregion

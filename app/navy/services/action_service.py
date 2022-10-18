@@ -23,8 +23,7 @@ class ActionService:
 
     def execute(self, action):
         ship = ship_service.get_by_id(action.ship_id)
-        ship.course = action.course
-        if ship_service.turn(ship):
+        if ship_service.turn(ship, action.course):
             if action.attack:
                 return ship_service.attack(ship)
             return ship_service.move(ship, action)

@@ -15,14 +15,16 @@ from . import navy
 @token_auth.login_required
 def action():
     try:
+
         data = action_service.validate_request(request.json)
         action_service.add(data)
         if navy_game_service.should_update(data["navy_game_id"]):
             navy_game_service.update_game(data["navy_game_id"])
-        return NavyResponse(201, data=data, message="Action added").to_json(), 201
+        return (
+            NavyResponse(201, data=request.json, message="Action added").to_json(),
+            201,
+        )
     except ValidationError as err:
-        actions = action_service.get_by_navy_game(1)
-        action_service.delete(actions[-1])
         return jsonify(err.messages), 400
 
 

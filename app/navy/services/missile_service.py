@@ -36,8 +36,9 @@ class MissileService:
 
     # region: Missile's Logic Methods for BD
     def get(self, navy_game_id):
-        missiles = missile_dao.get_by_navy_game_id(navy_game_id)
-        return missiles.sort(key=lambda x: x.order)
+        missiles = missile_dao.get_by_navy_game_id(navy_game_id=navy_game_id)
+        missiles.sort(key=lambda x: x.order)
+        return missiles
 
     def delete(self, missile):
         missile_dao.delete(missile)
@@ -62,8 +63,7 @@ class MissileService:
         # endregion
         # region: 2. Add the missile to the DB
         missile_dao.add_or_update(missile)
-        # endregion
-        self.add_in_map(missile)
+
         return missile
 
     def get_prox_order(self, navy_game_id):
@@ -132,7 +132,8 @@ class MissileService:
         x, y = old_x, old_y
         for _ in range(missile.speed):
             x, y = utils.get_next_position(x, y, missile.course)
-            if not utils.free_valid_poisition(missile.navy_game_id, x, y):
+            if not utils.free_valid_poisition(x, y, missile.navy_game_id):
+                missile.pos_x, missile.pos_y = old_x, old_y
                 self.act_accordingly(missile, x, y)
                 return False
             missile.pos_x, missile.pos_y = x, y

@@ -32,6 +32,13 @@ class ShipService:
         ship_dao.add_or_update(new_ship)
         return new_ship
 
+    def add_to_map(self, ship):
+        from app.navy.services.navy_game_service import navy_game_service
+
+        ships_positions = self.build(ship)
+        for x, y in ships_positions:
+            navy_game_service.add_in_map(ship.navy_game_id, x, y, ship)
+
     def get_by_id(self, ship_id):
         return ship_dao.get_by_id(ship_id)
 
@@ -46,11 +53,13 @@ class ShipService:
     def delete(self, ship):
         ship_dao.delete(ship)
 
-    def turn(self, ship):
+    def turn(self, ship, new_course):
         from app.navy.services.navy_game_service import navy_game_service
 
-        new_positions = self.build(ship)
         self.delete_from_map(ship)
+
+        ship.course = new_course
+        new_positions = self.build(ship)
 
         for x, y in new_positions[1:]:
             entity = navy_game_service.get_from_map(ship.navy_game_id, x, y)
@@ -87,22 +96,24 @@ class ShipService:
     def move(self, ship, action):
         from app.navy.services.navy_game_service import navy_game_service
 
-        old_positions = self.build(ship)
+        old_x, old_y = ship.pos_x, ship.pos_y
         for _ in range(action.move):
-            x, y = utils.get_next_position(ship.pos_x, ship.pos_y, ship.course)
+            x, y = utils.get_next_position(old_x, old_y, ship.course)
             if utils.is_out_of_bounds(x, y):
+                ship.pos_x, ship.pos_y = old_x, old_y
+                self.add_to_map(ship)
                 ship_dao.add_or_update(ship)
                 break
             entity = navy_game_service.get_from_map(ship.navy_game_id, x, y)
             if entity:
                 self.act_accordingly(ship, entity)
                 break
-            ship.pos_x, ship.pos_y = x, y
+            old_x, old_y = x, y
         else:
-            ship_dao.add_or_update(ship)
             self.delete_from_map(ship)
-            for x, y in self.build(ship):
-                navy_game_service.add_in_map(ship.navy_game_id, x, y, ship)
+            ship.pos_x, ship.pos_y = x, y
+            ship_dao.add_or_update(ship)
+            self.add_to_map(ship)
             return True
 
         return False
@@ -115,8 +126,11 @@ class ShipService:
             ship.navy_game_id, ship.id, ship.missile_type_id, ship.course, x, y
         )
         if not utils.free_valid_poisition(x, y, ship.navy_game_id):
+            missile_service.add_in_map(created_missile)  # TODO: refactor this please.
             missile_service.act_accordingly(created_missile, x, y)
             return False
+
+        missile_service.add_in_map(created_missile)
         return True
 
     def delete_from_map(self, ship):
