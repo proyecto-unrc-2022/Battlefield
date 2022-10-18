@@ -244,6 +244,13 @@ def return_direction(projectile):
         return None
     return projectile
 
+#Este metodo hace daño entre los projectiles
+def damage_projectile(projectile_id):
+    game = db.session.query(Projectile).id_game
+    other_projectile = db.session.query(Projectile).order_by(id_game= game).id
 
-
+    if(projectile_id.pos_x == other_projectile.pos_x and projectile_id.pos_y == other_projectile.pos_y):
+        db.session.query(Projectile).filter_by(id= other_projectile).destroy
+        db.session.query(Projectile).filter_by(id= projectile_id).destroy
+    
 
