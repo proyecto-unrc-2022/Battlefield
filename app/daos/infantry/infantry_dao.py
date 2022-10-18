@@ -126,28 +126,28 @@ def shoot(direction,figure_id,game_id):
 #TODO: Cambiar pos_x y pos_y
 def figure_valid(figure,direction,game_id):
     if(figure == "1"):
-        projectile1 = Projectile(id_game= game_id, pos_x=None, pos_y=None, velocidad=0, daño=5, direccion= direction, type= 1)
+        projectile1 = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=0, daño=5, direccion= direction)
         db.session.add(projectile1)
         db.session.commit()
-        projectile2 = Projectile(id_game= game_id, pos_x=None, pos_y=None, velocidad=0, daño=5, direccion= direction, type= 1)
+        projectile2 = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=0, daño=5, direccion= direction)
         db.session.add(projectile2)
         db.session.commit()
-        projectile3 = Projectile(id_game= game_id, pos_x=None, pos_y=None, velocidad=0, daño=5, direccion= direction, type= 1)
+        projectile3 = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=0, daño=5, direccion= direction)
         db.session.add(projectile3)
         db.session.commit()
         return True
     elif(figure == "2"):
-        projectile = Projectile(id_game= game_id, pos_x=None, pos_y=None, velocidad=5, daño=5, direccion= direction, type= 2)
+        projectile = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=5, daño=5, direccion= direction)
         db.session.add(projectile)
         db.session.commit()
         return True
     elif(figure == "3"):
-        projectile = Projectile(id_game= game_id, pos_x=None, pos_y=None, velocidad=3, daño=15, direccion= direction, type= 3)
+        projectile = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=3, daño=15, direccion= direction)
         db.session.add(projectile)
         db.session.commit()
         return True
     elif(figure == "4"):
-        projectile = Projectile(id_game= game_id, pos_x=None, pos_y=None, velocidad=20, daño=30, direccion= direction, type= 4)
+        projectile = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=20, daño=30, direccion= direction)
         db.session.add(projectile)
         db.session.commit()
         return True
@@ -164,7 +164,7 @@ def shoot_valid(direction):
            
 def create_game(user_id):
 
-    game = Game_Infantry(id_user1= user_id, id_user2= None,turn= user_id)
+    game = Game_Infantry(id_user1= user_id, id_user2= None)
     db.session.add(game)
     db.session.commit()
     return db.session.query(Game_Infantry).order_by(Game_Infantry.id.desc()).first().id  
