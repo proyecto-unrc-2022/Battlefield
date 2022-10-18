@@ -184,4 +184,4 @@ def step_impl(context):
 
 @then("a '200' response")
 def step_impl(context):
-    assert context.response.status_code != 200
+    assert context.response.status_code == 200
