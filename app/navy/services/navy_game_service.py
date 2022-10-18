@@ -31,7 +31,6 @@ from app.navy.validators.navy_game_post_validator import NavyGamePostValidator
 
     You can view in github the source code of this class:
     navy_game_service: https://github.com/proyecto-unrc-2022/Battlefield/tree/develop/app/navy
-
 """
 
 
@@ -77,7 +76,7 @@ class NavyGameService:
     # endregion
 
     # region Game's Logic Methods for memory map "self.games"
-    def load_game_to_map(self, navy_game_id):
+    def __load_game_to_map(self, navy_game_id):
         from app.navy.services.missile_service import missile_service
         from app.navy.utils.navy_utils import NavyUtils
 
@@ -114,10 +113,9 @@ class NavyGameService:
         from app.navy.services.missile_service import missile_service
 
         # endregion
-        # region: --------------- 2. Get game,missiles and ships ---------------#
+        # region: --------------- 2. Get game,missiles and actions ---------------#
         actions = action_service.get_by_navy_game(navy_game_id)
         missiles = self.load_game_to_map(navy_game_id)
-        print(self.games)
         game = self.get_by_id(navy_game_id)
         # endregion
 
@@ -139,13 +137,12 @@ class NavyGameService:
                     return
         # endregion
 
-        # region: --------------- 5. Update the game - Change turn ---------------#
+        # region: --------------- 5. Update region:   the game - Change turn ---------------#
         game = self.change_turn(game=game)
         navy_game_dao.add_or_update(game)
+        # endregion
 
-    # endregion
-
-    def change_turn(self, navy_game_id=None, game=None):
+    def __change_turn(self, navy_game_id=None, game=None):
         # region: --------------- 1. Logic parameter's ---------------#
         if not game:
             game = self.get_by_id(navy_game_id)
@@ -154,7 +151,7 @@ class NavyGameService:
         game.turn = game.user1_id if game.turn == game.user2_id else game.user2_id
         return game
 
-    def set_winner(self, winner, navy_game_id=None, game=None):
+    def __set_winner(self, winner, navy_game_id=None, game=None):
         # region: --------------- 1. Logic parameter's ---------------#
         if not game:
             game = self.get_by_id(navy_game_id)
@@ -164,13 +161,15 @@ class NavyGameService:
         navy_game_dao.add_or_update(game)
         return game
 
-    def end_game(self, navy_game_id):
+    def __end_game(self, navy_game_id):
         # region --------------- 1. Get Game and ship (from BD) ---------------#
         ships = ship_service.get_by(navy_game_id=navy_game_id)
         game = self.get_by_id(navy_game_id)
         # endregion
 
-        ships_user1 = filter(lambda ship: ship.user_id == game.user1_id, ships)
+        ships_user1 = filter(
+            lambda ship: ship.user_id == game.user1_id, ships
+        )  # TODO: refactor this.
         ships_user2 = filter(lambda ship: ship.user_id == game.user2_id, ships)
 
         # region --------------- 3. Check if are a Winner ---------------#
@@ -182,10 +181,13 @@ class NavyGameService:
         return game
 
     def should_update(self, navy_game_id):
+        from app.daos.user_dao import user_dao
         from app.navy.services.action_service import action_service
 
         actions = action_service.get_by_navy_game(navy_game_id=navy_game_id)
-        return len(actions) == 2
+        return (
+            len(actions) == 2
+        )  # refactor this, len(actions) == len(users in game) TODO: len(users)
 
 
 navy_game_service = NavyGameService()

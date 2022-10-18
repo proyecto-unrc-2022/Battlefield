@@ -9,6 +9,7 @@ class MissileDAO:
     def add_or_update(self, missile):
         db.session.add(missile)
         db.session.commit()
+        return missile
 
     def get_by_id(self, id):
         return db.session.query(self.model).filter_by(id=id).first()

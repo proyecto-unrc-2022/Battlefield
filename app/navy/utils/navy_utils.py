@@ -14,7 +14,6 @@ class NavyUtils:
     ZERO, ONE = 0, 1
     ROWS, COLS = 10, 20
     TRUE, FALSE = 1, 0
-
     INVERSE_COORDS = {
         "N": "S",
         "S": "N",
@@ -25,8 +24,9 @@ class NavyUtils:
         "SW": "NE",
         "NE": "SW",
     }
-
     DIRECTIONS = ["N", "S", "E", "W", "SE", "SW", "NE", "NW"]
+    # ---------- END CLASS CONSTANTS --------- #
+
     # ---------- CLASS METHODS --------- #
     def get_next_position(self, x, y, course):
         if course in self.COMPASS:

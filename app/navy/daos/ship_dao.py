@@ -11,6 +11,7 @@ class ShipDAO:
     def add_or_update(self, ship):
         db.session.add(ship)
         db.session.commit()
+        return ship
 
     def delete(self, ship):
         db.session.delete(ship)
