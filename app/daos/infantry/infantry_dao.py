@@ -197,8 +197,8 @@ def ready(game_id):
 #Falta diferenciar cual de los dos figures del game.
 def update_projectile(projectile_id):
 
-    game = db.session.query(Projectile).filter_by(id= projectile_id).id_game
-    figure_1 = db.session.query(Figure_infantry).filter_by(id_game= game).id
+    game = db.session.query(Projectile).filter_by(id= projectile_id).first().id_game
+    figure_1 = db.session.query(Figure_infantry).filter_by(id_game= game).first().id
     #figure_2 = db.session.query(Figure_infantry).filter_by(id_game= game).type
 
     damage_user(projectile_id, figure_1)
@@ -208,18 +208,29 @@ def update_projectile(projectile_id):
 #Este metodo hace el daño al player
 def damage_user(projectile_id, figure):
 
-    if(projectile_id.pos_x == figure.pos_x and projectile_id.pos_y == figure.pos_y):
-        figure.hp = figure.hp - projectile_id.daño
-        if(figure.hp <= 0):
-            db.session.query(Figure_infantry).filter_by(id= figure).destroy
+    projectileId = db.session.query(Projectile).filter_by(id= projectile_id).first()
+
+    figure_1 = db.session.query(Figure_infantry).filter_by(id= figure).first() #toma uno
+
+    if(projectileId.pos_x == figure_1.pos_x and projectileId.pos_y == figure_1.pos_y):
+        
+        figure_1.hp = figure_1.hp - projectileId.daño
+        if(figure_1.hp <= 0):
+            db.session.delete(figure_1)
+            db.session.commit()
+        else:
+            db.session.add(figure_1)
             db.session.commit()
     else:
-        projectile = return_direction(projectile_id)
+        projectile = return_direction(projectileId.id)
         db.session.add(projectile)
         db.session.commit()
 
 #Este metodo te retorna la direccion
-def return_direction(projectile):
+def return_direction(projectile_id):
+
+    projectile = db.session.query(Projectile).filter_by(id= projectile_id).first()
+
     if(projectile.direction == EAST):
         projectile.pos_x = projectile.pos_x + 1 
     elif(projectile.direction == SOUTH_EAST):

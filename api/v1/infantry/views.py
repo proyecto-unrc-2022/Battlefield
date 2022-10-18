@@ -94,16 +94,13 @@ def shoot_entity(direction, figure_id, game_id):
         return Response(status=404)
 
 @infantry.route("/update",methods=['POST'])
-def update_projectile():
+def updateProjectile():
 
     projectile = db.session.query(Projectile).order_by(Projectile.id.desc()).first()
     
-    if(update_projectile(projectile)):
-    
-        return jsonify(projectile_schema.dump(projectile))
+    update_projectile(projectile.id)
 
-    else:
-        return Response(status=404)
+    return jsonify(projectile_schema.dump(projectile))
 
 
     
