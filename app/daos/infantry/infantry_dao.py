@@ -44,9 +44,9 @@ def move_by_user(game_id, user_id, direction, velocity):
     exceeded_velocity_limit = (int(velocity) > figure.velocidad)
     move(aux_figure, int(direction), int(velocity))
     is_valid = False if aux_figure == None else is_valid_move(aux_figure)
-    if is_valid : 
-        figure.pos_x = Figure_infantry.pos_x + aux_figure.pos_x
-        figure.pos_y = Figure_infantry.pos_y + aux_figure.pos_y
+    if is_valid and not(exceeded_velocity_limit) : 
+        setattr(figure, 'pos_x', aux_figure.pos.x)
+        setattr(figure, 'pos_y', aux_figure.pos.y)
         db.session.commit() 
     print(is_valid)
     return is_valid and not(exceeded_velocity_limit)
