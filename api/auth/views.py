@@ -1,5 +1,6 @@
 import jwt
 from flask import jsonify, request
+from flask_cors import CORS
 from sqlalchemy import select
 
 from app import db, secret_token
@@ -7,6 +8,8 @@ from app.daos.user_dao import check_password
 from app.models.user import User
 
 from . import auth
+
+CORS(auth)
 
 
 @auth.route("/login", methods=["POST"])
