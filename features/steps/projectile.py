@@ -130,7 +130,7 @@ def step_impl(context):
         player=2,
         obj=context.projectile,
         x=5,
-        y=4,
+        y=7,
         course=4,
     )
 
@@ -149,4 +149,39 @@ def step_impl(context):
 @then("the projectile of player_b moves the speed corresponding")
 def step_impl(context):
     print(context.response.json)
+    assert context.response.status_code == 200
+
+
+# ------------------------------------------------------------------------------------------------------------
+
+
+@given("two or more projectile in the battlefield")
+def step_impl(context):
+    context.proj1 = add_projectile(speed=5, damage=10)
+    context.projectile1 = AirForceGame.battlefield.add_new_projectile(
+        player=1,
+        obj=context.proj1,
+        x=8,
+        y=7,
+        course=2,
+    )
+    context.proj2 = add_projectile(speed=5, damage=20)
+    context.projectile2 = AirForceGame.battlefield.add_new_projectile(
+        player=2,
+        obj=context.proj2,
+        x=12,
+        y=7,
+        course=4,
+    )
+
+
+@when("a collision occurs")
+def step_impl(context):
+    context.response = context.client.put(
+        url_for("air_force.move_projectile", player_projectile=2, course=4)
+    )
+
+
+@then("a '200' response")
+def step_impl(context):
     assert context.response.status_code == 200
