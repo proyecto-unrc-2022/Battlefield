@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask
+from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
@@ -14,6 +15,7 @@ secret_token = None
 
 def create_app(environment="development"):
     app = Flask(__name__)
+    CORS(app)
 
     global secret_token
 
@@ -43,5 +45,9 @@ def create_app(environment="development"):
     app.register_blueprint(air_force_blueprint, url_prefix="/api/v1/air_force")
     app.register_blueprint(underwater_blueprint, url_prefix="/api/v1/underwater")
     app.register_blueprint(infantry_blueprint, url_prefix="/api/v1/infantry")
+
+    @app.get("/")
+    def index():
+        return "index"
 
     return app

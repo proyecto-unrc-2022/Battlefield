@@ -1,6 +1,7 @@
 import json
 
 from flask import Blueprint, Response, jsonify, request
+from flask_cors import CORS
 from sqlalchemy import insert, select
 from werkzeug.security import generate_password_hash
 
@@ -10,6 +11,8 @@ from app.models.user import User, UserSchema
 
 users_bp = Blueprint("users", __name__, url_prefix="/users")
 user_schema = UserSchema()
+
+CORS(users_bp)
 
 
 @users_bp.route("", methods=["GET"])

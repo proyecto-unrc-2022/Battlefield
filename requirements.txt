@@ -8,6 +8,7 @@ coverage==6.4.4
 distlib==0.3.6
 filelock==3.8.0
 Flask==2.2.2
+Flask-Cors==3.0.10
 Flask-HTTPAuth==4.7.0
 Flask-Migrate==3.1.0
 Flask-SQLAlchemy==2.5.1
