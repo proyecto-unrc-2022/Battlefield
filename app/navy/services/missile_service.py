@@ -66,10 +66,10 @@ class MissileService:
         # region: 2. Add the missile to the DB
         return missile_dao.add_or_update(missile)
 
-    def __get_prox_order(self, navy_game_id):
+    def get_prox_order(self, navy_game_id):
         return self.max_by_order(missile_dao.get_by_navy_game_id(navy_game_id)) + 1
 
-    def __max_by_order(self, missiles):
+    def max_by_order(self, missiles):
         if not missiles:
             return 0
         temp = missiles[0].order
@@ -110,7 +110,7 @@ class MissileService:
         elif isinstance(entity, Ship):
             self.act_accordingly_ship(missile, entity)
 
-    def __act_accordingly_missile(self, other_missile):
+    def act_accordingly_missile(self, other_missile):
         # -- 1. Delete the missiles from the memory map -- #
         navy_game_service.delete_from_map(
             other_missile.navy_game_id, other_missile.pos_x, other_missile.pos_y
@@ -119,7 +119,7 @@ class MissileService:
         # -- 2. Delete the missiles from the DB -- #
         self.delete(other_missile)
 
-    def __act_accordingly_ship(self, missile, ship):
+    def act_accordingly_ship(self, missile, ship):
         from app.navy.services.ship_service import ship_service
 
         ship_service.update_hp(ship, missile.damage)

@@ -76,7 +76,7 @@ class NavyGameService:
     # endregion
 
     # region Game's Logic Methods for memory map "self.games"
-    def __load_game_to_map(self, navy_game_id):
+    def load_game_to_map(self, navy_game_id):
         from app.navy.services.missile_service import missile_service
         from app.navy.utils.navy_utils import NavyUtils
 
@@ -135,14 +135,17 @@ class NavyGameService:
                 game = self.end_game(navy_game_id)
                 if game.winner:
                     return
+        else:
+            action_service.delete_all(navy_game_id)
         # endregion
 
         # region: --------------- 5. Update region:   the game - Change turn ---------------#
         game = self.change_turn(game=game)
+        game.round += 1
         navy_game_dao.add_or_update(game)
         # endregion
 
-    def __change_turn(self, navy_game_id=None, game=None):
+    def change_turn(self, navy_game_id=None, game=None):
         # region: --------------- 1. Logic parameter's ---------------#
         if not game:
             game = self.get_by_id(navy_game_id)
@@ -151,7 +154,7 @@ class NavyGameService:
         game.turn = game.user1_id if game.turn == game.user2_id else game.user2_id
         return game
 
-    def __set_winner(self, winner, navy_game_id=None, game=None):
+    def set_winner(self, winner, navy_game_id=None, game=None):
         # region: --------------- 1. Logic parameter's ---------------#
         if not game:
             game = self.get_by_id(navy_game_id)
@@ -161,16 +164,18 @@ class NavyGameService:
         navy_game_dao.add_or_update(game)
         return game
 
-    def __end_game(self, navy_game_id):
+    def end_game(self, navy_game_id):
         # region --------------- 1. Get Game and ship (from BD) ---------------#
         ships = ship_service.get_by(navy_game_id=navy_game_id)
         game = self.get_by_id(navy_game_id)
         # endregion
 
-        ships_user1 = filter(
-            lambda ship: ship.user_id == game.user1_id, ships
-        )  # TODO: refactor this.
-        ships_user2 = filter(lambda ship: ship.user_id == game.user2_id, ships)
+        ships_user1 = ship_service.get_by(
+            user_id=game.user1_id, navy_game_id=navy_game_id
+        )
+        ships_user2 = ship_service.get_by(
+            user_id=game.user2_id, navy_game_id=navy_game_id
+        )
 
         # region --------------- 3. Check if are a Winner ---------------#
         if not ships_user1:
@@ -181,7 +186,6 @@ class NavyGameService:
         return game
 
     def should_update(self, navy_game_id):
-        from app.daos.user_dao import user_dao
         from app.navy.services.action_service import action_service
 
         actions = action_service.get_by_navy_game(navy_game_id=navy_game_id)

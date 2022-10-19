@@ -24,6 +24,11 @@ class ActionService:
     def delete(self, action):
         action_dao.delete(action)
 
+    def delete_all(self, navy_game_id):
+        actions = action_dao.get_by_navy_game_id(navy_game_id)
+        for action in actions:
+            action_dao.delete(action)
+
     def get_by_user(self, user_id, navy_game_id):
         return action_dao.get_by_user(user_id, navy_game_id)
 

@@ -136,57 +136,33 @@ class ShipService:
         if isinstance(entity, Missile):
             self.act_accordingly_to_missile(ship, entity)
 
-    def move(self, ship, action):
-        from app.navy.services.navy_game_service import navy_game_service
-
-        old_x, old_y = ship.pos_x, ship.pos_y
-        for _ in range(action.move):
-            x, y = utils.get_next_position(old_x, old_y, ship.course)
-            if utils.is_out_of_bounds(x, y):
-                ship.pos_x, ship.pos_y = old_x, old_y
-                self.add_to_map(ship)
-                ship_dao.add_or_update(ship)
-                break
-            entity = navy_game_service.get_from_map(ship.navy_game_id, x, y)
-            if entity:
-                self.act_accordingly(ship, entity)
-                break
-            old_x, old_y = x, y
-        else:
-            self.delete_from_map(ship)
-            ship.pos_x, ship.pos_y = x, y
-            ship_dao.add_or_update(ship)
-            self.add_to_map(ship)
-            return True
-
-        return False
-
     # endregion
 
-    # region Private Methods
-    def __is_alive(self, ship_id):
+    # -- Private Methods -- #
+    def is_alive(self, ship_id):
         return ship_dao.get_by_id(ship_id)
 
-    def __act_accordingly_to_ship(self, ship, other_ship):
+    def act_accordingly_to_ship(self, ship, other_ship):
         self.update_hp(ship, other_ship.hp)
         self.update_hp(other_ship, ship.hp)
 
-    def __act_accordingly_to_missile(self, ship, missile):
+    def act_accordingly_to_missile(self, ship, missile):
         from app.navy.services.missile_service import missile_service
 
         self.update_hp(ship, missile.damage)
         missile_service.delete_from_map(missile)
         missile_service.delete(missile)
 
-    def __build(self, ship):
+    def build(self, ship):
         res = [(ship.pos_x, ship.pos_y)]
         x, y = ship.pos_x, ship.pos_y
         for _ in range(utils.ONE, ship.size):
             x, y = utils.get_next_position(x, y, utils.INVERSE_COORDS[ship.course])
-            res.append((x, y))
+            if not utils.is_out_of_bounds(x, y):
+                res.append((x, y))
         return res
 
-    # endregion
+    # -- End Private Methods -- #
 
 
 ship_service = ShipService()

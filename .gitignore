@@ -3,7 +3,7 @@ env/
 entorno/
 freeze
 req.txt
-
+.vscode/
 
 
 *.pyc
