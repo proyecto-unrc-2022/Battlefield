@@ -28,7 +28,7 @@ def start_game(user_id):
     if(create_game(user_id) == None):
         return Response(status=404)
     
-    new_game = db.session.query(Game_Infantry).where(Game_Infantry.id_user1 == user_id).one_or_none()
+    new_game = Game_Infantry.query.filter_by(id_user1 = user_id).first()
 
     return jsonify(game_schema.dump(new_game))
     
@@ -52,7 +52,7 @@ def join_game(game_id, user_id):
 
     if (join(game_id, user_id)):
 
-        ready_game = db.session.query(Game_Infantry).where(Game_Infantry.id == game_id and Game_Infantry.id_user2 == user_id).one_or_none()
+        ready_game = Game_Infantry.query.filter_by(id = game_id, id_user2 = user_id).first()
 
         return jsonify(game_schema.dump(ready_game))
 
@@ -63,13 +63,14 @@ def join_game(game_id, user_id):
 
 @infantry.route("/create_entity/game/<game_id>/user/<user_id>/figure/<figure_id>",methods=['POST'])
 def choose_figure(game_id, user_id ,figure_id):
-    if (add_figure(game_id, user_id ,figure_id)):
-        
-        entity = db.session.query(Figure_infantry).where(Figure_infantry.id == game_id and Figure_infantry.id_user == user_id).one_or_none()
+    if (not(add_figure(game_id, user_id ,figure_id))):
 
-        return jsonify(figure_schema.dump(entity))
-    else:
         return Response(status=404)
+
+        
+    entity = Figure_infantry.query.filter_by(id_game = game_id, id_user = user_id).first()
+
+    return jsonify(figure_schema.dump(entity))
 
 #revisar la logica de moverse 
 @infantry.route("/move/game/<game_id>/user/<user_id>/course/<direction>/velocity/<velocity>",methods=['POST'])
