@@ -13,8 +13,10 @@ class Game_Infantry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_user1 = db.Column(db.Integer, db.ForeignKey(User.id), unique=True)
     id_user2 = db.Column(db.Integer, db.ForeignKey(User.id), unique=True)
-    turn = db.Column(db.Integer, db.ForeignKey(User.id))
+    proj= db.relationship('Projectile', backref='game_infantry')
+    #turn = db.Column(db.Integer, db.ForeignKey(User.id))
     
+
     #Foreign key
     user_1 = relationship("User", foreign_keys=[id_user1])
     user_2 = relationship("User", foreign_keys=[id_user2])
@@ -62,7 +64,7 @@ class Projectile(db.Model):
     
     
     #Foreign key
-    game = relationship("Game_Infantry", foreign_keys=[id_game])
+    #game = relationship("Game_Infantry", foreign_keys=[id_game])
 
     def __init__(self, id_game=None, pos_x=None, pos_y=None, velocidad=None, daño=None, direccion=None):
         self.id_game = id_game

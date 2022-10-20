@@ -13,24 +13,25 @@ import copy
 def  add_figure(game_id, user_id ,entity_id):
 
     succes = True
+    #soldier
     if("1" == entity_id):
-        soldier = Figure_infantry(id_game= game_id, id_user= user_id, hp=10, velocidad=3, tamaño=1, direccion=0,pos_x=0, pos_y=0, type=1)
-        db.session.add(soldier)
-        db.session.commit()
+        figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=10, velocidad=3, tamaño=1, direccion=0,pos_x=0, pos_y=0, type=1)
+    #humvee
     elif("2" == entity_id):
-        humvee = Figure_infantry(id_game= game_id, id_user= user_id, hp=20, velocidad=5, tamaño=2, direccion=0, pos_x=0, pos_y=0, type=2)
-        db.session.add(humvee)
-        db.session.commit()
+        figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=20, velocidad=5, tamaño=2, direccion=0, pos_x=0, pos_y=0, type=2)
+    #tank
     elif("3" == entity_id):
-        tank = Figure_infantry(id_game= game_id, id_user= user_id, hp=50, velocidad=2, tamaño=3, direccion=0, pos_x=0, pos_y=0, type=3)
-        db.session.add(tank)
-        db.session.commit()
+        figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=50, velocidad=2, tamaño=3, direccion=0, pos_x=0, pos_y=0, type=3)
+    #artillery
     elif("4" == entity_id):
-        artillery = Figure_infantry(id_game= game_id, id_user= user_id, hp=80, velocidad=1, tamaño=4, direccion=0,pos_x=0, pos_y=0, type=4)
-        db.session.add(artillery)
-        db.session.commit()
+        figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=80, velocidad=1, tamaño=4, direccion=0,pos_x=0, pos_y=0, type=4)
     else:
+        figure = None
         succes = False
+
+    if(figure):
+        db.session.add(figure)
+        db.session.commit()
     return succes
 
 
@@ -167,15 +168,15 @@ def create_game(user_id):
     game = Game_Infantry(id_user1= user_id, id_user2= None)
     db.session.add(game)
     db.session.commit()
-    return db.session.query(Game_Infantry).order_by(Game_Infantry.id.desc()).first().id  
+    return game  
 
 def join(game_id, user_id):
     
-    user = db.session.query(Game_Infantry).filter_by(id = game_id).first()
+    game = db.session.query(Game_Infantry).filter_by(id = game_id).first()
 
-    if (user.id_user2 == user_id or user.id_user2 == None):
+    if (game != None and game.id_user2 == None):
 
-        game = db.session.query(Game_Infantry).get(game_id)
+        #game = db.session.query(Game_Infantry).get(game_id)
         game.id_user2 = user_id
         db.session.add(game)
         db.session.commit()

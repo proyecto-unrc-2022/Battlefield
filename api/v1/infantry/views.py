@@ -22,8 +22,10 @@ projectile_schema = Projectile_Infantry_Schema()
 #figure = db.session.query(Figure_infantry).where(Figure_infantry.id_user == user_id and Figure_infantry.id_game == game_id).one_or_none()
 
 
-@infantry.route("/create_game/user/<user_id>",methods=['POST'])
+@infantry.route("/user/<user_id>/game", methods=['POST'])
 def start_game(user_id):
+
+    #new_game = create_game(user_id)
 
     if(create_game(user_id) == None):
         return Response(status=404)
@@ -47,12 +49,14 @@ def ready_to_play(game_id):
 
     
 
-@infantry.route("/join_game/game/<game_id>/user/<user_id>",methods=['POST'])
+@infantry.route("/game/<game_id>/user/<user_id>/join",methods=['POST'])
 def join_game(game_id, user_id):
+
+
 
     if (join(game_id, user_id)):
 
-        ready_game = Game_Infantry.query.filter_by(id = game_id, id_user2 = user_id).first()
+        ready_game = Game_Infantry.query.filter_by(id = game_id).first()
 
         return jsonify(game_schema.dump(ready_game))
 
@@ -61,9 +65,9 @@ def join_game(game_id, user_id):
 
 
 
-@infantry.route("/create_entity/game/<game_id>/user/<user_id>/figure/<figure_id>",methods=['POST'])
-def choose_figure(game_id, user_id ,figure_id):
-    if (not(add_figure(game_id, user_id ,figure_id))):
+@infantry.route("/game/<game_id>/user/<user_id>/figure/<type>/create_entity",methods=['POST'])
+def choose_figure(game_id, user_id ,type):
+    if (not(add_figure(game_id, user_id ,type))):
 
         return Response(status=404)
 
