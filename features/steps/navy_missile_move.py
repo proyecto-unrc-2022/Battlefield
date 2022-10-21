@@ -16,7 +16,8 @@ def step_impl(context):
 
     from app.navy.services.navy_game_service import navy_game_service
 
-    context.game = navy_game_service.add({"user1_id": context.user1.id})
+    navy_game_service.add({"user1_id": context.user1.id})
+    context.game = navy_game_service.join_second_player({"user2_id": context.user2.id})
     assert context.game
 
 
