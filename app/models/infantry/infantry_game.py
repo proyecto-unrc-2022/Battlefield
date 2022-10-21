@@ -11,8 +11,8 @@ class Game_Infantry(db.Model):
     __tablename__ = "game_infantry"
 
     id = db.Column(db.Integer, primary_key=True)
-    id_user1 = db.Column(db.Integer, db.ForeignKey(User.id), unique=True)
-    id_user2 = db.Column(db.Integer, db.ForeignKey(User.id), unique=True)
+    id_user1 = db.Column(db.Integer, db.ForeignKey(User.id))
+    id_user2 = db.Column(db.Integer, db.ForeignKey(User.id))
     proj= db.relationship('Projectile', backref='game_infantry')
     #turn = db.Column(db.Integer, db.ForeignKey(User.id))
     

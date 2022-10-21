@@ -25,13 +25,11 @@ projectile_schema = Projectile_Infantry_Schema()
 @infantry.route("/user/<user_id>/game", methods=['POST'])
 def start_game(user_id):
 
-    #new_game = create_game(user_id)
+    new_game = create_game(user_id)
 
-    if(create_game(user_id) == None):
+    if(new_game == None):
         return Response(status=404)
     
-    new_game = Game_Infantry.query.filter_by(id_user1 = user_id).first()
-
     return jsonify(game_schema.dump(new_game))
     
 
@@ -53,7 +51,6 @@ def ready_to_play(game_id):
 def join_game(game_id, user_id):
 
 
-
     if (join(game_id, user_id)):
 
         ready_game = Game_Infantry.query.filter_by(id = game_id).first()
@@ -66,15 +63,16 @@ def join_game(game_id, user_id):
 
 
 @infantry.route("/game/<game_id>/user/<user_id>/figure/<type>/create_entity",methods=['POST'])
-def choose_figure(game_id, user_id ,type):
-    if (not(add_figure(game_id, user_id ,type))):
+def choose_figure(game_id, user_id, type):
+
+    new_figure = add_figure(game_id, user_id, type)
+
+    if(new_figure == None):
 
         return Response(status=404)
 
-        
-    entity = Figure_infantry.query.filter_by(id_game = game_id, id_user = user_id).first()
 
-    return jsonify(figure_schema.dump(entity))
+    return jsonify(figure_schema.dump(new_figure))
 
 #revisar la logica de moverse 
 @infantry.route("/move/game/<game_id>/user/<user_id>/course/<direction>/velocity/<velocity>",methods=['POST'])

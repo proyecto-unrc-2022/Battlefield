@@ -10,9 +10,9 @@ from sqlalchemy import update
 from .direction import *
 import copy
 
-def  add_figure(game_id, user_id ,entity_id):
+def add_figure(game_id, user_id ,entity_id):
 
-    succes = True
+    #succes = True
     #soldier
     if("1" == entity_id):
         figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=10, velocidad=3, tamaño=1, direccion=0,pos_x=0, pos_y=0, type=1)
@@ -27,12 +27,13 @@ def  add_figure(game_id, user_id ,entity_id):
         figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=80, velocidad=1, tamaño=4, direccion=0,pos_x=0, pos_y=0, type=4)
     else:
         figure = None
-        succes = False
+        #succes = False
 
     if(figure):
         db.session.add(figure)
         db.session.commit()
-    return succes
+    
+    return figure
 
 
 #Dado un user_id, una direccion y una velocidad, mueva su respectiva unidad en el juego
