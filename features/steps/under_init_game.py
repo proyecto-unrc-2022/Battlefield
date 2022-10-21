@@ -38,7 +38,7 @@ def step_impl(context, username):
     data = json.loads(context.page.text)
     player = context.players[username]
 
-    assert data["host"] == player.id
+    assert data["host_id"] == player.id
 
 
 @then("a game with an empty board is returned")
@@ -84,4 +84,4 @@ def step_impl(context):
 def step_impl(context, username):
     data = json.loads(context.page.text)
     player = context.players[username]
-    assert data["host"] == player.id or data["visitor"] == player.id
+    assert data["host_id"] == player.id or data["visitor_id"] == player.id
