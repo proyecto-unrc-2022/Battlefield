@@ -2,9 +2,9 @@ from telnetlib import GA
 #from turtle import left, right
 from app import db
 from app.models.user import Profile
-from ...models.infantry.infantry_game import Figure_infantry
-from ...models.infantry.infantry_game import Game_Infantry
-from ...models.infantry.infantry_game import Projectile
+from ...models.infantry.figure_infantry import Figure_infantry
+from ...models.infantry.game_Infantry import Game_Infantry
+from ...models.infantry.projectile_infantry import Projectile
 from ...models.user import User
 from sqlalchemy import update
 from .direction import *

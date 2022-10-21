@@ -34,7 +34,9 @@ def create_app(environment="development"):
     from app.models.user import User
     from app.models.underwater.uw_game import UnderGame
     from app.models.navy.dynamic_navy_models import DynamicShip, DynamicMissile, Game
-    from app.models.infantry.infantry_game import Game_Infantry, Figure_infantry, Projectile
+    from app.models.infantry.game_Infantry import Game_Infantry
+    from app.models.infantry.figure_infantry import Figure_infantry
+    from app.models.infantry.projectile_infantry import Projectile
 
     app.register_blueprint(navy_blueprint, url_prefix="/api/v1/navy")
     app.register_blueprint(auth_blueprint, url_prefix="/auth")

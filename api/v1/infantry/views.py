@@ -12,7 +12,9 @@ from app.daos.infantry.infantry_dao import join
 from app.daos.infantry.infantry_dao import move_by_user
 from app.daos.infantry.infantry_dao import shoot
 from app.daos.infantry.infantry_dao import update_projectile
-from app.models.infantry.infantry_game import Game_Infantry, Figure_infantry, Game_Infantry_Schema, Projectile_Infantry_Schema, Figure_Infantry_Schema, Projectile
+from app.models.infantry.game_Infantry import Game_Infantry, Game_Infantry_Schema
+from app.models.infantry.figure_infantry import Figure_infantry, Figure_Infantry_Schema
+from app.models.infantry.projectile_infantry import Projectile_Infantry_Schema, Projectile
 from . import infantry
 
 game_schema= Game_Infantry_Schema()
