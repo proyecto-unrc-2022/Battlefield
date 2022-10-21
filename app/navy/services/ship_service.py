@@ -52,9 +52,13 @@ class ShipService:
     def delete_from_map(self, ship):
         from app.navy.services.navy_game_service import navy_game_service
 
-        ships_positions = self.build(ship)
-        for x, y in ships_positions:
-            navy_game_service.delete_from_map(ship.navy_game_id, x, y)
+        # TODO: Debuggear cuando un missile mata al ship o cuando se chocan barcos.
+        ship_db = ship_dao.get_by_id(ship.id)
+        if ship_db:
+            ships_positions = self.build(ship)
+            print(ships_positions)
+            for x, y in ships_positions:
+                navy_game_service.delete_from_map(ship.navy_game_id, x, y)
 
     # endregion
 
