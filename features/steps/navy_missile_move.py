@@ -22,9 +22,9 @@ def step_impl(context):
 
 
 @given(
-    "I have a ship '{ship_name}' in '{pos_x:d}','{pos_y:d}' with course '{course}' and hp '{hp:d}'"
+    "The user '{id:d}' has a ship '{ship_name}' in '{pos_x:d}','{pos_y:d}' with course '{course}' and hp '{hp:d}'"
 )
-def step_impl(context, ship_name, pos_x, pos_y, course, hp):
+def step_impl(context, ship_name, pos_x, pos_y, course, hp, id):
     context.ship = test_utils.add_test_ship(
         name=ship_name,
         pos_x=pos_x,
@@ -32,7 +32,7 @@ def step_impl(context, ship_name, pos_x, pos_y, course, hp):
         course=course,
         hp=hp,
         navy_game_id=context.game.id,
-        user_id=context.user1.id,
+        user_id=id,
     )
 
     from app.navy.services.ship_service import ship_service
