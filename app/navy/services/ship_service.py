@@ -77,10 +77,11 @@ class ShipService:
                 break
             old_x, old_y = x, y
         else:
-            self.delete_from_map(ship)
-            ship.pos_x, ship.pos_y = x, y
-            ship_dao.add_or_update(ship)
-            self.add_to_map(ship)
+            if action.move != 0:
+                self.delete_from_map(ship)
+                ship.pos_x, ship.pos_y = x, y
+                ship_dao.add_or_update(ship)
+                self.add_to_map(ship)
             return True
 
         return False
@@ -144,8 +145,9 @@ class ShipService:
         return ship_dao.get_by_id(ship_id)
 
     def act_accordingly_to_ship(self, ship, other_ship):
+        old_hp = ship.hp
         self.update_hp(ship, other_ship.hp)
-        self.update_hp(other_ship, ship.hp)
+        self.update_hp(other_ship, old_hp)
 
     def act_accordingly_to_missile(self, ship, missile):
         from app.navy.services.missile_service import missile_service

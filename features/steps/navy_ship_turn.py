@@ -2,6 +2,7 @@ import json
 
 from behave import *
 from flask import url_for
+from app.navy.services.navy_game_service import navy_game_service
 
 from app.navy.services.ship_service import ship_service
 
@@ -25,7 +26,8 @@ def step_impl(context, id, hp):
 @then("The ship with id '{id:d}' should be destroyed")
 def step_impl(context, id):
     ship = ship_service.get_by_id(id)
-    assert ship.hp <= 0
+    print(ship)
+    assert ship is None
 
 
 @then(
