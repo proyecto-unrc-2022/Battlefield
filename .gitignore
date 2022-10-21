@@ -18,3 +18,4 @@ htmlcov/
 dist/
 build/
 *.egg-info/
+client/node_modules/

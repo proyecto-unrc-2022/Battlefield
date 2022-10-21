@@ -1,7 +1,7 @@
 Feature: Move a missile
 
     Background: Login a user and initialized app with a game
-        Given Im logged as 'user'
+        Given I am logged in as "user1"
         And the app is initialized
         And the game is started
 

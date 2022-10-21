@@ -4,25 +4,6 @@ from behave import *
 from flask import url_for
 from steps.navy.test_utils import test_utils
 
-from app.daos.user_dao import add_user
-
-
-@given("Im logged as '{user}'")
-def step_impl(context, user):
-    add_user(user, "12345", "user@user.com")
-    context.body = {"username": user, "password": "12345"}
-    context.headers = {"Content-Type": "application/json"}
-    context.page = context.client.post(
-        url_for("auth.login"), json=context.body, headers=context.headers
-    )
-    from app import db
-    from app.models.user import User
-
-    context.user = db.session.query(User).filter_by(username=user).first()
-
-    assert context.user.email == "user@user.com"
-    assert context.page
-
 
 @given("the app is initialized")
 def step_impl(context):
@@ -35,7 +16,7 @@ def step_impl(context):
 
     from app.navy.services.navy_game_service import navy_game_service
 
-    context.game = navy_game_service.add({"user1_id": context.user.id})
+    context.game = navy_game_service.add({"user1_id": context.user1.id})
     assert context.game
 
 
@@ -50,7 +31,7 @@ def step_impl(context, ship_name, pos_x, pos_y, course, hp):
         course=course,
         hp=hp,
         navy_game_id=context.game.id,
-        user_id=context.user.id,
+        user_id=context.user1.id,
     )
 
     from app.navy.services.ship_service import ship_service
