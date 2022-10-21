@@ -124,8 +124,9 @@ class ShipService:
         if ship.hp - damage <= utils.ZERO:
             self.delete(ship)
             self.delete_from_map(ship)
-        ship.hp -= damage
-        ship_dao.add_or_update(ship)
+        else:
+            ship.hp -= damage
+            ship_dao.add_or_update(ship)
 
     def act_accordingly(self, ship, entity):
         from app.navy.models.missile import Missile

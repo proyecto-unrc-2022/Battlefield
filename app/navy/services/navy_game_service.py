@@ -6,12 +6,9 @@ from app.navy.validators.navy_game_patch_validator import NavyGamePatchValidator
 from app.navy.validators.navy_game_post_validator import NavyGamePostValidator
 
 """ Navy Game Service
-
     This class is responsible for all the business logic related to the Navy Game
-
     Attributes:
         games (list): List of all the games in the system.
-
     Methods:
         This class provides the following methods:
         validate_post_request(self, request)
@@ -78,7 +75,6 @@ class NavyGameService:
     # region Game's Logic Methods for memory map "self.games"
     def load_game_to_map(self, navy_game_id):
         from app.navy.services.missile_service import missile_service
-        from app.navy.utils.navy_utils import NavyUtils
 
         # --------------- 1.Get missiles and ships from DB ---------------#
         self.games[navy_game_id] = {}
@@ -118,15 +114,17 @@ class NavyGameService:
         missiles = self.load_game_to_map(navy_game_id)
         game = self.get_by_id(navy_game_id)
         # endregion
-
         # region: --------------- 3. Update the game - Move the missiles ---------------#
+
         for missile in missiles:
+            # move
+            # check if hit
+            #   act!
             if not missile_service.move(missile):
                 game = self.end_game(navy_game_id)
                 if game.winner:
                     return
         # endregion
-
         # region: --------------- 4. Update the game - Execute Actions associated ---------------#
         actions.sort(key=lambda x: x.user_id == game.turn, reverse=True)
 
@@ -138,7 +136,6 @@ class NavyGameService:
         else:
             action_service.delete_all(navy_game_id)
         # endregion
-
         # region: --------------- 5. Update region:   the game - Change turn ---------------#
         game = self.change_turn(game=game)
         game.round += 1

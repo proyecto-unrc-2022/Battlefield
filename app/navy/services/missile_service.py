@@ -126,6 +126,9 @@ class MissileService:
 
     # endregion
 
+    def move2(self, x, y):
+        x, y = utils.get_next_position(x, y)
+
     def move(self, missile):
         old_x, old_y = missile.pos_x, missile.pos_y
         x, y = old_x, old_y
@@ -138,10 +141,11 @@ class MissileService:
             missile.pos_x, missile.pos_y = x, y
         else:
             navy_game_service.delete_from_map(missile.navy_game_id, old_x, old_y)
-            navy_game_service.add_to_map(
-                missile.navy_game_id, missile.pos_x, missile.pos_y
+            navy_game_service.add_in_map(
+                missile.navy_game_id, missile.pos_x, missile.pos_y, missile
             )
             missile_dao.add_or_update(missile)
+
         return True
 
     # endregion
