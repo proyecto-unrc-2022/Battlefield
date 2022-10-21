@@ -35,16 +35,12 @@ class NavyGameService:
 
     games = {}
 
-    # region Validation's Logic
     def validate_post_request(self, request):
         return NavyGamePostValidator().load(request)
 
     def validate_patch_request(self, request):
         return NavyGamePatchValidator().load(request)
 
-    # endregion
-
-    # region Game's Logic Methods for BD
     def add(self, data):
         new_game = NavyGame(utils.ROWS, utils.COLS, data["user1_id"])
         navy_game_dao.add_or_update(new_game)
@@ -70,9 +66,6 @@ class NavyGameService:
         navy_game_dao.delete(game)
         return game
 
-    # endregion
-
-    # region Game's Logic Methods for memory map "self.games"
     def load_game_to_map(self, navy_game_id):
         from app.navy.services.missile_service import missile_service
 
@@ -104,17 +97,12 @@ class NavyGameService:
     # endregion
 
     def update_game(self, navy_game_id):
-        # region:  --------------- 1. Neccesary Imports ---------------#
         from app.navy.services.action_service import action_service
         from app.navy.services.missile_service import missile_service
 
-        # endregion
-        # region: --------------- 2. Get game,missiles and actions ---------------#
         actions = action_service.get_by_navy_game(navy_game_id)
         missiles = self.load_game_to_map(navy_game_id)
         game = self.get_by_id(navy_game_id)
-        # endregion
-        # region: --------------- 3. Update the game - Move the missiles ---------------#
 
         for missile in missiles:
             # move
@@ -124,8 +112,7 @@ class NavyGameService:
                 game = self.end_game(navy_game_id)
                 if game.winner:
                     return
-        # endregion
-        # region: --------------- 4. Update the game - Execute Actions associated ---------------#
+
         actions.sort(key=lambda x: x.user_id == game.turn, reverse=True)
 
         for action in actions:
@@ -135,37 +122,29 @@ class NavyGameService:
                     return
         else:
             action_service.delete_all(navy_game_id)
-        # endregion
-        # region: --------------- 5. Update region:   the game - Change turn ---------------#
+
         game = self.change_turn(game=game)
         game.round += 1
         navy_game_dao.add_or_update(game)
-        # endregion
 
     def change_turn(self, navy_game_id=None, game=None):
-        # region: --------------- 1. Logic parameter's ---------------#
         if not game:
             game = self.get_by_id(navy_game_id)
-        # endregion
 
         game.turn = game.user1_id if game.turn == game.user2_id else game.user2_id
         return game
 
     def set_winner(self, winner, navy_game_id=None, game=None):
-        # region: --------------- 1. Logic parameter's ---------------#
         if not game:
             game = self.get_by_id(navy_game_id)
-        # endregion
 
         game.winner = winner
         navy_game_dao.add_or_update(game)
         return game
 
     def end_game(self, navy_game_id):
-        # region --------------- 1. Get Game and ship (from BD) ---------------#
         ships = ship_service.get_by(navy_game_id=navy_game_id)
         game = self.get_by_id(navy_game_id)
-        # endregion
 
         ships_user1 = ship_service.get_by(
             user_id=game.user1_id, navy_game_id=navy_game_id
@@ -174,12 +153,10 @@ class NavyGameService:
             user_id=game.user2_id, navy_game_id=navy_game_id
         )
 
-        # region --------------- 3. Check if are a Winner ---------------#
         if not ships_user1:
             self.set_winner(game.user2_id, game=game)
         elif not ships_user2:
             self.set_winner(game.user1_id, game=game)
-        # endregion
         return game
 
     def should_update(self, navy_game_id):

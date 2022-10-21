@@ -41,7 +41,7 @@ def step_impl(context, ship_name, pos_x, pos_y, course, hp):
 
 
 @given(
-    "Exist a missile at '{pos_x:d}','{pos_y:d}' with speed '{speed:d}', course '{course}' and damage '{damage:d}'"
+    "There is a missile at '{pos_x:d}','{pos_y:d}' with speed '{speed:d}', course '{course}' and damage '{damage:d}'"
 )
 def step_impl(context, pos_x, pos_y, speed, course, damage):
     context.missile_test = test_utils.add_test_missile(
@@ -61,7 +61,7 @@ def step_impl(context, pos_x, pos_y, speed, course, damage):
     assert context.missile_test in missiles_db
 
 
-@when("The missile move")
+@when("The missile moves")
 def step_impl(context):
     from app.navy.services.missile_service import missile_service
     from app.navy.services.navy_game_service import navy_game_service

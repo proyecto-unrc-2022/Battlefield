@@ -182,3 +182,10 @@ def step_impl(context):
 @then("The game with id 1 should be deleted")
 def step_impl(context):
     assert context.page.status_code == 200
+
+@then(u"I should see the ship at the new position '{pos_x}','{pos_y}'")
+def step_impl(context, pos_x, pos_y):
+    from app.navy.services.navy_game_service import navy_game_service
+
+    ship = navy_game_service.get_from_map(context.game.id, pos_x, pos_y)
+    assert ship == context.ship
