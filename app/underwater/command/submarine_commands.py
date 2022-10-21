@@ -1,27 +1,28 @@
+from app.underwater.daos.submarine_dao import submarine_dao
+
 from .command import Command
 
 
 class SubmarineCommand(Command):
     def __init__(self, game, submarine, **params):
         super(SubmarineCommand, self).__init__(game, submarine.player, **params)
-        self.submarine = submarine
+        self.submarine_id = submarine.id
 
     def get_submarine(self):
-        return self.submarine
+        return submarine_dao.get_by_id(self.submarine_id)
 
 
 class RotateAndAdvance(SubmarineCommand):
     def execute(self):
-        self.game.rotate_object(self.submarine, self.params["direction"])
-        if self.submarine.in_game():
-            self.game.advance_object(self.submarine, self.params["steps"])
+        submarine = submarine_dao.get_by_id(self.submarine_id)
+        self.game.rotate_object(submarine, self.params["direction"])
+        if submarine.in_game():
+            self.game.advance_object(submarine, self.params["steps"])
 
 
 class RotateAndAttack(SubmarineCommand):
-    def __init__(self, game, submarine, **params):
-        super(RotateAndAttack, self).__init__(game, submarine, **params)
-
     def execute(self):
-        self.game.rotate_object(self.submarine, self.params["direction"])
-        if self.submarine.in_game():
-            self.game.attack(self.submarine)
+        submarine = submarine_dao.get_by_id(self.submarine_id)
+        self.game.rotate_object(submarine, self.params["direction"])
+        if submarine.in_game():
+            self.game.attack(submarine)
