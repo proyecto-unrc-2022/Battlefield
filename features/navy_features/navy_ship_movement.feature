@@ -2,6 +2,7 @@ Feature: Ship Movement
 
 Background: Login a user and initialize the app
     Given I am logged in as "user1"
+    And another user exists as "user2"
     And the app is initialized
     And the game is started
 
