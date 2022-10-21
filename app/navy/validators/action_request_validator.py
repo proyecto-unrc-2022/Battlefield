@@ -40,12 +40,15 @@ class ActionRequestValidator(Schema):
         if not in_data.get("attack"):
             ship = db.session.query(Ship).filter_by(id=in_data.get("ship_id")).first()
 
-            mov_ship = ship_type_dao.get_by(ship.name)["speed"]
-
-            if in_data.get("move") > mov_ship:
-                raise ValidationError(
-                    "Can't move more than " + str(mov_ship) + " spaces"
-                )
+            if ship:
+                mov_ship = ship_type_dao.get_by(ship.name)["speed"]
+                print(in_data.get("move"))
+                if in_data.get("move") < 0:
+                    raise ValidationError("The movement is a negative distance")
+                if in_data.get("move") > mov_ship:
+                    raise ValidationError(
+                        "Can't move more than " + str(mov_ship) + " spaces"
+                    )
 
     @validates_schema
     def check_game(self, in_data, **kwargs):
