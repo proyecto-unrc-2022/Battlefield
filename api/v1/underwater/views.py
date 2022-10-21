@@ -4,7 +4,8 @@ from os import stat_result
 from flask import Response, jsonify, request
 
 from api import token_auth
-from app.daos.user_dao import get_user_by_id
+from app import db
+from app.daos.user_dao import add_user, get_user_by_id
 from app.models.user import User
 from app.underwater import boards
 from app.underwater.command import AdvanceTorpedo, RotateAndAdvance, RotateAndAttack
@@ -18,67 +19,77 @@ from app.underwater.under_dtos import game_dto
 from . import underwater
 
 
-@underwater.get("/new_game")
+@underwater.post("/reset")
+def reset():
+    db.drop_all()
+    db.create_all()
+
+    add_user("joel", "joel", "joel@mail")
+    add_user("blito", "blito", "blito@mail")
+
+    return Response("{'message': 'success'}", status=200)
+
+
+@underwater.get("/game/<int:game_id>")
+def get_game(game_id):
+    game = game_dao.get_by_id(game_id)
+    return game_dto.dump(game)
+
+
+@underwater.post("/game/new")
 # @token_auth.login_required
 def new_game():
-    if not request.args.get("host_id"):
-        return Response("{'error':'must pass a host id'", status="409")
+    data = request.form.to_dict()
 
-    host = get_user_by_id(request.args.get("host_id"))
+    host = get_user_by_id(data["host_id"])
 
     height = 10
     width = 20
-    if request.args.get("height"):
-        height = request.args.get("height")
-    if request.args.get("width"):
-        width = request.args.get("width")
+    if "height" in data.keys():
+        height = data["height"]
+    if "width" in data.keys():
+        width = data["width"]
 
     try:
-        new_game = game_dao.create(
-            request.args.get("host_id"), height=height, width=width
-        )
+        new_game = game_dao.create(data["host_id"], height=height, width=width)
 
     except Exception as e:
         return Response("{'error':%s}" % str(e), status=409)
     return game_dto.dump(new_game)
 
 
-@underwater.get("/join_game")
-def join_game():
-    visitor_id = int(request.args.get("visitor_id"))
-    visitor = get_user_by_id(visitor_id)
-    game = game_dao.get_by_id(request.args.get("game_id"))
-    game_session = sessions[game.id]
-
-    if game.visitor_id is not None:
-        return Response("{'error':'game does not have an available slot'}", status=409)
-
-    if visitor_id == game.host_id:
-        return Response(
-            "{'error':'you cannot be a visitor to your own game'}", status=409
-        )
-
-    game.visitor_id = visitor_id
-
-    game_session.add_player(visitor)
-
-    game_dao.save(game)
-    return game_dto.dumps(game)
-
-
-@underwater.post("/choose_submarine")
-def choose_submarine():
-    # data = request.json
+@underwater.post("/game/<int:game_id>/join")
+def join_game(game_id):
     data = request.form.to_dict()
     for key in data:
         data[key] = int(data[key])
 
-    game_id = data["game_id"]
-    player_id = data["player_id"]
-    submarine_id = data["submarine_id"]
-    x_position = data["x_position"]
-    y_position = data["y_position"]
-    direction = data["direction"]
+    visitor = get_user_by_id(data["visitor_id"])
+    game = game_dao.get_by_id(game_id)
+    game_session = sessions[game.id]
+
+    if game.visitor is not None:
+        return Response("{'error':'game does not have an available slot'}", status=409)
+
+    if visitor is game.host:
+        return Response(
+            "{'error':'you cannot be a visitor to your own game'}", status=409
+        )
+
+    game.visitor = visitor
+
+    game_session.add_player(visitor)
+
+    game_dao.save(game)
+    return game_dto.dump(game)
+
+
+@underwater.post("/game/<int:game_id>/<int:player_id>/choose_submarine")
+def choose_submarine(game_id, player_id):
+    data = request.form.to_dict()
+    for key in data:
+        data[key] = int(data[key])
+
     game = game_dao.get_by_id(game_id)
     player = get_user_by_id(player_id)
 
@@ -88,7 +99,13 @@ def choose_submarine():
         return Response("{'error':'player not found'}", status=404)
 
     try:
-        game.add_submarine(player, submarine_id, x_position, y_position, direction)
+        game.add_submarine(
+            player,
+            data["submarine_id"],
+            data["x_position"],
+            data["y_position"],
+            data["direction"],
+        )
     except Exception as e:
         return Response("{'error':'%s'}" % str(e), status=409)
 
@@ -96,20 +113,26 @@ def choose_submarine():
     return game_dto.dump(game)
 
 
-@underwater.post("/rotate_and_advance")
-def rotate_and_advance():
-    # data = request.json
+@underwater.post("/game/<int:game_id>/<int:player_id>/rotate_and_advance")
+def rotate_and_advance(game_id, player_id):
     data = request.form.to_dict()
     for key in data:
         data[key] = int(data[key])
 
-    game = game_dao.get_by_id(data["game_id"])
-    submarine = submarine_dao.get_by_id(data["submarine_id"])
+    game = game_dao.get_by_id(game_id)
+    player = get_user_by_id(player_id)
+
+    if not game:
+        return Response("{'error':'game not found'}", status=404)
+    if not player:
+        return Response("{'error':'player not found'}", status=404)
+
+    submarine = player.submarine
     direction = data["direction"]
     steps = data["steps"]
-    game_session = sessions[game.id]
+    game_session = sessions[game_id]
 
-    if game_session.current_turn_player() is not submarine.player:
+    if game_session.current_turn_player() is not player:
         return Response("{'error': 'not your turn'}", status=409)
 
     game_session.add_command(
@@ -121,18 +144,25 @@ def rotate_and_advance():
     return game_dto.dump(game)
 
 
-@underwater.post("/rotate_and_attack")
-def rotate_and_attack():
+@underwater.post("/game/<int:game_id>/<int:player_id>/rotate_and_attack")
+def rotate_and_attack(game_id, player_id):
     data = request.form.to_dict()
     for key in data:
         data[key] = int(data[key])
 
-    game = game_dao.get_by_id(data["game_id"])
-    submarine = submarine_dao.get_by_id(data["submarine_id"])
+    game = game_dao.get_by_id(game_id)
+    player = get_user_by_id(player_id)
+
+    if not game:
+        return Response("{'error':'game not found'}", status=404)
+    if not player:
+        return Response("{'error':'player not found'}", status=404)
+
+    submarine = player.submarine
     direction = data["direction"]
     game_session = sessions[game.id]
 
-    if game_session.current_turn_player() is not submarine.player:
+    if game_session.current_turn_player() is not player:
         return Response("{'error': 'not your turn'}", status=409)
 
     game_session.add_command(RotateAndAttack(game, submarine, direction=direction))
@@ -142,7 +172,7 @@ def rotate_and_attack():
     return game_dto.dump(game)
 
 
-@underwater.get("/get_options")
+@underwater.get("/game/submarine_options")
 def get_options():
     return UnderGame.get_options()
 

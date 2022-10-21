@@ -36,13 +36,14 @@ def step_impl(context, username, sub_type, x, y, d):
     player = context.players[username]
     choosen_id = context.options[sub_type]
     payload = {
-        "game_id": context.game.id,
-        "player_id": player.id,
         "submarine_id": choosen_id,
         "x_position": x,
         "y_position": y,
         "direction": d,
     }
     context.page = context.client.post(
-        url_for("underwater.choose_submarine"), data=payload
+        url_for(
+            "underwater.choose_submarine", game_id=context.game.id, player_id=player.id
+        ),
+        data=payload,
     )
