@@ -126,30 +126,34 @@ def shoot(direction,figure_id,game_id):
 #Este metodo verifica si la firura es valida.
 #Falta cambiar las posiciones de los tres projectiles
 #TODO: Cambiar pos_x y pos_y
-def figure_valid(figure,direction,game_id):
-    if(figure == "1"):
-        projectile1 = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=0, daño=5, direccion= direction)
+def figure_valid(figure_id,direction,game_id):
+    if(figure_id == "1"):
+        figure = db.session.query(Figure_infantry).filter_by(id= figure_id).first()
+        projectile1 = Projectile(id_game= game_id, pos_x=figure.pos_x + 3, pos_y=figure.pos_y + 3, velocidad=0, daño=5, direccion= direction)
         db.session.add(projectile1)
         db.session.commit()
-        projectile2 = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=0, daño=5, direccion= direction)
+        projectile2 = Projectile(id_game= game_id, pos_x=figure.pos_ + 2, pos_y=figure.pos_y + 2, velocidad=0, daño=5, direccion= direction)
         db.session.add(projectile2)
         db.session.commit()
-        projectile3 = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=0, daño=5, direccion= direction)
+        projectile3 = Projectile(id_game= game_id, pos_x=figure.pos_x + 1, pos_y=figure.pos_y + 1, velocidad=0, daño=5, direccion= direction)
         db.session.add(projectile3)
         db.session.commit()
         return True
-    elif(figure == "2"):
-        projectile = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=5, daño=5, direccion= direction)
+    elif(figure_id == "2"):
+        figure = db.session.query(Figure_infantry).filter_by(id= figure_id).first()
+        projectile = Projectile(id_game= game_id, pos_x=figure.pos_x + 1, pos_y=figure.pos_y + 1, velocidad=5, daño=5, direccion= direction)
         db.session.add(projectile)
         db.session.commit()
         return True
-    elif(figure == "3"):
-        projectile = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=3, daño=15, direccion= direction)
+    elif(figure_id == "3"):
+        figure = db.session.query(Figure_infantry).filter_by(id= figure_id).first()
+        projectile = Projectile(id_game= game_id, pos_x=figure.pos_x + 1, pos_y=figure.pos_y + 1, velocidad=3, daño=15, direccion= direction)
         db.session.add(projectile)
         db.session.commit()
         return True
-    elif(figure == "4"):
-        projectile = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=20, daño=30, direccion= direction)
+    elif(figure_id == "4"):
+        figure = db.session.query(Figure_infantry).filter_by(id= figure_id).first()
+        projectile = Projectile(id_game= game_id, pos_x=figure.pos_x + 1, pos_y=figure.pos_y + 1, velocidad=20, daño=30, direccion= direction)
         db.session.add(projectile)
         db.session.commit()
         return True
@@ -260,10 +264,14 @@ def return_direction(projectile_id):
 #Este metodo hace daño entre los projectiles
 def damage_projectile(projectile_id):
     game = db.session.query(Projectile).id_game
-    other_projectile = db.session.query(Projectile).order_by(id_game= game).id
+    projectile = db.session.query(Projectile).filter_by(id= projectile_id).first()
+    other_projectile = db.session.query(Projectile).order_by(id_game= game).first()
 
-    if(projectile_id.pos_x == other_projectile.pos_x and projectile_id.pos_y == other_projectile.pos_y):
-        db.session.query(Projectile).filter_by(id= other_projectile).destroy
-        db.session.query(Projectile).filter_by(id= projectile_id).destroy
-    
+    if(projectile.pos_x == other_projectile.pos_x and projectile.pos_y == other_projectile.pos_y):
+        db.session.delete(projectile)
+        db.session.commit()
+        db.session.delete(other_projectile)
+        db.session.commit()
+        
+
 
