@@ -48,14 +48,16 @@ def step_impl(context):
 def step_impl(context, username, d, n):
     player = context.players[username]
     payload = {
-        "game_id": context.game.id,
-        "submarine_id": player.submarine.id,
         "direction": d,
         "steps": n,
     }
-    session = sessions[context.game.id]
     context.page = context.client.post(
-        url_for("underwater.rotate_and_advance"), data=payload
+        url_for(
+            "underwater.rotate_and_advance",
+            game_id=context.game.id,
+            player_id=player.id,
+        ),
+        data=payload,
     )
 
     assert context.page
@@ -74,12 +76,13 @@ def step_impl(context):
 def step_impl(context, username, d):
     player = context.players[username]
     payload = {
-        "game_id": context.game.id,
-        "submarine_id": player.submarine.id,
         "direction": d,
     }
     context.page = context.client.post(
-        url_for("underwater.rotate_and_attack"), data=payload
+        url_for(
+            "underwater.rotate_and_attack", game_id=context.game.id, player_id=player.id
+        ),
+        data=payload,
     )
     assert context.page
 

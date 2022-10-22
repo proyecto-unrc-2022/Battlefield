@@ -26,7 +26,9 @@ def step_impl(context):
 @when("the user '{username}' asks for a new game")
 def step_impl(context, username):
     player = context.players[username]
-    context.page = context.client.get(url_for("underwater.new_game", host_id=player.id))
+    context.page = context.client.post(
+        url_for("underwater.new_game"), data={"host_id": player.id}
+    )
 
     assert context.page
 
@@ -59,8 +61,8 @@ def step_impl(context, username, id):
 @when("the user '{username}' asks to join the game of id '{id:d}'")
 def step_impl(context, username, id):
     player = context.players[username]
-    context.page = context.client.get(
-        url_for("underwater.join_game", game_id=id, visitor_id=player.id)
+    context.page = context.client.post(
+        url_for("underwater.join_game", game_id=id), data={"visitor_id": player.id}
     )
     assert context.page
 
