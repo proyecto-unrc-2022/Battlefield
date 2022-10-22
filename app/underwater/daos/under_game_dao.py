@@ -18,25 +18,31 @@ class UnderGameDAO:
 
         host = db.session.get(User, host_id)
         visitor = None
+
         if host.under_game_host or host.under_game_visitor:
             raise Exception("User of id %s is in another game" % host_id)
 
-        game = UnderGame(host_id=host_id, height=height, width=width)
-        boards.pop(game.id, None)  # Clear any existing boards with this game's id
-        sessions.pop(game.id, None)  # Clear any existing sessions with this game's id
-        game.build_board()
+        game = UnderGame(host=host, height=height, width=width)
+
         if visitor_id is not None:
             visitor = db.session.get(User, visitor_id)
             if not visitor:
                 return None
-            game.visitor_id = visitor_id
+            game.visitor = visitor
 
         db.session.add(game)
         db.session.commit()
+
+        boards.pop(game.id, None)
         boards.update({game.id: game.board})
+        game.build_board()
+
+        sessions.pop(game.id, None)
         sessions.update({game.id: UnderGameSession(host)})
+
         if visitor:
             sessions[game.id].add_player(visitor)
+
         return game
 
     def get_by_id(self, game_id):
