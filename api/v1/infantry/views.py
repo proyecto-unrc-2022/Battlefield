@@ -92,10 +92,10 @@ def mov_action(direction, velocity, user_id, game_id):
     
     return Response(status=404)
 
-@infantry.route("/shoot/game/<game_id>/course/<direction>/figure/<figure_id>",methods=['POST'])
-def shoot_entity(direction, figure_id, game_id):
+@infantry.route("/game/<game_id>/user/<user_id>/course/<direction>/shoot",methods=['POST'])
+def shoot_entity(direction, user_id, game_id):
 
-    if(shoot(direction, figure_id, game_id)):
+    if(shoot(direction, user_id, game_id)):
 
         projectile = db.session.query(Projectile).order_by(Projectile.id.desc()).first()
 

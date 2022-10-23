@@ -136,8 +136,10 @@ def move(figure, direction, velocity):
 #Primero busca en la tabla Figura el personaje del usuario.
 #Luego pregunta si la direccion que quiere disparar es verdadero o no.
 #Si el disparo se puede realizar, pregunta cual es la figure y dependiendo cual es crea su respectivo proyectil. 
-def shoot(direction,figure_id,game_id):
- 
+def shoot(direction, user_id, game_id):
+
+    figure_id = Figure_infantry.query.filter_by(id_user = user_id).first().figure_type
+
     if (direction):
         if(figure_valid(figure_id,direction,game_id)):
             return True
@@ -150,7 +152,8 @@ def shoot(direction,figure_id,game_id):
 #Falta cambiar las posiciones de los tres projectiles
 #TODO: Cambiar pos_x y pos_y
 def figure_valid(figure,direction,game_id):
-    if(figure == "1"):
+
+    if(figure == 1):
         projectile1 = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=0, daño=5, direccion= direction)
         db.session.add(projectile1)
         db.session.commit()
@@ -161,17 +164,17 @@ def figure_valid(figure,direction,game_id):
         db.session.add(projectile3)
         db.session.commit()
         return True
-    elif(figure == "2"):
+    elif(figure == 2):
         projectile = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=5, daño=5, direccion= direction)
         db.session.add(projectile)
         db.session.commit()
         return True
-    elif(figure == "3"):
+    elif(figure == 3):
         projectile = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=3, daño=15, direccion= direction)
         db.session.add(projectile)
         db.session.commit()
         return True
-    elif(figure == "4"):
+    elif(figure == 4):
         projectile = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=20, daño=30, direccion= direction)
         db.session.add(projectile)
         db.session.commit()
