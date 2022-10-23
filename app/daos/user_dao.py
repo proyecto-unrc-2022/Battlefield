@@ -11,6 +11,8 @@ def add_user(username, password, email):
     db.session.add(user)
     db.session.commit()
 
+    return user
+
 
 def hash_password(plaintext_password):
     return hashpw(plaintext_password, gensalt())

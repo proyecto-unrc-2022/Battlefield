@@ -11,7 +11,7 @@ from app.daos.infantry.infantry_dao import ready
 from app.daos.infantry.infantry_dao import join
 from app.daos.infantry.infantry_dao import move_by_user
 from app.daos.infantry.infantry_dao import shoot
-from app.daos.infantry.infantry_dao import update_projectile
+from app.daos.infantry.infantry_dao import *
 from app.models.infantry.game_Infantry import Game_Infantry, Game_Infantry_Schema
 from app.models.infantry.figure_infantry import Figure_infantry, Figure_Infantry_Schema
 from app.models.infantry.projectile_infantry import Projectile_Infantry_Schema, Projectile
@@ -52,7 +52,6 @@ def ready_to_play(game_id):
 @infantry.route("/game/<game_id>/user/<user_id>/join",methods=['POST'])
 def join_game(game_id, user_id):
 
-
     if (join(game_id, user_id)):
 
         ready_game = Game_Infantry.query.filter_by(id = game_id).first()
@@ -67,7 +66,12 @@ def join_game(game_id, user_id):
 @infantry.route("/game/<game_id>/user/<user_id>/figure/<type>/create_entity",methods=['POST'])
 def choose_figure(game_id, user_id, type):
 
-    new_figure = add_figure(game_id, user_id, type)
+    data = json.loads(request.data)
+
+    pos_x = data["pos_x"]
+    pos_y = data["pos_y"]
+
+    new_figure = add_figure(game_id, user_id, type, pos_x, pos_y)
 
     if(new_figure == None):
 
@@ -102,8 +106,8 @@ def shoot_entity(direction, figure_id, game_id):
 def updateProjectile():
 
     projectile = db.session.query(Projectile).order_by(Projectile.id.desc()).first()
-    
-    update_projectile(projectile.id)
+
+    setDirection(projectile, 3)
 
     return jsonify(projectile_schema.dump(projectile))
 

@@ -36,6 +36,12 @@ class Figure_infantry(db.Model):
         self.pos_y = pos_y
         self.figure_type = type
 
+
+    def getId(self):
+
+        return self.id
+
+
 class Figure_Infantry_Schema(SQLAlchemySchema):
     class Meta:
         model= Figure_infantry

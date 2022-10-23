@@ -20,7 +20,7 @@ class Projectile(db.Model):
     
     
     #Foreign key
-    #game = relationship("Game_Infantry", foreign_keys=[id_game])
+    game = relationship("Game_Infantry", foreign_keys=[id_game])
 
     def __init__(self, id_game=None, pos_x=None, pos_y=None, velocidad=None, daño=None, direccion=None):
         self.id_game = id_game

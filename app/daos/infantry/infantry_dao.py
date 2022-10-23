@@ -10,21 +10,44 @@ from sqlalchemy import update
 from .direction import *
 import copy
 
-def add_figure(game_id, user_id ,entity_id):
+def validation_position(game_id, user_id, pos_x, pos_y):
+
+    succes = False
+
+    game = db.session.query(Game_Infantry).filter_by(id = game_id).first()
+
+    if(game.id_user1 == int(user_id)):
+        if(0 <= pos_x <= 9 and 0 <= pos_y <= 10):
+            
+            succes = True
+
+    if(game.id_user2 == int(user_id)):
+        if(11 <= pos_x <= 20 and 0 <= pos_y <= 10):
+            
+            succes = True
+
+    return succes
+
+def add_figure(game_id, user_id ,entity_id, position_X, position_Y):
+
+    succes = validation_position(game_id, user_id, position_X, position_Y)
+
+    if(not(succes)):
+        return None
 
     #succes = True
     #soldier
     if("1" == entity_id):
-        figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=10, velocidad=3, tamaño=1, direccion=0,pos_x=0, pos_y=0, type=1)
+        figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=10, velocidad=3, tamaño=1, direccion=0, pos_x=position_X, pos_y=position_Y, type=1)
     #humvee
     elif("2" == entity_id):
-        figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=20, velocidad=5, tamaño=2, direccion=0, pos_x=0, pos_y=0, type=2)
+        figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=20, velocidad=5, tamaño=2, direccion=0, pos_x=position_X, pos_y=position_Y, type=2)
     #tank
     elif("3" == entity_id):
-        figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=50, velocidad=2, tamaño=3, direccion=0, pos_x=0, pos_y=0, type=3)
+        figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=50, velocidad=2, tamaño=3, direccion=0, pos_x=position_X, pos_y=position_Y, type=3)
     #artillery
     elif("4" == entity_id):
-        figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=80, velocidad=1, tamaño=4, direccion=0,pos_x=0, pos_y=0, type=4)
+        figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=80, velocidad=1, tamaño=4, direccion=0,pos_x=position_X, pos_y=position_Y, type=4)
     else:
         figure = None
         #succes = False
@@ -266,4 +289,16 @@ def damage_projectile(projectile_id):
         db.session.query(Projectile).filter_by(id= other_projectile).destroy
         db.session.query(Projectile).filter_by(id= projectile_id).destroy
     
+
+def setDirection(object, direction):
+
+    object.direccion = direction
+
+def intersec(object1, object2):
+
+    if(object1.pos_x == object2.pos_x and object1.pos_y == object2.pos_y):
+
+        return True
+
+    return False
 

@@ -40,11 +40,9 @@ def create_user():
     password = data["password"]
     email = data["email"]
 
-    add_user(username, password, email)
+    user = add_user(username, password, email)
 
-   
-
-    return "ok"
+    return jsonify(user_schema.dump(user))
     
 
     
