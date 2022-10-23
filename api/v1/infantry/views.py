@@ -1,4 +1,5 @@
 import json
+from sqlalchemy import insert, select
 from api import token_auth
 
 from app import db
@@ -111,6 +112,13 @@ def updateProjectile():
 
     return jsonify(projectile_schema.dump(projectile))
 
+@infantry.route("games", methods=["GET"])
+# @token_auth.login_required
+def get_all_users():
+
+    games = db.session.scalars(select(Game_Infantry).where(Game_Infantry.id_user2 == None)).all()
+
+    return jsonify(game_schema.dump(games, many=True))
 
     
 # Routes here
