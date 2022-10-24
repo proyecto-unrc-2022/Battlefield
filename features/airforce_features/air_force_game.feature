@@ -1,19 +1,19 @@
 Feature: game logic
     
-    @air_force_game
+    @air_force_game_new
     Scenario: User start new game
         Given three logged user
-        When enter in empty game
-        Then players id who are in the game are returned
+        When create new game
+        Then game id are returned
 
 
-    @air_force_game
+    @air_force_game_new
     Scenario: Second user enter in the game
         Given three logged user
         When second user enter in the game
         Then two users info are returned
 
-    @air_force_game
+    @air_force_game_new
     Scenario: Third user try enter in the game
         Given three logged user
         When new user try enter in the game

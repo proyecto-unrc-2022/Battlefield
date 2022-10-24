@@ -25,12 +25,25 @@ def step_impl(context):
     context.player_c = user_c.id
 
 
-@when("enter in empty game")
+@when("create new game")
 def step_impl(context):
     context.response = context.client.put(
-        url_for("air_force.join_in_game", player=context.player_a)
+        url_for("air_force.new_game", player=context.player_a)
     )
     assert context.response.status_code is 200
+
+
+@then("game id are returned")
+def step_impl(context):
+    raw_expected = {"game_id": 0}
+    raw_response = context.response.json
+
+    response, expected = json.dumps(raw_expected, sort_keys=True), json.dumps(
+        raw_response, sort_keys=True
+    )
+    print(response)
+    print(expected)
+    assert response == expected
 
 
 @then("players id who are in the game are returned")
@@ -49,7 +62,7 @@ def step_impl(context):
 @when("second user enter in the game")
 def step_impl(context):
     context.response = context.client.put(
-        url_for("air_force.join_in_game", player=context.player_b)
+        url_for("air_force.join_in_game", id=0, player=context.player_b)
     )
     assert context.response.status_code is 200
 
@@ -61,19 +74,17 @@ def step_impl(context):
         "player_b": str(context.player_b),
     }
     raw_response = context.response.json
-    response, expected = json.dumps(raw_expected, sort_keys=True), json.dumps(
+    expected, response = json.dumps(raw_expected, sort_keys=True), json.dumps(
         raw_response, sort_keys=True
     )
-    print(response)
-    print(expected)
-
+    print("responmse", response)
     assert response == expected
 
 
 @when("new user try enter in the game")
 def step_impl(context):
     context.response = context.client.put(
-        url_for("air_force.join_in_game", player=context.player_c)
+        url_for("air_force.join_in_game", id=0, player=context.player_c)
     )
 
 
