@@ -12,6 +12,7 @@ from app.models.airforce.air_force_game import (
     ChoosePlane,
     GetPlayers,
     JoinGame,
+    MovePlane,
 )
 from app.models.airforce.plane import Plane, PlaneSchema, ProjectileSchema
 
@@ -75,6 +76,18 @@ def choose_plane_and_position(id):
         dic = game.execute(command)
         print(dic.to_dict())
         return jsonify(dic.to_dict())  # Response(status=201)
+    except:
+        return Response(status=400)
+
+
+@air_force.route("game_id/<id>/player/<player>/course/<course>/", methods=["PUT"])
+def fligth(id, player, course):
+    game = air_force_game[int(id)]
+    try:
+        game.battlefield.check_course(course, player)
+        command = MovePlane(course, player, game)
+        game.add_command(command)
+        return Response(status=201)
     except:
         return Response(status=400)
 
@@ -148,13 +161,3 @@ def move_projectile(player_projectile, course):
 @token_auth.login_required
 def attack():
     return {"result": "booom!!!"}
-
-
-@air_force.route("/player/<player>/course/<course>/", methods=["PUT"])
-def fligth(player, course):
-    try:
-        obj = air_force_game.battlefield.fligth(int(player), int(course))
-    except:
-        return Response(status=400)
-    #    return Response(status=201)
-    return jsonify(obj.to_dict())
