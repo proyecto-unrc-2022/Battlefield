@@ -96,7 +96,7 @@ def step_impl(context):
 
 @given("player_a and plane in db")
 def step_impl(context):
-    players = context.client.get(url_for("air_force.get_players"))
+    players = context.client.get(url_for("air_force.get_players", id=0))
     players = players.json
     context.player = players.get("player_a")
     context.plane = add_plane(
@@ -113,6 +113,25 @@ def step_impl(context):
     context.course = 2
 
 
+@when("choose a plane and position outside of map")
+def step_impl(context):
+    body = {
+        "player": context.player,
+        "plane": context.plane.id,
+        "x": 21,
+        "y": 11,
+        "course": 2,
+    }
+    headers = {"Conten-Type": "application/json"}
+
+    context.response = context.client.put(
+        url_for("air_force.choose_plane_and_position", id=0),
+        data=json.dumps(body),
+        headers=headers,
+    )
+    assert context.response
+
+
 @when("player_a choose a plane and his position")
 def step_impl(context):
     body = {
@@ -124,11 +143,10 @@ def step_impl(context):
     }
     headers = {"Content-Type": "application/json"}
     context.response = context.client.put(
-        url_for("air_force.choice_plane_and_position"),
+        url_for("air_force.choose_plane_and_position", id=0),
         data=json.dumps(body),
         headers=headers,
     )
-    assert context.response
 
 
 @when("player_a choose try add new plane")
@@ -142,10 +160,29 @@ def step_impl(context):
     }
     headers = {"Content-Type": "application/json"}
     context.response = context.client.put(
-        url_for("air_force.choice_plane_and_position"),
+        url_for("air_force.choose_plane_and_position", id=0),
         data=json.dumps(body),
         headers=headers,
     )
+
+
+@given("player_b in the game and plane in db")
+def step_impl(context):
+    players = context.client.get(url_for("air_force.get_players", id=0))
+    players = players.json
+    context.player = players.get("player_b")
+    context.plane = add_plane(
+        name="Hawker Tempest",
+        size=1,
+        speed=5,
+        health=10,
+        course=3,
+        coor_x=5,
+        coor_y=5,
+    )
+    context.x = 13
+    context.y = 6
+    context.course = 4
 
 
 @when("player_b choose a plane and his position")
@@ -159,7 +196,7 @@ def step_impl(context):
     }
     headers = {"Content-Type": "application/json"}
     context.response = context.client.put(
-        url_for("air_force.choice_plane_and_position"),
+        url_for("air_force.choose_plane_and_position", id=0),
         data=json.dumps(body),
         headers=headers,
     )
@@ -185,23 +222,6 @@ def step_impl(context):
     assert response == expected
 
 
-@when("choose a plane and position outside of map")
-def step_impl(context):
-    body = {
-        "player": context.player,
-        "plane": context.plane.id,
-        "x": 21,
-        "y": 11,
-        "course": 2,
-    }
-    headers = {"Conten-Type": "application/json"}
-
-    context.response = context.client.put(
-        url_for(url_for_plane_position), data=json.dumps(body), headers=headers
-    )
-    assert context.response
-
-
 @then("400 response are returned")
 def step_impl(context):
     assert context.response.status_code == 400
@@ -219,7 +239,9 @@ def step_impl(context):
     headers = {"Conten-Type": "application/json"}
 
     context.response = context.client.put(
-        url_for(url_for_plane_position), data=json.dumps(body), headers=headers
+        url_for("air_force.choose_plane_and_position", id=0),
+        data=json.dumps(body),
+        headers=headers,
     )
     assert context.response
 
@@ -227,25 +249,6 @@ def step_impl(context):
 @then("Error status code are returned")
 def step_impl(context):
     assert context.response.status_code == 400
-
-
-@given("player_b in the game and plane in db")
-def step_impl(context):
-    players = context.client.get(url_for("air_force.get_players"))
-    players = players.json
-    context.player = players.get("player_b")
-    context.plane = add_plane(
-        name="Hawker Tempest",
-        size=1,
-        speed=5,
-        health=10,
-        course=3,
-        coor_x=5,
-        coor_y=5,
-    )
-    context.x = 13
-    context.y = 6
-    context.course = 4
 
 
 @when("choose a plane and position in player_a position")
@@ -260,7 +263,9 @@ def step_impl(context):
     headers = {"Conten-Type": "application/json"}
 
     context.response = context.client.put(
-        url_for(url_for_plane_position), data=json.dumps(body), headers=headers
+        url_for("air_force.choose_plane_and_position", id=0),
+        data=json.dumps(body),
+        headers=headers,
     )
     assert context.response
 
