@@ -11,7 +11,7 @@ class AirForceGame:
     player_b_ready = False
 
     def add_command(self, command):
-        command.append(command)
+        self.command.append(command)
         if self.player_a_ready and self.player_b_ready:
             self.execute()
 
@@ -50,12 +50,10 @@ class GetPlayers:
         self.air_force_game = air_force_game
 
     def execute(self):
-        dicti = {
+        return {
             "player_a": self.air_force_game.player_a,
             "player_b": self.air_force_game.player_b,
         }
-        print(dicti, "diccionario")
-        return dicti
 
 
 class ChoosePlane:
@@ -64,16 +62,27 @@ class ChoosePlane:
     y = None
     player = None
     battlefield = None
+    plane = None
+    air_force_game = None
 
-    def __init__(self, course, x, y, player, battlefield):
+    def __init__(self, course, x, y, player, plane, air_force_game):
         self.course = course
         self.x = x
         self.y = y
         self.player = player
-        self.battlefield = battlefield
+        self.battlefield = air_force_game.battlefield
+        self.plane = plane
+        self.air_force_game = air_force_game
 
     def execute(self):
-        raise NotImplementedError()
+        return self.battlefield.add_new_plane(
+            int(self.player),
+            self.plane,
+            int(self.x),
+            int(self.y),
+            int(self.course),
+            self.air_force_game,
+        )
 
 
 class MovePlane:
