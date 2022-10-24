@@ -55,32 +55,32 @@ Feature: game logic
         When choose a plane and position in player_a position   
         Then Error status code are returned
 
-    @air_force_game
+    @air_force_game_new
     Scenario: Player_a move his plane in the same course
         Given a battlefield with player_a's plane 
         When player_a moves his plane in th same course
         Then 201 response code are returned
 
-    @air_force_game
+    @air_force_game_new
     Scenario: Player_a move his plane in new course
         Given a battlefield with player_a's plane 
         When player_a moves his plane in new valid course
         Then 201 response code are returned
     
-    @air_force_game
+    @air_force_game_new
     Scenario: Player_a move his plane in valid course and colition with a limit
         Given a battlefield with player_a's plane 
         When player_a moves his plane and colition with a limit
         Then 201 response code are returned
     
-    @air_force_game
+    @air_force_game_new
     Scenario: Player_a move his plane in invalid course
         Given a battlefield with player_a's plane 
         When player_a moves his plane in invalid course
         Then 400 response code are returned
 
-    @air_force_game
+    @air_force_game_new
     Scenario: Player_b move his plane and crash with player_a planes
         Given a battlefield with player_a's and player_b's plane
         When player b moves his plane and crash with player_a planes
-        Then battlefield are returned
+        Then 201 response code are returned
