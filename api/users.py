@@ -33,18 +33,18 @@ def get_user(user_id):
 
     return jsonify(user_schema.dump(user))
 
-#@users_bp.route("", methods=["POST"])
-#def create_user():
-#    data = json.loads(request.data)
-#    username = data["username"]
-#    password = data["password"]
-#    email = data["email"]
-#
-#    add_user(username, password, email)
-#
-#   
-#
-#    return "ok"
+@users_bp.route("", methods=["POST"])
+def create_user():
+   data = json.loads(request.data)
+   username = data["username"]
+   password = data["password"]
+   email = data["email"]
+
+   add_user(username, password, email)
+
+  
+
+   return "ok"
     
 
     
