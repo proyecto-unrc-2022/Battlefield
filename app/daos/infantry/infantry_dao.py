@@ -2,11 +2,11 @@ from telnetlib import GA
 #from turtle import left, right
 from app import db
 from app.models.user import Profile
+from sqlalchemy import insert, select, update
 from ...models.infantry.figure_infantry import Figure_infantry
 from ...models.infantry.game_Infantry import Game_Infantry
 from ...models.infantry.projectile_infantry import Projectile
 from ...models.user import User
-from sqlalchemy import update
 from .direction import *
 import copy
 
@@ -297,13 +297,55 @@ def setDirection(object, direction):
 
     object.direccion = direction
 
+
+#Testear
 def intersec(object1, object2):
 
-    if(object1.pos_x == object2.pos_x and object1.pos_y == object2.pos_y):
+    if(object1 is None or object2 is None):
+        return False
 
-        return True
+    for x in getPositionSize(object1):
+        if(x in getPositionSize(object2)):
+            return True
 
     return False
+    
+
+#Testear
+def getPositionSize(object):
+
+    if(object.tamaño == 1):
+        objectSize = [object.pos_x, object.pos_y]
+    elif(object.tamaño == 2):
+        objectSize = [object.pos_x, object.pos_x + 1, object.pos_y]
+    elif(object.tamaño == 3):
+        objectSize = [object.pos_x, object.pos_y, object.pos_y + 1, object.pos_y - 1]
+    elif(object.tamaño == 4):
+        objectSize = [object.pos_x, object.pos_x + 1, object.pos_y - 1, object.pos_y, object.pos_y + 1]
+
+    return objectSize
 
 
 
+
+
+def update(game_id):
+
+    figures_all = Figure_infantry.query.filter_by(id_game = game_id).all()
+    
+    size = len(figures_all)
+
+    #print(size)
+
+    for i in range(size-1):
+        
+        print(i)
+        for j in range(i+1, size):
+            print("-" + str(j))
+    
+
+
+    
+        
+
+    return True

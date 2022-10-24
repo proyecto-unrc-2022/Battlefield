@@ -103,14 +103,14 @@ def shoot_entity(direction, user_id, game_id):
     else:
         return Response(status=404)
 
-@infantry.route("/update",methods=['POST'])
-def updateProjectile():
+@infantry.route("/game/<game_id>/update",methods=['POST'])
+def updateProjectile(game_id):
 
-    projectile = db.session.query(Projectile).order_by(Projectile.id.desc()).first()
+    x = update(game_id)   
 
-    setDirection(projectile, 3)
+    #print(x)
 
-    return jsonify(projectile_schema.dump(projectile))
+    return "ok"
 
 @infantry.route("games", methods=["GET"])
 # @token_auth.login_required
