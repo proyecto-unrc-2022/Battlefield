@@ -19,17 +19,43 @@ class AirForceGame:
         for c in self.command:
             c.execute()
 
-    def join_game(self, new_player):
-        if self.player_a == None:
-            self.player_a = new_player
-        elif self.player_b == None:
-            self.player_b = new_player
-        else:
-            raise Exception("The game are full!")
-        return {"player_a": self.player_a, "player_b": self.player_b}
+    def execute(self, command):
+        return command.execute()
 
     def get_player_plane(self, player_id):
         return self.battlefield.get_player_plane(player_id)
+
+
+class JoinGame:
+    air_force_game = None
+    player = None
+
+    def __init__(self, air_force_game, player):
+        self.air_force_game = air_force_game
+        self.player = player
+
+    def execute(self):
+        if self.air_force_game.player_a == None:
+            self.air_force_game.player_a = self.player
+        elif self.air_force_game.player_b == None:
+            self.air_force_game.player_b = self.player
+        else:
+            raise Exception("The game are full!")
+
+
+class GetPlayers:
+    air_force_game = None
+
+    def __init__(self, air_force_game):
+        self.air_force_game = air_force_game
+
+    def execute(self):
+        dicti = {
+            "player_a": self.air_force_game.player_a,
+            "player_b": self.air_force_game.player_b,
+        }
+        print(dicti, "diccionario")
+        return dicti
 
 
 class ChoosePlane:
