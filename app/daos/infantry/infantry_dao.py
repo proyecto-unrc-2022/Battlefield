@@ -8,107 +8,127 @@ from ...models.infantry.infantry_game import Projectile
 from ...models.user import User
 from sqlalchemy import update
 from .direction import *
+from .type import *
 import copy
 
 def add_figure(game_id, user_id ,entity_id):
-
-    #succes = True
-    #soldier
-    if("1" == entity_id):
+    if(SOLDIER == entity_id):
         figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=10, velocidad=3, tamaño=1, direccion=0,pos_x=0, pos_y=0, type=1)
-    #humvee
-    elif("2" == entity_id):
+    elif(HUMVEE == entity_id):
         figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=20, velocidad=5, tamaño=2, direccion=0, pos_x=0, pos_y=0, type=2)
-    #tank
-    elif("3" == entity_id):
+    elif(TANK == entity_id):
         figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=50, velocidad=2, tamaño=3, direccion=0, pos_x=0, pos_y=0, type=3)
-    #artillery
-    elif("4" == entity_id):
+    elif(ARTILLERY == entity_id):
         figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=80, velocidad=1, tamaño=4, direccion=0,pos_x=0, pos_y=0, type=4)
     else:
         figure = None
-        #succes = False
-
     if(figure):
         db.session.add(figure)
         db.session.commit()
-    
     return figure
 
 
-#Dado un user_id, una direccion y una velocidad, mueva su respectiva unidad en el juego
-#velocity seria la cantidad de casillas que se va a mover su unidad
-#verificando que no supere su velocidad maxima.
-#ej: la velocidad limite del tanque es 2, entonces su velocity no puede ser mayor a 2
-def move_by_user(game_id, user_id, direction, velocity):
-    figure = Figure_infantry.query.filter_by(id_user = user_id, id_game = game_id).first()
-    aux_figure = copy.copy(figure)
-    exceeded_velocity_limit = (int(velocity) > figure.velocidad)
-    move(aux_figure, int(direction), int(velocity))
-    is_valid = False if aux_figure == None else is_valid_move(aux_figure)
-    if is_valid and not(exceeded_velocity_limit) : 
-        setattr(figure, 'pos_x', aux_figure.pos.x)
-        setattr(figure, 'pos_y', aux_figure.pos.y)
-        db.session.commit() 
-    print(is_valid)
-    return is_valid and not(exceeded_velocity_limit)
+def move(game_id, user_id, direction, velocity):
+    """Dado un user_id, una direccion y una velocidad, mueva su respectiva unidad en el juego
 
-#Verifica que si una unidad(figure) se movio, este movimiento se valido
-#devuelve verdadero si la unidad que se movio no choca contra otra unidad
-def is_valid_move(figure):
+    Args:
+        game_id (int): id del juego
+        user_id (int): id del usuario
+        direction (int): direccion a la que se movera la unidad
+        velocity (int): cantidad de casillas que se va a mover su unidad
 
-    game_id = Figure_infantry.query.filter_by(id_game = figure.id_game).first().id_game
+    Returns:
+        boolean: (si el movimiento es valido) y (no excede su limite)
+    """
+    figure = db.session.query(Figure_infantry).filter_by(id_user = user_id, id_game = game_id).first()
     game = Game_Infantry.query.filter_by(id = game_id).first()
     user_1 = game.user_1
     user_2 = game.user_2
-    opponent = user_1 if user_1.id != figure.id else user_2
-    figure_opponent = Figure_infantry.query.filter_by(id_user = opponent.id, id_game = game_id).first()
-    return not(intersection(copy.copy(figure), copy.copy(figure_opponent)))
+    user_opponent = user_1 if user_1.id != figure.id else user_2
+    figure_opponent = Figure_infantry.query.filter_by(id_user = user_opponent.id, id_game = game_id).first()
+    
+    aux_figure = copy.copy(figure)
+    exceeded_velocity_limit = (velocity > figure.velocidad)
+    coor = move_pos([aux_figure.pos_x, aux_figure.pos_y], direction, velocity)
+    aux_figure.pos_x = coor[0]
+    aux_figure.pos_y = coor[1]
+
+    is_valid = False if aux_figure == None else not(intersection(copy.copy(aux_figure), copy.copy(figure_opponent)))
+    if is_valid and not(exceeded_velocity_limit): 
+        db.session.execute(
+            update(Figure_infantry)
+            .where(Figure_infantry.id_user == user_id, Figure_infantry.id_game == game_id)
+            .values(pos_x = aux_figure.pos_x, pos_y = aux_figure.pos_y, direccion = direction)
+        )
+    elif not(is_valid) and not(exceeded_velocity_limit):
+        db.session.execute(
+            update(Figure_infantry)
+            .where(Figure_infantry.id_user == figure.id_user, Figure_infantry.id_game == game_id)
+            .values(hp = figure.hp - figure_opponent.hp)
+        )
+        db.session.execute(
+            update(Figure_infantry)
+            .where(Figure_infantry.id_user == figure_opponent.id, Figure_infantry.id_game == game_id)
+            .values(hp = figure_opponent.hp - figure.hp)
+        )
+    db.session.commit()
+    return is_valid and not(exceeded_velocity_limit)
 
 #Verifica si hay una interseccion entre dos figure
 def intersection(figure_1, figure_2):
-
     intersection = False
     for i in range(figure_1.tamaño):
-        aux_figure = copy.copy(figure_2)
+        if intersection : break
+        coor = move_pos([figure_1.pos_x, figure_1.pos_y], figure_1.direccion, i)
+        figure_1.pos_x = coor[0]
+        figure_1.pos_y = coor[1]
+        figure_2_aux = copy.copy(figure_2)
         for j in range(figure_2.tamaño):
-            equal_pos_x = figure_1.pos_x == aux_figure.pos_x
-            equal_pos_y = figure_1.pos_y == aux_figure.pos_y
+            if intersection : break
+            coor = move_pos([figure_2_aux.pos_x, figure_2_aux.pos_y], figure_2_aux.direccion, j)
+            figure_2_aux.pos_x = coor[0]
+            figure_2_aux.pos_y = coor[1]
+            equal_pos_x = figure_1.pos_x == figure_2_aux.pos_x
+            equal_pos_y = figure_1.pos_y == figure_2_aux.pos_y
             intersection = equal_pos_x and equal_pos_y
-            aux_figure = move(aux_figure, aux_figure.direccion, j)
-        figure_1 = move(figure_1, figure_1.direccion, i)
+    print(intersection)
     return intersection
 
-#Devuelve un figure con la direccion y velocidad que se
-#pasaron por parametros
-def move(figure, direction, velocity):
+def move_pos(coor, direction, velocity):
+    """Mueve un par de cordenadas a la direccion y numero de casillas
+        especificadas
+
+    Args:
+        coor (list): Par x e y en una lista
+        direction (int): direccion
+        velocity (int): cantidad de casillas que se movera
+
+    Returns:
+        list: par coordenados movidos (devuelve una lista)
+    """
     if(direction == EAST):
-        figure.direccion = EAST
-        figure.pos_x = figure.pos_x + velocity
+        coor[0] = coor[0] + velocity
     elif(direction == SOUTH_EAST):
-        figure.direccion = SOUTH_EAST
-        figure.pos_x = figure.pos_x + velocity
-        figure.pos_y = figure.pos_y - velocity
+        coor[0] = coor[0] + velocity
+        coor[1] = coor[1] - velocity
     elif(direction == SOUTH):
-        figure.direccion = SOUTH
-        figure.pos_y = figure.pos_y - velocity
+        coor[1] = coor[1] - velocity
     elif(direction == SOUTH_WEST):
-        figure.direccion = SOUTH_WEST
-        figure.pos_x = figure.pos_x - velocity
-        figure.pos_y = figure.pos_y - velocity
+        coor[0] = coor[0] - velocity
+        coor[1] = coor[1] - velocity
     elif(direction == WEST):
-        figure.direccion = WEST
-        figure.pos_x = figure.pos_x - velocity
+        coor[0] = coor[0] - velocity
     elif(direction == NORTH_WEST):
-        figure.direccion = NORTH_WEST
-        figure.pos_x = figure.pos_x - velocity
-        figure.pos_y = figure.pos_y + velocity
+        coor[0] = coor[0] - velocity
+        coor[1] = coor[1] + velocity
     elif(direction == NORTH):
-        figure.direccion = NORTH
-        figure.pos_y = figure.pos_y + velocity
+        coor[1] = coor[1] + velocity
+    elif(direction == NORTH_EAST):
+        coor[0] = coor[0] + velocity
+        coor[1] = coor[1] + velocity
     else:
-        return None
-    return figure
+        coor = None
+    return coor
 
 #Primero busca en la tabla Figura el personaje del usuario.
 #Luego pregunta si la direccion que quiere disparar es verdadero o no.
@@ -127,7 +147,7 @@ def shoot(direction,figure_id,game_id):
 #Falta cambiar las posiciones de los tres projectiles
 #TODO: Cambiar pos_x y pos_y
 def figure_valid(figure_id,direction,game_id):
-    if(figure_id == "1"):
+    if(figure_id == SOLDIER):
         figure = db.session.query(Figure_infantry).filter_by(id= figure_id).first()
         projectile1 = Projectile(id_game= game_id, pos_x=figure.pos_x + 3, pos_y=figure.pos_y + 3, velocidad=0, daño=5, direccion= direction)
         db.session.add(projectile1)
@@ -139,19 +159,19 @@ def figure_valid(figure_id,direction,game_id):
         db.session.add(projectile3)
         db.session.commit()
         return True
-    elif(figure_id == "2"):
+    elif(figure_id == HUMVEE):
         figure = db.session.query(Figure_infantry).filter_by(id= figure_id).first()
         projectile = Projectile(id_game= game_id, pos_x=figure.pos_x + 1, pos_y=figure.pos_y + 1, velocidad=5, daño=5, direccion= direction)
         db.session.add(projectile)
         db.session.commit()
         return True
-    elif(figure_id == "3"):
+    elif(figure_id == TANK):
         figure = db.session.query(Figure_infantry).filter_by(id= figure_id).first()
         projectile = Projectile(id_game= game_id, pos_x=figure.pos_x + 1, pos_y=figure.pos_y + 1, velocidad=3, daño=15, direccion= direction)
         db.session.add(projectile)
         db.session.commit()
         return True
-    elif(figure_id == "4"):
+    elif(figure_id == ARTILLERY):
         figure = db.session.query(Figure_infantry).filter_by(id= figure_id).first()
         projectile = Projectile(id_game= game_id, pos_x=figure.pos_x + 1, pos_y=figure.pos_y + 1, velocidad=20, daño=30, direccion= direction)
         db.session.add(projectile)
