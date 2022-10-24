@@ -89,11 +89,13 @@ class MovePlane:
     course = None
     player = None
     battlefield = None
+    air_force_game = None
 
-    def __init__(self, course, player, battlefield):
+    def __init__(self, course, player, air_force_game):
         self.course = course
         self.player = player
-        self.battlefield = battlefield
+        self.battlefield = air_force_game.battlefield
+        self.air_force_game = air_force_game
 
     def execute(self):
         raise NotImplementedError()

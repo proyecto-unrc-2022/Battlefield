@@ -135,6 +135,13 @@ class Battlefield:
 
         # obj.update_projectile(course)
 
+    def check_course(self, course, player):
+        obj = self.get_player_plane(int(player))
+        # print(player)
+        if obj != []:
+            if obj[0].check_course(int(course)):
+                raise ValueError("New course cant be 180 degrees deference")
+
     def update_plane_position(self, course, fly_obj):
         if fly_obj.check_course(course):
             raise ValueError("New course cant be 180 degrees deference")
