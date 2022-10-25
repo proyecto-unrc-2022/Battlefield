@@ -36,16 +36,19 @@ class ShipService:
 
         #TODO: CanLoad to board
         ships_positions = self.build(ship)
+        for x, y in ships_positions:
+            navy_game_service.load_to_board(ship.navy_game_id, x, y, ship)
+        
+
+    def can_load_to_board(self, ship):
+        from app.navy.services.navy_game_service import navy_game_service
+        ships_positions = self.build(ship)
         for x,y in ships_positions:
             entity = navy_game_service.get_from_board(ship.navy_game_id, x, y)
             if entity:
                 self.act_accordingly(ship, entity)
                 if not self.is_alive(ship.id):
                     return False
-
-        for x, y in ships_positions:
-            navy_game_service.load_to_board(ship.navy_game_id, x, y, ship)
-        
         return True
 
     def get_by_id(self, ship_id):
@@ -73,37 +76,34 @@ class ShipService:
 
     # region Public Methods
 
-    def move(self, ship, action):
+    def update_position(self, ship, action):
         from app.navy.services.navy_game_service import navy_game_service
 
-        old_x, old_y = ship.pos_x, ship.pos_y
+        self.delete_from_board(ship)
+        
         for _ in range(action.move):
-            x, y = utils.get_next_position(old_x, old_y, ship.course)
+            x, y = utils.get_next_position(ship.pos_x, ship.pos_y, ship.course)
             if utils.out_of_bounds(x, y):
-                ship.pos_x, ship.pos_y = old_x, old_y
                 self.load_to_board(ship)
                 ship_dao.add_or_update(ship)
-                break
+                return True
+                
             entity = navy_game_service.get_from_board(ship.navy_game_id, x, y)
             if entity:
                 self.act_accordingly(ship, entity)
-                break
-            old_x, old_y = x, y
-        else:
-            if action.move != 0:
-                self.delete_from_board(ship)
-                ship.pos_x, ship.pos_y = x, y
-                ship_dao.add_or_update(ship)
-                self.load_to_board(ship)
-            return True
+                if not self.is_alive(ship):
+                    return False
+            ship.pos_x, ship.pos_y = x, y
 
-        return False
+        ship_dao.add_or_update(ship)
+        self.load_to_board(ship)
+        return True
 
     def turn(self, ship, new_course):
-        from app.navy.services.navy_game_service import navy_game_service
         self.delete_from_board(ship)
         ship.course = new_course
-        if self.load_to_board(ship):
+        if self.can_load_to_board(ship):
+            self.load_to_board(ship)
             ship_dao.add_or_update(ship)
             return True 
         return False

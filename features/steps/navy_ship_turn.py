@@ -8,7 +8,7 @@ from app.navy.services.ship_service import ship_service
 
 @when("The ship with id '{id:d}' turns to '{course}'")
 def step_impl(context, id, course):
-    navy_game_service.load_game_to_map(context.game.id)
+    navy_game_service.load_game(context.game.id)
     ship = ship_service.get_by_id(id)
     ship_service.turn(ship, course)
 

@@ -67,7 +67,7 @@ def step_impl(context):
     from app.navy.services.missile_service import missile_service
     from app.navy.services.navy_game_service import navy_game_service
 
-    navy_game_service.load_game_to_map(context.game.id)
+    navy_game_service.load_game(context.game.id)
     old_x, old_y = context.missile_test.pos_x, context.missile_test.pos_y
     missile_service.update_position(context.missile_test)
     assert not navy_game_service.get_from_board(context.game.id, old_x, old_y)

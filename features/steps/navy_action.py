@@ -9,8 +9,8 @@ EXPECTED_ERRORS = {
     "Invalid move": "_schema",
     "User not found": "user_id",
     "Must be one of: N, S, E, W, SE, SW, NE, NW.": "course",
-    "Can't move more than 4 spaces": "move",
-    "The movement is a negative distance": "move",
+    "Can't move more than 4 spaces": "_schema",
+    "The movement is a negative distance": "_schema",
     "Invalid ship in game": "_schema",
 }
 

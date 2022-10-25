@@ -68,26 +68,6 @@ class NavyGameService:
         navy_game_dao.delete(game)
         return game
 
-    def load_game_to_map(self, navy_game_id):
-        from app.navy.services.missile_service import missile_service
-        from app.navy.services.ship_service import ship_service
-
-        # --------------- 1.Get missiles and ships from DB ---------------#
-        self.games[navy_game_id] = {}
-        missiles = missile_service.get(navy_game_id=navy_game_id)
-        ships = ship_service.get_by(navy_game_id=navy_game_id)
-
-        # --------------- 2. Load missiles and ships to map ---------------#
-        for ship in ships:
-            ship_service.load_to_board(ship)
-
-        if missiles:
-            for missile in missiles:
-                missile_service.load_to_board(missile)
-            return missiles
-        return []
-        # --------------- 3. Returned them ---------------#
-
     def delete_from_board(self, navy_game_id, x, y):
         del self.games[navy_game_id][(x, y)]
 
@@ -135,9 +115,7 @@ class NavyGameService:
         game = self.games[navy_game_id]
         actions = action_service.get_by_navy_game(navy_game_id)
 
-
-        if not self.update_missiles(game['missiles']):
-
+        if self.update_missiles(game['missiles']):
             actions.sort(key=lambda x: x.user_id == game.turn, reverse=True)
             for action in actions:
                 if not action_service.execute(action):
@@ -152,9 +130,8 @@ class NavyGameService:
         from app.navy.services.missile_service import missile_service
 
         for missile in missiles:
-            if not missile_service.update_position(missile):
-                if self.check_winner(missile.navy_game_id):
-                    return False
+            if not missile_service.update_position(missile) and self.check_winner(missile.navy_game_id):
+                return False
         return True
 
     def change_turn(self, navy_game_id=None, game=None):

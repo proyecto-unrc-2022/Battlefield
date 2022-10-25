@@ -127,7 +127,7 @@ class MissileService:
 
         for _ in range(missile.speed):
 
-            new_position  = utils.next_free_position(missile.pos_x, missile.pos_y, missile.course, missile.navy_game_id)
+            new_position = utils.next_free_position(missile.pos_x, missile.pos_y, missile.course, missile.navy_game_id)
             if new_position:
                 missile.pos_x, missile.pos_y = new_position
                 continue

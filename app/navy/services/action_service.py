@@ -42,7 +42,7 @@ class ActionService:
         if ship_service.turn(ship, action.course):
             if action.attack:
                 return ship_service.attack(ship)
-            return ship_service.move(ship, action)
+            return ship_service.update_position(ship, action)
         else:
             return False
 
