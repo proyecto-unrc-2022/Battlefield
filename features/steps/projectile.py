@@ -123,30 +123,65 @@
 # # ------------------------------------------------------------------------------------------------------------
 
 
-# @given("a projectile of player_b in the")
-# def step_impl(context):
-#     context.projectile = add_projectile(speed=5, damage=10)
-#     context.flying_o = AirForceGame.battlefield.add_new_projectile(
-#         player=2,
-#         obj=context.projectile,
-#         x=5,
-#         y=4,
-#         course=4,
-#     )
+@given("a projectile of player_b in the")
+def step_impl(context):
+    context.projectile = add_projectile(speed=5, damage=10)
+    context.flying_o = AirForceGame.battlefield.add_new_projectile(
+        player=2,
+        obj=context.projectile,
+        x=5,
+        y=7,
+        course=4,
+    )
 
 
-# @when("a new turn starts and the projectiles of player_b have to be updated")
-# def step_impl(context):
-#     context.response = context.client.put(
-#         url_for(
-#             "air_force.move_projectile",
-#             player_projectile=2,
-#             course=4,
-#         )
-#     )
+@when("a new turn starts and the projectiles of player_b have to be updated")
+def step_impl(context):
+    context.response = context.client.put(
+        url_for(
+            "air_force.move_projectile",
+            player_projectile=2,
+            course=4,
+        )
+    )
 
 
-# @then("the projectile of player_b moves the speed corresponding")
-# def step_impl(context):
-#     print(context.response.json)
-#     assert context.response.status_code == 200
+@then("the projectile of player_b moves the speed corresponding")
+def step_impl(context):
+    print(context.response.json)
+    assert context.response.status_code == 200
+
+
+# ------------------------------------------------------------------------------------------------------------
+
+
+@given("two or more projectile in the battlefield")
+def step_impl(context):
+    context.proj1 = add_projectile(speed=5, damage=10)
+    context.projectile1 = AirForceGame.battlefield.add_new_projectile(
+        player=1,
+        obj=context.proj1,
+        x=8,
+        y=7,
+        course=2,
+    )
+    context.proj2 = add_projectile(speed=5, damage=20)
+    context.projectile2 = AirForceGame.battlefield.add_new_projectile(
+        player=2,
+        obj=context.proj2,
+        x=12,
+        y=7,
+        course=4,
+    )
+
+
+@when("a collision occurs")
+def step_impl(context):
+    context.response = context.client.put(
+        url_for("air_force.move_projectile", player_projectile=2, course=4)
+    )
+
+
+@then("a '200' response")
+def step_impl(context):
+    assert context.response.status_code == 200
