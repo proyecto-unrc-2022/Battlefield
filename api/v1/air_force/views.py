@@ -10,6 +10,7 @@ from app.daos.airforce.plane_dao import update_course as update_course_dao
 from app.models.airforce.air_force_game import (
     AirForceGame,
     ChoosePlane,
+    GetBattlefieldStatus,
     GetPlayers,
     JoinGame,
     MovePlane,
@@ -86,10 +87,18 @@ def fligth(id, player, course):
     try:
         game.battlefield.check_course(course, player)
         command = MovePlane(course, player, game)
-        game.add_command(command)
+        game.add_command(command, player)
         return Response(status=201)
     except:
         return Response(status=400)
+
+
+@air_force.route("get_battlefield_status/game_id/<id>", methods=["GET"])
+def get_battlefield_status(id):
+    game = air_force_game[int(id)]
+    command = GetBattlefieldStatus(game.battlefield)
+    obj_list = game.execute(command)
+    return jsonify(obj_list)
 
 
 @air_force.route("/game/<game_id>/plane/<plane_id>", methods=["GET"])
