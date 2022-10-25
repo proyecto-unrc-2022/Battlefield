@@ -1,4 +1,5 @@
 from telnetlib import GA
+#from turtle import position
 #from turtle import left, right
 from app import db
 from app.models.user import Profile
@@ -299,20 +300,20 @@ def setDirection(object, direction):
 
 
 #Testear
-def intersec(object1, object2):
-
-    if(object1 is None or object2 is None):
-        return False
-
-    for x in getPositionSize(object1):
-        if(x in getPositionSize(object2)):
-            return True
-
-    return False
+#def intersec(object1, object2):
+#
+#    if(object1 is None or object2 is None):
+#        return False
+#
+#    for x in getPositionSize(object1):
+#        if(x in getPositionSize(object2)):
+#            return True
+#
+#    return False
     
 
 #Testear
-def getPositionSize(object):
+def positionSize(object):
 
     if(object.tamaño == 1):
         objectSize = [object.pos_x, object.pos_y]
@@ -325,27 +326,57 @@ def getPositionSize(object):
 
     return objectSize
 
+#mal implementado - cambiar
+def intersecProjectile(projectile, object):
 
+    position=[]
+    print(position)
+    for x in object.values():
+        print(x)
+        if(projectile.pos_x in x):
+            x.remove(0)
+            print(x)
+            if(projectile.pos_y in x):
+                print(x)
+                position.append(projectile.pos_y)
+                position.append(projectile.pos_x)
+                return position
+            
 
+    return position
 
 
 def update(game_id):
 
-    figures_all = Figure_infantry.query.filter_by(id_game = game_id).all()
-    
-    size = len(figures_all)
-
-    #print(size)
-
-    for i in range(size-1):
-        
-        print(i)
-        for j in range(i+1, size):
-            print("-" + str(j))
-    
-
-
-    
-        
-
     return True
+
+
+#con errores
+def getPosition(game_id):
+
+    figures_all = Figure_infantry.query.filter_by(id_game = game_id).all()
+    projectile_all = Projectile.query.filter_by(id_game = game_id).all()
+    
+    #print(projectile_all)
+    #print(figures_all)
+    print(projectile_all[0].id_game)
+    sizefigure = len(figures_all)
+    sizeprojectile = len(projectile_all)
+
+    figures = {}
+    
+
+    for i in range(sizefigure):
+        figures.update({"personaje "+ str(i) : positionSize(figures_all[i])})
+        print(figures)
+
+    figures_projec = copy.deepcopy(figures)
+
+    for i in range(sizeprojectile):
+        pos= intersecProjectile(projectile_all[i], figures_projec)
+    
+    print(pos)
+    print(figures)
+    
+
+    return figures
