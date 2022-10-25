@@ -193,3 +193,9 @@ class Battlefield:
             # raise Exception('A = ', obj.to_dict(), plane.to_dict())
             obj.flying_obj.health -= plane.flying_obj.health
             plane.flying_obj.health -= obj.flying_obj.health
+
+    def get_status(self):
+        l = []
+        for f in self.flying_objects:
+            l.append(f.to_dict())
+        return l

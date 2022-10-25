@@ -10,17 +10,24 @@ class AirForceGame:
     player_a_ready = False
     player_b_ready = False
 
-    def add_command(self, command):
+    def add_command(self, command, player):
         self.command.append(command)
+        self.ready(player)
         if self.player_a_ready and self.player_b_ready:
-            self.execute()
+            self.executeList()
 
-    def execute(self):
+    def executeList(self):
         for c in self.command:
             c.execute()
 
     def execute(self, command):
         return command.execute()
+
+    def ready(self, player):
+        if player == self.player_a:
+            self.player_a_ready = True
+        else:
+            self.player_b_ready = True
 
     def get_player_plane(self, player_id):
         return self.battlefield.get_player_plane(player_id)
@@ -98,7 +105,7 @@ class MovePlane:
         self.air_force_game = air_force_game
 
     def execute(self):
-        raise NotImplementedError()
+        self.battlefield.fligth(int(self.player), int(self.course))
 
 
 class LaunchProjectile:
@@ -125,3 +132,13 @@ class Shoot:
 
     def execute(self):
         raise NotImplementedError()
+
+
+class GetBattlefieldStatus:
+    battlefield = None
+
+    def __init__(self, battlefield):
+        self.battlefield = battlefield
+
+    def execute(self):
+        return self.battlefield.get_status()
