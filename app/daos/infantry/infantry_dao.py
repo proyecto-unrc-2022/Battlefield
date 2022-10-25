@@ -316,13 +316,17 @@ def setDirection(object, direction):
 def positionSize(object):
 
     if(object.tamaño == 1):
-        objectSize = [object.pos_x, object.pos_y]
+        #objectSize = {"pos": [object.pos_x], "pos_y": [object.pos_y]}
+        objectSize = [[object.pos_x, object.pos_y]]
     elif(object.tamaño == 2):
-        objectSize = [object.pos_x, object.pos_x + 1, object.pos_y]
+        #objectSize = {"pos_x": [object.pos_x, object.pos_x + 1], "pos_y": [object.pos_y]}
+        objectSize = [[object.pos_x, object.pos_y], [object.pos_x + 1, object.pos_y]]
     elif(object.tamaño == 3):
-        objectSize = [object.pos_x, object.pos_y, object.pos_y + 1, object.pos_y - 1]
+        #objectSize = {"pos_x": [object.pos_x], "pos_y": [object.pos_y - 1, object.pos_y, object.pos_y + 1]}
+        objectSize = [[object.pos_x, object.pos_y - 1], [object.pos_x, object.pos_y], [object.pos_x, object.pos_y + 1]]
     elif(object.tamaño == 4):
-        objectSize = [object.pos_x, object.pos_x + 1, object.pos_y - 1, object.pos_y, object.pos_y + 1]
+        #objectSize = {"pos_x": [object.pos_x, object.pos_x + 1], "pos_y": [object.pos_y - 1, object.pos_y, object.pos_y + 1]}
+        objectSize = [[object.pos_x, object.pos_y - 1], [object.pos_x, object.pos_y], [object.pos_x, object.pos_y + 1], [object.pos_x + 1, object.pos_y]]
 
     return objectSize
 
@@ -330,17 +334,21 @@ def positionSize(object):
 def intersecProjectile(projectile, object):
 
     position=[]
-    print(position)
+    #print(position)
+    projectile_pos = [projectile.pos_x, projectile.pos_y]
     for x in object.values():
-        print(x)
-        if(projectile.pos_x in x):
-            x.remove(0)
-            print(x)
-            if(projectile.pos_y in x):
-                print(x)
-                position.append(projectile.pos_y)
-                position.append(projectile.pos_x)
-                return position
+
+        if(projectile_pos in x):
+            position.append(projectile.pos_y)
+            position.append(projectile.pos_x)
+            return position
+        #    x.remove(0)
+        #    print(x)
+        #    if(projectile.pos_y in x):
+        #        print(x)
+        #        position.append(projectile.pos_y)
+        #        position.append(projectile.pos_x)
+        #        return position
             
 
     return position
@@ -354,12 +362,12 @@ def update(game_id):
 #con errores
 def getPosition(game_id):
 
-    figures_all = Figure_infantry.query.filter_by(id_game = game_id).all()
+    figures_all = Figure_infantry.query.filter_by(id_game = 2).all()
     projectile_all = Projectile.query.filter_by(id_game = game_id).all()
     
     #print(projectile_all)
     #print(figures_all)
-    print(projectile_all[0].id_game)
+    
     sizefigure = len(figures_all)
     sizeprojectile = len(projectile_all)
 
@@ -368,13 +376,13 @@ def getPosition(game_id):
 
     for i in range(sizefigure):
         figures.update({"personaje "+ str(i) : positionSize(figures_all[i])})
-        print(figures)
+        
 
-    figures_projec = copy.deepcopy(figures)
-
+    #figures_projec = copy.deepcopy(figures)
+#
     for i in range(sizeprojectile):
-        pos= intersecProjectile(projectile_all[i], figures_projec)
-    
+        pos= intersecProjectile(projectile_all[i], figures)
+    #
     print(pos)
     print(figures)
     
