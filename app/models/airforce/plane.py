@@ -15,10 +15,33 @@ class Plane(db.Model):
     coor_x = db.Column(db.Integer, nullable=False)
     coor_y = db.Column(db.Integer, nullable=False)
 
+    projectile = relationship("Projectile", uselist=False, back_populates="plane")
+
+
+class Projectile(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    speed = db.Column(db.Integer, nullable=False)
+    damage = db.Column(db.Integer, nullable=False)
+    plane_id = db.Column(db.Integer, db.ForeignKey(Plane.id))
+
+    plane = relationship("Plane", back_populates="projectile")
+
+
+class ProjectileSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Projectile
+        include_relationship = True
+        load_instance = True
+
+    speed = auto_field()
+    damage = auto_field()
+
 
 class PlaneSchema(SQLAlchemySchema):
     class Meta:
         model = Plane
+        include_relationship = True
+        load_instance = True
 
     name = auto_field()
     size = auto_field()
@@ -27,17 +50,3 @@ class PlaneSchema(SQLAlchemySchema):
     course = auto_field()
     coor_x = auto_field()
     coor_y = auto_field()
-
-
-class Projectile(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    speed = db.Column(db.Integer, nullable=False)
-    damage = db.Column(db.Integer, nullable=False)
-
-
-class ProjectileSchema(SQLAlchemyAutoSchema):
-    class Meta:
-        model = Projectile
-
-    speed = auto_field()
-    damage = auto_field()

@@ -100,8 +100,15 @@ class Battlefield:
         self.update_plane_position(course, obj)
         return obj
 
-    def add_new_projectile(self, player, obj, x, y, course):
-        fly_obj = FlyingObject(player, obj, x, y, course)
+    # De que otra forma se podria obtener la velocidad y el daño del projectile?
+    # Que pasa si creamos 2 columnas nuevas en la BD que sean la velocidad y el daño del cohete?
+    def add_new_projectile(self, player):
+
+        plane = self.get_player_plane(player)
+        print(plane)
+
+        # tiene sentido crear un Projectile aca? o lo paso como parametro?
+        fly_obj = FlyingObject(player, projectile, x, y, course)
         if course == 1:
             fly_obj.y = fly_obj.y + 1
         elif course == 2:
@@ -113,7 +120,8 @@ class Battlefield:
         self.flying_objects.append(fly_obj)
         return fly_obj
 
-    def move_projectile(self, player, course):
+    def move_projectile(self, player, plane):
+        print(plane)
         obj = list(
             filter(
                 lambda x: x.player == player
@@ -121,6 +129,8 @@ class Battlefield:
                 self.flying_objects,
             )
         )
+        course = plane.course
+        print(obj[0].to_dict())
         print(self.flying_objects)
         for n in range(len(obj)):
             print(obj[n].to_dict())
@@ -142,7 +152,7 @@ class Battlefield:
                     obj[n].update_position(course)
                     if obj[n].y >= 10 or obj[n].y <= 0:
                         self.flying_objects.remove(obj[n])
-
+        print(obj[0].to_dict())
         print(self.flying_objects)
 
     def collision_x_projectile(self, fly_obj, course):
