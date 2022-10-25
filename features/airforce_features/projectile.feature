@@ -1,4 +1,4 @@
-# Feature: Creation, movement of a projectile
+ #Feature: Creation, movement of a projectile
 
 #     @air_force_projectile
 #     Scenario: Player_a create a projectile
@@ -24,10 +24,10 @@
 #         When a new turn starts and the projectiles of player_b have to be updated 
 #         Then the projectile of player_b moves the speed corresponding
 
-    @air_force_projectile
-    Scenario: Projectile collision
-    Given two or more projectile in the battlefield
-    When a collision occurs
-    Then a '200' response
+    # @air_force_projectile
+    # Scenario: Projectile collision
+    # Given two or more projectile in the battlefield
+    # When a collision occurs
+    # Then a '200' response
 
  
