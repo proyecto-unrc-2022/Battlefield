@@ -40,9 +40,6 @@ class MissileService:
         missiles.sort(key=lambda x: x.order)
         return missiles
 
-    def delete(self, missile):
-        missile_dao.delete(missile)
-
     def create(self, navy_game_id, ship_id, missile_type, course, pos_x, pos_y):
         # region: 0. Neccesary imports
         from app.navy.daos.missile_dao import missile_dao
@@ -64,6 +61,7 @@ class MissileService:
         # endregion
 
         # region: 2. Add the missile to the DB
+        navy_game_service.games[navy_game_id]['missiles'].append(missile)
         return missile_dao.add_or_update(missile)
 
     def get_prox_order(self, navy_game_id):
@@ -77,46 +75,43 @@ class MissileService:
             temp = max(m.order, temp)
         return temp
 
-    def add_in_map(self, missile):
-        navy_game_service.add_in_map(
+    def load_to_board(self, missile):
+        navy_game_service.load_to_board(
             missile.navy_game_id, missile.pos_x, missile.pos_y, missile
         )
 
     # endregion
 
-    def delete_from_map(self, missile):
-        navy_game_service.delete_from_map(
+    def delete_from_board(self, missile):
+        navy_game_service.delete_from_board(
             missile.navy_game_id, missile.pos_x, missile.pos_y
         )
+
+    def delete(self, missile):
+        navy_game_service.delete_entity(missile)
+        missile_dao.delete(missile)
 
     # region: Act Accordingly
     def act_accordingly(self, missile, x_conflict, y_conflict):
-        # generic act, independent of the type of entity
-        navy_game_service.delete_from_map(
-            missile.navy_game_id, missile.pos_x, missile.pos_y
-        )
         self.delete(missile)
 
-        if utils.is_out_of_bounds(x_conflict, y_conflict):
-            return
+        if not utils.out_of_bounds(x_conflict, y_conflict):
+        
+            entity = navy_game_service.get_from_board(
+                missile.navy_game_id, x_conflict, y_conflict
+            )
 
-        entity = navy_game_service.get_from_map(
-            missile.navy_game_id, x_conflict, y_conflict
-        )
-
-        # En este punto se que entity tiene que ser un objeto, ya que si no, no habria conflicto
-        if isinstance(entity, Missile):
-            self.act_accordingly_missile(entity)
-        elif isinstance(entity, Ship):
-            self.act_accordingly_ship(missile, entity)
+            # En este punto se que entity tiene que ser un objeto, ya que si no, no habria conflicto
+            if isinstance(entity, Missile):
+                self.act_accordingly_missile(entity)
+            elif isinstance(entity, Ship):
+                self.act_accordingly_ship(missile, entity)
 
     def act_accordingly_missile(self, other_missile):
         # -- 1. Delete the missiles from the memory map -- #
-        navy_game_service.delete_from_map(
+        navy_game_service.delete_from_board(
             other_missile.navy_game_id, other_missile.pos_x, other_missile.pos_y
         )
-
-        # -- 2. Delete the missiles from the DB -- #
         self.delete(other_missile)
 
     def act_accordingly_ship(self, missile, ship):
@@ -126,25 +121,23 @@ class MissileService:
 
     # endregion
 
-    def move2(self, x, y):
-        x, y = utils.get_next_position(x, y)
+    
+    def update_position(self, missile):
+        self.delete_from_board(missile)
 
-    def move(self, missile):
-        old_x, old_y = missile.pos_x, missile.pos_y
-        x, y = old_x, old_y
         for _ in range(missile.speed):
-            x, y = utils.get_next_position(x, y, missile.course)
-            if not utils.free_valid_poisition(x, y, missile.navy_game_id):
-                missile.pos_x, missile.pos_y = old_x, old_y
-                self.act_accordingly(missile, x, y)
-                return False
-            missile.pos_x, missile.pos_y = x, y
-        else:
-            navy_game_service.delete_from_map(missile.navy_game_id, old_x, old_y)
-            navy_game_service.add_in_map(
-                missile.navy_game_id, missile.pos_x, missile.pos_y, missile
-            )
-            missile_dao.add_or_update(missile)
+
+            new_position  = utils.next_free_position(missile.pos_x, missile.pos_y, missile.course, missile.navy_game_id)
+            if new_position:
+                missile.pos_x, missile.pos_y = new_position
+                continue
+            self.act_accordingly(missile, new_position[0], new_position[1])
+            return False
+            
+        navy_game_service.load_to_board(
+            missile.navy_game_id, missile.pos_x, missile.pos_y, missile
+        )
+        missile_dao.add_or_update(missile)
 
         return True
 

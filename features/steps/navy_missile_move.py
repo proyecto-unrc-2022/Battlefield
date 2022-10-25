@@ -69,15 +69,15 @@ def step_impl(context):
 
     navy_game_service.load_game_to_map(context.game.id)
     old_x, old_y = context.missile_test.pos_x, context.missile_test.pos_y
-    missile_service.move(context.missile_test)
-    assert not navy_game_service.get_from_map(context.game.id, old_x, old_y)
+    missile_service.update_position(context.missile_test)
+    assert not navy_game_service.get_from_board(context.game.id, old_x, old_y)
 
 
 @then("I should see the missile at the new position '{pos_x:d}','{pos_y:d}'")
 def step_impl(context, pos_x, pos_y):
     from app.navy.services.navy_game_service import navy_game_service
 
-    missile = navy_game_service.get_from_map(context.game.id, pos_x, pos_y)
+    missile = navy_game_service.get_from_board(context.game.id, pos_x, pos_y)
     assert missile == context.missile_test
 
 
@@ -94,7 +94,7 @@ def step_impl(context, pos_x, pos_y):
     from app.navy.daos.ship_dao import ship_dao
     from app.navy.services.navy_game_service import navy_game_service
 
-    ship_map = navy_game_service.get_from_map(context.game.id, pos_x, pos_y)
+    ship_map = navy_game_service.get_from_board(context.game.id, pos_x, pos_y)
     ship_bd = ship_dao.get_by_id(context.ship.id)
     assert ship_map is None and ship_bd is None
 

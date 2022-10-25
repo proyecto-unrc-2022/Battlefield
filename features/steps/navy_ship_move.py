@@ -8,7 +8,7 @@ from app.navy.services.ship_service import ship_service
 
 @then(u"I should see the ship at the position '{pos_x:d}','{pos_y:d}'")
 def step_impl(context, pos_x, pos_y):
-    ship = navy_game_service.get_from_map(context.game.id, pos_x, pos_y)
+    ship = navy_game_service.get_from_board(context.game.id, pos_x, pos_y)
     ship1 = ship_service.get_by_id(1)
     print(navy_game_service.games[1])
     assert ship == ship1
