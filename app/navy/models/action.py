@@ -16,7 +16,15 @@ class Action(db.Model):
     user_id = db.Column(db.Integer(), db.ForeignKey("user.id"))
 
     def __init__(
-        self, navy_game_id, ship_id, course, move, attack, missile_type_id, user_id
+        self,
+        navy_game_id,
+        ship_id,
+        course,
+        move,
+        attack,
+        missile_type_id,
+        user_id,
+        round,
     ):
         self.navy_game_id = navy_game_id
         self.ship_id = ship_id
@@ -25,3 +33,4 @@ class Action(db.Model):
         self.attack = attack
         self.missile_type_id = missile_type_id
         self.user_id = user_id
+        self.round = round
