@@ -7,6 +7,7 @@ from app.daos.airforce.plane_dao import get_projectile
 from app.daos.airforce.plane_dao import update_course as update_course_dao
 from app.models.airforce.air_force_game import AirForceGame
 from app.models.airforce.plane import Plane, PlaneSchema, ProjectileSchema
+from app.daos.airforce.plane_dao import add_machine_gun, add_plane
 
 from . import air_force
 
@@ -130,3 +131,12 @@ def fligth(player, course):
         return Response(status=400)
     #    return Response(status=201)
     return jsonify(obj.to_dict())
+
+@air_force.route("/machine_gun", methods=["POST"])
+def create_machine_gun():
+    damage_1 = request.json["damage_1"]
+    damage_2 = request.json["damage_2"]
+    damage_3 = request.json["damage_3"]
+    
+    m = add_machine_gun(damage_1, damage_2, damage_3)
+    return jsonify(plane_schema.dump(m))
