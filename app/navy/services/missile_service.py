@@ -30,23 +30,17 @@ from app.navy.utils.navy_utils import utils
 
 class MissileService:
 
-    # region: Class constants
     MISSILE_TYPES = [1, 2, 3, 4]
-    # endregion
 
-    # region: Missile's Logic Methods for BD
     def get(self, navy_game_id):
         missiles = missile_dao.get_by_navy_game_id(navy_game_id=navy_game_id)
         missiles.sort(key=lambda x: x.order)
         return missiles
 
     def create(self, navy_game_id, ship_id, missile_type, course, pos_x, pos_y):
-        # region: 0. Neccesary imports
         from app.navy.daos.missile_dao import missile_dao
         from app.navy.daos.missile_type_dao import missile_type_dao
 
-        # endregion
-        # region: 1. Create the missile
         missile_data = missile_type_dao.get_by_id(str(missile_type))
         missile = Missile(
             missile_data["speed"],
@@ -58,9 +52,7 @@ class MissileService:
             navy_game_id,
             self.get_prox_order(navy_game_id),
         )
-        # endregion
 
-        # region: 2. Add the missile to the DB
         navy_game_service.games[navy_game_id]["missiles"].append(missile)
         return missile_dao.add_or_update(missile)
 
@@ -80,8 +72,6 @@ class MissileService:
             missile.navy_game_id, missile.pos_x, missile.pos_y, missile
         )
 
-    # endregion
-
     def delete_from_board(self, missile):
         navy_game_service.delete_from_board(
             missile.navy_game_id, missile.pos_x, missile.pos_y
@@ -91,7 +81,6 @@ class MissileService:
         navy_game_service.delete_entity(missile)
         missile_dao.delete(missile)
 
-    # region: Act Accordingly
     def act_accordingly(self, missile, x_conflict, y_conflict):
         self.delete(missile)
 
@@ -101,14 +90,12 @@ class MissileService:
                 missile.navy_game_id, x_conflict, y_conflict
             )
 
-            # En este punto se que entity tiene que ser un objeto, ya que si no, no habria conflicto
             if isinstance(entity, Missile):
                 self.act_accordingly_missile(entity)
             elif isinstance(entity, Ship):
                 self.act_accordingly_ship(missile, entity)
 
     def act_accordingly_missile(self, other_missile):
-        # -- 1. Delete the missiles from the memory map -- #
         navy_game_service.delete_from_board(
             other_missile.navy_game_id, other_missile.pos_x, other_missile.pos_y
         )
@@ -118,8 +105,6 @@ class MissileService:
         from app.navy.services.ship_service import ship_service
 
         ship_service.update_hp(ship, missile.damage)
-
-    # endregion
 
     def update_position(self, missile):
         self.delete_from_board(missile)
@@ -144,8 +129,6 @@ class MissileService:
         missile_dao.add_or_update(missile)
 
         return True
-
-    # endregion
 
 
 missile_service = MissileService()

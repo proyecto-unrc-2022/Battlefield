@@ -7,7 +7,6 @@ from app.navy.utils.navy_utils import utils
 class ShipService:
     SHIP_NAMES = ["Destroyer", "Cruiser", "Battleship", "Corvette"]
 
-    # region Validate and persiste Methods
     def validate_request(self, request):
         from app.navy.validators.ship_request_validator import ShipRequestValidator
 
@@ -34,16 +33,16 @@ class ShipService:
     def load_to_board(self, ship):
         from app.navy.services.navy_game_service import navy_game_service
 
-        #TODO: CanLoad to board
+        # TODO: CanLoad to board
         ships_positions = self.build(ship)
         for x, y in ships_positions:
             navy_game_service.load_to_board(ship.navy_game_id, x, y, ship)
-        
 
     def can_load_to_board(self, ship):
         from app.navy.services.navy_game_service import navy_game_service
+
         ships_positions = self.build(ship)
-        for x,y in ships_positions:
+        for x, y in ships_positions:
             entity = navy_game_service.get_from_board(ship.navy_game_id, x, y)
             if entity:
                 self.act_accordingly(ship, entity)
@@ -61,7 +60,7 @@ class ShipService:
 
     def delete(self, ship):
         from app.navy.services.navy_game_service import navy_game_service
-        
+
         navy_game_service.delete_entity(ship)
         ship_dao.delete(ship)
 
@@ -72,22 +71,18 @@ class ShipService:
         for x, y in ships_positions:
             navy_game_service.delete_from_board(ship.navy_game_id, x, y)
 
-    # endregion
-
-    # region Public Methods
-
     def update_position(self, ship, action):
         from app.navy.services.navy_game_service import navy_game_service
 
         self.delete_from_board(ship)
-        
+
         for _ in range(action.move):
             x, y = utils.get_next_position(ship.pos_x, ship.pos_y, ship.course)
             if utils.out_of_bounds(x, y):
                 self.load_to_board(ship)
                 ship_dao.add_or_update(ship)
                 return True
-                
+
             entity = navy_game_service.get_from_board(ship.navy_game_id, x, y)
             if entity:
                 self.act_accordingly(ship, entity)
@@ -105,7 +100,7 @@ class ShipService:
         if self.can_load_to_board(ship):
             self.load_to_board(ship)
             ship_dao.add_or_update(ship)
-            return True 
+            return True
         return False
 
     def attack(self, ship):
@@ -138,8 +133,6 @@ class ShipService:
 
         if isinstance(entity, Missile):
             self.act_accordingly_to_missile(ship, entity)
-
-    # endregion
 
     # -- Private Methods -- #
     def is_alive(self, ship_id):
