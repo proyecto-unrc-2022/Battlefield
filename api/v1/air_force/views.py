@@ -172,15 +172,6 @@ def move_projectile(player_projectile, course):
 def attack():
     return {"result": "booom!!!"}
 
-@air_force.route("/<player>/<course>/", methods=["PUT"])
-def fligth(player, course):
-    try:
-        obj = air_force_game.battlefield.fligth(int(player), int(course))
-    except:
-        return Response(status=400)
-    #    return Response(status=201)
-    return jsonify(obj.to_dict())
-
 @air_force.route("/machine_gun", methods=["POST"])
 def create_machine_gun():
     damage_1 = request.json["damage_1"]
