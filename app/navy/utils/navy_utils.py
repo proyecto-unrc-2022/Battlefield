@@ -1,6 +1,3 @@
-from turtle import position
-
-
 class NavyUtils:
     # ---------- CLASS CONSTANTS --------- #
     COMPASS = {
@@ -54,7 +51,6 @@ class NavyUtils:
         if self.free_valid_poisition(next_x, next_y, navy_game_id):
             return next_x, next_y
         return None
-
 
     # ---------- END OF CLASS METHODS --------- #
 

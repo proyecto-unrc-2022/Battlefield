@@ -61,7 +61,7 @@ class MissileService:
         # endregion
 
         # region: 2. Add the missile to the DB
-        navy_game_service.games[navy_game_id]['missiles'].append(missile)
+        navy_game_service.games[navy_game_id]["missiles"].append(missile)
         return missile_dao.add_or_update(missile)
 
     def get_prox_order(self, navy_game_id):
@@ -96,7 +96,7 @@ class MissileService:
         self.delete(missile)
 
         if not utils.out_of_bounds(x_conflict, y_conflict):
-        
+
             entity = navy_game_service.get_from_board(
                 missile.navy_game_id, x_conflict, y_conflict
             )
@@ -121,19 +121,23 @@ class MissileService:
 
     # endregion
 
-    
     def update_position(self, missile):
         self.delete_from_board(missile)
 
         for _ in range(missile.speed):
 
-            new_position = utils.next_free_position(missile.pos_x, missile.pos_y, missile.course, missile.navy_game_id)
+            new_position = utils.next_free_position(
+                missile.pos_x, missile.pos_y, missile.course, missile.navy_game_id
+            )
             if new_position:
                 missile.pos_x, missile.pos_y = new_position
                 continue
-            self.act_accordingly(missile, new_position[0], new_position[1])
+            x_conflict, y_conflit = utils.get_next_position(
+                x=missile.pos_x, y=missile.pos_y, course=missile.course
+            )
+            self.act_accordingly(missile, x_conflict, y_conflit)
             return False
-            
+
         navy_game_service.load_to_board(
             missile.navy_game_id, missile.pos_x, missile.pos_y, missile
         )
