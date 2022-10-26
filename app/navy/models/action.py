@@ -12,6 +12,7 @@ class Action(db.Model):
     move = db.Column(db.Integer())
     attack = db.Column(db.Boolean())
     missile_type_id = db.Column(db.Integer())
+    round = db.Column(db.Integer())
     user_id = db.Column(db.Integer(), db.ForeignKey("user.id"))
 
     def __init__(

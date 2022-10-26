@@ -13,8 +13,6 @@ from app.navy.validators.action_request_validator import ActionRequestValidator
 
 
 class ActionService:
-
-    # region Validator and persist Methods
     def validate_request(self, request):
         return ActionRequestValidator().load(request)
 
@@ -24,18 +22,11 @@ class ActionService:
     def delete(self, action):
         action_dao.delete(action)
 
-    def delete_all(self, navy_game_id):
-        actions = action_dao.get_by_navy_game_id(navy_game_id)
-        for action in actions:
-            action_dao.delete(action)
-
     def get_by_user(self, user_id, navy_game_id):
         return action_dao.get_by_user(user_id, navy_game_id)
 
-    def get_by_navy_game(self, navy_game_id):
-        return action_dao.get_by_navy_game_id(navy_game_id)
-
-    # endregion
+    def get_by_round(self, navy_game_id, round):
+        return action_dao.get_by_round(navy_game_id, round)
 
     def execute(self, action):
         ship = ship_service.get_by_id(action.ship_id)

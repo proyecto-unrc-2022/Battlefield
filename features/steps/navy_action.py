@@ -12,7 +12,7 @@ EXPECTED_ERRORS = {
     "Can't move more than 3 spaces": "_schema",
     "The movement is a negative distance": "_schema",
     "Invalid ship in game": "_schema",
-    "Ship not found":"_schema"
+    "Ship not found": "_schema",
 }
 
 
@@ -90,8 +90,6 @@ def step_impl(context):
 
 @then("I should see an error message '{error_msj}'")
 def step_impl(context, error_msj):
-    print(context.page.text)
-
     message = json.loads(context.page.text)
     value = EXPECTED_ERRORS[error_msj]
     assert message[value][0] == error_msj

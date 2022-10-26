@@ -57,6 +57,7 @@ class ActionRequestValidator(Schema):
 
         user_id = in_data.get("user_id")
         navy_game_id = in_data.get("navy_game_id")
+        round = in_data.get("round")
         navy_game_user: NavyGame = (
             db.session.query(NavyGame)
             .filter(
@@ -75,7 +76,7 @@ class ActionRequestValidator(Schema):
 
         actions = (
             db.session.query(Action)
-            .filter_by(navy_game_id=navy_game_id, user_id=user_id)
+            .filter_by(navy_game_id=navy_game_id, user_id=user_id, round=round)
             .all()
         )
         if actions:
@@ -101,3 +102,4 @@ class ActionRequestValidator(Schema):
     ship_id = fields.Int(required=True)
     move = fields.Int(required=True)
     attack = fields.Integer(validate=validate.OneOf([1, 0]), required=True)
+    round = fields.Integer(required=True)

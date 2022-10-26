@@ -1,6 +1,14 @@
 class TestUtils:
     def json_action(
-        self, user_id, course, attack, navy_game_id, missile_type_id, ship_id, move
+        self,
+        user_id,
+        course,
+        attack,
+        navy_game_id,
+        missile_type_id,
+        ship_id,
+        move,
+        round=None,
     ):
         return {
             "user_id": user_id,
@@ -10,6 +18,7 @@ class TestUtils:
             "missile_type_id": missile_type_id,
             "ship_id": ship_id,
             "move": move,
+            "round": round or 1,
         }
 
     def json_ship(self, name, pos_x, pos_y, course, user_id, navy_game_id):
