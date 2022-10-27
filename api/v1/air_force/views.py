@@ -16,6 +16,7 @@ from app.models.airforce.air_force_game import (
     MovePlane,
 )
 from app.models.airforce.plane import Plane, PlaneSchema, ProjectileSchema
+from app.daos.airforce.plane_dao import add_machine_gun, add_plane
 
 from . import air_force
 
@@ -169,3 +170,12 @@ def move_projectile(player_projectile, course):
 # @token_auth.login_required
 def attack():
     return {"result": "booom!!!"}
+
+@air_force.route("/machine_gun", methods=["POST"])
+def create_machine_gun():
+    damage_1 = request.json["damage_1"]
+    damage_2 = request.json["damage_2"]
+    damage_3 = request.json["damage_3"]
+    
+    m = add_machine_gun(damage_1, damage_2, damage_3)
+    return jsonify(plane_schema.dump(m))
