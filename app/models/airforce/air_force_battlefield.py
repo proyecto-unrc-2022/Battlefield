@@ -100,7 +100,15 @@ class Battlefield:
         self.update_plane_position(course, obj)
         return obj
 
-    def add_new_projectile(self, player, obj, x, y, course):
+    def add_new_projectile(self, player):
+        plane = self.get_player_plane(int(player))[0]
+        course = plane.course
+        x = plane.x
+        y = plane.y
+
+        plane_model = plane.flying_obj
+        obj = plane_model.projectile[0]
+
         fly_obj = FlyingObject(player, obj, x, y, course)
         if course == 1:
             fly_obj.y = fly_obj.y + 1
