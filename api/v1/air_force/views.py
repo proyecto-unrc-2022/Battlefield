@@ -13,6 +13,7 @@ from app.models.airforce.air_force_game import (
     GetBattlefieldStatus,
     GetPlayers,
     JoinGame,
+    LaunchProjectile,
     MovePlane,
 )
 from app.models.airforce.plane import Plane, PlaneSchema, ProjectileSchema
@@ -72,7 +73,6 @@ def choose_plane_and_position(id):
     command = ChoosePlane(
         course=course, plane=plane, x=x, y=y, player=player, air_force_game=game
     )
-
     try:
         dic = game.execute(command)
         print(dic.to_dict())
@@ -101,7 +101,7 @@ def get_battlefield_status(id):
     return jsonify(obj_list)
 
 
-@air_force.route("/game/<game_id>/plane/<plane_id>", methods=["GET"])
+@air_force.route("/game/plane/<plane_id>", methods=["GET"])
 def get_plane(plane_id):
     plane = get_plane_dao(plane_id)
     return jsonify(plane_schema.dump(plane))
@@ -138,32 +138,25 @@ def update_course():
         return Response(status=201)  # or jsonify(plane_schema.dump(p))
 
 
-@air_force.route("/projectile", methods=["POST"])
-def create_projectile():
+@air_force.route("/game/<id>/new_projectile/<player>", methods=["POST"])
+def create_projectile(id, player):
+    game = air_force_game[int(id)]
 
-    player = request.json["player"]
-    flying_object = request.json["projectile"]
-    x = request.json["x"]
-    y = request.json["y"]
-    course = request.json["course"]
+    command = LaunchProjectile(player, game)
 
-    proj = get_projectile(projectile_id=flying_object)
-    obj = air_force_game.battlefield.add_new_projectile(
-        player,
-        proj,
-        int(x),
-        int(y),
-        int(course),
-    )
-    return jsonify(obj.to_dict())
+    try:
+        dic = game.execute(command)
+        return jsonify(dic.to_dict())
+    except:
+        return Response(status=400)
 
 
-@air_force.route("/<player_projectile>/<course>", methods=["PUT"])
-def move_projectile(player_projectile, course):
-    move = air_force_game.battlefield.move_projectile(
-        player=int(player_projectile), course=int(course)
-    )
-    return jsonify(move)
+# @air_force.route("/<player_projectile>/<course>", methods=["PUT"])
+# def move_projectile(player_projectile, course):
+#     move = air_force_game.battlefield.move_projectile(
+#         player=int(player_projectile), course=int(course)
+#     )
+#     return jsonify(move)
 
 
 @air_force.route("/attack")
