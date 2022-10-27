@@ -132,6 +132,9 @@ def rotate_and_advance(game_id, player_id):
     steps = data["steps"]
     game_session = sessions[game_id]
 
+    if direction == (submarine.direction + 4) % 8:
+        return Response("{'error':'submarines cant rotate 180 degrees'}", status=409)
+
     if game_session.current_turn_player() is not player:
         return Response("{'error': 'not your turn'}", status=409)
 
@@ -161,6 +164,9 @@ def rotate_and_attack(game_id, player_id):
     submarine = player.submarine
     direction = data["direction"]
     game_session = sessions[game.id]
+
+    if direction == (submarine.direction + 4) % 8:
+        return Response("{'error':'submarines cant rotate 180 degrees'}", status=409)
 
     if game_session.current_turn_player() is not player:
         return Response("{'error': 'not your turn'}", status=409)

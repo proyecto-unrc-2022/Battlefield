@@ -34,8 +34,8 @@ class UnderGameDAO:
         db.session.commit()
 
         boards.pop(game.id, None)
-        boards.update({game.id: game.board})
         game.build_board()
+        boards.update({game.id: game.board})
 
         sessions.pop(game.id, None)
         sessions.update({game.id: UnderGameSession(host)})

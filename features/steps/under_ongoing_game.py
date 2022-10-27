@@ -51,6 +51,7 @@ def step_impl(context, username, d, n):
         "direction": d,
         "steps": n,
     }
+    # print(context.game)
     context.page = context.client.post(
         url_for(
             "underwater.rotate_and_advance",
@@ -65,7 +66,6 @@ def step_impl(context, username, d, n):
 
 @then("the board is in the following state")
 def step_impl(context):
-    print(context.game)
     compare_board(context)
 
 
@@ -78,6 +78,7 @@ def step_impl(context, username, d):
     payload = {
         "direction": d,
     }
+    # print(context.game)
     context.page = context.client.post(
         url_for(
             "underwater.rotate_and_attack", game_id=context.game.id, player_id=player.id
@@ -85,6 +86,11 @@ def step_impl(context, username, d):
         data=payload,
     )
     assert context.page
+
+
+@then("fail")
+def step_impl(context):
+    assert False
 
 
 def compare_board(context):
@@ -101,3 +107,5 @@ def compare_board(context):
                 assert type(board[i][j] is Submarine)
             elif context.table[i][j] == "*":
                 assert type(board[i][j]) is Torpedo
+            else:
+                assert board[i][j] is None
