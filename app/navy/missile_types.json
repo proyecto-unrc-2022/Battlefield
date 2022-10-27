@@ -1,0 +1,18 @@
+{
+    "1": {
+        "damage": 20,
+        "speed": 5
+    },
+    "2": {
+        "damage": 40,
+        "speed": 4
+    },
+    "3": {
+        "damage": 15,
+        "speed": 3
+    },
+    "4": {
+        "damage": 60,
+        "speed": 4
+    }
+}

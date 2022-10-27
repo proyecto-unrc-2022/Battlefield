@@ -1,168 +1,112 @@
 import json
+
 from behave import *
 from flask import url_for
-
-from app.daos.user_dao import add_user
-from app.models.navy.dynamic_missile import DynamicMissile
-from app.models.navy.dynamic_ship import DynamicShip
-from app.models.user import User
-from app.navy.navy_constants import EMPTY_LIST, FIRST, ONE, SECOND
-from app.navy.navy_utils import (
-    add_missile_to_map_game,
-    add_ship_special,
-    add_ship_to_map_game,
-    get_ship_select,
-)
-
-
-@given("Im logged as '{user}'")
-def step_impl(context, user):
-    add_user(user, "12345", "user1@user1.com")
-    context.body = {"username": "user1", "password": "12345"}
-    context.headers = {"Content-Type": "application/json"}
-    context.page = context.client.post(
-        url_for("auth.login"), json=context.body, headers=context.headers
-    )
-    context.user_1 = User.query.filter_by(username=user).first()
-    assert context.user_1.email == "user1@user1.com"
-    assert context.page
+from steps.navy.test_utils import test_utils
 
 
 @given("the app is initialized")
 def step_impl(context):
     context.token = json.loads(context.page.text)
     assert context.token
-    assert context.client
 
 
-@given("the game one is started")
+@given("the game is started")
 def step_impl(context):
-    context.headers = {
-        "Content-Type": "application/json",
-        "Authorization": f'Bearer {context.token["token"]}',
-    }
-    context.body = {"id_user_1": context.user_1.id}
-    context.page = context.client.post(
-        url_for("navy.create_game"), json=context.body, headers=context.headers
+
+    from app.navy.services.navy_game_service import navy_game_service
+
+    context.game = navy_game_service.add({"user1_id": context.user1.id})
+    context.game = navy_game_service.join_second_player(
+        {"user2_id": context.user2.id}, context.game.id
     )
-    assert context.page
+    assert context.game
 
 
 @given(
-    "I have a ship '{name_ship_one}' at '{ship_one_x:d}','{ship_one_y:d}' and '{name_ship_two}' with '{hp:d}' hp at '{ship_two_x:d}','{ship_two_y:d}' on the board game"
+    "The user '{id:d}' has a ship '{ship_name}' in '{pos_x:d}','{pos_y:d}' with course '{course}' and hp '{hp:d}'"
 )
-def step_impl(
-    context,
-    name_ship_one,
-    ship_one_x,
-    ship_one_y,
-    name_ship_two,
-    ship_two_x,
-    ship_two_y,
-    hp,
-):
-
-    ship_one_selected = get_ship_select(ship_type=name_ship_one)
-    ship_two_selected = get_ship_select(ship_type=name_ship_two)
-
-    context.game_id = context.page.json["game_id"]
-
-
-    ship_one = add_ship_special(
-        id_game=context.game_id,
-        id_user=context.user_1.id,
-        pos_x=ship_one_x,
-        pos_y=ship_one_y,
-        hp=100,
-        direction="N",
-        ship_type=ship_one_selected["ship_id"],
-    )
-
-    ship_two = add_ship_special(
-        id_game=context.game_id,
-        id_user=context.user_1.id,
-        pos_x=ship_two_x,
-        pos_y=ship_two_y,
+def step_impl(context, ship_name, pos_x, pos_y, course, hp, id):
+    context.ship = test_utils.add_test_ship(
+        name=ship_name,
+        pos_x=pos_x,
+        pos_y=pos_y,
+        course=course,
         hp=hp,
-        direction="N",
-        ship_type=ship_two_selected["ship_id"],
+        navy_game_id=context.game.id,
+        user_id=id,
     )
 
-    ships_on_bd = DynamicShip.query.filter_by(id_game=context.game_id).all()
-    add_ship_to_map_game(context.game_id, ships_on_bd)
+    from app.navy.services.ship_service import ship_service
 
-    assert ship_one == ships_on_bd[FIRST]
-    assert ship_two == ships_on_bd[SECOND]
+    ships_db = ship_service.get_by(navy_game_id=context.game.id)
+    assert context.ship in ships_db
 
 
 @given(
-    "I have a missile at '{missile_x:d}','{missile_y:d}' with '{range}' range, direction '{direction}' and damage '{damage:d}'"
+    "There is a missile at '{pos_x:d}','{pos_y:d}' with speed '{speed:d}', course '{course}' and damage '{damage:d}'"
 )
-def step_impl(context, missile_x, missile_y, range, direction, damage):
-    missile = {
-        "id_game": context.game_id,
-        "id_ship": 1,
-        "pos_x": missile_x,
-        "pos_y": missile_y,
-        "order": 1,
-        "direction": direction,
-        "missile_type": 1,
-    }
-    from app.daos.navy.dynamic_missile_dao import add_missile, update_missile
+def step_impl(context, pos_x, pos_y, speed, course, damage):
+    context.missile_test = test_utils.add_test_missile(
+        pos_x=pos_x,
+        pos_y=pos_y,
+        speed=speed,
+        course=course,
+        damage=damage,
+        navy_game_id=context.game.id,
+        ship_id=context.ship.id,
+        missile_type=context.ship.missile_type_id,
+    )
 
-    context.missile_in_game = add_missile(missile)
+    from app.navy.services.missile_service import missile_service
 
-    add_missile_to_map_game(id_game=context.game_id, missiles=[context.missile_in_game])
-
-    context.data_missile = {"speed": int(range), "danger": damage}
-    assert context.missile_in_game
+    missiles_db = missile_service.get(navy_game_id=context.game.id)
+    assert context.missile_test in missiles_db
 
 
-@when("I move the missile")
+@when("The missile moves")
 def step_impl(context):
-    from app.daos.navy.dynamic_missile_dao import update_missile
-    update_missile(context.missile_in_game, context.data_missile)
-    assert True
+    from app.navy.services.missile_service import missile_service
+    from app.navy.services.navy_game_service import navy_game_service
+
+    navy_game_service.load_game(context.game.id)
+    old_x, old_y = context.missile_test.pos_x, context.missile_test.pos_y
+    missile_service.update_position(context.missile_test)
+    assert not navy_game_service.get_from_board(context.game.id, old_x, old_y)
 
 
-@then("I should see the missile at the new position '{missile_x:d},'{missile_y:d}'")
-def step_impl(context, missile_x, missile_y):
-    misil = DynamicMissile.query.filter_by(id_game=context.game_id).first()
-    assert misil.pos_x == missile_x
-    assert misil.pos_y == missile_y
+@then("I should see the missile at the new position '{pos_x:d}','{pos_y:d}'")
+def step_impl(context, pos_x, pos_y):
+    from app.navy.services.navy_game_service import navy_game_service
+
+    missile = navy_game_service.get_from_board(context.game.id, pos_x, pos_y)
+    assert missile == context.missile_test
 
 
 @then("Missile should be destroyed")
 def step_impl(context):
-    misil = DynamicMissile.query.filter_by(
-        id_game=context.game_id, id=context.missile_in_game.id
-    ).first()
-    assert misil is None
+    from app.navy.daos.missile_dao import missile_dao
+
+    missile = missile_dao.get_by_id(context.missile_test.id)
+    assert not missile
 
 
-@then("The ship at '{ship_x:d}','{ship_y:d}' should be destroyed")
-def step_impl(context, ship_x, ship_y):
-    ship = DynamicShip.query.filter_by(
-        id_game=context.game_id, pos_x=ship_x, pos_y=ship_y
-    ).all()
-    print(ship)
+@then("The ship at '{pos_x:d}','{pos_y:d}' should be destroyed")
+def step_impl(context, pos_x, pos_y):
+    from app.navy.daos.ship_dao import ship_dao
+    from app.navy.services.navy_game_service import navy_game_service
 
-    assert ship == EMPTY_LIST
-
-
-@then("The ship at '{ship_x:d}','{ship_y:d}' should have '{hp:d}' hp")
-def step_impl(context, ship_x, ship_y, hp):
-    ship: list[DynamicShip] = DynamicShip.query.filter_by(
-        id_game=context.game_id, pos_x=ship_x, pos_y=ship_y
-    ).all()
-    assert len(ship) == ONE
-    assert ship[FIRST].hp == hp
+    ship_map = navy_game_service.get_from_board(context.game.id, pos_x, pos_y)
+    ship_bd = ship_dao.get_by_id(context.ship.id)
+    assert ship_map is None and ship_bd is None
 
 
-@then("The enemy missile at '{missile_x:d}','{missile_y:d}' should be destroyed")
-def step_impl(context, missile_x, missile_y):
-    misil = DynamicMissile.query.filter_by(
-        id_game=context.game_id, pos_x=missile_x, pos_y=missile_y
-    ).all()
-    print("the misil is", misil)
-    assert misil == EMPTY_LIST
+@then("The ship at '{pos_x:d}','{pos_y:d}' should have '{hp:d}' hp")
+def step_impl(context, pos_x, pos_y, hp):
+    from app.navy.daos.ship_dao import ship_dao
+    from app.navy.services.navy_game_service import navy_game_service
+
+    ship_bd = ship_dao.get_by_id(context.ship.id)
+    ship = navy_game_service.get_ship_from_game(context.game.id, context.ship.id)
+    assert ship.pos_x == pos_x and ship.pos_y == pos_y and ship.hp == hp
+    assert ship_bd.pos_x == pos_x and ship_bd.pos_y == pos_y and ship_bd.hp == hp
