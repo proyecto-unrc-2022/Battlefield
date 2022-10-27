@@ -81,16 +81,17 @@ def choose_figure(game_id, user_id, type):
 
     return jsonify(figure_schema.dump(new_figure))
 
-#revisar la logica de moverse 
-@infantry.route("/move/game/<game_id>/user/<user_id>/course/<direction>/velocity/<velocity>",methods=['POST'])
-def mov_action(direction, velocity, user_id, game_id):
-    if(move_by_user(game_id, user_id, direction, velocity)):
-        
+@infantry.route("/move",methods=['POST'])
+def mov_action():
+    data = json.loads(request.data)
+    velocity = data["velocity"]
+    course = data["course"]
+    game_id = data["game_id"]
+    user_id = data["user_id"]
+    if(move(int(game_id), int(user_id), int(course), int(velocity))):
         move_entity = db.session.query(Figure_infantry).where(Figure_infantry.id == game_id and Figure_infantry.id_user == user_id).one_or_none()
-        
         return jsonify(figure_schema.dump(move_entity))
-    
-    return Response(status=404)
+    return "Colision o velocidad excedida"
 
 @infantry.route("/shoot/user/<user_id>/game/<game_id>",methods=['POST'])
 def shoot_entity(user_id, game_id):
