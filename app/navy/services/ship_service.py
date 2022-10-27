@@ -118,9 +118,10 @@ class ShipService:
         return True
 
     def update_hp(self, ship, damage):
+        from app.navy.services.navy_game_service import navy_game_service
         if ship.hp - damage <= utils.ZERO:
             self.delete(ship)
-            if self.is_alive_on_board(ship):
+            if navy_game_service.get_from_board(ship.navy_game_id, ship.pos_x, ship.pos_y):
                 self.delete_from_board(ship)
         else:
             ship.hp -= damage

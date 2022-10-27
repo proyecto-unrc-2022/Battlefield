@@ -23,7 +23,7 @@ Scenario: Ship collides with a ship and decrease its hp
     And The user '2' has a ship 'Destroyer' in '4','5' with course 'W' and hp '60'
     When The ship id '1' moves '3' positions
     Then The ship with id '1' should have '40' hp
-    And I should see the ship at the position '5','5'
+    And I should see the ship at the position '2','5'
     And The ship with id '2' should be destroyed
 
 Scenario: Ship collides with a missile and decreases its hp
