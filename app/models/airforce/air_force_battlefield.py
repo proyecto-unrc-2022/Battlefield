@@ -116,11 +116,11 @@ class Battlefield:
 
         fly_obj = FlyingObject(player, obj, x, y, course)
         if course == 1:
-            fly_obj.y = fly_obj.y + 1
+            fly_obj.y = fly_obj.y - 1
         elif course == 2:
             fly_obj.x = fly_obj.x + 1
         elif course == 3:
-            fly_obj.y = fly_obj.y - 1
+            fly_obj.y = fly_obj.y + 1
         elif course == 4:
             fly_obj.x = fly_obj.x - 1
         self.flying_objects.append(fly_obj)
