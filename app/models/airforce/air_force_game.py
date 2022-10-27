@@ -10,6 +10,15 @@ class AirForceGame:
     player_a_ready = False
     player_b_ready = False
 
+    def __init__(self):
+        self.player_a = ""
+        self.player_b = ""
+        self.battlefield = Battlefield()
+        self.command = []
+        self.turn = "a"
+        self.player_a_ready = False
+        self.player_b_ready = False
+
     def add_command(self, command, player):
         self.command.append(command)
         self.ready(player)
@@ -42,12 +51,13 @@ class JoinGame:
         self.player = player
 
     def execute(self):
-        if self.air_force_game.player_a == None:
+
+        if self.air_force_game.player_a == "":
             self.air_force_game.player_a = self.player
-        elif self.air_force_game.player_b == None:
+        elif self.air_force_game.player_b == "":
             self.air_force_game.player_b = self.player
         else:
-            raise Exception("The game are full!")
+            raise Exception("The game is full!")
 
 
 class GetPlayers:
@@ -143,3 +153,7 @@ class GetBattlefieldStatus:
 
     def execute(self):
         return self.battlefield.get_status()
+
+    # def __str__(self):
+    #     self.battlefield if self.battlefield is not None else "None"
+    #     # self.battlefield.flying_obj if self.battlefield is not None else ""

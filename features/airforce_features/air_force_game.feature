@@ -79,9 +79,20 @@ Feature: game logic
         When player_a moves his plane in invalid course
         Then 400 response code are returned
 
+    # @air_force_game
+    # Scenario: Player_b move his plane and crash with player_a planes
+    #     Given a battlefield with player_a's and player_b's plane
+    #     When player b moves his plane and crash with player_a planes
+    #     Then 201 response code are returned
+
+
     @air_force_game
-    Scenario: Player_b move his plane and crash with player_a planes
-        Given a battlefield with player_a's and player_b's plane
-        When player b moves his plane and crash with player_a planes
-        Then 201 response code are returned
+    Scenario: Given two players game state are updated
+        Given two logged users
+        When player_a create game
+        And player_b join in this game
+        And player_a choose a plane
+        And player_b choose a plane
+        Then info of the battlefield are returned
+
 

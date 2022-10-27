@@ -3,7 +3,7 @@ import json
 from flask import Blueprint, Response, jsonify, request
 
 from api import token_auth
-from app.daos.airforce.plane_dao import add_plane
+from app.daos.airforce.plane_dao import add_machine_gun, add_plane
 from app.daos.airforce.plane_dao import get_plane as get_plane_dao
 from app.daos.airforce.plane_dao import get_projectile
 from app.daos.airforce.plane_dao import update_course as update_course_dao
@@ -29,9 +29,9 @@ air_force_game = []  # AirForceGame()#lista de juegos
 
 @air_force.route("/new_game/player/<player>", methods=["PUT"])
 def new_game(player):
-    air_force_game.append(AirForceGame())
-    game_id = air_force_game.__len__() - 1
-    game = air_force_game[game_id]
+    game = AirForceGame()
+    air_force_game.append(game)
+    game_id = len(air_force_game) - 1
     command = JoinGame(player=player, air_force_game=game)
     try:
         game.execute(command)
@@ -59,23 +59,22 @@ def get_players(id):
     return jsonify(game.execute(command))
 
 
-@air_force.route("/choose_plane/game_id/<id>", methods=["PUT"])
-def choose_plane_and_position(id):
-    game = air_force_game[int(id)]
+@air_force.route("/choose_plane", methods=["PUT"])
+def choose_plane_and_position():
+    game = air_force_game[int(request.json["id"])]
     player = request.json["player"]
-    flying_object = request.json["plane"]
+    plane = request.json["plane"]
     x = request.json["x"]
     y = request.json["y"]
     course = request.json["course"]
 
-    plane = Plane.query.filter_by(id=flying_object).first()
+    plane = Plane.query.filter_by(id=plane).first()
 
     command = ChoosePlane(
         course=course, plane=plane, x=x, y=y, player=player, air_force_game=game
     )
     try:
         dic = game.execute(command)
-        print(dic.to_dict())
         return jsonify(dic.to_dict())  # Response(status=201)
     except:
         return Response(status=400)
@@ -159,6 +158,16 @@ def create_projectile(id, player):
 
 
 @air_force.route("/attack")
-@token_auth.login_required
+# @token_auth.login_required
 def attack():
     return {"result": "booom!!!"}
+
+
+@air_force.route("/machine_gun", methods=["POST"])
+def create_machine_gun():
+    damage_1 = request.json["damage_1"]
+    damage_2 = request.json["damage_2"]
+    damage_3 = request.json["damage_3"]
+
+    m = add_machine_gun(damage_1, damage_2, damage_3)
+    return jsonify(plane_schema.dump(m))
