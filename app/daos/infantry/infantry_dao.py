@@ -124,15 +124,14 @@ def move(figure, direction, velocity):
 #Primero busca en la tabla Figura el personaje del usuario.
 #Luego pregunta si la direccion que quiere disparar es verdadero o no.
 #Si el disparo se puede realizar, pregunta cual es la figure y dependiendo cual es crea su respectivo proyectil. 
-def shoot(direction, user_id, game_id):
+def shoot(user_id,game_id):
 
-    figure_id = Figure_infantry.query.filter_by(id_user = user_id).first().figure_type
+    figure = Figure_infantry.query.filter_by(id_game= game_id, id_user= user_id).first()
+    figure_type = Figure_infantry.query.filter_by(id = figure.id).first().figure_type
+    direction = Figure_infantry.query.filter_by(id= figure.id).first().direction
 
-    if (direction):
-        if(figure_valid(figure_id,direction,game_id)):
-            return True
-        else:
-            return False
+    if(figure_valid(figure_type,game_id,direction)):
+        return True
     else:
         return False
 
@@ -170,13 +169,6 @@ def figure_valid(figure,direction,game_id):
     else:
         return False
 
-#Este metodo nos devuelve si la direccion es valida.
-def shoot_valid(direction):
-
-    if(direction == EAST or direction == SOUTH_EAST or direction == SOUTH_WEST or direction == NORTH or direction == NORTH_EAST or direction == NORTH_WEST or direction == SOUTH or direction == WEST):
-        return True
-    else:
-        return False
            
 def create_game(user_id):
 
