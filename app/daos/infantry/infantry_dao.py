@@ -72,7 +72,6 @@ def move(game_id, user_id, direction, velocity):
         aux_figure.pos_y = coor[1]
     is_valid = False if aux_figure == None else not(intersection([aux_figure.pos_x, aux_figure.pos_y], figures[figure_opponent.id][1]))
     if is_valid and not(exceeded_velocity_limit): 
-        print("entre2")
         db.session.query(Figure_infantry).filter(
             Figure_infantry.id_user == user_id, Figure_infantry.id_game == game_id).update(
                 {'pos_x' :  aux_figure.pos_x, 'pos_y' : aux_figure.pos_y})
