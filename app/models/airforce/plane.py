@@ -6,6 +6,8 @@ from app import db
 
 
 class Plane(db.Model):
+    __tablename__ = "plane"
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
     size = db.Column(db.Integer, nullable=False)
@@ -15,16 +17,16 @@ class Plane(db.Model):
     coor_x = db.Column(db.Integer, nullable=False)
     coor_y = db.Column(db.Integer, nullable=False)
 
-    projectile = relationship("Projectile", uselist=False, back_populates="plane")
+    projectile = relationship("Projectile")
 
 
 class Projectile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     speed = db.Column(db.Integer, nullable=False)
     damage = db.Column(db.Integer, nullable=False)
-    plane_id = db.Column(db.Integer, db.ForeignKey(Plane.id))
+    plane_id = db.Column(db.Integer, db.ForeignKey("plane.id"))
 
-    plane = relationship("Plane", back_populates="projectile")
+    # plane = relationship("Plane", back_populates="projectile")
 
 
 class ProjectileSchema(SQLAlchemyAutoSchema):
