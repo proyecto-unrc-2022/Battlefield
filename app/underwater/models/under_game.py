@@ -39,12 +39,13 @@ class UnderGame(db.Model):
     submarines = relationship("Submarine", back_populates="game")
     torpedos = relationship("Torpedo", back_populates="game")
 
-    def __init__(self, host_id, visitor_id=None, height=10, width=20):
-        self.host_id = host_id
-        if visitor_id:
-            self.visitor_id = visitor_id
+    def __init__(self, host, visitor=None, height=10, width=20):
+        self.host = host
+        if visitor:
+            self.visitor = visitor
         self.height = height
         self.width = width
+        self.build_board()
         self.state = GameState.PREGAME
 
     @staticmethod
@@ -66,6 +67,9 @@ class UnderGame(db.Model):
 
     def is_ongoing(self):
         return self.state == GameState.ONGOING
+
+    def is_finished(self):
+        return self.state == GameState.FINISHED
 
     def get_height(self):
         return self.height
@@ -115,7 +119,6 @@ class UnderGame(db.Model):
                 raise Exception("Player already has a submarine")
 
         sub = Submarine(self, player, sub_stats)
-        self.submarines.append(sub)
         self.place(sub, x_coord, y_coord, direction)
 
         if len(self.submarines) == 2:
@@ -152,25 +155,26 @@ class UnderGame(db.Model):
             raise Exception("Speed (%s) exceeded" % obj.get_speed())
 
         while n > 0 and self.is_ongoing() and obj.in_game():
-            if self.board.valid(obj.get_next_position()):
-                self.__advance_object_one(obj)
-                n -= 1
-            else:
-                self.__destroy_object(obj)
+            self.__advance_object_one(obj)
+            n -= 1
 
     def __advance_object_one(self, obj):
         x, y = next_cell = obj.get_next_position()
 
-        if not self.board.is_empty(next_cell):
+        if not self.board.valid(next_cell):
+            self.__destroy_object(obj)
+
+        elif not self.board.is_empty(next_cell):
             self.solve_conflict(obj, self.board.get_cell_content(next_cell))
 
-        if self.is_ongoing() and obj.in_game():
+        if obj.in_game():
             self.board.clear(obj.get_last_position())
             self.board.place(obj, next_cell)
             obj.set_position(x_position=x, y_position=y)
 
     def __destroy_object(self, obj):
-        self.board.clear_all(obj.get_positions())
+        if obj.is_placed():
+            self.board.clear_all(obj.get_positions())
 
         if isinstance(obj, Torpedo):
             self.torpedos.remove(obj)
@@ -181,14 +185,17 @@ class UnderGame(db.Model):
                 self.set_state(GameState.FINISHED)
 
     def attack(self, sub):
-        next_cell = sub.get_next_position()
+        x, y = next_cell = sub.get_next_position()
 
-        new_torpedo = sub.create_torpedo()
+        if self.board.valid(next_cell):
+            new_torpedo = sub.create_torpedo()
 
-        if not self.board.is_empty(next_cell):
-            self.solve_conflict(new_torpedo, self.board.get_cell_content(next_cell))
-        elif self.board.valid(next_cell):
-            self.board.place(new_torpedo, next_cell)
+            if not self.board.is_empty(next_cell):
+                self.solve_conflict(new_torpedo, self.board.get_cell_content(next_cell))
+
+            elif self.board.valid(next_cell):
+                self.board.place(new_torpedo, next_cell)
+                new_torpedo.set_position(x, y, sub.get_direction())
 
     def solve_conflict(self, obj1, obj2):
         # Conflict types = "s-s, s-t, t-t"
