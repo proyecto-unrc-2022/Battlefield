@@ -64,31 +64,26 @@ def move(game_id, user_id, direction, velocity):
     user_2 = game.user_2
     user_opponent = user_1 if user_1.id != figure.id else user_2
     figure_opponent = Figure_infantry.query.filter_by(id_user = user_opponent.id, id_game = game_id).first()
-    
     aux_figure = copy.copy(figure)
     exceeded_velocity_limit = (velocity > figure.velocidad)
-    coor = direc(direction, aux_figure.pos_x, aux_figure.pos_y)
-    aux_figure.pos_x = coor[0]
-    aux_figure.pos_y = coor[1]
-
-    is_valid = False if aux_figure == None else not(intersection(figures[figure.id][1], figures[figure_opponent.id][1]))
+    for i in range(velocity):
+        coor = direc(direction, aux_figure.pos_x, aux_figure.pos_y)
+        aux_figure.pos_x = coor[0]
+        aux_figure.pos_y = coor[1]
+    is_valid = False if aux_figure == None else not(intersection([aux_figure.pos_x, aux_figure.pos_y], figures[figure_opponent.id][1]))
     if is_valid and not(exceeded_velocity_limit): 
-        db.session.execute(
-            update(Figure_infantry)
-            .where(Figure_infantry.id_user == user_id, Figure_infantry.id_game == game_id)
-            .values(pos_x = aux_figure.pos_x, pos_y = aux_figure.pos_y, direccion = direction)
-        )
+        print("entre2")
+        db.session.query(Figure_infantry).filter(
+            Figure_infantry.id_user == user_id, Figure_infantry.id_game == game_id).update(
+                {'pos_x' :  aux_figure.pos_x, 'pos_y' : aux_figure.pos_y})
+
     elif not(is_valid) and not(exceeded_velocity_limit):
-        db.session.execute(
-            update(Figure_infantry)
-            .where(Figure_infantry.id_user == figure.id_user, Figure_infantry.id_game == game_id)
-            .values(hp = figure.hp - figure_opponent.hp)
-        )
-        db.session.execute(
-            update(Figure_infantry)
-            .where(Figure_infantry.id_user == figure_opponent.id, Figure_infantry.id_game == game_id)
-            .values(hp = figure_opponent.hp - figure.hp)
-        )
+        db.session.query(Figure_infantry).filter(
+            Figure_infantry.id_user == user_id, Figure_infantry.id_game == game_id).update(
+                {'hp' :  figure.hp - figure_opponent.hp})
+        db.session.query(Figure_infantry).filter(
+            Figure_infantry.id_user == user_id, Figure_infantry.id_game == game_id).update(
+                {'hp' :  figure_opponent.hp - figure.hp})
     db.session.commit()
     return is_valid and not(exceeded_velocity_limit)
 
