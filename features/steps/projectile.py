@@ -31,14 +31,24 @@ def step_impl(context):
     context.response = context.client.put(
         url_for("air_force.new_game", player=context.player_a)
     )
+    print(context.response)
+    context.game_id = context.response.json.get("game_id")
     assert context.response.status_code == 200
 
 
-@when("add a plane")
+@when("user_b join in game")
+def step_impl(context):
+    context.response = context.client.put(
+        url_for("air_force.join_in_game", player=context.player_b, id=context.game_id)
+    )
+    assert context.response.status_code == 200
+
+
+@when("player_a add his plane")
 def step_impl(context):
     players = context.client.get(url_for("air_force.get_players", id=0))
     players = players.json
-    context.player = players.get("player_a")
+    context.player_a = players.get("player_a")
     context.plane = add_plane(
         name="Hawker Tempest",
         size=1,
@@ -55,7 +65,8 @@ def step_impl(context):
     context.plane.projectile.append(projectile)
 
     body = {
-        "player": context.player,
+        "id": context.game_id,
+        "player": context.player_a,
         "plane": context.plane.id,
         "x": context.x,
         "y": context.y,
@@ -63,35 +74,18 @@ def step_impl(context):
     }
     headers = {"Content-Type": "application/json"}
     context.page = context.client.put(
-        url_for("air_force.choose_plane_and_position", id=0),
+        url_for("air_force.choose_plane_and_position"),
         data=json.dumps(body),
         headers=headers,
     )
     assert context.page
 
 
-@then("a '200' responses")
-def step_impl(context):
-    response = context.page.json
-    expected = {"course": 3, "flying_obj": 1, "player": 1, "x": 5, "y": 5}
-    raw_expected = {"game_id": 0}
-    raw_response = context.response.json
-    assert raw_expected == raw_response and response == expected
-
-
-@when("user_b enter the game")
-def step_impl(context):
-    context.response = context.client.put(
-        url_for("air_force.join_in_game", player=context.player_b, id=0)
-    )
-    assert context.response.status_code == 200
-
-
-@when("add his plane")
+@when("player_b add his plane")
 def step_impl(context):
     players = context.client.get(url_for("air_force.get_players", id=0))
     players = players.json
-    context.player = players.get("player_b")
+    context.player_b = players.get("player_b")
 
     context.plane = add_plane(
         name="Hawker Tempest",
@@ -109,7 +103,8 @@ def step_impl(context):
     context.plane.projectile.append(projectile)
 
     body = {
-        "player": context.player,
+        "id": context.game_id,
+        "player": context.player_b,
         "plane": context.plane.id,
         "x": context.x,
         "y": context.y,
@@ -118,62 +113,43 @@ def step_impl(context):
     headers = {"Content-Type": "application/json"}
 
     context.page = context.client.put(
-        url_for("air_force.choose_plane_and_position", id=0),
+        url_for("air_force.choose_plane_and_position"),
         data=json.dumps(body),
         headers=headers,
     )
     assert context.page
 
 
-@then("get '200' response")
+@then("a '200' responses")
 def step_impl(context):
-    response = context.page.json
-    expected = {"course": 2, "flying_obj": 1, "player": 2, "x": 15, "y": 5}
-    raw_expected = {"player_a": "1", "player_b": "2"}
-    raw_response = context.response.json
-    assert raw_expected == raw_response and response == expected
-
-
-@given("player_a in the map")
-def step_impl(context):
-    players = context.client.get(url_for("air_force.get_players", id=0))
-    players = players.json
-    context.player = players.get("player_a")
+    raw_response = context.client.get(
+        url_for("air_force.get_battlefield_status", id=context.game_id)
+    ).json
+    raw_expected = [
+        {"course": 3, "flying_obj": 1, "player": 1, "x": 5, "y": 5},
+        {"course": 2, "flying_obj": 2, "player": 2, "x": 15, "y": 5},
+        {"course": 3, "flying_obj": 1, "player": "1", "x": 5, "y": 6},
+        {"course": 2, "flying_obj": 2, "player": "2", "x": 16, "y": 5},
+    ]
+    assert raw_expected == raw_response
 
 
 @when("player_a create a projectile")
 def step_impl(context):
     context.response = context.client.post(
-        url_for("air_force.create_projectile", id=0, player=context.player)
+        url_for(
+            "air_force.create_projectile", id=context.game_id, player=context.player_a
+        )
     )
-
-
-@then("'200' response")
-def step_impl(context):
-    response = context.response.json
-    expected = {"course": 3, "flying_obj": 1, "player": "1", "x": 5, "y": 4}
-    assert response == expected
-
-
-@given("player_b in the map")
-def step_impl(context):
-    players = context.client.get(url_for("air_force.get_players", id=0))
-    players = players.json
-    context.player = players.get("player_b")
 
 
 @when("player_b create a projectile")
 def step_impl(context):
     context.response = context.client.post(
-        url_for("air_force.create_projectile", id=0, player=context.player)
+        url_for(
+            "air_force.create_projectile", id=context.game_id, player=context.player_b
+        )
     )
-
-
-@then("a '200' response")
-def step_impl(context):
-    response = context.response.json
-    expected = {"course": 2, "flying_obj": 1, "player": "2", "x": 16, "y": 5}
-    assert response == expected
 
 
 # # @given("player_a and player_b in the game with their planes and projectiles available")
