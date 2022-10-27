@@ -110,15 +110,16 @@ class MovePlane:
 
 class LaunchProjectile:
     player = None
+    air_force_game = None
     battlefield = None
 
-    def __init__(self, course, player, battlefield):
-        self.course = course
+    def __init__(self, player, air_force_game):
         self.player = player
-        self.battlefield = battlefield
+        self.air_force_game = air_force_game
+        self.battlefield = air_force_game.battlefield
 
     def execute(self):
-        raise NotImplementedError()
+        return self.battlefield.add_new_projectile(self.player)
 
 
 class Shoot:
