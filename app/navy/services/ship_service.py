@@ -86,7 +86,7 @@ class ShipService:
             entity = navy_game_service.get_from_board(ship.navy_game_id, x, y)
             if entity:
                 self.act_accordingly(ship, entity)
-                if not self.is_alive(ship):
+                if not self.is_alive(ship.id):
                     return False
             ship.pos_x, ship.pos_y = x, y
 

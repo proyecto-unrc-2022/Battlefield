@@ -19,5 +19,5 @@ def step_impl(context, pos_x, pos_y):
 def step_impl(context, id, x):
     navy_game_service.load_game(context.game.id)
     ship1 = ship_service.get_by_id(id)
-    action = test_utils.add_action_test(context.game.id, ship1.id, ship1.course, x, 0, ship1.missile_type_id, context.user1.id)
+    action = test_utils.add_action_test(context.game.id, ship1.id, ship1.course, x, 0, ship1.missile_type_id, context.user1.id, context.game.round)
     ship_service.update_position(ship1, action)
