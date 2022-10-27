@@ -105,3 +105,6 @@ class SubmergedObject(db.Model):
 
     def in_game(self):
         return self.game is not None
+
+    def save(self):
+        db.session.commit()

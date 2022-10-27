@@ -189,6 +189,7 @@ def update_game(game):
         game_session.execute_commands()
         game_session.invert_order()
         for torpedo in game.get_torpedos():
+            torpedo.save()
             game_session.add_command(AdvanceTorpedo(torpedo))
     else:
         game_session.next_turn()

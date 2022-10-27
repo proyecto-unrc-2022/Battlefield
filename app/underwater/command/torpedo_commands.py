@@ -15,4 +15,4 @@ class AdvanceTorpedo(TorpedoCommand):
     def execute(self):
         torpedo = submerged_object_dao.get_by_id(self.torpedo_id)
         if torpedo.in_game():
-            self.game.advance_object(self.torpedo)
+            self.game.advance_object(torpedo)
