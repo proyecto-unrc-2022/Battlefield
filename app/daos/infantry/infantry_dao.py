@@ -9,23 +9,7 @@ from ...models.user import User
 from .constant import *
 import copy
 
-def validation_position(game_id, user_id, pos_x, pos_y):
 
-    succes = False
-
-    game = db.session.query(Game_Infantry).filter_by(id = game_id).first()
-
-    if(game.id_user1 == int(user_id)):
-        if(0 <= pos_x <= 9 and 0 <= pos_y <= 10):
-            
-            succes = True
-
-    if(game.id_user2 == int(user_id)):
-        if(11 <= pos_x <= 20 and 0 <= pos_y <= 10):
-            
-            succes = True
-
-    return succes
 
 def add_figure(game_id, user_id ,entity_id, position_X, position_Y):
 
@@ -33,6 +17,8 @@ def add_figure(game_id, user_id ,entity_id, position_X, position_Y):
 
     if(not(succes)):
         return None
+
+    game = db.session.query(Game_Infantry).filter_by(id = game_id).first()
 
     #succes = True
     #soldier
@@ -50,6 +36,9 @@ def add_figure(game_id, user_id ,entity_id, position_X, position_Y):
     else:
         figure = None
         #succes = False
+
+    if(game.id_user2 == int(user_id)):
+        figure.direccion = 4
 
     if(figure):
         db.session.add(figure)
@@ -292,41 +281,24 @@ def damage_projectile(projectile_id):
         db.session.query(Projectile).filter_by(id= projectile_id).destroy
     
 
-def setDirection(object, direction):
+def validation_position(game_id, user_id, pos_x, pos_y):
 
-    object.direccion = direction
+    succes = False
 
+    game = db.session.query(Game_Infantry).filter_by(id = game_id).first()
 
-#Testear
-#def intersec(object1, object2):
-#
-#    if(object1 is None or object2 is None):
-#        return False
-#
-#    for x in getPositionSize(object1):
-#        if(x in getPositionSize(object2)):
-#            return True
-#
-#    return False
-    
+    if(game.id_user1 == int(user_id)):
+        if(0 <= pos_x <= 9 and 0 <= pos_y <= 10):
+            
+            succes = True
 
-#Testear
-def positionSize(object, dir):
+    if(game.id_user2 == int(user_id)):
+        if(11 <= pos_x <= 20 and 0 <= pos_y <= 10):
+            
+            succes = True
 
-    if(object.tamaño == 1):
-        #objectSize = {"pos": [object.pos_x], "pos_y": [object.pos_y]}
-        objectSize = [[object.pos_x, object.pos_y]]
-    elif(object.tamaño == 2):
-        #objectSize = {"pos_x": [object.pos_x, object.pos_x + 1], "pos_y": [object.pos_y]}
-        objectSize = [[object.pos_x, object.pos_y], [object.pos_x + 1, object.pos_y]]
-    elif(object.tamaño == 3):
-        #objectSize = {"pos_x": [object.pos_x], "pos_y": [object.pos_y - 1, object.pos_y, object.pos_y + 1]}
-        objectSize = [[object.pos_x, object.pos_y - 1], [object.pos_x, object.pos_y], [object.pos_x, object.pos_y + 1]]
-    elif(object.tamaño == 4):
-        #objectSize = {"pos_x": [object.pos_x, object.pos_x + 1], "pos_y": [object.pos_y - 1, object.pos_y, object.pos_y + 1]}
-        objectSize = [[object.pos_x, object.pos_y - 1], [object.pos_x, object.pos_y], [object.pos_x, object.pos_y + 1], [object.pos_x + 1, object.pos_y]]
+    return succes
 
-    return objectSize
 
 def direc(dir, pos_x, pos_y):
 
@@ -349,34 +321,6 @@ def getposition(object):
     return position
 
 
-
-#mal implementado - cambiar
-def intersecProjectile(projectile, object):
-
-    position=[]
-    #print(position)
-    projectile_pos = [projectile.pos_x, projectile.pos_y]
-    for x in object.values():
-
-        if(projectile_pos in x):
-            position.append(projectile.pos_x)
-            position.append(projectile.pos_y)
-            print(x)
-            return position
-        #    x.remove(0)
-        #    print(x)
-        #    if(projectile.pos_y in x):
-        #        print(x)
-        #        position.append(projectile.pos_y)
-        #        position.append(projectile.pos_x)
-        #        return position
-            
-
-    return position
-
-
-
-#con errores
 def figures_id_game(game_id):
 
     figures_all = Figure_infantry.query.filter_by(id_game = game_id).all()
@@ -391,7 +335,6 @@ def figures_id_game(game_id):
     print()
 
     return figures
-
 
 
 def intersec_Projectile(projectile, object):
@@ -432,14 +375,9 @@ def update(game_id):
 
     print(pos)
 
-    #print(projectile_all)
-    #print()
-    #print(pos)
-
+    
     return True
 
 
 
 # Hacer la creación del personaje del jugador 2 orientado al oeste
-#for i in projectile_all:
-#    print(str(i.pos_x) + str(i.pos_y))
