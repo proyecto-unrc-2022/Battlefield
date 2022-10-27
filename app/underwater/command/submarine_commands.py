@@ -15,14 +15,16 @@ class SubmarineCommand(Command):
 class RotateAndAdvance(SubmarineCommand):
     def execute(self):
         submarine = submarine_dao.get_by_id(self.submarine_id)
-        self.game.rotate_object(submarine, self.params["direction"])
         if submarine.in_game():
-            self.game.advance_object(submarine, self.params["steps"])
+            self.game.rotate_object(submarine, self.params["direction"])
+            if submarine.in_game():
+                self.game.advance_object(submarine, self.params["steps"])
 
 
 class RotateAndAttack(SubmarineCommand):
     def execute(self):
         submarine = submarine_dao.get_by_id(self.submarine_id)
-        self.game.rotate_object(submarine, self.params["direction"])
         if submarine.in_game():
-            self.game.attack(submarine)
+            self.game.rotate_object(submarine, self.params["direction"])
+            if submarine.in_game():
+                self.game.attack(submarine)
