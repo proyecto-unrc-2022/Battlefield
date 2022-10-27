@@ -93,7 +93,6 @@ def move(game_id, user_id, direction, velocity):
     return is_valid and not(exceeded_velocity_limit)
 
 
-#Verifica si hay una interseccion entre dos figure
 def intersection(coords1, coords2):
     intersection = False
     for i in range(len(coords1)):
