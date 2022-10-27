@@ -98,7 +98,15 @@ class TestUtils:
         return missile_dao.add_or_update(missile)
 
     def add_action_test(
-        self, navy_game_id, ship_id, course, move, attack, missile_type_id, user_id, round
+        self,
+        navy_game_id,
+        ship_id,
+        course,
+        move,
+        attack,
+        missile_type_id,
+        user_id,
+        round,
     ):
         from app.navy.daos.action_dao import action_dao
         from app.navy.models.action import Action

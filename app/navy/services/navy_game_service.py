@@ -115,13 +115,13 @@ class NavyGameService:
         if self.update_missiles(game["missiles"]):
             actions.sort(key=lambda x: x.user_id == game.turn, reverse=True)
             for action in actions:
-                if not action_service.execute(action):
-                    if self.check_winner(navy_game_id):
-                        return
-
-            game = self.change_turn(game=game)
-            game.round += 1
-            navy_game_dao.add_or_update(game)
+                if not action_service.execute(action) and self.check_winner(
+                    navy_game_id
+                ):
+                    return
+        game = self.change_turn(game=game)
+        game.round += 1
+        navy_game_dao.add_or_update(game)
 
     def update_missiles(self, missiles):
         from app.navy.services.missile_service import missile_service
@@ -184,6 +184,13 @@ class NavyGameService:
             self.games[entity.navy_game_id]["ships"].remove(entity)
         elif isinstance(entity, Missile):
             self.games[entity.navy_game_id]["missiles"].remove(entity)
+
+    def get_ship_from_game(self, navy_game_id, ship_id):
+        ships = self.games[navy_game_id]["ships"]
+        for ship in ships:
+            if ship.id == ship_id:
+                return ship
+        return None
 
 
 navy_game_service = NavyGameService()

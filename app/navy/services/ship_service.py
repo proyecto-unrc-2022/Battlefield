@@ -119,9 +119,12 @@ class ShipService:
 
     def update_hp(self, ship, damage):
         from app.navy.services.navy_game_service import navy_game_service
+
         if ship.hp - damage <= utils.ZERO:
             self.delete(ship)
-            if navy_game_service.get_from_board(ship.navy_game_id, ship.pos_x, ship.pos_y):
+            if navy_game_service.get_from_board(
+                ship.navy_game_id, ship.pos_x, ship.pos_y
+            ):
                 self.delete_from_board(ship)
         else:
             ship.hp -= damage
@@ -136,15 +139,8 @@ class ShipService:
         if isinstance(entity, Missile):
             self.act_accordingly_to_missile(ship, entity)
 
-    # -- Private Methods -- #
     def is_alive(self, ship_id):
         return ship_dao.get_by_id(ship_id)
-
-    # Como para evitar buscar posicion por posicion en el mapa
-    def is_alive_on_board(self, ship):
-        from app.navy.services.navy_game_service import navy_game_service
-
-        return ship in navy_game_service.games[ship.navy_game_id]["ships"]
 
     def act_accordingly_to_ship(self, ship, other_ship):
         old_hp = ship.hp

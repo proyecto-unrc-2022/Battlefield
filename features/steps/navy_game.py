@@ -182,4 +182,3 @@ def step_impl(context):
 @then("The game with id 1 should be deleted")
 def step_impl(context):
     assert context.page.status_code == 200
-

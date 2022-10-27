@@ -104,6 +104,9 @@ def step_impl(context, pos_x, pos_y):
 @then("The ship at '{pos_x:d}','{pos_y:d}' should have '{hp:d}' hp")
 def step_impl(context, pos_x, pos_y, hp):
     from app.navy.daos.ship_dao import ship_dao
+    from app.navy.services.navy_game_service import navy_game_service
 
-    ship = ship_dao.get_by_id(context.ship.id)
+    ship_bd = ship_dao.get_by_id(context.ship.id)
+    ship = navy_game_service.get_ship_from_game(context.game.id, context.ship.id)
     assert ship.pos_x == pos_x and ship.pos_y == pos_y and ship.hp == hp
+    assert ship_bd.pos_x == pos_x and ship_bd.pos_y == pos_y and ship_bd.hp == hp
