@@ -106,20 +106,22 @@ class NavyGameService:
         from app.navy.services.action_service import action_service
         from app.navy.services.missile_service import missile_service
 
-        if not self.games.get(navy_game_id):
-            self.load_game(navy_game_id)
+        #if not self.games.get(navy_game_id):
+        self.load_game(navy_game_id)
 
-        game = self.games[navy_game_id]
-        actions = action_service.get_by_round(navy_game_id)
+        #game = self.games[navy_game_id]
+        game_db = navy_game_dao.get_by_id(navy_game_id)
+        missiles = missile_service.get(navy_game_id=game_db.id)
+        actions = action_service.get_by_round(navy_game_id, game_db.round)
 
-        if self.update_missiles(game["missiles"]):
-            actions.sort(key=lambda x: x.user_id == game.turn, reverse=True)
+        if self.update_missiles(missiles):
+            actions.sort(key=lambda x: x.user_id == game_db.turn, reverse=True)
             for action in actions:
                 if not action_service.execute(action) and self.check_winner(
                     navy_game_id
                 ):
                     return
-        game = self.change_turn(game=game)
+        game = self.change_turn(game=game_db)
         game.round += 1
         navy_game_dao.add_or_update(game)
 
