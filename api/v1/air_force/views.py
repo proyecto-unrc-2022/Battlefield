@@ -138,10 +138,9 @@ def update_course():
         return Response(status=201)  # or jsonify(plane_schema.dump(p))
 
 
-@air_force.route("/game/<id>/new_projectile/<player>", methods=["POST"])
+@air_force.route("/game/<id>/new_projectile/player/<player>", methods=["POST"])
 def create_projectile(id, player):
     game = air_force_game[int(id)]
-
     command = LaunchProjectile(player, game)
 
     try:
