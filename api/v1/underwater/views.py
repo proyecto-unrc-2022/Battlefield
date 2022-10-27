@@ -5,19 +5,13 @@ from flask import Response, jsonify, request
 
 from api import token_auth
 from app import db
-from app.daos.underwater.submarine_dao import get_submarine, is_placed
-from app.daos.underwater.uw_game_dao import add_submarine, create_game, get_game
-from app.daos.underwater.uw_game_dao import get_options as get_options_dao
-from app.daos.underwater.uw_game_dao import has_user
-from app.daos.underwater.uw_game_dao import place_submarine as place_sub
-from app.daos.underwater.uw_game_dao import update_game
-from app.models.underwater.under_dtos import UnderGameSchema
-from app.models.underwater.under_models import UnderGame
 from app.models.user import User
+from app.underwater.daos.submarine_dao import SubmarineDAO
+from app.underwater.daos.under_game_dao import game_dao
+from app.underwater.models.under_game import UnderGame
+from app.underwater.under_dtos import game_dto
 
 from . import underwater
-
-under_game_schema = UnderGameSchema()
 
 
 @underwater.get("/new_game")
@@ -33,52 +27,60 @@ def new_game():
     if request.args.get("width"):
         width = request.args.get("width")
 
-    ng = create_game(request.args.get("host_id"), height, width)
-    return jsonify(under_game_schema.dump(ng))
+    try:
+        new_game = game_dao.create(
+            request.args.get("host_id"), height=height, width=width
+        )
+    except Exception as e:
+        return Response("{'error':%s}" % str(e), status=409)
+    return game_dto.dump(new_game)
 
 
 @underwater.get("/get_options")
 def get_options():
-    return get_options_dao()
+    return UnderGame.get_options()
 
 
 @underwater.get("/join_game")
 def join_game():
-    game = get_game(request.args.get("game_id"))
     visitor_id = int(request.args.get("visitor_id"))
+    game = game_dao.get_by_id(request.args.get("game_id"))
 
-    if not game:
-        return Response("{'error':'game not found'}", status="404")
-    if game.visitor_id:
-        return Response(
-            "{'error':'game does not have an available slot'}", status="409"
-        )
+    if game.visitor_id is not None:
+        return Response("{'error':'game does not have an available slot'}", status=409)
+
     if visitor_id == game.host_id:
-        return Response("{'error':'you can not join to your game'}", status="409")
+        return Response(
+            "{'error':'you cannot be a visitor to your own game'}", status=409
+        )
 
-    game = update_game(game_id=game.id, visitor_id=visitor_id)
+    game.visitor_id = visitor_id
+    game_dao.save(game)
 
-    return jsonify(under_game_schema.dump(game))
+    return game_dto.dumps(game)
 
 
 @underwater.post("/choose_submarine")
 def choose_submarine():
-    game_id = int(request.form["game_id"])
-    player_id = int(request.form["player_id"])
-    submarine_id = request.form["submarine_id"]
+    game_id = request.form.get("game_id", type=int)
+    player_id = request.form.get("player_id", type=int)
+    submarine_id = request.form.get("submarine_id", type=int)
+    x_position = request.form.get("x_position", type=int)
+    y_position = request.form.get("y_position", type=int)
+    direction = request.form.get("direction", type=int)
+    game = game_dao.get_by_id(game_id)
 
-    submarines = json.load(open("app/models/underwater/options.json"))
+    submarines = json.load(open("app/underwater/options.json"))
 
-    game = get_game(game_id=game_id)
     if not game:
         return Response("{'error':'game not found'}", status="404")
 
     try:
-        add_submarine(game, player_id, submarine_id)
+        game.add_submarine(player_id, submarine_id, x_position, y_position, direction)
     except Exception as e:
         return Response("{'error':'%s'}" % str(e), status="409")
 
-    return jsonify(under_game_schema.dump(game))
+    return game_dto.dump(game)
 
 
 # Takes submarine_id, x_coord, y_coord, direction
@@ -88,14 +90,18 @@ def place_submarine():
     x_coord = int(request.form["x_coord"])
     y_coord = int(request.form["y_coord"])
     direction = int(request.form["direction"])
-    submarine = get_submarine(submarine_id)
 
-    if not submarine:
-        return Response("{'error':'submarine not found'}", status="404")
-    if is_placed(submarine):
-        return Response("{'error':'submarine is already placed'}", status="409")
     try:
-        place_sub(submarine, x_coord, y_coord, direction)
+        submarine_dao = SubmarineDAO.get(submarine_id)
+    except Exception:
+        return Response("{'error':'submarine not found'}", status="404")
+
+    if submarine_dao.is_placed():
+        return Response("{'error':'submarine is already placed'}", status="409")
+
+    try:
+        game_dao = UnderGameDAO.get(submarine_dao.get_game().id)
+        game_dao.place(submarine_dao.submarine, x_coord, y_coord, direction)
     except Exception as e:
         return Response("{'error':'%s'}" % str(e), status="409")
 

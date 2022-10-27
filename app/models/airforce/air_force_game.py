@@ -1,225 +1,144 @@
-from calendar import c
-
-
-class flying_object:
-    player = None
-    flying_obj = None
-    x = -1
-    y = -1
-    course = -1  # course 1 north, 2 east, 3 south, 4 west
-
-    def __init__(self, player, flying_obj, x, y, course):
-        self.player = player
-        self.flying_obj = flying_obj
-        self.x = x
-        self.y = y
-        self.course = course
-
-    def check_course(self, course):
-        #        raise Exception(self.course)
-        return abs(self.course - course) == 2
-
-    def to_dict(self):
-        return {
-            "player": self.player,
-            "flying_obj": self.flying_obj.id,
-            "x": self.x,
-            "y": self.y,
-            "course": self.course,
-        }
-
-
-class battlefield:
-    flying_objects = []
-    max_x = 20
-    max_y = 10
-
-    def position_inside_map(self, x, y):
-        if x > self.max_x:
-            return False
-        if x < 1:
-            return False
-        if y > self.max_y:
-            return False
-        if y < 1:
-            return False
-        return True
-
-    @classmethod
-    def position_inside_player_field(self, x, y, course, player):
-        if AirForceGame.player_a == player:
-            if x > self.max_x / 2:
-                return False
-            if (x == (self.max_x / 2)) and course != 2:
-                return False
-        if AirForceGame.player_b == player:
-            if x <= self.max_x / 2:
-                return False
-            if (x == (self.max_x / 2) + 1) and course != 4:
-                return False
-
-        return True
-
-    def add_new_plane(self, player, obj, x, y, course):
-        if not self.position_inside_map(x, y):
-            raise Exception("Invalid position")
-
-        if not self.position_inside_player_field(x, y, course, player):
-            raise Exception("Plane position cant be inside enemy field")
-
-        if self.player_have_plane(player):
-            raise Exception("This player already have a plane")
-
-        fly_obj = flying_object(player, obj, x, y, course)
-        self.flying_objects.append(fly_obj)
-        return fly_obj
-
-    def player_have_plane(self, player):
-        return self.get_player_plane(player) != []
-
-    def get_player_plane(self, player):
-        return list(
-            filter(
-                lambda x: x.player == player
-                and x.flying_obj.__class__.__name__ == "Plane",
-                self.flying_objects,
-            )
-        )
-
-    def fligth(self, player, course):
-        obj = self.get_player_plane(player)[0]
-        self.update_plane_position(course, obj)
-        return obj
-
-    def add_new_projectile(self, player, obj, x, y, course):
-        fly_obj = flying_object(player, obj, x, y, course)
-        if course == 1:
-            fly_obj.x + 1
-        elif course == 2:
-            fly_obj.y + 1
-        elif course == 3:
-            fly_obj.x - 1
-        elif course == 4:
-            fly_obj.y - 1
-        self.flying_objects.append(fly_obj)
-        return fly_obj
-
-    def update_position(self, course, fly_obj):
-        if fly_obj.check_course(course):
-            raise ValueError("New course cant be 180 degrees deference")
-        fly_obj.course = course
-        if course == 1:
-            new_y = fly_obj.y + fly_obj.flying_obj.speed
-            fly_obj.y = new_y if new_y <= self.max_y else self.max_y
-        elif course == 2:
-            new_x = fly_obj.x + fly_obj.flying_obj.speed
-            fly_obj.x = new_x if new_x <= self.max_x else self.max_x
-        elif course == 3:
-            new_y = fly_obj.y - fly_obj.flying_obj.speed
-            fly_obj.y = new_y if new_y >= 0 else 0
-        elif course == 4:
-            new_x = fly_obj.x - fly_obj.flying_obj.speed
-            fly_obj.x = new_x if new_x >= 0 else 0
-
-    def update_plane_position(self, course, fly_obj):
-        if fly_obj.check_course(course):
-            raise ValueError("New course cant be 180 degrees deference")
-        fly_obj.course = course
-        if course == 1:
-            self.colision_y(fly_obj, course)
-            new_y = fly_obj.y + fly_obj.flying_obj.speed
-            fly_obj.y = new_y if new_y <= self.max_y else self.max_y
-        elif course == 2:
-            self.colision_x(fly_obj, course)
-            new_x = fly_obj.x + fly_obj.flying_obj.speed
-            fly_obj.x = new_x if new_x <= self.max_x else self.max_x
-        elif course == 3:
-            self.colision_y(fly_obj, course)
-            new_y = fly_obj.y - fly_obj.flying_obj.speed
-            fly_obj.y = new_y if new_y >= 0 else 0
-        elif course == 4:
-            self.colision_x(fly_obj, course)
-            new_x = fly_obj.x - fly_obj.flying_obj.speed
-            fly_obj.x = new_x if new_x >= 0 else 0
-
-    def colision_x(self, fly_obj, course):
-        position = fly_obj.x
-        speed = fly_obj.flying_obj.speed if course == 1 else -fly_obj.flying_obj.speed
-
-        colision_obj = list(
-            filter(
-                lambda x: x.x < position and x.x >= position + speed,
-                self.flying_objects,
-            )
-        )
-        if colision_obj != []:
-            obj = min(colision_obj, key=lambda x: x.x + speed)
-            # raise Exception(obj.to_dict())
-            obj.flying_obj.health -= fly_obj.flying_obj.health
-            fly_obj.flying_obj.health -= obj.flying_obj.health
-
-    def colision_y(self, plane, course):
-        position = plane.y
-        speed = plane.flying_obj.speed if course == 2 else -plane.flying_obj.speed
-        colision_obj = list(
-            filter(
-                lambda p: p.y < position and p.y >= position + speed,
-                self.flying_objects,
-            )
-        )
-        if colision_obj != []:
-            obj = min(colision_obj, key=lambda x: x.x + speed)
-            # raise Exception('A = ', obj.to_dict(), plane.to_dict())
-            obj.flying_obj.health -= plane.flying_obj.health
-            plane.flying_obj.health -= obj.flying_obj.health
-
-    # @classmethod
-    # def move_projectile(cls, player):#yo lo haria asi, total de actualizar actualizarias todos los proyectiles de un jugador de ultima en el orden de creacion
-
-    #     speed = obj.flying_object.speed
-    #     course = obj.course
-
-    #     if course == 1:
-    #         if obj.x + speed >= 20:
-    #             obj.clear()
-    #         else:
-    #             obj.x = obj.x + speed
-    #     elif course == 2:
-    #         if obj.y + speed >= 10:
-    #             obj.clear()
-    #         else:
-    #             obj.y = obj.y + speed
-    #     elif course == 3:
-    #         if obj.x - speed <= 0:
-    #             obj.clear()
-    #         else:
-    #             obj.x = obj.x - speed
-    #     else:
-    #         if obj.y - speed <= 0:
-    #             obj.clear()
-    #         else:
-    #             obj.y = obj.y - speed
-
-    #     cls.flying_objects = obj
-    #     return cls.flying_objects
+from app.models.airforce.air_force_battlefield import Battlefield
 
 
 class AirForceGame:
     player_a = None
     player_b = None
-    battlefield = battlefield()
+    battlefield = Battlefield()
+    command = []
+    turn = "a"
+    player_a_ready = False
+    player_b_ready = False
 
-    def __init__(self, p_a, p_b):
-        self.player_a = p_a
-        self.player_b = p_b
-        self.battlefield = battlefield()
+    def add_command(self, command, player):
+        self.command.append(command)
+        self.ready(player)
+        if self.player_a_ready and self.player_b_ready:
+            self.executeList()
 
-    @classmethod
-    def join_game(cls, new_player):
-        if cls.player_a == None:
-            cls.player_a = new_player
-        elif cls.player_b == None:
-            cls.player_b = new_player
+    def executeList(self):
+        for c in self.command:
+            c.execute()
+
+    def execute(self, command):
+        return command.execute()
+
+    def ready(self, player):
+        if player == self.player_a:
+            self.player_a_ready = True
+        else:
+            self.player_b_ready = True
+
+    def get_player_plane(self, player_id):
+        return self.battlefield.get_player_plane(player_id)
+
+
+class JoinGame:
+    air_force_game = None
+    player = None
+
+    def __init__(self, air_force_game, player):
+        self.air_force_game = air_force_game
+        self.player = player
+
+    def execute(self):
+        if self.air_force_game.player_a == None:
+            self.air_force_game.player_a = self.player
+        elif self.air_force_game.player_b == None:
+            self.air_force_game.player_b = self.player
         else:
             raise Exception("The game are full!")
-        return {"player_a": cls.player_a, "player_b": cls.player_b}
+
+
+class GetPlayers:
+    air_force_game = None
+
+    def __init__(self, air_force_game):
+        self.air_force_game = air_force_game
+
+    def execute(self):
+        return {
+            "player_a": self.air_force_game.player_a,
+            "player_b": self.air_force_game.player_b,
+        }
+
+
+class ChoosePlane:
+    course = None
+    x = None
+    y = None
+    player = None
+    battlefield = None
+    plane = None
+    air_force_game = None
+
+    def __init__(self, course, x, y, player, plane, air_force_game):
+        self.course = course
+        self.x = x
+        self.y = y
+        self.player = player
+        self.battlefield = air_force_game.battlefield
+        self.plane = plane
+        self.air_force_game = air_force_game
+
+    def execute(self):
+        return self.battlefield.add_new_plane(
+            int(self.player),
+            self.plane,
+            int(self.x),
+            int(self.y),
+            int(self.course),
+            self.air_force_game,
+        )
+
+
+class MovePlane:
+    course = None
+    player = None
+    battlefield = None
+    air_force_game = None
+
+    def __init__(self, course, player, air_force_game):
+        self.course = course
+        self.player = player
+        self.battlefield = air_force_game.battlefield
+        self.air_force_game = air_force_game
+
+    def execute(self):
+        self.battlefield.fligth(int(self.player), int(self.course))
+
+
+class LaunchProjectile:
+    player = None
+    battlefield = None
+
+    def __init__(self, course, player, battlefield):
+        self.course = course
+        self.player = player
+        self.battlefield = battlefield
+
+    def execute(self):
+        raise NotImplementedError()
+
+
+class Shoot:
+    player = None
+    battlefield = None
+
+    def __init__(self, course, player, battlefield):
+        self.course = course
+        self.player = player
+        self.battlefield = battlefield
+
+    def execute(self):
+        raise NotImplementedError()
+
+
+class GetBattlefieldStatus:
+    battlefield = None
+
+    def __init__(self, battlefield):
+        self.battlefield = battlefield
+
+    def execute(self):
+        return self.battlefield.get_status()
