@@ -106,7 +106,8 @@ def shoot_entity(direction, user_id, game_id):
 @infantry.route("/game/<game_id>/update",methods=['POST'])
 def updateProjectile(game_id):
 
-    x = getPosition(game_id)   
+    x = update(game_id)
+   
 
     #print(x)
 

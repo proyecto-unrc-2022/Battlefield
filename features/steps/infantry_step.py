@@ -2,7 +2,7 @@ from app import db
 from app.models.infantry.infantry_game import Figure_infantry, Game_Infantry
 from app.models.user import Profile
 from flask import url_for
-from app.daos.infantry.direction import *
+from app.daos.infantry.constant import *
 
 from app.models.user import User
 from app.daos.user_dao import add_user
