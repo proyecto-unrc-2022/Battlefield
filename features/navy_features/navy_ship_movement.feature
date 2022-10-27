@@ -31,6 +31,7 @@ Scenario: Ship collides with a missile and decreases its hp
     And There is a missile at '4','5' with speed '2', course 'E' and damage '50'
     When The ship id '1' moves '3' positions
     Then The ship with id '1' should have '10' hp
+    And I should see the ship at the position '2','5'
 
 Scenario: Ship collides with a missile and is destroyed
     Given The user '1' has a ship 'Destroyer' in '5','5' with course 'N' and hp '60'
