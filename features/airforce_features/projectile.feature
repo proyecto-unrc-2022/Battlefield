@@ -2,30 +2,14 @@ Feature: Creation, movement of a projectile
 
     @air_force_projectile
     Scenario: Player_a join in a new game
-        Given a users logged
+        Given a users logged 
         When  user_a create the game
-        And add a plane
+        And user_b join in game
+        And player_a add his plane
+        And player_b add his plane
+        And player_a create a projectile
+        And player_b create a projectile
         Then a '200' responses
-
-    @air_force_projectile
-    Scenario: Player_b join in a new game 
-        Given a users logged
-        When user_b enter the game
-        And add his plane
-        Then get '200' response
-    
-     @air_force_projectile
-     Scenario: Player_a create a projectile
-          Given player_a in the map
-          When player_a create a projectile
-          Then '200' response
-        
-    @air_force_projectile
-    Scenario: Player_b create a projectile
-        Given player_b in the map
-        When player_b create a projectile
-        Then a '200' response 
-
     
     # @air_force_projectile
     # Scenario: Player_b create a projectile
