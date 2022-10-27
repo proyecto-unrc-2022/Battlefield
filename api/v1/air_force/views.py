@@ -3,7 +3,7 @@ import json
 from flask import Blueprint, Response, jsonify, request
 
 from api import token_auth
-from app.daos.airforce.plane_dao import add_plane
+from app.daos.airforce.plane_dao import add_machine_gun, add_plane
 from app.daos.airforce.plane_dao import get_plane as get_plane_dao
 from app.daos.airforce.plane_dao import get_projectile
 from app.daos.airforce.plane_dao import update_course as update_course_dao
@@ -13,10 +13,10 @@ from app.models.airforce.air_force_game import (
     GetBattlefieldStatus,
     GetPlayers,
     JoinGame,
+    LaunchProjectile,
     MovePlane,
 )
 from app.models.airforce.plane import Plane, PlaneSchema, ProjectileSchema
-from app.daos.airforce.plane_dao import add_machine_gun, add_plane
 
 from . import air_force
 
@@ -73,7 +73,6 @@ def choose_plane_and_position():
     command = ChoosePlane(
         course=course, plane=plane, x=x, y=y, player=player, air_force_game=game
     )
-
     try:
         dic = game.execute(command)
         return jsonify(dic.to_dict())  # Response(status=201)
@@ -101,7 +100,7 @@ def get_battlefield_status(id):
     return jsonify(obj_list)
 
 
-@air_force.route("/game/<game_id>/plane/<plane_id>", methods=["GET"])
+@air_force.route("/game/plane/<plane_id>", methods=["GET"])
 def get_plane(plane_id):
     plane = get_plane_dao(plane_id)
     return jsonify(plane_schema.dump(plane))
@@ -138,32 +137,24 @@ def update_course():
         return Response(status=201)  # or jsonify(plane_schema.dump(p))
 
 
-@air_force.route("/projectile", methods=["POST"])
-def create_projectile():
+@air_force.route("/game/<id>/new_projectile/player/<player>", methods=["POST"])
+def create_projectile(id, player):
+    game = air_force_game[int(id)]
+    command = LaunchProjectile(player, game)
 
-    player = request.json["player"]
-    flying_object = request.json["projectile"]
-    x = request.json["x"]
-    y = request.json["y"]
-    course = request.json["course"]
-
-    proj = get_projectile(projectile_id=flying_object)
-    obj = air_force_game.battlefield.add_new_projectile(
-        player,
-        proj,
-        int(x),
-        int(y),
-        int(course),
-    )
-    return jsonify(obj.to_dict())
+    try:
+        dic = game.execute(command)
+        return jsonify(dic.to_dict())
+    except:
+        return Response(status=400)
 
 
-@air_force.route("/<player_projectile>/<course>", methods=["PUT"])
-def move_projectile(player_projectile, course):
-    move = air_force_game.battlefield.move_projectile(
-        player=int(player_projectile), course=int(course)
-    )
-    return jsonify(move)
+# @air_force.route("/<player_projectile>/<course>", methods=["PUT"])
+# def move_projectile(player_projectile, course):
+#     move = air_force_game.battlefield.move_projectile(
+#         player=int(player_projectile), course=int(course)
+#     )
+#     return jsonify(move)
 
 
 @air_force.route("/attack")
@@ -171,11 +162,12 @@ def move_projectile(player_projectile, course):
 def attack():
     return {"result": "booom!!!"}
 
+
 @air_force.route("/machine_gun", methods=["POST"])
 def create_machine_gun():
     damage_1 = request.json["damage_1"]
     damage_2 = request.json["damage_2"]
     damage_3 = request.json["damage_3"]
-    
+
     m = add_machine_gun(damage_1, damage_2, damage_3)
     return jsonify(plane_schema.dump(m))
