@@ -10,7 +10,7 @@ from app.daos.infantry.infantry_dao import add_figure
 from app.daos.infantry.infantry_dao import create_game
 from app.daos.infantry.infantry_dao import ready
 from app.daos.infantry.infantry_dao import join
-from app.daos.infantry.infantry_dao import move_by_user
+from app.daos.infantry.infantry_dao import move
 from app.daos.infantry.infantry_dao import shoot
 from app.daos.infantry.infantry_dao import *
 from app.models.infantry.game_Infantry import Game_Infantry, Game_Infantry_Schema
