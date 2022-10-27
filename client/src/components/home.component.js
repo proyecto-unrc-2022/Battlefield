@@ -30,7 +30,9 @@ export default class Home extends Component {
   }
 
   render() {
-    console.log(this.state.content);
+    if (!!this.state || !!this.state.content){
+      return "There are o Players"
+    }
     const listItems =
       this.state.content &&
       this.state.content.map((u) => <li key={u.id}>{u.username}</li>);

@@ -43,6 +43,11 @@ class Battlefield:
     max_x = 20
     max_y = 10
 
+    def __init__(self):
+        self.flying_objects = []
+        self.max_x = 20
+        self.max_y = 10
+
     def position_inside_map(self, x, y):
         if x > self.max_x:
             return False
@@ -100,14 +105,22 @@ class Battlefield:
         self.update_plane_position(course, obj)
         return obj
 
-    def add_new_projectile(self, player, obj, x, y, course):
+    def add_new_projectile(self, player):
+        plane = self.get_player_plane(int(player))[0]
+        course = plane.course
+        x = plane.x
+        y = plane.y
+
+        plane_model = plane.flying_obj
+        obj = plane_model.projectile[0]
+
         fly_obj = FlyingObject(player, obj, x, y, course)
         if course == 1:
-            fly_obj.y = fly_obj.y + 1
+            fly_obj.y = fly_obj.y - 1
         elif course == 2:
             fly_obj.x = fly_obj.x + 1
         elif course == 3:
-            fly_obj.y = fly_obj.y - 1
+            fly_obj.y = fly_obj.y + 1
         elif course == 4:
             fly_obj.x = fly_obj.x - 1
         self.flying_objects.append(fly_obj)
@@ -121,9 +134,7 @@ class Battlefield:
                 self.flying_objects,
             )
         )
-        print(self.flying_objects)
         for n in range(len(obj)):
-            print(obj[n].to_dict())
             if course == 2 or course == 4:
                 tupl = self.collision_x_projectile(obj[n], course)
                 if tupl != ():
@@ -142,8 +153,6 @@ class Battlefield:
                     obj[n].update_position(course)
                     if obj[n].y >= 10 or obj[n].y <= 0:
                         self.flying_objects.remove(obj[n])
-
-        print(self.flying_objects)
 
     def collision_x_projectile(self, fly_obj, course):
         position = fly_obj.x
@@ -203,6 +212,12 @@ class Battlefield:
                 return (fly_obj, min_distance)
         return ()
 
+    def check_course(self, course, player):
+        obj = self.get_player_plane(int(player))
+        if obj != []:
+            if obj[0].check_course(int(course)):
+                raise ValueError("New course cant be 180 degrees deference")
+
     def update_plane_position(self, course, fly_obj):
         if fly_obj.check_course(course):
             raise ValueError("New course cant be 180 degrees deference")
@@ -254,3 +269,9 @@ class Battlefield:
             # raise Exception('A = ', obj.to_dict(), plane.to_dict())
             obj.flying_obj.health -= plane.flying_obj.health
             plane.flying_obj.health -= obj.flying_obj.health
+
+    def get_status(self):
+        l = []
+        for f in self.flying_objects:
+            l.append(f.to_dict())
+        return l

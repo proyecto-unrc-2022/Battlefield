@@ -1,48 +1,105 @@
-from flask import jsonify, request
+from flask import Response, jsonify, request
+from marshmallow import ValidationError
 
 from api import token_auth
-from app import db
-from app.daos.navy.dynamic_ship_dao import add_ship
-from app.daos.navy.game_dao import add_game, get_game, read_data
-from app.models.action_game_request import ActionGameRequest
-from app.models.navy.dynamic_game import Game, GameSchema
-from app.models.navy.dynamic_ship import DynamicShip
-from app.navy.navy_constants import PATH_TO_START
-from app.models.navy.start_game_request import StartGameRequest
-from marshmallow import ValidationError
+from app.navy.dtos.navy_game_dto import NavyGameDTO
+from app.navy.services.action_service import action_service
+from app.navy.services.navy_game_service import navy_game_service
+from app.navy.services.ship_service import ship_service
+from app.navy.utils.navy_response import NavyResponse
 
 from . import navy
 
-game_schema = GameSchema()
 
-
-@navy.post("/create")
-@token_auth.login_required
-def create_game():
-    id_game = add_game(request.json["id_user_1"])
-    json_resp = read_data(PATH_TO_START)
-
-    json_resp["game_id"] = id_game
-    return jsonify(json_resp)
-
-
-@navy.post("/start")
-@token_auth.login_required
-def start_game():
-    try:
-        data = StartGameRequest().load(request.json)
-        game_id = data["game_id"]
-        add_ship(data)
-        game_one = get_game(game_id)
-        return jsonify(game_schema.dump(game_one))
-    except ValidationError as err:
-        return jsonify(err.messages),400
-
-@navy.post("/action")
+@navy.post("/actions")
 @token_auth.login_required
 def action():
     try:
-        data = ActionGameRequest().load(request.json)
-        return jsonify(data)
+
+        data = action_service.validate_request(request.json)
+        action_service.add(data)
+        if navy_game_service.should_update(data["navy_game_id"]):
+            navy_game_service.update_game(data["navy_game_id"])
+        return (
+            NavyResponse(201, data=request.json, message="Action added").to_json(),
+            201,
+        )
     except ValidationError as err:
         return jsonify(err.messages), 400
+
+
+@navy.post("/ships")
+@token_auth.login_required
+def new_ship():
+    try:
+        data = ship_service.validate_request(request.json)
+        ship_service.add(data)
+        return NavyResponse(201, data=data, message="Ship added").to_json(), 201
+    except ValidationError as err:
+        return jsonify(err.messages), 400
+
+
+@navy.post("/navy_games")
+@token_auth.login_required
+def new_navy_game():
+    try:
+        validated_data = navy_game_service.validate_post_request(request.json)
+        created_game = navy_game_service.add(validated_data)
+        return (
+            NavyResponse(
+                201, data=NavyGameDTO().dump(created_game), message="Game created."
+            ).to_json(),
+            201,
+        )
+    except ValidationError as err:
+        return jsonify(err.messages), 400
+
+
+@navy.get("/navy_games")
+@token_auth.login_required
+def get_navy_games():
+    user_id = request.args.get("user_id")
+    if user_id:
+        games = navy_game_service.get_all(user_id)
+    else:
+        games = navy_game_service.get_all()
+    json_games = list(map(lambda game: NavyGameDTO().dump(game), games))
+    return NavyResponse(status=200, data=json_games, message="Ok").to_json(), 200
+
+
+@navy.get("/navy_games/<id>")
+@token_auth.login_required
+def get_navy_game(id):
+    game = navy_game_service.get_by_id(id)
+    return (
+        NavyResponse(status=200, data=NavyGameDTO().dump(game), message="Ok").to_json(),
+        200,
+    )
+
+
+@navy.patch("/navy_games/<id>")
+@token_auth.login_required
+def update_navy_game(id):
+    try:
+        validated_data = navy_game_service.validate_patch_request(request.json)
+        game = navy_game_service.join_second_player(validated_data, id)
+        return (
+            NavyResponse(
+                200, data=NavyGameDTO().dump(game), message="Game updated."
+            ).to_json(),
+            200,
+        )
+    except ValidationError as err:
+        return jsonify(err.messages), 400
+
+
+@navy.delete("/navy_games/<id>")
+@token_auth.login_required
+def delete_navy_game(id):
+    deleted_game = navy_game_service.delete(id)
+    return (
+        NavyResponse(
+            status=200, data=NavyGameDTO().dump(deleted_game), message="Game deleted."
+        ).to_json(),
+        200,
+    )
