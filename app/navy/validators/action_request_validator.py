@@ -29,7 +29,7 @@ class ActionRequestValidator(Schema):
 
         navy_game = db.session.query(NavyGame).filter_by(id=navy_game_id).first()
         if not navy_game:
-            raise ValidationError("Game not found")       
+            raise ValidationError("Game not found")
         elif navy_game.winner:
             raise ValidationError("Game finished")
 
@@ -60,7 +60,7 @@ class ActionRequestValidator(Schema):
         user_id = in_data.get("user_id")
         navy_game_id = in_data.get("navy_game_id")
         round = in_data.get("round")
-       
+
         navy_game_user: NavyGame = (
             db.session.query(NavyGame)
             .filter(
@@ -74,7 +74,7 @@ class ActionRequestValidator(Schema):
 
         if not navy_game_user:
             raise ValidationError("Invalid game")
-        elif navy_game_user.round != round :
+        elif navy_game_user.round != round:
             raise ValidationError("Wrong round")
 
         self.check_ship(in_data, **kwargs)

@@ -162,13 +162,15 @@ class NavyGameService:
             user_id=game.user2_id, navy_game_id=navy_game_id
         )
 
-        if not ships_user1:
-            self.set_winner(game.user2_id, game=game)
-            return True
-        elif not ships_user2:
+        if ships_user1 and ships_user2:
+            return False
+
+        if not ships_user2:
             self.set_winner(game.user1_id, game=game)
-            return True
-        return False
+        else:
+            self.set_winner(game.user1_id, game=game)
+
+        return True
 
     def should_update(self, navy_game_id):
         from app.navy.services.action_service import action_service
