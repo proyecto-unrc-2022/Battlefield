@@ -70,6 +70,29 @@ class ShipRequestValidator(Schema):
                     ):
                         raise ValidationError("Ship can't be builded out of range")
 
+    @validates_schema
+    def create_when_game_has_ended(self, in_data, **kwargs):
+        game = (
+            db.session.query(NavyGame).filter_by(id=in_data.get("navy_game_id")).first()
+        )
+        if game.winner:
+            raise ValidationError(
+                "Can't create a ship when the game has already finished"
+            )
+
+    @validates_schema
+    def create_when_game_has_started(self, in_data, **kwargs):
+        from app.navy.models.action import Action
+
+        actions = (
+            db.session.query(Action).filter_by(id=in_data.get("navy_game_id")).all()
+        )
+
+        if actions:
+            raise ValidationError(
+                "Can't create a ship when the game has already started"
+            )
+
     def build_completely(self, pos_x, pos_y, course, size):
         res = [(pos_x, pos_y)]
         x, y = pos_x, pos_y
