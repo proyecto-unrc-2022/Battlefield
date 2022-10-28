@@ -53,14 +53,14 @@ class ShipRequestValidator(Schema):
             if game.user1_id == user.id:
                 for x, y in ship_positions:
                     if utils.out_of_bounds(x, y) or (
-                        utils.ONE > y or game.board_colums / 2 < y
+                        utils.ONE > y or game.board_colums / 2 <= y
                     ):
                         raise ValidationError("Ship can't be builded out of range")
 
             if game.user2_id == user.id:
                 for x, y in ship_positions:
                     if utils.out_of_bounds(x, y) or (
-                        utils.COLS / 2 >= y or utils.board_colums < y
+                        utils.COLS / 2 >= y or game.board_colums <= y
                     ):
                         raise ValidationError("Ship can't be builded out of range")
 
@@ -86,17 +86,6 @@ class ShipRequestValidator(Schema):
             raise ValidationError(
                 "Can't create a ship when the game has already started"
             )
-
-    @validates_schema
-    def check_max_position(self, in_data, **kwargs):
-        game = (
-            db.session.query(NavyGame).filter_by(id=in_data.get("navy_game_id")).first()
-        )
-        if (
-            in_data.get("pos_x") > game.board_rows
-            or in_data.get("pos_x") > game.board_colums
-        ):
-            raise ValidationError("Can't choose an out of range position")
 
     def build_completely(self, pos_x, pos_y, course, size):
         res = [(pos_x, pos_y)]
