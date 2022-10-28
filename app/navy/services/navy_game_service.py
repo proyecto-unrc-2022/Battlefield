@@ -44,6 +44,7 @@ class NavyGameService:
     def add(self, data):
         new_game = NavyGame(utils.ROWS, utils.COLS, data["user1_id"])
         navy_game_dao.add_or_update(new_game)
+        self.games[new_game.id] = {}
         return new_game
 
     def join_second_player(self, data, id):
@@ -106,10 +107,10 @@ class NavyGameService:
         from app.navy.services.action_service import action_service
         from app.navy.services.missile_service import missile_service
 
-        #if not self.games.get(navy_game_id):
+        # if not self.games.get(navy_game_id):
         self.load_game(navy_game_id)
 
-        #game = self.games[navy_game_id]
+        # game = self.games[navy_game_id]
         game_db = navy_game_dao.get_by_id(navy_game_id)
         missiles = missile_service.get(navy_game_id=game_db.id)
         actions = action_service.get_by_round(navy_game_id, game_db.round)
@@ -193,6 +194,15 @@ class NavyGameService:
             if ship.id == ship_id:
                 return ship
         return None
+
+    def get_active_games(self):
+        keys_games = self.games.keys()
+        games = []
+        for key in keys_games:
+            game = self.get_by_id(key)
+            if not game.winner:
+                games.append(game)
+        return games
 
 
 navy_game_service = NavyGameService()
