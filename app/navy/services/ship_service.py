@@ -6,6 +6,7 @@ from app.navy.utils.navy_utils import utils
 
 class ShipService:
     SHIP_NAMES = ["Destroyer", "Cruiser", "Battleship", "Corvette"]
+    SHIP_SIZES = [3, 3, 4, 2]
 
     def validate_request(self, request):
         from app.navy.validators.ship_request_validator import ShipRequestValidator

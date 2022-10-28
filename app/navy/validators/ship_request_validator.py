@@ -1,3 +1,5 @@
+from operator import indexOf
+
 from marshmallow import (
     Schema,
     ValidationError,
@@ -18,7 +20,6 @@ class ShipRequestValidator(Schema):
 
     name = fields.Str(required=True, validate=validate.OneOf(ship_service.SHIP_NAMES))
 
-    # TODO: Validar rows y cols desde game
     pos_x = fields.Integer(
         required=True, validate=validate.Range(min=utils.ONE, max=utils.ROWS)
     )
@@ -47,13 +48,36 @@ class ShipRequestValidator(Schema):
             db.session.query(NavyGame).filter_by(id=in_data.get("navy_game_id")).first()
         )
         user = db.session.query(User).filter_by(id=in_data.get("user_id")).first()
+
+        x = in_data.get("pos_x")
         y = in_data.get("pos_y")
 
         if game and user:
-            if game.user1_id == user.id and (utils.ONE > y or utils.COLS / 2 < y):
-                raise ValidationError("Y coord of user 1, must be between 1 or 10")
+            ship_positions = self.build_completely(
+                x, y, in_data.get("course"), self.get_size_by_name(in_data.get("name"))
+            )
+            if game.user1_id == user.id:
+                for x, y in ship_positions:
+                    if utils.out_of_bounds(x, y) or (
+                        utils.ONE > y or utils.COLS / 2 < y
+                    ):
+                        raise ValidationError("Ship can't be builded out of range")
 
-            if game.user2_id == user.id and (utils.COLS / 2 >= y or utils.COLS < y):
-                raise ValidationError("Y coord of user 2, must be between 11 and 20")
-        else:
-            raise ValidationError("User or Game don't exist.")
+            if game.user2_id == user.id:
+                for x, y in ship_positions:
+                    if utils.out_of_bounds(x, y) or (
+                        utils.COLS / 2 >= y or utils.COLS < y
+                    ):
+                        raise ValidationError("Ship can't be builded out of range")
+
+    def build_completely(self, pos_x, pos_y, course, size):
+        res = [(pos_x, pos_y)]
+        x, y = pos_x, pos_y
+        for _ in range(utils.ONE, size):
+            x, y = utils.get_next_position(x, y, utils.INVERSE_COORDS[course])
+            res.append((x, y))
+        return res
+
+    def get_size_by_name(self, name):
+        i = ship_service.SHIP_NAMES.index(name)
+        return ship_service.SHIP_SIZES[i]
