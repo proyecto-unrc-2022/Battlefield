@@ -7,7 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 from config import DevelopmentConfig, config
 
-db = SQLAlchemy()
+db = SQLAlchemy(session_options={"expire_on_commit": False})
 migrate = Migrate()
 
 secret_token = None
