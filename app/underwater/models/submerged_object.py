@@ -1,4 +1,4 @@
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import backref, relationship
 
 from app import db
 from app.underwater.game_state import GameState
@@ -15,10 +15,8 @@ class SubmergedObject(db.Model):
     type = db.Column(db.String(50))
 
     game_id = db.Column(db.Integer, db.ForeignKey("under_game.id"))
-    game = relationship("UnderGame", back_populates="submerged_objects")
 
     player_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    player = relationship("User", backref="submerged_object")
 
     __mapper_args__ = {
         "polymorphic_identity": "submerged_object",
@@ -62,6 +60,9 @@ class SubmergedObject(db.Model):
     def get_head_position(self):
         return (self.x_position, self.y_position)
 
+    def get_last_position(self):
+        return self.get_positions()[-1]
+
     @staticmethod
     def move_pointer(x, y, direction):
         d = direction % 8
@@ -90,10 +91,20 @@ class SubmergedObject(db.Model):
     def get_game(self):
         return self.game
 
-    def advance(self, n):
-        if n > self.speed:
-            raise Exception("Speed (%s) exceeded" % self.speed)
+    def get_speed(self):
+        return self.speed
 
-        while n > 0 and self.game.state == GameState.ONGOING:
-            self.game.advance_object_one(self)
-            n -= 1
+    def get_x_position(self):
+        return self.x_position
+
+    def get_y_position(self):
+        return self.y_position
+
+    def get_direction(self):
+        return self.direction
+
+    def in_game(self):
+        return self.game is not None
+
+    def save(self):
+        db.session.commit()

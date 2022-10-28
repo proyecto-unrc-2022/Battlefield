@@ -46,10 +46,8 @@ class UnderGameSchema(SQLAlchemySchema):
     host_id = auto_field()
     visitor_id = auto_field()
 
-    # submarines = Nested(SubmarineSchema, many=True)
-    # torpedos = Nested(TorpedoSchema, many=True)
-
-    submerged_objects = Nested(SubmergedObjectSchema, many=True)
+    submarines = Nested(SubmarineSchema, many=True)
+    torpedos = Nested(TorpedoSchema, many=True)
 
 
 game_dto = UnderGameSchema()

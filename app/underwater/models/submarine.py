@@ -1,4 +1,4 @@
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import backref, relationship
 
 from app import db
 from app.underwater.torpedo_launcher import t_launcher
@@ -16,10 +16,38 @@ class Submarine(SubmergedObject):
     torpedo_speed = db.Column(db.Integer, nullable=False)
     torpedo_damage = db.Column(db.Float, nullable=False)
 
+    game = relationship("UnderGame", back_populates="submarines")
+
+    player = relationship("User", backref=backref("submarine", uselist=False))
+
     __mapper_args__ = {"polymorphic_identity": "submarine"}
+
+    def __init__(
+        self, game, player, stats, x_position=None, y_position=None, direction=None
+    ):
+        self.game = game
+        self.player = player
+        self.name = stats["name"]
+        self.size = stats["size"]
+        self.speed = stats["speed"]
+        self.visibility = stats["visibility"]
+        self.radar_scope = stats["radar_scope"]
+        self.health = stats["health"]
+        self.torpedo_speed = stats["torpedo_speed"]
+        self.torpedo_damage = stats["torpedo_damage"]
+
+        if x_position:
+            self.x_position = x_position
+        if y_position:
+            self.y_position = y_position
+        if direction:
+            self.direction = direction
 
     def create_torpedo(self):
         return t_launcher.create_torpedo(self)
+
+    def get_health(self):
+        return self.health
 
     def set_health(self, health):
         self.health = health

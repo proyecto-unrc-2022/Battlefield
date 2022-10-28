@@ -1,9 +1,13 @@
 from behave import given, then, when
+from flask import url_for
 
-from app.underwater.daos.submarine_dao import sub_dao
+from app.underwater.daos.submarine_dao import submarine_dao
 from app.underwater.daos.under_game_dao import game_dao
 from app.underwater.models.submarine import Submarine
 from app.underwater.models.torpedo import Torpedo
+from app.underwater.session import sessions
+
+### BACKGROUND ###
 
 
 @given(
@@ -12,9 +16,12 @@ from app.underwater.models.torpedo import Torpedo
 def step_impl(context, h, w, username1, username2):
     host = context.players[username1]
     visitor = context.players[username2]
-    context.game = game_dao.create(host.id, visitor.id, h, w)
+    context.game = game_dao.create(host.id, visitor_id=visitor.id, height=h, width=w)
     assert context.game.host is host
     assert context.game.visitor is visitor
+
+
+### ROTATE AND MOVE ###
 
 
 @given("the submarines are in the following state")
@@ -25,13 +32,68 @@ def step_impl(context):
         x = int(row["x_position"])
         y = int(row["y_position"])
         d = int(row["direction"])
-        sub = context.game.add_submarine(player.id, option_id, x, y, d)
+        sub = context.game.add_submarine(player, option_id, x, y, d)
         sub.set_health(int(row["health"]))
-        sub_dao.save(sub)
+        submarine_dao.save(sub)
 
 
 @given("the board is in the following state")
 def step_impl(context):
+    compare_board(context)
+
+
+@when(
+    "the user '{username}' rotates the submarine with direction '{d:d}' and moves '{n:d}' positions"
+)
+def step_impl(context, username, d, n):
+    player = context.players[username]
+    payload = {
+        "direction": d,
+        "steps": n,
+    }
+    # print(context.game)
+    context.page = context.client.post(
+        url_for(
+            "underwater.rotate_and_advance",
+            game_id=context.game.id,
+            player_id=player.id,
+        ),
+        data=payload,
+    )
+
+    assert context.page
+
+
+@then("the board is in the following state")
+def step_impl(context):
+    compare_board(context)
+
+
+### ROTATE AND ATTACK ###
+
+
+@when("the user '{username}' rotates the submarine with direction '{d:d}' and attacks")
+def step_impl(context, username, d):
+    player = context.players[username]
+    payload = {
+        "direction": d,
+    }
+    # print(context.game)
+    context.page = context.client.post(
+        url_for(
+            "underwater.rotate_and_attack", game_id=context.game.id, player_id=player.id
+        ),
+        data=payload,
+    )
+    assert context.page
+
+
+@then("fail")
+def step_impl(context):
+    assert False
+
+
+def compare_board(context):
     board = context.game.board.matrix
     for i in range(context.game.get_height()):
         for j in range(context.game.get_width()):
@@ -42,22 +104,8 @@ def step_impl(context):
                     and board[i][j].y_position == j
                 )
             elif context.table[i][j] == "T":
-                print(type(board[i][j]))
                 assert type(board[i][j] is Submarine)
             elif context.table[i][j] == "*":
                 assert type(board[i][j]) is Torpedo
-
-
-@when("the user 'player1' rotates the submarine with direction '7'")
-def step_impl(context):
-    pass
-
-
-@then("the board is in the following state")
-def step_impl(context):
-    pass
-
-
-@then("the submarines are in the following state")
-def step_impl(context):
-    pass
+            else:
+                assert board[i][j] is None
