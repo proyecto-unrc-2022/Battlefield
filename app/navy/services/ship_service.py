@@ -75,8 +75,7 @@ class ShipService:
         from app.navy.services.navy_game_service import navy_game_service
 
         self.delete_from_board(ship)
-
-        for _ in range(action.move):
+        for _ in range(int(action.move)):
             x, y = utils.get_next_position(ship.pos_x, ship.pos_y, ship.course)
             if utils.out_of_bounds(x, y):
                 self.load_to_board(ship)
