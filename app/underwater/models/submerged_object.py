@@ -104,7 +104,7 @@ class SubmergedObject(db.Model):
         return self.direction
 
     def in_game(self):
-        return self.game is not None
+        return self in self.game.submarines + self.game.torpedos
 
     def save(self):
         db.session.commit()

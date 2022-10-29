@@ -36,17 +36,19 @@ class UnderGame(db.Model):
         foreign_keys=[visitor_id],
     )
 
-    submarines = relationship("Submarine", back_populates="game")
-    torpedos = relationship("Torpedo", back_populates="game")
-
     def __init__(self, host, visitor=None, height=10, width=20):
         self.host = host
         if visitor:
             self.visitor = visitor
         self.height = height
         self.width = width
-        self.build_board()
         self.state = GameState.PREGAME
+        self.submarines = []
+        self.torpedos = []
+        self.build_board()
+
+    def build_board(self):
+        self.board = UnderBoard.build_from(self)
 
     @staticmethod
     def get_options():
@@ -92,34 +94,24 @@ class UnderGame(db.Model):
     def get_torpedos(self):
         return self.torpedos
 
-    def contains_object(self, obj):
-        for obj in self.submerged_objects:
-            if obj == obj:
-                return True
-        return False
-
-    # def get_submerged_objects(self, model=SubmergedObject):
-    #     ret_list = []
-    #     for sub in self.submarines + self.torpedos:
-    #         if isinstance(sub, model):
-    #             ret_list.append(sub)
-    #     return ret_list
-
     def has_user(self, player):
-        return self.host == player or self.visitor == player
+        return self.host is player or self.visitor is player
 
     def add_submarine(self, player, option_id, x_coord, y_coord, direction):
         sub_stats = UnderGame.get_submarine_option(option_id)
+        if self.is_finished():
+            return Exception("the game has already finished")
 
         if not self.has_user(player):
             raise ValueError("the game does not have the specified player")
 
         for sub in self.submarines:
-            if sub.player == player:
-                raise Exception("Player already has a submarine")
+            if sub.player is player:
+                raise Exception("player already has a submarine")
 
         sub = Submarine(self, player, sub_stats)
         self.place(sub, x_coord, y_coord, direction)
+        # db.session.commit()
 
         if len(self.submarines) == 2:
             self.set_state(GameState.ONGOING)
@@ -127,13 +119,15 @@ class UnderGame(db.Model):
 
     def place(self, obj, x_coord, y_coord, direction):
         if obj.is_placed():
-            raise Exception("submarine is already placed")
+            raise Exception("object is already placed")
 
         obj.set_position(x_coord, y_coord, direction)
         self.board.place_object(obj)
 
     def rotate_object(self, obj, direction):
         if direction == obj.direction:
+            return
+        if self.is_finished():
             return
 
         new_cells = obj.get_tail_positions(direction=direction)
@@ -187,7 +181,7 @@ class UnderGame(db.Model):
     def attack(self, sub):
         x, y = next_cell = sub.get_next_position()
 
-        if self.board.valid(next_cell):
+        if self.board.valid(next_cell) and self.is_ongoing():
             new_torpedo = sub.create_torpedo()
 
             if not self.board.is_empty(next_cell):
@@ -234,13 +228,27 @@ class UnderGame(db.Model):
     def set_state(self, state):
         self.state = state
 
-    def build_board(self):
-        if self.id not in boards.keys():
-            board = UnderBoard.build_from(self)
-            boards.update({self.id: board})
-            self.board = board
-        else:
-            self.board = boards[self.id]
-
     def __str__(self):
         return self.board.__str__()
+
+    def to_dict(self):
+        submarines_as_dicts = []
+        torpedos_as_dicts = []
+        for sub in self.submarines:
+            submarines_as_dicts.append(sub.to_dict())
+        for tor in self.torpedos:
+            torpedos_as_dicts.append(tor.to_dict())
+        dict = {
+            "id": self.id,
+            "host_id": self.host_id,
+            "visitor_id": self.visitor_id,
+            "height": self.height,
+            "width": self.width,
+            "state": self.state,
+            "submarines": submarines_as_dicts,
+            "torpedos": torpedos_as_dicts,
+        }
+        return dict
+
+    def __repr__(self):
+        return json.dumps(self.to_dict())

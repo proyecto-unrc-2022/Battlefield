@@ -1,3 +1,5 @@
+import json
+
 from sqlalchemy.orm import backref, relationship
 
 from app import db
@@ -15,8 +17,6 @@ class Submarine(SubmergedObject):
     health = db.Column(db.Float, nullable=False)
     torpedo_speed = db.Column(db.Integer, nullable=False)
     torpedo_damage = db.Column(db.Float, nullable=False)
-
-    game = relationship("UnderGame", back_populates="submarines")
 
     player = relationship("User", backref=backref("submarine", uselist=False))
 
@@ -42,6 +42,8 @@ class Submarine(SubmergedObject):
             self.y_position = y_position
         if direction:
             self.direction = direction
+        if game:
+            game.submarines.append(self)
 
     def create_torpedo(self):
         return t_launcher.create_torpedo(self)
@@ -51,3 +53,28 @@ class Submarine(SubmergedObject):
 
     def set_health(self, health):
         self.health = health
+
+    def to_dict(self):
+        dict = {
+            "player_id": self.player.id,
+            "name": self.name,
+            "size": self.size,
+            "speed": self.speed,
+            "visibility": self.visibility,
+            "radar_scope": self.radar_scope,
+            "health": self.health,
+            "torpedo_speed": self.torpedo_speed,
+            "torpedo_damage": self.torpedo_damage,
+        }
+        if self.x_position:
+            dict.update({"x_position": self.x_position})
+        if self.y_position:
+            dict.update({"y_position": self.y_position})
+        if self.direction:
+            dict.update({"direction": self.direction})
+        if self.game:
+            dict.update({"game_id:": self.game.id})
+        return dict
+
+    def __repr__(self):
+        return json.dumps(self.to_dict())
