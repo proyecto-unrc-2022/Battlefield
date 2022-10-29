@@ -22,8 +22,6 @@ game_schema= Game_Infantry_Schema()
 figure_schema = Figure_Infantry_Schema()
 projectile_schema = Projectile_Infantry_Schema()
 
-#figure = db.session.query(Figure_infantry).where(Figure_infantry.id_user == user_id and Figure_infantry.id_game == game_id).one_or_none()
-
 
 @infantry.route("/user/<user_id>/game", methods=['POST'])
 def start_game(user_id):
