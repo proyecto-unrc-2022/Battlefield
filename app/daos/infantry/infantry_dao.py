@@ -1,4 +1,5 @@
 from math import fabs
+from pickle import TRUE
 from telnetlib import GA
 from app import db
 from app.models.user import Profile
@@ -106,38 +107,52 @@ def shoot(user_id,game_id):
         return False
 
 #Este metodo verifica si la firura es valida.
-#Falta cambiar las posiciones de los tres projectiles
-#TODO: Cambiar pos_x y pos_y
 def figure_valid(figure,direction,game_id):
-
-    if(figure == 1):
-        projectile1 = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=0, daño=5, direccion= direction, type = MACHINE_GUN)
+    aux = copy.copy(figure)
+    pos = direc(direction, aux.pos_x, aux.pos_y)
+    pos = (aux.pos_x + (aux.pos_x - pos[0]), aux.pos_y + (aux.pos_y - pos[1]))
+    is_valid = True
+    if figure == SOLDIER:
+        #Proyectil delantero del soldado
+        projectile1 = Projectile(id_game= game_id, pos_x=pos[0], pos_y=pos[1], velocidad=0, daño=5, direccion= direction, type = MACHINE_GUN)
         db.session.add(projectile1)
         db.session.commit()
-        projectile2 = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=0, daño=5, direccion= direction, type=MACHINE_GUN)
-        db.session.add(projectile2)
-        db.session.commit()
-        projectile3 = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=0, daño=5, direccion= direction, type=MACHINE_GUN)
-        db.session.add(projectile3)
-        db.session.commit()
-        return True
-    elif(figure == 2):
-        projectile = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=5, daño=5, direccion= direction, type=MISSILE)
+        #Proyectiles laterales del soldado
+        #Proyectiles horizontales
+        if direction == NORTH or direction == SOUTH: 
+            pos = direc(WEST, aux.pos_x, aux.pos_y)
+            projectile2 = Projectile(id_game= game_id, pos_x=pos[0], pos_y=pos[1], velocidad=0, daño=5, direccion= direction, type=MACHINE_GUN)
+            db.session.add(projectile2)
+            db.session.commit()
+            pos = direc(EAST, aux.pos_x, aux.pos_y)
+            projectile3 = Projectile(id_game= game_id, pos_x=pos[0], pos_y=pos[1], velocidad=0, daño=5, direccion= direction, type=MACHINE_GUN)
+            db.session.add(projectile3)
+            db.session.commit()
+        #Proyectiles verticales
+        elif direction == WEST or direction == EAST:
+            pos = direc(NORTH, aux.pos_x, aux.pos_y)
+            projectile2 = Projectile(id_game= game_id, pos_x=pos[0], pos_y=pos[1], velocidad=0, daño=5, direccion= direction, type=MACHINE_GUN)
+            db.session.add(projectile2)
+            db.session.commit()
+            pos = direc(SOUTH, aux.pos_x, aux.pos_y)
+            projectile3 = Projectile(id_game= game_id, pos_x=pos[0], pos_y=pos[1], velocidad=0, daño=5, direccion= direction, type=MACHINE_GUN)
+            db.session.add(projectile3)
+            db.session.commit()
+    elif(figure == HUMVEE):
+        projectile = Projectile(id_game= game_id, pos_x=pos[0] , pos_y=pos[1], velocidad=5, daño=5, direccion= direction, type=MISSILE)
         db.session.add(projectile)
         db.session.commit()
-        return True
-    elif(figure == 3):
-        projectile = Projectile(id_game= game_id, pos_x=15, pos_y=0, velocidad=3, daño=15, direccion= direction, type=MISSILE)
+    elif(figure == TANK):
+        projectile = Projectile(id_game= game_id, pos_x=pos[0], pos_y=pos[1], velocidad=3, daño=15, direccion= direction, type=MISSILE)
         db.session.add(projectile)
         db.session.commit()
-        return True
-    elif(figure == 4):
-        projectile = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=20, daño=30, direccion= direction, type=MORTAR)
+    elif(figure == ARTILLERY):
+        projectile = Projectile(id_game= game_id, pos_x=pos[0], pos_y=pos[1], velocidad=20, daño=30, direccion= direction, type=MORTAR)
         db.session.add(projectile)
         db.session.commit()
-        return True
     else:
-        return False
+        is_valid = False
+    return is_valid
 
            
 def create_game(user_id):
@@ -364,22 +379,9 @@ def intersec_Projectile_all(game_id):
         for i in range(len(projectile_all)):
             print(projectile_all[i])
             pos = damage_Projectile(projectile_all[i], figures)
-    
-    
-    #print(projectile_all)
-    
     return pos
 
 
 def update(game_id):
-
     pos = intersec_Projectile_all(game_id)
-
-    
-
-    
     return True
-
-
-
-# Hacer la creación del personaje del jugador 2 orientado al oeste
