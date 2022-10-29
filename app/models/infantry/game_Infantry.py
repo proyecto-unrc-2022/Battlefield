@@ -13,7 +13,8 @@ class Game_Infantry(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     id_user1 = db.Column(db.Integer, db.ForeignKey(User.id))
-    id_user2 = db.Column(db.Integer, db.ForeignKey(User.id))    
+    id_user2 = db.Column(db.Integer, db.ForeignKey(User.id))   
+    turn = db.Column(db.Integer, nullable=False) 
 
     #Foreign key
     user_1 = relationship("User", foreign_keys=[id_user1])
@@ -32,3 +33,4 @@ class Game_Infantry_Schema(SQLAlchemySchema):
     id = auto_field()
     id_user1 = auto_field()
     id_user2 = auto_field()
+    turn = auto_field()
