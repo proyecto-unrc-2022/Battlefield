@@ -17,18 +17,20 @@ class Projectile(db.Model):
     velocidad = db.Column(db.Integer, nullable=False)
     daño = db.Column(db.Integer, nullable=False)
     direccion = db.Column(db.Integer, nullable=False)
+    type = db.Column(db.Integer, nullable=False)
     
     
     #Foreign key
     game = relationship("Game_Infantry", foreign_keys=[id_game])
 
-    def __init__(self, id_game=None, pos_x=None, pos_y=None, velocidad=None, daño=None, direccion=None):
+    def __init__(self, id_game=None, pos_x=None, pos_y=None, velocidad=None, daño=None, direccion=None, type=None):
         self.id_game = id_game
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.velocidad = velocidad
         self.daño = daño
         self.direccion = direccion
+        self.type = type
 
 
 class Projectile_Infantry_Schema(SQLAlchemySchema):
@@ -43,3 +45,4 @@ class Projectile_Infantry_Schema(SQLAlchemySchema):
     velocidad = auto_field()
     daño = auto_field()
     direccion = auto_field()
+    type = auto_field()
