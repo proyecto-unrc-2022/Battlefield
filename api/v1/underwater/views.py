@@ -1,6 +1,3 @@
-import json
-from os import stat_result
-
 from flask import Response, jsonify, request
 
 from api import token_auth
@@ -14,9 +11,10 @@ from app.underwater.daos.under_game_dao import game_dao
 from app.underwater.models.under_game import UnderGame
 from app.underwater.session import sessions
 from app.underwater.session.under_game_session import UnderGameSession
-from app.underwater.under_dtos import game_dto
 
 from . import underwater
+
+# from app.underwater.under_dtos import game_dto
 
 
 @underwater.post("/reset")
@@ -33,7 +31,7 @@ def reset():
 @underwater.get("/game/<int:game_id>")
 def get_game(game_id):
     game = game_dao.get_by_id(game_id)
-    return game_dto.dump(game)
+    return game.__repr__()
 
 
 @underwater.post("/game/new")
@@ -51,11 +49,11 @@ def new_game():
         width = data["width"]
 
     try:
-        new_game = game_dao.create(data["host_id"], height=height, width=width)
-
+        new_session = UnderGameSession(host)
     except Exception as e:
         return Response("{'error':%s}" % str(e), status=409)
-    return game_dto.dump(new_game)
+
+    return new_session.__repr__()
 
 
 @underwater.post("/game/<int:game_id>/join")
@@ -81,7 +79,7 @@ def join_game(game_id):
     game_session.add_player(visitor)
 
     game_dao.save(game)
-    return game_dto.dump(game)
+    return game.__repr__()
 
 
 @underwater.post("/game/<int:game_id>/<int:player_id>/choose_submarine")
@@ -110,7 +108,7 @@ def choose_submarine(game_id, player_id):
         return Response("{'error':'%s'}" % str(e), status=409)
 
     game_dao.save(game)
-    return game_dto.dump(game)
+    return game.__repr__()
 
 
 @underwater.post("/game/<int:game_id>/<int:player_id>/rotate_and_advance")
@@ -144,7 +142,7 @@ def rotate_and_advance(game_id, player_id):
     update_game(game)
 
     game_dao.save(game)
-    return game_dto.dump(game)
+    return game.__repr__()
 
 
 @underwater.post("/game/<int:game_id>/<int:player_id>/rotate_and_attack")
@@ -175,7 +173,7 @@ def rotate_and_attack(game_id, player_id):
     update_game(game)
 
     game_dao.save(game)
-    return game_dto.dump(game)
+    return game.__repr__()
 
 
 @underwater.get("/game/submarine_options")

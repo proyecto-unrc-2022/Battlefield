@@ -1,10 +1,13 @@
+import json
+
 from app.daos.user_dao import get_user_by_id
+from app.underwater.daos.under_game_dao import game_dao
 
 from ..command import Command, SubmarineCommand
 
 
 class UnderGameSession:
-    def __init__(self, *players):
+    def __init__(self, *players, game=None):
         self.__players = []
         for player in players:
             self.__players.append(player.id)
@@ -12,6 +15,10 @@ class UnderGameSession:
         self.__order = 1  # 1 means forward, -1 means backward
         self.__commands = []
         self.__remaining_to_move = self.__players.copy()
+        if game:
+            self.game = game
+        else:
+            self.game = game_dao.create()
 
     def add_command(self, c):
         if not isinstance(c, Command):
@@ -84,3 +91,21 @@ class UnderGameSession:
         self.__order = 1
         self.__commands = []
         self.__remaining_to_move = self.__players.copy()
+
+    def to_dict(self):
+        commands_to_dict = []
+        i = 1
+        for c in self.__commands:
+            commands_to_dict.update({"{}".format(i): c.__repr__()})
+            i += 1
+        dict = {
+            "turn": self.__turn,
+            "order": self.__order,
+            "commands": commands_to_dict,
+            "game": self.game.to_dict
+            # "remaining_to_move" lo ponemos?
+        }
+        return dict
+
+    def __repr__(self):
+        return json.dumps(self.to_dict())
