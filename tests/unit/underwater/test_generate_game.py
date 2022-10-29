@@ -5,7 +5,7 @@ from app.underwater.under_board import UnderBoard
 
 def generate_game(h, w, players, sub_list, tor_list):
     game = UnderGame(players["host"], height=h, width=w)
-    game.board = UnderBoard(game.id, h, w)
+    # game.board = UnderBoard(game.id, h, w)
 
     for sub in sub_list:
         if not game.host.submarine:
