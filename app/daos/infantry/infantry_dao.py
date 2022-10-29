@@ -96,23 +96,24 @@ def intersection(coord1, coords2):
 #Primero busca en la tabla Figura el personaje del usuario.
 #Luego pregunta si la direccion que quiere disparar es verdadero o no.
 #Si el disparo se puede realizar, pregunta cual es la figure y dependiendo cual es crea su respectivo proyectil. 
-def shoot(user_id,game_id):
+def shoot(user_id,game_id, direction):
 
     figure = Figure_infantry.query.filter_by(id_game= game_id, id_user= user_id).first()
     
-
-    if(figure_valid(figure.figure_type,figure.direccion,game_id)):
+    if(figure_valid(figure, direction, game_id)):
         return True
     else:
         return False
 
 #Este metodo verifica si la firura es valida.
-def figure_valid(figure,direction,game_id):
+def figure_valid(figure, direction, game_id):
     aux = copy.copy(figure)
     pos = direc(direction, aux.pos_x, aux.pos_y)
     pos = (aux.pos_x + (aux.pos_x - pos[0]), aux.pos_y + (aux.pos_y - pos[1]))
+    print(pos)
+
     is_valid = True
-    if figure == SOLDIER:
+    if figure.figure_type == SOLDIER:
         #Proyectil delantero del soldado
         projectile1 = Projectile(id_game= game_id, pos_x=pos[0], pos_y=pos[1], velocidad=0, daño=5, direccion= direction, type = MACHINE_GUN)
         db.session.add(projectile1)
@@ -121,10 +122,12 @@ def figure_valid(figure,direction,game_id):
         #Proyectiles horizontales
         if direction == NORTH or direction == SOUTH: 
             pos = direc(WEST, aux.pos_x, aux.pos_y)
+            pos = (aux.pos_x + (aux.pos_x - pos[0]), aux.pos_y + (aux.pos_y - pos[1]))
             projectile2 = Projectile(id_game= game_id, pos_x=pos[0], pos_y=pos[1], velocidad=0, daño=5, direccion= direction, type=MACHINE_GUN)
             db.session.add(projectile2)
             db.session.commit()
             pos = direc(EAST, aux.pos_x, aux.pos_y)
+            pos = (aux.pos_x + (aux.pos_x - pos[0]), aux.pos_y + (aux.pos_y - pos[1]))
             projectile3 = Projectile(id_game= game_id, pos_x=pos[0], pos_y=pos[1], velocidad=0, daño=5, direccion= direction, type=MACHINE_GUN)
             db.session.add(projectile3)
             db.session.commit()
@@ -138,15 +141,15 @@ def figure_valid(figure,direction,game_id):
             projectile3 = Projectile(id_game= game_id, pos_x=pos[0], pos_y=pos[1], velocidad=0, daño=5, direccion= direction, type=MACHINE_GUN)
             db.session.add(projectile3)
             db.session.commit()
-    elif(figure == HUMVEE):
+    elif(figure.figure_type == HUMVEE):
         projectile = Projectile(id_game= game_id, pos_x=pos[0] , pos_y=pos[1], velocidad=5, daño=5, direccion= direction, type=MISSILE)
         db.session.add(projectile)
         db.session.commit()
-    elif(figure == TANK):
+    elif(figure.figure_type == TANK):
         projectile = Projectile(id_game= game_id, pos_x=pos[0], pos_y=pos[1], velocidad=3, daño=15, direccion= direction, type=MISSILE)
         db.session.add(projectile)
         db.session.commit()
-    elif(figure == ARTILLERY):
+    elif(figure.figure_type == ARTILLERY):
         projectile = Projectile(id_game= game_id, pos_x=pos[0], pos_y=pos[1], velocidad=20, daño=30, direccion= direction, type=MORTAR)
         db.session.add(projectile)
         db.session.commit()
