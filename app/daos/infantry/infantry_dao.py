@@ -74,7 +74,7 @@ def move(game_id, user_id, direction, velocity):
     if is_valid and not(exceeded_velocity_limit): 
         db.session.query(Figure_infantry).filter(
             Figure_infantry.id_user == user_id, Figure_infantry.id_game == game_id).update(
-                {'pos_x' :  aux_figure.pos_x, 'pos_y' : aux_figure.pos_y})
+                {'pos_x' :  aux_figure.pos_x, 'pos_y' : aux_figure.pos_y, 'direccion' : direction})
 
     elif not(is_valid) and not(exceeded_velocity_limit):
         db.session.query(Figure_infantry).filter(
