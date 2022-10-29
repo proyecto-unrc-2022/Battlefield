@@ -101,10 +101,9 @@ def intersection(coords1, coords2):
 def shoot(user_id,game_id):
 
     figure = Figure_infantry.query.filter_by(id_game= game_id, id_user= user_id).first()
-    figure_type = Figure_infantry.query.filter_by(id = figure.id).first().figure_type
-    direction = Figure_infantry.query.filter_by(id= figure.id).first().direction
+    
 
-    if(figure_valid(figure_type,game_id,direction)):
+    if(figure_valid(figure.figure_type,figure.direccion,game_id)):
         return True
     else:
         return False
@@ -187,7 +186,7 @@ def update_projectile(projectile_id):
     #damage_projectile(projectile_id, user_2)
     
     
-#Este metodo hace el daño al player
+#Borrar
 def damage_user(projectile_id, figure):
 
     projectileId = db.session.query(Projectile).filter_by(id= projectile_id).first()
@@ -310,6 +309,7 @@ def damage_Projectile(projectile, figures):
         if(projectile_pos in x[1]):
             x[0].hp = x[0].hp - projectile.daño
             db.session.add(x[0])
+            db.session.delete(projectile)
             db.session.commit()
 
     return True
@@ -327,8 +327,8 @@ def intersec_Projectile_all(game_id):
             print(projectile_all[i])
             pos = damage_Projectile(projectile_all[i], figures)
     
-    print(figures)
-    print(projectile_all)
+    print((figures[1][0].pos_x), (figures[1][0].pos_y))
+    #print(projectile_all)
     
     return pos
 

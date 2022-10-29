@@ -93,7 +93,7 @@ def mov_action():
         return jsonify(figure_schema.dump(move_entity))
     return "Colision o velocidad excedida"
 
-@infantry.route("/shoot/user/<user_id>/game/<game_id>",methods=['POST'])
+@infantry.route("/game/<game_id>/user/<user_id>/shoot",methods=['POST'])
 def shoot_entity(user_id, game_id):
 
       if(shoot(user_id, game_id)):
