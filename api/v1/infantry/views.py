@@ -70,7 +70,7 @@ def choose_figure(game_id, user_id, type):
     pos_x = data["pos_x"]
     pos_y = data["pos_y"]
 
-    new_figure = add_figure(game_id, user_id, type, pos_x, pos_y)
+    new_figure = add_figure(game_id, user_id, int(type), pos_x, pos_y)
 
     if(new_figure == None):
 
@@ -92,16 +92,20 @@ def mov_action():
         return jsonify(figure_schema.dump(move_entity))
     return "Colision o velocidad excedida"
 
-@infantry.route("/game/<game_id>/user/<user_id>/shoot",methods=['POST'])
-def shoot_entity(user_id, game_id):
+@infantry.route("/shoot",methods=['POST'])
+def shoot_entity():
+    data = json.loads(request.data)
+    course = int(data["course"])
+    game_id = int(data["game_id"])
+    user_id = int(data["user_id"])
+    if(shoot(user_id, game_id, course)):
 
-      if(shoot(user_id, game_id)):
+        projectile = db.session.query(Projectile).order_by(Projectile.id.desc()).first()
 
-          projectile = db.session.query(Projectile).order_by(Projectile.id.desc()).first()
+        return jsonify(projectile_schema.dump(projectile))
+    else:
+        return Response(status=404)
 
-          return jsonify(projectile_schema.dump(projectile))
-      else:
-          return Response(status=404)
 
 @infantry.route("/game/<game_id>/update",methods=['POST'])
 def updateProjectile(game_id):
