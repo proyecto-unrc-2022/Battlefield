@@ -68,9 +68,9 @@ def move(game_id, user_id, direction, velocity):
     exceeded_velocity_limit = (velocity > figure.velocidad)
     for i in range(velocity):
         coor = direc(direction, aux_figure.pos_x, aux_figure.pos_y)
-        aux_figure.pos_x = coor[0]
-        aux_figure.pos_y = coor[1]
-    is_valid = False if aux_figure == None else not(intersection([aux_figure.pos_x, aux_figure.pos_y], figures[figure_opponent.id][1]))
+        aux_figure.pos_x = aux_figure.pos_x + (aux_figure.pos_x - coor[0])
+        aux_figure.pos_y = aux_figure.pos_y + (aux_figure.pos_y - coor[1])
+        is_valid = False if aux_figure == None else not(intersection([aux_figure.pos_x, aux_figure.pos_y], figures[(figure_opponent.id)-1][1]))
     if is_valid and not(exceeded_velocity_limit): 
         db.session.query(Figure_infantry).filter(
             Figure_infantry.id_user == user_id, Figure_infantry.id_game == game_id).update(
@@ -89,9 +89,11 @@ def move(game_id, user_id, direction, velocity):
 
 def intersection(coords1, coords2):
     intersection = False
-    for i in range(len(coords1)):
-        if coords1[i] in coords2:
-            intersection = True
+    for j in range(len(coords2)):
+        for i in range(len(coords1)-1):
+            if coords1[i] in coords2[j] and coords1[i+1] in coords2[j]:
+                intersection = True
+    print(intersection)
     return intersection
 
 
