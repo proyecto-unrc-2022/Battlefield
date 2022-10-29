@@ -10,7 +10,7 @@ from app.underwater.daos.under_game_dao import game_dao
 def step_impl(context, id, username1, username2):
     host = context.players[username1]
     visitor = context.players[username2]
-    context.game = game_dao.create(host.id, visitor.id)
+    context.game = game_dao.create(host, visitor)
     assert context.game.host is host
     assert context.game.visitor is visitor
 
@@ -47,3 +47,4 @@ def step_impl(context, username, sub_type, x, y, d):
         ),
         data=payload,
     )
+    print(context.page.text)

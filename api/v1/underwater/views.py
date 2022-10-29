@@ -29,9 +29,9 @@ def reset():
 
 
 @underwater.get("/game/<int:game_id>")
-def get_game(game_id):
-    game = game_dao.get_by_id(game_id)
-    return game.__repr__()
+def get_game_state(game_id):
+    game_session = sessions[game_id]
+    return game_session.to_dict()
 
 
 @underwater.post("/game/new")
@@ -41,6 +41,9 @@ def new_game():
 
     host = get_user_by_id(data["host_id"])
 
+    if host.under_game_host or host.under_game_visitor:
+        return Response("{'error': 'player is in another game'}", status=409)
+
     height = 10
     width = 20
     if "height" in data.keys():
@@ -48,23 +51,19 @@ def new_game():
     if "width" in data.keys():
         width = data["width"]
 
-    try:
-        new_session = UnderGameSession(host)
-    except Exception as e:
-        return Response("{'error':%s}" % str(e), status=409)
+    game = game_dao.create(host=host, width=width, height=height)
+    new_session = UnderGameSession.start_session_for(game)
+    sessions.update({new_session.id: new_session})
 
-    return new_session.__repr__()
+    return "{'game_id': '%d'}" % game.id
 
 
 @underwater.post("/game/<int:game_id>/join")
 def join_game(game_id):
     data = request.form.to_dict()
-    for key in data:
-        data[key] = int(data[key])
 
     visitor = get_user_by_id(data["visitor_id"])
     game = game_dao.get_by_id(game_id)
-    game_session = sessions[game.id]
 
     if game.visitor is not None:
         return Response("{'error':'game does not have an available slot'}", status=409)
@@ -76,16 +75,14 @@ def join_game(game_id):
 
     game.visitor = visitor
 
-    game_session.add_player(visitor)
-
     game_dao.save(game)
-    return game.__repr__()
+    return "{'success': 'user joined the game'}"
 
 
 @underwater.post("/game/<int:game_id>/<int:player_id>/choose_submarine")
 def choose_submarine(game_id, player_id):
     data = request.form.to_dict()
-    for key in data:
+    for key in data.keys():
         data[key] = int(data[key])
 
     game = game_dao.get_by_id(game_id)
@@ -97,7 +94,7 @@ def choose_submarine(game_id, player_id):
         return Response("{'error':'player not found'}", status=404)
 
     try:
-        game.add_submarine(
+        sub = game.add_submarine(
             player,
             data["submarine_id"],
             data["x_position"],
@@ -107,8 +104,7 @@ def choose_submarine(game_id, player_id):
     except Exception as e:
         return Response("{'error':'%s'}" % str(e), status=409)
 
-    game_dao.save(game)
-    return game.__repr__()
+    return "{'success': submarine placed}"
 
 
 @underwater.post("/game/<int:game_id>/<int:player_id>/rotate_and_advance")
@@ -133,6 +129,7 @@ def rotate_and_advance(game_id, player_id):
     if direction == (submarine.direction + 4) % 8:
         return Response("{'error':'submarines cant rotate 180 degrees'}", status=409)
 
+    print("here 1")
     if game_session.current_turn_player() is not player:
         return Response("{'error': 'not your turn'}", status=409)
 

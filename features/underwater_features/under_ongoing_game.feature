@@ -13,40 +13,6 @@ Feature: Game in ongoing game state
             | USS Sturgeon  | 2  |
 
 
-    # Scenario: Rotate and move submarine
-    #     Given the submarines are in the following state:
-    #         | submarine | username | health | x_position | y_position | direction |
-    #         |   Saukko  | player1  |   10   |     1      |      1     |     3     |
-    #         |  Nautilus | player2  |   20   |     3      |      5     |     0     |
-    #     And the board is in the following state:
-    #         | 0 | 1 | 2 | 3 | 4 | 5 |
-    #         | T |   |   |   |   |   |
-    #         |   | H |   |   |   |   |
-    #         |   |   |   |   |   |   |
-    #         |   |   |   |   |   | H |
-    #         |   |   |   |   |   | T |
-    #         |   |   |   |   |   | T |
-    #     When the user 'player1' rotates the submarine with direction '4' and moves '3' positions
-    #     Then the system informs success
-         
-    # Scenario: Rotate and attack
-    #     Given the submarines are in the following state:
-    #         | submarine | username | health | x_position | y_position | direction |
-    #         |   Saukko  | player1  |   10   |     1      |      1     |     3     |
-    #         |  Nautilus | player2  |   20   |     3      |      5     |     0     |
-    #     And the board is in the following state:
-    #         | 0 | 1 | 2 | 3 | 4 | 5 |
-    #         | T |   |   |   |   |   |
-    #         |   | H |   |   |   |   |
-    #         |   |   |   |   |   |   |
-    #         |   |   |   |   |   | H |
-    #         |   |   |   |   |   | T |
-    #         |   |   |   |   |   | T |
-    #     When the user 'player2' rotates the submarine with direction '7' and attacks
-    #     Then the system informs success
-
-#################################################################################################
-
     Scenario: Everyone moves
         Given the submarines are in the following state:
             | submarine | username | health | x_position | y_position | direction |

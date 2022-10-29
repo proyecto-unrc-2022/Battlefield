@@ -28,10 +28,14 @@ class UnderGameDAO:
 
     def get_by_id(self, game_id):
         if game_id in game_cache.keys():
-            return game_cache[game_id]
-        game = db.session.get(self.model, game_id)
-        if game:
-            game.build_board()
+            game = game_cache[game_id]
+        else:
+            game = db.session.get(self.model, game_id)
+            if game:
+                game.build_board()
+
+        db.session.add(game)
+
         return game
 
     def save(self, game):

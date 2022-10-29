@@ -54,7 +54,7 @@ def step_impl(context):
 @given("the user '{username}' is in a game of id '{id:d}'")
 def step_impl(context, username, id):
     player = context.players[username]
-    context.game = game_dao.create(player.id)
+    context.game = game_dao.create(player)
     context.game.id = id
 
 

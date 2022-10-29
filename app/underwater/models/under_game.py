@@ -111,7 +111,6 @@ class UnderGame(db.Model):
 
         sub = Submarine(self, player, sub_stats)
         self.place(sub, x_coord, y_coord, direction)
-        # db.session.commit()
 
         if len(self.submarines) == 2:
             self.set_state(GameState.ONGOING)

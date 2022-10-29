@@ -7,28 +7,40 @@ from ..command import Command, SubmarineCommand
 
 
 class UnderGameSession:
-    def __init__(self, *players, game=None):
-        self.__players = []
-        for player in players:
-            self.__players.append(player.id)
+    def __init__(self, host, *visitors):
+        self.__players = [host]
+        for player in visitors:
+            self.__players.append(player)
         self.__turn = 0
         self.__order = 1  # 1 means forward, -1 means backward
         self.__commands = []
         self.__remaining_to_move = self.__players.copy()
-        if game:
-            self.game = game
-        else:
-            self.game = game_dao.create()
+        self.game = None
+        self.id = None
+
+    @staticmethod
+    def start_session_for(game):
+        new_session = UnderGameSession(game.host)
+        if game.visitor:
+            new_session.add_player(game.visitor)
+
+        new_session.game = game
+        new_session.id = game.id
+        return new_session
+
+    def set_game(self, game):
+        self.game = game
+        self.id = game.id
 
     def add_command(self, c):
         if not isinstance(c, Command):
             raise TypeError("object is not a command")
 
         player = c.get_player()
-        if player.id is self.__players[self.__turn]:
+        if player is self.__players[self.__turn]:
             self.__commands.append(c)
             if isinstance(c, SubmarineCommand):
-                self.__remaining_to_move.remove(player.id)
+                self.__remaining_to_move.remove(player)
             return True
 
         return False
@@ -37,13 +49,11 @@ class UnderGameSession:
         self.__turn += self.__order
 
     def add_player(self, player):
-        if player.id in self.__players:
+        if player in self.__players:
             return False
 
-        self.__players.append(
-            player.id
-        )  # Working with id's to avoid using objects detatched from the session
-        self.__remaining_to_move.append(player.id)
+        self.__players.append(player)
+        self.__remaining_to_move.append(player)
         return True
 
     def execute_commands(self):
@@ -58,11 +68,11 @@ class UnderGameSession:
     def everyone_moved(self):
         return self.__remaining_to_move == []
 
+    def get_game(self):
+        return self.game
+
     def get_players(self):
-        players = []
-        for player_id in self.__players:
-            players.append(get_user_by_id(player_id))
-        return players
+        return self.__players.copy()
 
     def get_order(self):
         return self.__order
@@ -77,12 +87,11 @@ class UnderGameSession:
         return self.__commands
 
     def current_turn_player(self):
-        player_id = self.__players[self.__turn]
-        return get_user_by_id(player_id)
+        return self.__players[self.__turn]
 
     def set_turn(self, player):
         for i in range(len(self.__players)):
-            if self.__players[i] == player.id:
+            if self.__players[i] is player:
                 self.__turn = i
                 return
 
@@ -93,18 +102,19 @@ class UnderGameSession:
         self.__remaining_to_move = self.__players.copy()
 
     def to_dict(self):
-        commands_to_dict = []
-        i = 1
-        for c in self.__commands:
-            commands_to_dict.update({"{}".format(i): c.__repr__()})
-            i += 1
+        # commands_to_dict = []  esto iria?
+        # i = 1
+        # for c in self.__commands:
+        #     commands_to_dict.update({"{}".format(i): c.__repr__()})
+        #     i += 1
         dict = {
             "turn": self.__turn,
-            "order": self.__order,
-            "commands": commands_to_dict,
-            "game": self.game.to_dict
+            "order": self.__order  # ,
+            # "commands": commands_to_dict,
+            # "game": self.game.to_dict
             # "remaining_to_move" lo ponemos?
         }
+        dict.update(self.game.to_dict())  # append game dict to this dict
         return dict
 
     def __repr__(self):
