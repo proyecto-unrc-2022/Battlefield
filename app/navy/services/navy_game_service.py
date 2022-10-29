@@ -106,12 +106,13 @@ class NavyGameService:
         from app.navy.services.action_service import action_service
         from app.navy.services.missile_service import missile_service
 
-        #if not self.games.get(navy_game_id):
-        self.load_game(navy_game_id)
+        if not self.games.get(navy_game_id):
+            self.load_game(navy_game_id)
 
-        #game = self.games[navy_game_id]
+        # game = self.games[navy_game_id]
         game_db = navy_game_dao.get_by_id(navy_game_id)
-        missiles = missile_service.get(navy_game_id=game_db.id)
+        # missiles = missile_service.get(navy_game_id=game_db.id)
+        missiles = self.games[navy_game_id]["missiles"]
         actions = action_service.get_by_round(navy_game_id, game_db.round)
 
         if self.update_missiles(missiles):

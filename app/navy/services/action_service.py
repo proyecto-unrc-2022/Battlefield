@@ -29,7 +29,7 @@ class ActionService:
         return action_dao.get_by_round(navy_game_id, round)
 
     def execute(self, action):
-        ship = ship_service.get_by_id(action.ship_id)
+        ship = navy_game_service.get_ship_from_game(action.navy_game_id, action.ship_id)
         if ship_service.turn(ship, action.course):
             if action.attack:
                 return ship_service.attack(ship)
