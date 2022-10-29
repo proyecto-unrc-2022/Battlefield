@@ -14,13 +14,13 @@ class Game_Infantry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_user1 = db.Column(db.Integer, db.ForeignKey(User.id))
     id_user2 = db.Column(db.Integer, db.ForeignKey(User.id))   
-    turn = db.Column(db.Integer, nullable=False) 
+    turn = db.Column(db.Integer) 
 
     #Foreign key
     user_1 = relationship("User", foreign_keys=[id_user1])
     user_2 = relationship("User", foreign_keys=[id_user2])
 
-    def __init__(self, id_user1=None, id_user2=None, turn=1):
+    def __init__(self, id_user1=None, id_user2=None, turn=None):
         self.id_user1 = id_user1
         self.id_user2 = id_user2 
         self.turn = turn

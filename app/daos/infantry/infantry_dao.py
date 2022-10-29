@@ -146,7 +146,7 @@ def figure_valid(figure,direction,game_id):
            
 def create_game(user_id):
 
-    game = Game_Infantry(id_user1= user_id, id_user2= None)
+    game = Game_Infantry(id_user1= user_id, id_user2= None, turn= user_id)
     db.session.add(game)
     db.session.commit()
     return game  
@@ -298,6 +298,9 @@ def figures_id_game(game_id):
     for x in range(sizeFigures_all):
         figures.update({x : [figures_all[x], getposition(figures_all[x])]})
 
+
+    print(figures)
+
     return figures
 
 
@@ -328,7 +331,7 @@ def intersec_Projectile_all(game_id):
             print(projectile_all[i])
             pos = damage_Projectile(projectile_all[i], figures)
     
-    print((figures[1][0].pos_x), (figures[1][0].pos_y))
+    
     #print(projectile_all)
     
     return pos
