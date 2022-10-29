@@ -8,13 +8,13 @@ from ..command import Command, SubmarineCommand
 
 class UnderGameSession:
     def __init__(self, host, *visitors):
-        self.__players = [host]
+        self.__players_ids = [host.id]
         for player in visitors:
-            self.__players.append(player)
+            self.__players_ids.append(player.id)
         self.__turn = 0
         self.__order = 1  # 1 means forward, -1 means backward
         self.__commands = []
-        self.__remaining_to_move = self.__players.copy()
+        self.__remaining_to_move = self.__players_ids.copy()
         self.game = None
         self.id = None
 
@@ -37,10 +37,10 @@ class UnderGameSession:
             raise TypeError("object is not a command")
 
         player = c.get_player()
-        if player is self.__players[self.__turn]:
+        if player.id is self.__players_ids[self.__turn]:
             self.__commands.append(c)
             if isinstance(c, SubmarineCommand):
-                self.__remaining_to_move.remove(player)
+                self.__remaining_to_move.remove(player.id)
             return True
 
         return False
@@ -49,18 +49,18 @@ class UnderGameSession:
         self.__turn += self.__order
 
     def add_player(self, player):
-        if player in self.__players:
+        if player.id in self.__players_ids:
             return False
 
-        self.__players.append(player)
-        self.__remaining_to_move.append(player)
+        self.__players_ids.append(player.id)
+        self.__remaining_to_move.append(player.id)
         return True
 
     def execute_commands(self):
         for c in self.__commands:
             c.execute()
         self.__commands.clear()
-        self.__remaining_to_move = self.__players.copy()
+        self.__remaining_to_move = self.__players_ids.copy()
 
     def invert_order(self):
         self.__order *= -1
@@ -72,7 +72,10 @@ class UnderGameSession:
         return self.game
 
     def get_players(self):
-        return self.__players.copy()
+        players = []
+        for player_id in self.__players_ids:
+            players.append(get_user_by_id(player_id))
+        return players
 
     def get_order(self):
         return self.__order
@@ -87,11 +90,11 @@ class UnderGameSession:
         return self.__commands
 
     def current_turn_player(self):
-        return self.__players[self.__turn]
+        return get_user_by_id(self.__players_ids[self.__turn])
 
     def set_turn(self, player):
-        for i in range(len(self.__players)):
-            if self.__players[i] is player:
+        for i in range(len(self.__players_ids)):
+            if self.__players_ids[i] == player.id:
                 self.__turn = i
                 return
 
@@ -99,7 +102,7 @@ class UnderGameSession:
         self.__turn = 0
         self.__order = 1
         self.__commands = []
-        self.__remaining_to_move = self.__players.copy()
+        self.__remaining_to_move = self.__players_ids.copy()
 
     def to_dict(self):
         # commands_to_dict = []  esto iria?

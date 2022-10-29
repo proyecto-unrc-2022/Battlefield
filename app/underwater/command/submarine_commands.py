@@ -6,15 +6,15 @@ from .command import Command
 class SubmarineCommand(Command):
     def __init__(self, game, submarine, **params):
         super(SubmarineCommand, self).__init__(game, submarine.player, **params)
-        self.submarine_id = submarine.id
+        self.submarine = submarine
 
     def get_submarine(self):
-        return submarine_dao.get_by_id(self.submarine_id)
+        return self.submarine
 
 
 class RotateAndAdvance(SubmarineCommand):
     def execute(self):
-        submarine = submarine_dao.get_by_id(self.submarine_id)
+        submarine = self.submarine
         if submarine.in_game():
             self.game.rotate_object(submarine, self.params["direction"])
             if submarine.in_game():
@@ -23,7 +23,7 @@ class RotateAndAdvance(SubmarineCommand):
 
 class RotateAndAttack(SubmarineCommand):
     def execute(self):
-        submarine = submarine_dao.get_by_id(self.submarine_id)
+        submarine = self.submarine
         if submarine.in_game():
             self.game.rotate_object(submarine, self.params["direction"])
             if submarine.in_game():

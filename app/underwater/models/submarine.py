@@ -56,7 +56,7 @@ class Submarine(SubmergedObject):
 
     def to_dict(self):
         dict = {
-            "player_id": self.player.id,
+            "player_id": self.player_id,
             "name": self.name,
             "size": self.size,
             "speed": self.speed,

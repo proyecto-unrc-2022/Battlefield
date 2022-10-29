@@ -64,6 +64,7 @@ def join_game(game_id):
 
     visitor = get_user_by_id(data["visitor_id"])
     game = game_dao.get_by_id(game_id)
+    game_session = sessions[game.id]
 
     if game.visitor is not None:
         return Response("{'error':'game does not have an available slot'}", status=409)
@@ -74,6 +75,7 @@ def join_game(game_id):
         )
 
     game.visitor = visitor
+    game_session.add_player(visitor)
 
     game_dao.save(game)
     return "{'success': 'user joined the game'}"
@@ -101,8 +103,12 @@ def choose_submarine(game_id, player_id):
             data["y_position"],
             data["direction"],
         )
+        if sub:
+            db.session.add(sub)
     except Exception as e:
-        return Response("{'error':'%s'}" % str(e), status=409)
+        return Response("{'error': %s}" % str(e), status=409)
+
+    submarine_dao.save(sub)
 
     return "{'success': submarine placed}"
 
@@ -129,7 +135,6 @@ def rotate_and_advance(game_id, player_id):
     if direction == (submarine.direction + 4) % 8:
         return Response("{'error':'submarines cant rotate 180 degrees'}", status=409)
 
-    print("here 1")
     if game_session.current_turn_player() is not player:
         return Response("{'error': 'not your turn'}", status=409)
 
@@ -138,8 +143,7 @@ def rotate_and_advance(game_id, player_id):
     )
     update_game(game)
 
-    game_dao.save(game)
-    return game.__repr__()
+    return "{'success': 'command enqueued'}"
 
 
 @underwater.post("/game/<int:game_id>/<int:player_id>/rotate_and_attack")
@@ -169,8 +173,7 @@ def rotate_and_attack(game_id, player_id):
     game_session.add_command(RotateAndAttack(game, submarine, direction=direction))
     update_game(game)
 
-    game_dao.save(game)
-    return game.__repr__()
+    return "{'success': 'command enqueued'}"
 
 
 @underwater.get("/game/submarine_options")

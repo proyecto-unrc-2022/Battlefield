@@ -18,8 +18,7 @@ class UnderGameDAO:
 
         game = UnderGame(host=host, visitor=visitor, height=height, width=width)
 
-        db.session.add(game)
-        db.session.commit()
+        self.save(game)
 
         game.build_board()
 
@@ -35,7 +34,6 @@ class UnderGameDAO:
                 game.build_board()
 
         db.session.add(game)
-
         return game
 
     def save(self, game):
