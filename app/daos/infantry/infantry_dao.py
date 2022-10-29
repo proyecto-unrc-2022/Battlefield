@@ -87,11 +87,11 @@ def move(game_id, user_id, direction, velocity):
     return is_valid and not(exceeded_velocity_limit)
 
 
-def intersection(coords1, coords2):
+def intersection(coord1, coords2):
     intersection = False
     for j in range(len(coords2)):
-        for i in range(len(coords1)-1):
-            if coords1[i] in coords2[j] and coords1[i+1] in coords2[j]:
+        for i in range(len(coord1)-1):
+            if coord1[i] in coords2[j] and coord1[i+1] in coords2[j]:
                 intersection = True
     return intersection
 
@@ -115,28 +115,28 @@ def shoot(user_id,game_id):
 def figure_valid(figure,direction,game_id):
 
     if(figure == 1):
-        projectile1 = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=0, daño=5, direccion= direction)
+        projectile1 = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=0, daño=5, direccion= direction, type = MACHINE_GUN)
         db.session.add(projectile1)
         db.session.commit()
-        projectile2 = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=0, daño=5, direccion= direction)
+        projectile2 = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=0, daño=5, direccion= direction, type=MACHINE_GUN)
         db.session.add(projectile2)
         db.session.commit()
-        projectile3 = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=0, daño=5, direccion= direction)
+        projectile3 = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=0, daño=5, direccion= direction, type=MACHINE_GUN)
         db.session.add(projectile3)
         db.session.commit()
         return True
     elif(figure == 2):
-        projectile = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=5, daño=5, direccion= direction)
+        projectile = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=5, daño=5, direccion= direction, type=MISSILE)
         db.session.add(projectile)
         db.session.commit()
         return True
     elif(figure == 3):
-        projectile = Projectile(id_game= game_id, pos_x=15, pos_y=0, velocidad=3, daño=15, direccion= direction)
+        projectile = Projectile(id_game= game_id, pos_x=15, pos_y=0, velocidad=3, daño=15, direccion= direction, type=MISSILE)
         db.session.add(projectile)
         db.session.commit()
         return True
     elif(figure == 4):
-        projectile = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=20, daño=30, direccion= direction)
+        projectile = Projectile(id_game= game_id, pos_x=0, pos_y=0, velocidad=20, daño=30, direccion= direction, type=MORTAR)
         db.session.add(projectile)
         db.session.commit()
         return True
@@ -174,6 +174,27 @@ def ready(game_id):
     
     return False
 
+
+def move_projecile(projectile_id, game_id):
+    """devuelve la posiciones por donde se mueve el projectil
+
+    Args:
+        projectile_id (int): id del projectil a mover
+        game_id (int): id del game donde pertenece el projectil
+
+    Returns:
+        lista: retorna una lista con las coordenadas por donde se movio el projectil
+    """
+    projectile = Projectile.query.filter_by(id = projectile_id, id_game = game_id).first()
+    pos = (projectile.pos_x, projectile.pos_y)
+    move = []
+    for i in range(projectile.velocidad):
+        pos = direc(projectile.direccion, pos[0], pos[1])
+        move.append(pos)
+    return move
+
+         
+    
 
 #Este metodo toma los misiles del game y actuliza todos sus movimientos
 #Falta diferenciar cual de los dos figures del game.
@@ -239,13 +260,14 @@ def return_direction(projectile_id):
 
 #Este metodo hace daño entre los projectiles
 def damage_projectile(projectile_id):
+    intersection = False
     game = db.session.query(Projectile).id_game
     other_projectile = db.session.query(Projectile).order_by(id_game= game).id
 
     if(projectile_id.pos_x == other_projectile.pos_x and projectile_id.pos_y == other_projectile.pos_y):
         db.session.query(Projectile).filter_by(id= other_projectile).destroy
         db.session.query(Projectile).filter_by(id= projectile_id).destroy
-    
+    return intersection
 
 def validation_position(game_id, user_id, pos_x, pos_y):
 
@@ -303,11 +325,9 @@ def figures_id_game(game_id):
 
     return figures
 
-
 def damage_Projectile(projectile, figures):
-    
     projectile_pos = (projectile.pos_x, projectile.pos_y)
-
+    damage = False
     for x in figures.values():
         print(x)
         if(projectile_pos in x[1]):
@@ -315,8 +335,8 @@ def damage_Projectile(projectile, figures):
             db.session.add(x[0])
             db.session.delete(projectile)
             db.session.commit()
-
-    return True
+            damage = True
+    return damage
 
 def intersec_Projectile_all(game_id):
 
