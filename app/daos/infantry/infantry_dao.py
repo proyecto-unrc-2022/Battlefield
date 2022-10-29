@@ -93,7 +93,6 @@ def intersection(coords1, coords2):
         for i in range(len(coords1)-1):
             if coords1[i] in coords2[j] and coords1[i+1] in coords2[j]:
                 intersection = True
-    print(intersection)
     return intersection
 
 
