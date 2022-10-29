@@ -290,36 +290,31 @@ def getposition(object):
 def figures_id_game(game_id):
 
     figures_all = Figure_infantry.query.filter_by(id_game = game_id).all()
-    
+    sizeFigures_all = len(figures_all)
+
+
     figures = {}
 
-    for x in figures_all:
-        figures.update({x.id : [x, getposition(x)]})
-
-    print()
-    print(figures)
-    print()
+    for x in range(sizeFigures_all):
+        figures.update({x : [figures_all[x], getposition(figures_all[x])]})
 
     return figures
 
 
-def intersec_Projectile(projectile, object):
+def damage_Projectile(projectile, figures):
     
     projectile_pos = (projectile.pos_x, projectile.pos_y)
-    position = []
 
-    for x in object.values():
-        print(projectile.id)
-        print(projectile_pos)
+    for x in figures.values():
+        print(x)
         if(projectile_pos in x[1]):
-            position.append(projectile.pos_x)
-            position.append(projectile.pos_y)
-            
-            return position
+            x[0].hp = x[0].hp - projectile.daño
+            db.session.add(x[0])
+            db.session.commit()
 
-    return None
+    return True
 
-def getPosition_intersec_Projectile(game_id):
+def intersec_Projectile_all(game_id):
 
     projectile_all = Projectile.query.filter_by(id_game = game_id).all()
 
@@ -329,17 +324,20 @@ def getPosition_intersec_Projectile(game_id):
 
     if(projectile_all != None):
         for i in range(len(projectile_all)):
-            pos = intersec_Projectile(projectile_all[i], figures)
+            print(projectile_all[i])
+            pos = damage_Projectile(projectile_all[i], figures)
     
+    print(figures)
+    print(projectile_all)
     
     return pos
 
 
 def update(game_id):
 
-    pos = getPosition_intersec_Projectile(game_id)
+    pos = intersec_Projectile_all(game_id)
 
-    print(pos)
+    
 
     
     return True
