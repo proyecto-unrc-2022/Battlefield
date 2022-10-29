@@ -20,9 +20,10 @@ class Game_Infantry(db.Model):
     user_1 = relationship("User", foreign_keys=[id_user1])
     user_2 = relationship("User", foreign_keys=[id_user2])
 
-    def __init__(self, id_user1=None, id_user2=None):
+    def __init__(self, id_user1=None, id_user2=None, turn=1):
         self.id_user1 = id_user1
         self.id_user2 = id_user2 
+        self.turn = turn
 
 class Game_Infantry_Schema(SQLAlchemySchema):
     class Meta:
