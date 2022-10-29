@@ -17,3 +17,7 @@ COORDS = {
     1 : (1, 1),
     3 : (1, -1),
 }
+
+MACHINE_GUN = 0
+MISSILE = 1
+MORTAR = 2
