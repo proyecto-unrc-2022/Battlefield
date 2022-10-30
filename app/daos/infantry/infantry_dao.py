@@ -150,7 +150,8 @@ def figure_valid(figure, game_id, direccion):
         db.session.add(projectile)
         db.session.commit()
         return True
-
+        
+    return False
 
 #Este metodo toma la figura y el proyectil.
 #Setea las posiciones x e y para la creacion de los proyectiles
