@@ -110,7 +110,6 @@ def figure_valid(figure, direction, game_id):
     aux = copy.copy(figure)
     pos = direc(direction, aux.pos_x, aux.pos_y)
     pos = (aux.pos_x + (aux.pos_x - pos[0]), aux.pos_y + (aux.pos_y - pos[1]))
-    print(pos)
 
     is_valid = True
     if figure.figure_type == SOLDIER:
@@ -203,21 +202,28 @@ def move_projecile(projectile_id, game_id, direction):
     projectile = Projectile.query.filter_by(id = projectile_id, id_game = game_id).first()
     figures = figures_id_game(game_id)
     move = True
+    pos = (projectile.pos_x, projectile.pos_y)
     if projectile.type == MACHINE_GUN:
+        projectile_collision(projectile_id, game_id)
         damage_Projectile(projectile, figures)
+        db.session.delete(projectile)
     elif projectile.type == MISSILE:       
         for i in range(projectile.velocidad):
             pos = direc(direction, pos[0], pos[1])
-            projectile.pos_x = pos[0]
-            projectile.pos_y = pos[1]
-            if damage_Projectile(projectile, figures): 
+            projectile.pos_x = projectile.pos_x + (projectile.pos_x - pos[0])
+            projectile.pos_y = projectile.pos_y + (projectile.pos_y - pos[1])
+            pos = (projectile.pos_x, projectile.pos_y)
+            if projectile_collision(projectile, game_id):
+                move = False
+                break
+            elif damage_Projectile(projectile, figures): 
                 move = False
                 break
     elif projectile.type == MORTAR:
         for i in range(projectile.velocidad):
             pos = direc(direction, pos[0], pos[1])
-        projectile.pos_x = pos[0]
-        projectile.pos_y = pos[1]
+        projectile.pos_x = projectile.pos_x + (projectile.pos_x - pos[0])
+        projectile.pos_y = projectile.pos_y + (projectile.pos_y - pos[1])
         if damage_Projectile(projectile, figures): 
             move = False
     if move :
@@ -227,8 +233,30 @@ def move_projecile(projectile_id, game_id, direction):
         db.session.commit()
     return move
 
-         
-    
+def projectile_collision(projectile, game_id):
+    """detecta si el proyectil dado se colisiona con los del resto del juego y los
+        proyectiles colisionados los elimina
+
+    Args:
+        projectile (Proyectile): proyectil al que se le va a detectar la colision con el resto del juego
+        game_id (int): id del juego en el que se hara dicha deteccion
+
+    Returns:
+        bool: retrona True si hubo una colision, si no retorna False
+    """
+    collision = False
+    projectile_pos = (projectile.pos_x, projectile.pos_y)
+    projectiles = Projectile.query.filter_by(id_game = game_id).all()
+    for i in range(len(projectiles)):
+        opponent_projectil_pos = (projectiles[i].pos_x, projectiles[i].pos_y)
+        if (projectile_pos == opponent_projectil_pos) and (projectile.id != projectiles[i].id):
+            db.session.delete(projectiles[i])
+            collision = True
+    if collision: 
+        db.session.delete(projectile)
+        db.session.commit()
+    return collision           
+        
 
 #Este metodo toma los misiles del game y actuliza todos sus movimientos
 #Falta diferenciar cual de los dos figures del game.
@@ -353,7 +381,6 @@ def figures_id_game(game_id):
         figures.update({x : [figures_all[x], getposition(figures_all[x])]})
 
 
-    print(figures)
 
     return figures
 
@@ -361,7 +388,6 @@ def damage_Projectile(projectile, figures):
     projectile_pos = (projectile.pos_x, projectile.pos_y)
     damage = False
     for x in figures.values():
-        print(x)
         if(projectile_pos in x[1]):
             x[0].hp = x[0].hp - projectile.daño
             db.session.add(x[0])
@@ -380,7 +406,6 @@ def intersec_Projectile_all(game_id):
 
     if(projectile_all != None):
         for i in range(len(projectile_all)):
-            print(projectile_all[i])
             pos = damage_Projectile(projectile_all[i], figures)
     return pos
 
