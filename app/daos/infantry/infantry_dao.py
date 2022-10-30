@@ -15,26 +15,23 @@ import copy
 
 def add_figure(game_id, user_id ,entity_id, position_X, position_Y):
 
-    succes = validation_position(game_id, user_id, position_X, position_Y)
-
-    if(not(succes)):
-        return None
-
     game = db.session.query(Game_Infantry).filter_by(id = game_id).first()
 
     if(SOLDIER == entity_id):
-        figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=10, velocidad=3, tamaño=1, direccion=0, pos_x=position_X, pos_y=position_Y, type=1)
+        figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=10, velocidad=3, tamaño=1, direccion=6, pos_x=position_X, pos_y=position_Y, type=1)
     elif(HUMVEE == entity_id):
-        figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=20, velocidad=5, tamaño=2, direccion=0, pos_x=position_X, pos_y=position_Y, type=2)
+        figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=20, velocidad=5, tamaño=2, direccion=6, pos_x=position_X, pos_y=position_Y, type=2)
     elif(TANK == entity_id):
-        figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=50, velocidad=2, tamaño=3, direccion=0, pos_x=position_X, pos_y=position_Y, type=3)
+        figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=50, velocidad=2, tamaño=3, direccion=6, pos_x=position_X, pos_y=position_Y, type=3)
     elif(ARTILLERY == entity_id):
-        figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=80, velocidad=1, tamaño=4, direccion=0,pos_x=position_X, pos_y=position_Y, type=4)
+        figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=80, velocidad=1, tamaño=4, direccion=6,pos_x=position_X, pos_y=position_Y, type=4)
     else:
         figure = None
 
-    if(game.id_user2 == int(user_id)):
-        figure.direccion = 4
+    succes = validation_position(game_id, user_id, figure)
+
+    if(not(succes)):
+        return None
 
     if(figure):
         db.session.add(figure)
@@ -329,21 +326,24 @@ def damage_projectile(projectile_id):
         db.session.query(Projectile).filter_by(id= other_projectile).destroy
         db.session.query(Projectile).filter_by(id= projectile_id).destroy
 
-def validation_position(game_id, user_id, pos_x, pos_y):
+def validation_position(game_id, user_id, object):
 
     succes = False
 
     game = db.session.query(Game_Infantry).filter_by(id = game_id).first()
 
     if(game.id_user1 == int(user_id)):
-        if(0 <= pos_x <= 9 and 0 <= pos_y <= 10):
+        if(0 <= object.pos_x <= 9 and 0 <= object.pos_y <= 10):
             
             succes = True
 
     if(game.id_user2 == int(user_id)):
-        if(11 <= pos_x <= 20 and 0 <= pos_y <= 10):
+        if(11 <= object.pos_x <= 20 and 0 <= object.pos_y <= 10):
             
             succes = True
+
+    if(game.id_user2 == int(user_id)):
+        object.direccion = 2
 
     return succes
 
@@ -381,6 +381,7 @@ def figures_id_game(game_id):
         figures.update({x : [figures_all[x], getposition(figures_all[x])]})
 
 
+    print(figures)
 
     return figures
 
@@ -388,6 +389,7 @@ def damage_Projectile(projectile, figures):
     projectile_pos = (projectile.pos_x, projectile.pos_y)
     damage = False
     for x in figures.values():
+        print(x)
         if(projectile_pos in x[1]):
             x[0].hp = x[0].hp - projectile.daño
             db.session.add(x[0])
@@ -406,6 +408,7 @@ def intersec_Projectile_all(game_id):
 
     if(projectile_all != None):
         for i in range(len(projectile_all)):
+            print(projectile_all[i])
             pos = damage_Projectile(projectile_all[i], figures)
     return pos
 

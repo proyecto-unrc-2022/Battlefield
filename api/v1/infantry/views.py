@@ -109,8 +109,8 @@ def shoot_entity():
 @infantry.route("/game/<game_id>/update",methods=['POST'])
 def updateProjectile(game_id):
 
-    x = update(game_id)
-   
+    update(game_id)
+    terrain_validation(game_id)
 
     #print(x)
 
