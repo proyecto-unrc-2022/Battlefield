@@ -10,7 +10,7 @@ from app.daos.infantry.infantry_dao import add_figure
 from app.daos.infantry.infantry_dao import create_game
 from app.daos.infantry.infantry_dao import ready
 from app.daos.infantry.infantry_dao import join
-from app.daos.infantry.infantry_dao import move_by_user
+from app.daos.infantry.infantry_dao import move
 from app.daos.infantry.infantry_dao import shoot
 from app.daos.infantry.infantry_dao import *
 from app.models.infantry.game_Infantry import Game_Infantry, Game_Infantry_Schema
@@ -21,8 +21,6 @@ from . import infantry
 game_schema= Game_Infantry_Schema()
 figure_schema = Figure_Infantry_Schema()
 projectile_schema = Projectile_Infantry_Schema()
-
-#figure = db.session.query(Figure_infantry).where(Figure_infantry.id_user == user_id and Figure_infantry.id_game == game_id).one_or_none()
 
 
 @infantry.route("/user/<user_id>/game", methods=['POST'])
@@ -72,7 +70,7 @@ def choose_figure(game_id, user_id, type):
     pos_x = data["pos_x"]
     pos_y = data["pos_y"]
 
-    new_figure = add_figure(game_id, user_id, type, pos_x, pos_y)
+    new_figure = add_figure(game_id, user_id, int(type), pos_x, pos_y)
 
     if(new_figure == None):
 
@@ -81,33 +79,33 @@ def choose_figure(game_id, user_id, type):
 
     return jsonify(figure_schema.dump(new_figure))
 
-#revisar la logica de moverse 
-@infantry.route("/move/game/<game_id>/user/<user_id>/course/<direction>/velocity/<velocity>",methods=['POST'])
-def mov_action(direction, velocity, user_id, game_id):
-    if(move_by_user(game_id, user_id, direction, velocity)):
-        
-        move_entity = db.session.query(Figure_infantry).where(Figure_infantry.id == game_id and Figure_infantry.id_user == user_id).one_or_none()
-        
+@infantry.route("/move",methods=['POST'])
+def mov_action():
+    data = json.loads(request.data)
+    velocity = int(data["velocity"])
+    course = int(data["course"])
+    game_id = int(data["game_id"])
+    user_id = int(data["user_id"])
+    if(move(game_id, user_id, course, velocity)):
+        move_entity = Figure_infantry.query.filter_by(id_game = game_id, id_user = user_id).first()
         return jsonify(figure_schema.dump(move_entity))
-    
-    return Response(status=404)
+    return "Colision o velocidad excedida"
 
 @infantry.route("/shoot/user/<user_id>/game/<game_id>/direccion/<direccion>",methods=['POST'])
 def shoot_entity(user_id, game_id,direccion):
 
-      if(shoot(user_id, game_id, int(direccion))):
+    if(shoot(user_id, game_id, int(direccion))):
 
-          projectile = db.session.query(Projectile).order_by(Projectile.id.desc()).first()
+        return jsonify(projectile_schema.dump(projectile))
+    else:
+        return Response(status=404)
 
-          return jsonify(projectile_schema.dump(projectile))
-      else:
-          return Response(status=404)
 
 @infantry.route("/game/<game_id>/update",methods=['POST'])
 def updateProjectile(game_id):
 
-    x = update(game_id)
-   
+    update(game_id)
+    terrain_validation(game_id)
 
     #print(x)
 

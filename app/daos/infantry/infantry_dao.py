@@ -1,3 +1,5 @@
+from math import fabs
+from pickle import TRUE
 from telnetlib import GA
 from app import db
 from app.models.user import Profile
@@ -47,79 +49,55 @@ def add_figure(game_id, user_id ,entity_id, position_X, position_Y):
     return figure
 
 
-#Dado un user_id, una direccion y una velocidad, mueva su respectiva unidad en el juego
-#velocity seria la cantidad de casillas que se va a mover su unidad
-#verificando que no supere su velocidad maxima.
-#ej: la velocidad limite del tanque es 2, entonces su velocity no puede ser mayor a 2
-def move_by_user(game_id, user_id, direction, velocity):
-    figure = Figure_infantry.query.filter_by(id_user = user_id, id_game = game_id).first()
-    aux_figure = copy.copy(figure)
-    exceeded_velocity_limit = (int(velocity) > figure.velocidad)
-    move(aux_figure, int(direction), int(velocity))
-    is_valid = False if aux_figure == None else is_valid_move(aux_figure)
-    if is_valid and not(exceeded_velocity_limit) : 
-        setattr(figure, 'pos_x', aux_figure.pos.x)
-        setattr(figure, 'pos_y', aux_figure.pos.y)
-        db.session.commit() 
-    print(is_valid)
-    return is_valid and not(exceeded_velocity_limit)
-
-#Verifica que si una unidad(figure) se movio, este movimiento se valido
-#devuelve verdadero si la unidad que se movio no choca contra otra unidad
-def is_valid_move(figure):
-
-    game_id = Figure_infantry.query.filter_by(id_game = figure.id_game).first().id_game
+def move(game_id, user_id, direction, velocity):
+    """Dado un user_id, una direccion y una velocidad, mueva su respectiva unidad en el juego
+    Args:
+        game_id (int): id del juego
+        user_id (int): id del usuario
+        direction (int): direccion a la que se movera la unidad
+        velocity (int): cantidad de casillas que se va a mover su unidad
+    Returns:
+        boolean: (si el movimiento es valido) y (no excede su limite)
+    """
+    is_valid = True
+    figures = figures_id_game(game_id)
+    figure = db.session.query(Figure_infantry).filter_by(id_user = user_id, id_game = game_id).first()
     game = Game_Infantry.query.filter_by(id = game_id).first()
     user_1 = game.user_1
     user_2 = game.user_2
-    opponent = user_1 if user_1.id != figure.id else user_2
-    figure_opponent = Figure_infantry.query.filter_by(id_user = opponent.id, id_game = game_id).first()
-    return not(intersection(copy.copy(figure), copy.copy(figure_opponent)))
+    user_opponent = user_1 if user_1.id != figure.id else user_2
+    figure_opponent = Figure_infantry.query.filter_by(id_user = user_opponent.id, id_game = game_id).first()
+    aux_figure = copy.copy(figure)
+    exceeded_velocity_limit = (velocity > figure.velocidad)
+    for i in range(velocity):
+        coor = direc(direction, aux_figure.pos_x, aux_figure.pos_y)
+        aux_figure.pos_x = aux_figure.pos_x + (aux_figure.pos_x - coor[0])
+        aux_figure.pos_y = aux_figure.pos_y + (aux_figure.pos_y - coor[1])
+        is_valid = False if aux_figure == None else not(intersection([aux_figure.pos_x, aux_figure.pos_y], figures[(figure_opponent.id)-1][1]))
+    if is_valid and not(exceeded_velocity_limit): 
+        db.session.query(Figure_infantry).filter(
+            Figure_infantry.id_user == user_id, Figure_infantry.id_game == game_id).update(
+                {'pos_x' :  aux_figure.pos_x, 'pos_y' : aux_figure.pos_y, 'direccion' : direction})
 
-#Verifica si hay una interseccion entre dos figure
-def intersection(figure_1, figure_2):
+    elif not(is_valid) and not(exceeded_velocity_limit):
+        db.session.query(Figure_infantry).filter(
+            Figure_infantry.id_user == user_id, Figure_infantry.id_game == game_id).update(
+                {'hp' :  figure.hp - figure_opponent.hp})
+        db.session.query(Figure_infantry).filter(
+            Figure_infantry.id_user == user_id, Figure_infantry.id_game == game_id).update(
+                {'hp' :  figure_opponent.hp - figure.hp})
+    db.session.commit()
+    return is_valid and not(exceeded_velocity_limit)
 
+
+def intersection(coord1, coords2):
     intersection = False
-    for i in range(figure_1.tamaño):
-        aux_figure = copy.copy(figure_2)
-        for j in range(figure_2.tamaño):
-            equal_pos_x = figure_1.pos_x == aux_figure.pos_x
-            equal_pos_y = figure_1.pos_y == aux_figure.pos_y
-            intersection = equal_pos_x and equal_pos_y
-            aux_figure = move(aux_figure, aux_figure.direccion, j)
-        figure_1 = move(figure_1, figure_1.direccion, i)
+    for j in range(len(coords2)):
+        for i in range(len(coord1)-1):
+            if coord1[i] in coords2[j] and coord1[i+1] in coords2[j]:
+                intersection = True
     return intersection
 
-#Devuelve un figure con la direccion y velocidad que se
-#pasaron por parametros
-def move(figure, direction, velocity):
-    if(direction == EAST):
-        figure.direccion = EAST
-        figure.pos_x = figure.pos_x + velocity
-    elif(direction == SOUTH_EAST):
-        figure.direccion = SOUTH_EAST
-        figure.pos_x = figure.pos_x + velocity
-        figure.pos_y = figure.pos_y - velocity
-    elif(direction == SOUTH):
-        figure.direccion = SOUTH
-        figure.pos_y = figure.pos_y - velocity
-    elif(direction == SOUTH_WEST):
-        figure.direccion = SOUTH_WEST
-        figure.pos_x = figure.pos_x - velocity
-        figure.pos_y = figure.pos_y - velocity
-    elif(direction == WEST):
-        figure.direccion = WEST
-        figure.pos_x = figure.pos_x - velocity
-    elif(direction == NORTH_WEST):
-        figure.direccion = NORTH_WEST
-        figure.pos_x = figure.pos_x - velocity
-        figure.pos_y = figure.pos_y + velocity
-    elif(direction == NORTH):
-        figure.direccion = NORTH
-        figure.pos_y = figure.pos_y + velocity
-    else:
-        return None
-    return figure
 
 #Primero busca en la tabla Figura el personaje del usuario.
 #Luego pregunta si la direccion que quiere disparar es verdadero o no.
@@ -129,6 +107,7 @@ def shoot(user_id, game_id, direccion):
     figure = Figure_infantry.query.filter_by(id_game= game_id, id_user= user_id).first()
 
     if(figure_valid(figure, game_id, direccion)):
+
         return True
     else:
         return False
@@ -207,7 +186,7 @@ def direction_of_projectile(figure, projectile, direccion):
     
 def create_game(user_id):
 
-    game = Game_Infantry(id_user1= user_id, id_user2= None)
+    game = Game_Infantry(id_user1= user_id, id_user2= None, turn= user_id)
     db.session.add(game)
     db.session.commit()
     return game  
@@ -236,6 +215,76 @@ def ready(game_id):
     return False
 
 
+def move_projecile(projectile_id, game_id, direction):
+    """Mueve el proyectil, y si colisiona se destruye
+
+    Args:
+        projectile_id (int): id del projectil a mover
+        game_id (int): id del game donde pertenece el projectil
+        direction (int): hacia donde se movera el proyectil
+
+    Returns:
+        lista: retorna True si el proyectil se movio, o False si el proyectil se destruyo
+    """
+    projectile = Projectile.query.filter_by(id = projectile_id, id_game = game_id).first()
+    figures = figures_id_game(game_id)
+    move = True
+    pos = (projectile.pos_x, projectile.pos_y)
+    if projectile.type == MACHINE_GUN:
+        projectile_collision(projectile_id, game_id)
+        damage_Projectile(projectile, figures)
+        db.session.delete(projectile)
+    elif projectile.type == MISSILE:       
+        for i in range(projectile.velocidad):
+            pos = direc(direction, pos[0], pos[1])
+            projectile.pos_x = projectile.pos_x + (projectile.pos_x - pos[0])
+            projectile.pos_y = projectile.pos_y + (projectile.pos_y - pos[1])
+            pos = (projectile.pos_x, projectile.pos_y)
+            if projectile_collision(projectile, game_id):
+                move = False
+                break
+            elif damage_Projectile(projectile, figures): 
+                move = False
+                break
+    elif projectile.type == MORTAR:
+        for i in range(projectile.velocidad):
+            pos = direc(direction, pos[0], pos[1])
+        projectile.pos_x = projectile.pos_x + (projectile.pos_x - pos[0])
+        projectile.pos_y = projectile.pos_y + (projectile.pos_y - pos[1])
+        if damage_Projectile(projectile, figures): 
+            move = False
+    if move :
+        db.session.query(Projectile).filter(
+            Projectile.id == projectile_id, Projectile.id_game == game_id).update(
+                {'pos_x' :  projectile.pos_x, 'pos_y' : projectile.pos_y, 'direccion' : direction})
+        db.session.commit()
+    return move
+
+def projectile_collision(projectile, game_id):
+    """detecta si el proyectil dado se colisiona con los del resto del juego y los
+        proyectiles colisionados los elimina
+
+    Args:
+        projectile (Proyectile): proyectil al que se le va a detectar la colision con el resto del juego
+        game_id (int): id del juego en el que se hara dicha deteccion
+
+    Returns:
+        bool: retrona True si hubo una colision, si no retorna False
+    """
+    collision = False
+    projectile_pos = (projectile.pos_x, projectile.pos_y)
+    projectiles = Projectile.query.filter_by(id_game = game_id).all()
+    for i in range(len(projectiles)):
+        opponent_projectil_pos = (projectiles[i].pos_x, projectiles[i].pos_y)
+        if (projectile_pos == opponent_projectil_pos) and (projectile.id != projectiles[i].id):
+            db.session.delete(projectiles[i])
+            collision = True
+    if collision: 
+        db.session.delete(projectile)
+        db.session.commit()
+    return collision           
+        
+
 #Este metodo toma los misiles del game y actuliza todos sus movimientos
 #Falta diferenciar cual de los dos figures del game.
 def update_projectile(projectile_id):
@@ -248,7 +297,7 @@ def update_projectile(projectile_id):
     #damage_projectile(projectile_id, user_2)
     
     
-#Este metodo hace el daño al player
+#Borrar
 def damage_user(projectile_id, figure):
 
     projectileId = db.session.query(Projectile).filter_by(id= projectile_id).first()
@@ -306,23 +355,25 @@ def damage_projectile(projectile_id):
     if(projectile_id.pos_x == other_projectile.pos_x and projectile_id.pos_y == other_projectile.pos_y):
         db.session.query(Projectile).filter_by(id= other_projectile).destroy
         db.session.query(Projectile).filter_by(id= projectile_id).destroy
-    
 
-def validation_position(game_id, user_id, pos_x, pos_y):
+def validation_position(game_id, user_id, object):
 
     succes = False
 
     game = db.session.query(Game_Infantry).filter_by(id = game_id).first()
 
     if(game.id_user1 == int(user_id)):
-        if(0 <= pos_x <= 9 and 0 <= pos_y <= 10):
+        if(0 <= object.pos_x <= 9 and 0 <= object.pos_y <= 10):
             
             succes = True
 
     if(game.id_user2 == int(user_id)):
-        if(11 <= pos_x <= 20 and 0 <= pos_y <= 10):
+        if(11 <= object.pos_x <= 20 and 0 <= object.pos_y <= 10):
             
             succes = True
+
+    if(game.id_user2 == int(user_id)):
+        object.direccion = 2
 
     return succes
 
@@ -351,36 +402,33 @@ def getposition(object):
 def figures_id_game(game_id):
 
     figures_all = Figure_infantry.query.filter_by(id_game = game_id).all()
-    
+    sizeFigures_all = len(figures_all)
+
+
     figures = {}
 
-    for x in figures_all:
-        figures.update({x.id : [x, getposition(x)]})
+    for x in range(sizeFigures_all):
+        figures.update({x : [figures_all[x], getposition(figures_all[x])]})
 
-    print()
+
     print(figures)
-    print()
 
     return figures
 
-
-def intersec_Projectile(projectile, object):
-    
+def damage_Projectile(projectile, figures):
     projectile_pos = (projectile.pos_x, projectile.pos_y)
-    position = []
-
-    for x in object.values():
-        print(projectile.id)
-        print(projectile_pos)
+    damage = False
+    for x in figures.values():
+        print(x)
         if(projectile_pos in x[1]):
-            position.append(projectile.pos_x)
-            position.append(projectile.pos_y)
-            
-            return position
+            x[0].hp = x[0].hp - projectile.daño
+            db.session.add(x[0])
+            db.session.delete(projectile)
+            db.session.commit()
+            damage = True
+    return damage
 
-    return None
-
-def getPosition_intersec_Projectile(game_id):
+def intersec_Projectile_all(game_id):
 
     projectile_all = Projectile.query.filter_by(id_game = game_id).all()
 
@@ -390,39 +438,15 @@ def getPosition_intersec_Projectile(game_id):
 
     if(projectile_all != None):
         for i in range(len(projectile_all)):
-            pos = intersec_Projectile(projectile_all[i], figures)
-    
-    
+            print(projectile_all[i])
+            pos = damage_Projectile(projectile_all[i], figures)
     return pos
 
 
 def update(game_id):
-
-    pos = getPosition_intersec_Projectile(game_id)
-
-    print(pos)
-
-    
+    pos = intersec_Projectile_all(game_id)
     return True
 
 
 
 # Hacer la creación del personaje del jugador 2 orientado al oeste
-
-
- #succes = True
-    #soldier
-    #if("1" == entity_id):
-    #    figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=10, velocidad=3, tamaño=1, direccion=0, pos_x=position_X, pos_y=position_Y, type=1)
-    ##humvee
-    #elif("2" == entity_id):
-    #    figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=20, velocidad=5, tamaño=2, direccion=0, pos_x=position_X, pos_y=position_Y, type=2)
-    ##tank
-    #elif("3" == entity_id):
-    #    figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=50, velocidad=2, tamaño=3, direccion=0, pos_x=position_X, pos_y=position_Y, type=3)
-    ##artillery
-    #elif("4" == entity_id):
-    #    figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=80, velocidad=1, tamaño=4, direccion=0,pos_x=position_X, pos_y=position_Y, type=4)
-    #else:
-    #    figure = None
-    #    #succes = False

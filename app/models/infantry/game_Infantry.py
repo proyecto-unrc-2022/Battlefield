@@ -13,15 +13,17 @@ class Game_Infantry(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     id_user1 = db.Column(db.Integer, db.ForeignKey(User.id))
-    id_user2 = db.Column(db.Integer, db.ForeignKey(User.id))    
+    id_user2 = db.Column(db.Integer, db.ForeignKey(User.id))   
+    turn = db.Column(db.Integer) 
 
     #Foreign key
     user_1 = relationship("User", foreign_keys=[id_user1])
     user_2 = relationship("User", foreign_keys=[id_user2])
 
-    def __init__(self, id_user1=None, id_user2=None):
+    def __init__(self, id_user1=None, id_user2=None, turn=None):
         self.id_user1 = id_user1
         self.id_user2 = id_user2 
+        self.turn = turn
 
 class Game_Infantry_Schema(SQLAlchemySchema):
     class Meta:
@@ -32,3 +34,4 @@ class Game_Infantry_Schema(SQLAlchemySchema):
     id = auto_field()
     id_user1 = auto_field()
     id_user2 = auto_field()
+    turn = auto_field()
