@@ -186,7 +186,7 @@ def ready(game_id):
 
 
 def move_projecile(projectile_id, game_id, direction):
-    """devuelve la posiciones por donde se mueve el projectil
+    """Mueve el proyectil, y si colisiona se destruye
 
     Args:
         projectile_id (int): id del projectil a mover
