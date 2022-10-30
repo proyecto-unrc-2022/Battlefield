@@ -105,19 +105,8 @@ class UnderGameSession:
         self.__remaining_to_move = self.__players_ids.copy()
 
     def to_dict(self):
-        # commands_to_dict = []  esto iria?
-        # i = 1
-        # for c in self.__commands:
-        #     commands_to_dict.update({"{}".format(i): c.__repr__()})
-        #     i += 1
-        dict = {
-            "turn": self.__turn,
-            "order": self.__order  # ,
-            # "commands": commands_to_dict,
-            # "game": self.game.to_dict
-            # "remaining_to_move" lo ponemos?
-        }
-        dict.update(self.game.to_dict())  # append game dict to this dict
+        dict = {"turn": self.__turn, "order": self.__order}
+        dict.update(self.game.to_dict())
         return dict
 
     def __repr__(self):

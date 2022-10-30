@@ -76,5 +76,18 @@ class Submarine(SubmergedObject):
             dict.update({"game_id:": self.game.id})
         return dict
 
+    def vision_scope(self):
+        visible_positions = []
+        min_x = self.x_position - self.visibility
+        min_y = self.y_position - self.visibility
+        max_x = self.x_position + self.visibility
+        max_y = self.y_position + self.visibility
+
+        for x in range(min_x, max_x + 1):
+            for y in range(min_y, max_y + 1):
+                visible_positions.append((x, y))
+
+        return visible_positions
+
     def __repr__(self):
         return json.dumps(self.to_dict())
