@@ -68,7 +68,7 @@ def join_game(game_id, user_id):
 def choose_figure(game_id, user_id, type):
 
     data = json.loads(request.data)
-
+    
     pos_x = data["pos_x"]
     pos_y = data["pos_y"]
 
@@ -92,10 +92,10 @@ def mov_action(direction, velocity, user_id, game_id):
     
     return Response(status=404)
 
-@infantry.route("/shoot/user/<user_id>/game/<game_id>",methods=['POST'])
-def shoot_entity(user_id, game_id):
+@infantry.route("/shoot/user/<user_id>/game/<game_id>/direccion/<direccion>",methods=['POST'])
+def shoot_entity(user_id, game_id,direccion):
 
-      if(shoot(user_id, game_id)):
+      if(shoot(user_id, game_id, int(direccion))):
 
           projectile = db.session.query(Projectile).order_by(Projectile.id.desc()).first()
 
