@@ -88,7 +88,6 @@ def mov_action():
     user_id = int(data["user_id"])
     if(move(game_id, user_id, course, velocity)):
         move_entity = Figure_infantry.query.filter_by(id_game = game_id, id_user = user_id).first()
-        print(move_entity)
         return jsonify(figure_schema.dump(move_entity))
     return "Colision o velocidad excedida"
 
