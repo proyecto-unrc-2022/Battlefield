@@ -60,7 +60,7 @@ def join_game(game_id, user_id):
 def choose_figure(game_id, user_id, type):
 
     data = json.loads(request.data)
-
+    
     pos_x = data["pos_x"]
     pos_y = data["pos_y"]
 
@@ -85,15 +85,10 @@ def mov_action():
         return jsonify(figure_schema.dump(move_entity))
     return "Colision o velocidad excedida"
 
-@infantry.route("/shoot",methods=['POST'])
-def shoot_entity():
-    data = json.loads(request.data)
-    course = int(data["course"])
-    game_id = int(data["game_id"])
-    user_id = int(data["user_id"])
-    if(shoot(user_id, game_id, course)):
+@infantry.route("/shoot/user/<user_id>/game/<game_id>/direccion/<direccion>",methods=['POST'])
+def shoot_entity(user_id, game_id,direccion):
 
-        projectile = db.session.query(Projectile).order_by(Projectile.id.desc()).first()
+    if(shoot(user_id, game_id, int(direccion))):
 
         return jsonify(projectile_schema.dump(projectile))
     else:

@@ -3,7 +3,7 @@ from telnetlib import GA
 from app import db
 from app.models.user import Profile
 from sqlalchemy import insert, select, update
-from ...models.infantry.figure_infantry import Figure_infantry
+from ...models.infantry.figure_infantry import Figure_Infantry_Schema, Figure_infantry
 from ...models.infantry.game_Infantry import Game_Infantry
 from ...models.infantry.projectile_infantry import Projectile
 from ...models.user import User
@@ -15,28 +15,38 @@ import queue
 import copy
 queue_turn = None
 def add_figure(game_id, user_id ,entity_id, position_X, position_Y):
-
-    game = db.session.query(Game_Infantry).filter_by(id = game_id).first()
-
-    if(SOLDIER == entity_id):
-        figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=10, velocidad=3, tamaño=1, direccion=6, pos_x=position_X, pos_y=position_Y, type=1)
-    elif(HUMVEE == entity_id):
-        figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=20, velocidad=5, tamaño=2, direccion=6, pos_x=position_X, pos_y=position_Y, type=2)
-    elif(TANK == entity_id):
-        figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=50, velocidad=2, tamaño=3, direccion=6, pos_x=position_X, pos_y=position_Y, type=3)
-    elif(ARTILLERY == entity_id):
-        figure = Figure_infantry(id_game= game_id, id_user= user_id, hp=80, velocidad=1, tamaño=4, direccion=6,pos_x=position_X, pos_y=position_Y, type=4)
-    else:
-        figure = None
-
-    succes = validation_position(game_id, user_id, figure)
+    
+    succes = validation_position(game_id, user_id, position_X, position_Y)
 
     if(not(succes)):
         return None
 
+    game = db.session.query(Game_Infantry).filter_by(id = game_id).first()
+
+
+    diccionary_figure = {"1":{"hp":10,"velocidad":3,"tamaño":1,"direccion":0,"type":1},
+                        "2":{"hp":20,"velocidad":5,"tamaño":2,"direccion":1,"type":2},
+                        "3":{"hp":50,"velocidad":2,"tamaño":3,"direccion":0,"type":3},
+                        "4":{"hp":80,"velocidad":1,"tamaño":4,"direccion":0,"type":4}}
+    
+    
+    figure = Figure_infantry(id_game= game_id, id_user= user_id, 
+                            hp=diccionary_figure[entity_id]["hp"], 
+                            velocidad=diccionary_figure[entity_id]["velocidad"], 
+                            tamaño=diccionary_figure[entity_id]["tamaño"], 
+                            direccion=diccionary_figure[entity_id]["direccion"], 
+                            pos_x=position_X, 
+                            pos_y=position_Y, 
+                            type=diccionary_figure[entity_id]["type"])
+
+    if(game.id_user2 == int(user_id)):
+        figure.direccion = 4 
+
     if(figure):
         db.session.add(figure)
         db.session.commit()
+    else:
+        figure = None
     
     return figure
 
@@ -107,48 +117,89 @@ def intersection(coord1, coords2):
 #Primero busca en la tabla Figura el personaje del usuario.
 #Luego pregunta si la direccion que quiere disparar es verdadero o no.
 #Si el disparo se puede realizar, pregunta cual es la figure y dependiendo cual es crea su respectivo proyectil. 
-def shoot(user_id,game_id, direction):
+def shoot(user_id, game_id, direccion):
 
     figure = Figure_infantry.query.filter_by(id_game= game_id, id_user= user_id).first()
-    
-    if(figure_valid(figure, direction, game_id)):
+
+    if(figure_valid(figure, game_id, direccion)):
+
         return True
     else:
         return False
 
-#Este metodo verifica si la firura es valida.
-def figure_valid(figure, direction, game_id):
-    aux = copy.copy(figure)
-    pos = direc(direction, aux.pos_x, aux.pos_y)
-    pos = (aux.pos_x + (aux.pos_x - pos[0]), aux.pos_y + (aux.pos_y - pos[1]))
-    is_valid = True
-    if figure.figure_type == SOLDIER:
-        #Proyectil delantero del soldado
-        projectile1 = Projectile(id_game= game_id, pos_x=pos[0], pos_y=pos[1], velocidad=0, daño=5, direccion= direction, type = MACHINE_GUN)
-        db.session.add(projectile1)
-        pos = direc(direction, pos[0], pos[1])
-        pos = (aux.pos_x + (aux.pos_x - pos[0]), aux.pos_y + (aux.pos_y - pos[1]))
-        projectile2 = Projectile(id_game= game_id, pos_x=pos[0], pos_y=pos[1], velocidad=0, daño=2, direccion= direction, type=MACHINE_GUN)
-        db.session.add(projectile2)
-        pos = direc(direction, pos[0], pos[1])
-        pos = (aux.pos_x + (aux.pos_x - pos[0]), aux.pos_y + (aux.pos_y - pos[1]))
-        projectile3 = Projectile(id_game= game_id, pos_x=pos[0], pos_y=pos[1], velocidad=0, daño=1, direccion= direction, type=MACHINE_GUN)
-        db.session.add(projectile3)
-    elif(figure.figure_type == HUMVEE):
-        projectile = Projectile(id_game= game_id, pos_x=pos[0] , pos_y=pos[1], velocidad=5, daño=5, direccion= direction, type=MISSILE)
-        db.session.add(projectile)
-    elif(figure.figure_type == TANK):
-        projectile = Projectile(id_game= game_id, pos_x=pos[0], pos_y=pos[1], velocidad=3, daño=15, direccion= direction, type=MISSILE)
-        db.session.add(projectile)
-    elif(figure.figure_type == ARTILLERY):
-        projectile = Projectile(id_game= game_id, pos_x=pos[0], pos_y=pos[1], velocidad=20, daño=30, direccion= direction, type=MORTAR)
-        db.session.add(projectile)
-    else:
-        is_valid = False
-    db.session.commit()
-    return is_valid
+#Este metodo es la creacion para los proyectiles
+def figure_valid(figure, game_id, direccion):
 
-           
+    diccionary_projectile1 = {1:{"velocidad":0,"daño":5},
+                              2:{"velocidad":0,"daño":2},
+                              3:{"velocidad":0,"daño":1}}
+
+    diccionary_projectile2 = {2:{"velocidad":5,"daño":5},
+                              3:{"velocidad":3,"daño":15},
+                              4:{"velocidad":20,"daño":30}}
+    
+    y = 1
+    if(figure.figure_type == 1):
+        while y != 4:
+            projectile = Projectile(id_game= game_id, 
+                                    pos_x=0, 
+                                    pos_y=0, 
+                                    velocidad=diccionary_projectile1[y]["velocidad"], 
+                                    daño=diccionary_projectile1[y]["daño"], 
+                                    direccion= direccion)
+            direction_of_projectile(figure, projectile, direccion)
+            db.session.add(projectile)
+            db.session.commit()
+            figure.pos_x = projectile.pos_x
+            figure.pos_y = projectile.pos_y
+            y = y + 1
+        return True
+    else:
+        projectile = Projectile(id_game= game_id, 
+                                pos_x=0, 
+                                pos_y=0, 
+                                velocidad=diccionary_projectile2[figure.figure_type]["velocidad"], 
+                                daño=diccionary_projectile2[figure.figure_type]["daño"], 
+                                direccion= direccion)
+        direction_of_projectile(figure, projectile, direccion)
+        db.session.add(projectile)
+        db.session.commit()
+        return True
+        
+    return False
+
+#Este metodo toma la figura y el proyectil.
+#Setea las posiciones x e y para la creacion de los proyectiles
+def direction_of_projectile(figure, projectile, direccion):
+    print(direccion)
+    if(direccion == 0):
+        projectile.pos_x = figure.pos_x + COORDS[direccion+4][0]
+        projectile.pos_y = figure.pos_y + COORDS[direccion+4][1]
+    elif(direccion == 1):
+        projectile.pos_x = figure.pos_x + COORDS[direccion+2][0]
+        projectile.pos_y = figure.pos_y + COORDS[direccion+2][1]
+    elif(direccion == 2):
+        projectile.pos_x = figure.pos_x + COORDS[direccion][0]
+        projectile.pos_y = figure.pos_y + COORDS[direccion][1]
+    elif(direccion == 3):
+        projectile.pos_x = figure.pos_x + COORDS[direccion-2][0]
+        projectile.pos_y = figure.pos_y + COORDS[direccion-2][1]
+    elif(direccion == 4):
+        projectile.pos_x = figure.pos_x + COORDS[direccion-4][0]
+        projectile.pos_y = figure.pos_y + COORDS[direccion-4][1]
+    elif(direccion == 5):
+        projectile.pos_x = figure.pos_x + COORDS[direccion+2][0]
+        projectile.pos_y = figure.pos_y + COORDS[direccion+2][1]
+    elif(direccion == 6):
+        projectile.pos_x = figure.pos_x + COORDS[direccion][0]
+        projectile.pos_y = figure.pos_y + COORDS[direccion][1]
+    elif(direccion == 7):
+        projectile.pos_x = figure.pos_x + COORDS[direccion-2][0]
+        projectile.pos_y = figure.pos_y + COORDS[direccion-2][1]
+
+    return projectile
+
+    
 def create_game(user_id):
     global queue_turn
     game = Game_Infantry(id_user1= user_id, id_user2= None)
@@ -464,3 +515,6 @@ def intersec_Projectile_all(game_id):
 def update(game_id):
     pos = intersec_Projectile_all(game_id)
     return True
+
+
+
