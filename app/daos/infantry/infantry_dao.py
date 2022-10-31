@@ -324,6 +324,9 @@ def move_projecile(projectile_id, game_id, direction):
         projectile.pos_y = projectile.pos_y + (projectile.pos_y - pos[1])
         if damage_Projectile(projectile, figures): 
             move = False
+        elif damage_Projectile(projectile, figures): 
+            move = False
+        db.session.delete(projectile)    
     if move :
         db.session.query(Projectile).filter(
             Projectile.id == projectile_id, Projectile.id_game == game_id).update(
