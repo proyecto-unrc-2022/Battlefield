@@ -24,10 +24,10 @@ def add_figure(game_id, user_id ,entity_id, position_X, position_Y):
     game = db.session.query(Game_Infantry).filter_by(id = game_id).first()
 
 
-    diccionary_figure = {"1":{"hp":10,"velocidad":3,"tamaño":1,"direccion":0,"type":1},
-                        "2":{"hp":20,"velocidad":5,"tamaño":2,"direccion":1,"type":2},
-                        "3":{"hp":50,"velocidad":2,"tamaño":3,"direccion":0,"type":3},
-                        "4":{"hp":80,"velocidad":1,"tamaño":4,"direccion":0,"type":4}}
+    diccionary_figure = {"1":{"hp":10,"velocidad":3,"tamaño":1,"direccion":0,"type":SOLDIER},
+                        "2":{"hp":20,"velocidad":5,"tamaño":2,"direccion":1,"type":HUMVEE},
+                        "3":{"hp":50,"velocidad":2,"tamaño":3,"direccion":0,"type":TANK},
+                        "4":{"hp":80,"velocidad":1,"tamaño":4,"direccion":0,"type":ARTILLERY}}
     
     
     figure = Figure_infantry(id_game= game_id, id_user= user_id, 
@@ -139,14 +139,15 @@ def figure_valid(figure, game_id, direccion):
                               4:{"velocidad":20,"daño":30}}
     
     y = 1
-    if(figure.figure_type == 1):
+    if(figure.figure_type == SOLDIER):
         while y != 4:
             projectile = Projectile(id_game= game_id, 
                                     pos_x=0, 
                                     pos_y=0, 
                                     velocidad=diccionary_projectile1[y]["velocidad"], 
                                     daño=diccionary_projectile1[y]["daño"], 
-                                    direccion= direccion)
+                                    direccion= direccion,
+                                    type=MACHINE_GUN)
             direction_of_projectile(figure, projectile, direccion)
             db.session.add(projectile)
             db.session.commit()
@@ -160,7 +161,8 @@ def figure_valid(figure, game_id, direccion):
                                 pos_y=0, 
                                 velocidad=diccionary_projectile2[figure.figure_type]["velocidad"], 
                                 daño=diccionary_projectile2[figure.figure_type]["daño"], 
-                                direccion= direccion)
+                                direccion= direccion,
+                                type=MISSILE)
         direction_of_projectile(figure, projectile, direccion)
         db.session.add(projectile)
         db.session.commit()
