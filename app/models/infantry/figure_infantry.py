@@ -21,13 +21,12 @@ class Figure_infantry(db.Model):
     pos_y = db.Column(db.Integer, nullable=False)
     figure_type = db.Column(db.Integer, nullable=False)
     
-    #Foreign key
     game = relationship("Game_Infantry", foreign_keys=[id_game])
     user = relationship("User", foreign_keys=[id_user])
     
     def __init__(self, id_user=None, id_game=None, hp=None, velocidad=None, tamaño=None, direccion=None, pos_x=None, pos_y=None, type=None):
-        self.id_user = id_user #game.user_1 preguntar como pasar  
-        self.id_game = id_game #game preguntar como pasar 
+        self.id_user = id_user  
+        self.id_game = id_game 
         self.hp = hp
         self.velocidad = velocidad
         self.tamaño = tamaño
