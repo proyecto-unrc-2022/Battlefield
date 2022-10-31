@@ -126,7 +126,7 @@ class Battlefield:
         self.flying_objects.append(fly_obj)
         return fly_obj
 
-    def move_projectile(self, player, course):
+    def move_projectile(self, player):
         obj = list(
             filter(
                 lambda x: x.player == player
@@ -135,6 +135,7 @@ class Battlefield:
             )
         )
         for n in range(len(obj)):
+            course = obj[n].course
             if course == 2 or course == 4:
                 tupl = self.collision_x_projectile(obj[n], course)
                 if tupl != ():
