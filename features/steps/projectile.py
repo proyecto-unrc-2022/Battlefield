@@ -78,7 +78,8 @@ def step_impl(context):
         data=json.dumps(body),
         headers=headers,
     )
-    assert context.page
+    print(context.page)
+    assert context.page.status_code == 200
 
 
 @when("player_b add his plane")
@@ -131,6 +132,7 @@ def step_impl(context):
         {"course": 3, "flying_obj": 1, "player": "1", "x": 5, "y": 6},
         {"course": 2, "flying_obj": 2, "player": "2", "x": 16, "y": 5},
     ]
+    print(raw_response)
     assert raw_expected == raw_response
 
 
