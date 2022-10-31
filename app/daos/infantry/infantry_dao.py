@@ -1,5 +1,4 @@
 from math import fabs
-from pickle import TRUE
 from telnetlib import GA
 from app import db
 from app.models.user import Profile
@@ -9,10 +8,12 @@ from ...models.infantry.game_Infantry import Game_Infantry
 from ...models.infantry.projectile_infantry import Projectile
 from ...models.user import User
 from .constant import *
+import queue
+
+
+
 import copy
-
-
-
+queue_turn = None
 def add_figure(game_id, user_id ,entity_id, position_X, position_Y):
 
     game = db.session.query(Game_Infantry).filter_by(id = game_id).first()
@@ -53,10 +54,7 @@ def move(game_id, user_id, direction, velocity):
     is_valid = True
     figures = figures_id_game(game_id)
     figure = db.session.query(Figure_infantry).filter_by(id_user = user_id, id_game = game_id).first()
-    game = Game_Infantry.query.filter_by(id = game_id).first()
-    user_1 = game.user_1
-    user_2 = game.user_2
-    user_opponent = user_1 if user_1.id != figure.id else user_2
+    user_opponent = find_opponent(game_id, figure.id)
     figure_opponent = Figure_infantry.query.filter_by(id_user = user_opponent.id, id_game = game_id).first()
     aux_figure = copy.copy(figure)
     exceeded_velocity_limit = (velocity > figure.velocidad)
@@ -79,6 +77,22 @@ def move(game_id, user_id, direction, velocity):
                 {'hp' :  figure_opponent.hp - figure.hp})
     db.session.commit()
     return is_valid and not(exceeded_velocity_limit)
+
+def find_opponent(game_id, user_id):
+    """Encuentra el oponente de la id de la figura dada por parametro
+
+    Args:
+        game_id (int): id del juego para buscar el oponente
+        user_id (int): la id de la figura a la que se quiere encontrar el oponente
+
+    Returns:
+        int: id del oponente
+    """
+    game = Game_Infantry.query.filter_by(id = game_id).first()
+    user_1 = game.user_1
+    user_2 = game.user_2
+    user_opponent = user_1 if user_1.id != user_id else user_2
+    return user_opponent
 
 
 def intersection(coord1, coords2):
@@ -136,35 +150,88 @@ def figure_valid(figure, direction, game_id):
 
            
 def create_game(user_id):
-
-    game = Game_Infantry(id_user1= user_id, id_user2= None, turn= user_id)
+    global queue_turn
+    game = Game_Infantry(id_user1= user_id, id_user2= None)
     db.session.add(game)
     db.session.commit()
+    queue_turn = queue.Queue()
+    queue_turn.put(user_id)
     return game  
 
 def join(game_id, user_id):
-    
+    global queue_turn
     game = db.session.query(Game_Infantry).filter_by(id = game_id).first()
-
     if (game != None and game.id_user2 == None):
-
-        #game = db.session.query(Game_Infantry).get(game_id)
         game.id_user2 = user_id
         db.session.add(game)
         db.session.commit()
+        queue_turn.put(user_id)
         return True
     
     return False
 
-#Tira error 500 cuando entra al
-def ready(game_id):
+def ready(game_id, user_id):
+    """Verifica que ambos jugadores esten listos para jugar antes de empezar la partida
 
-    if((db.session.query(Game_Infantry).get(game_id).id_user1 != None) or (db.session.query(Game_Infantry).get(game_id).id_user2 != None)):
-        return True
-    
-    
-    return False
+    Args:
+        game_id (int): id del game al que se jugara
+        user_id (int): id del usuario que marco que ya esta listo para jugar
 
+    Returns:
+        bool: si ambos jugadores estan listos para jugar retorna True
+    """
+    global queue_turn
+    is_players_ready = False
+    game = Game_Infantry.query.filter_by(id = game_id).first()
+    if game.turn == None :
+        turn_list = queue_turn.queue
+        if (user_id in turn_list) and len(turn_list) > 0:
+            turn_list.remove(user_id)
+            queue_turn.queue = queue.deque(turn_list)
+        if len(turn_list) == 0: 
+            queue_turn = queue.Queue()
+            game.turn = game.id_user1
+            next_turn(game)
+    if game.turn != None: is_players_ready = True
+    return is_players_ready
+
+def next_turn(game):
+    """Avanza el turno solo si LA RONDA NO A TERMINADO,
+    cuando la ronda termina, se crea de nuevo 2 turnos donde se respeta el orden
+    explicado en la narrativa. Ej:
+    1° ronda:
+        next_turn(game_id) (llamada 1) - 1° turno: user1
+        next_turn(game_id) (llamada 2) - 2° turno: user2
+        next_turn(game_id) (llamada 3) - retrona True
+    2° ronda:
+        next_turn(game_id) (llamada 4) - 1° turno: user2
+        next_turn(game_id) (llamada 5) - 2° turno: user1
+        next_turn(game_id) (llamada 6) - retrona True
+    Args:
+        game (Game_Infantry): game en el que se quiere avanzar el turno
+
+    Returns:
+        bool: True si la ronda termino, False si la ronda aun no termino y avanza el turno
+    """
+    global queue_turn
+    round = False
+    if queue_turn == None and game.turn != None: #Este caso es por si el servidor se reinicia, pueda retomar los turnos
+        queue_turn = Queue() 
+        queue_turn.put(game.turn)
+    if queue_turn.empty():
+        queue_turn.put(game.turn)
+        queue_turn.put(find_opponent(game.id, User.query.filter_by(id = game.turn).first().id).id)
+        round = True
+        db.session.query(Game_Infantry).filter(
+            Game_Infantry.id == game.id).update(
+                {'turn' :  game.turn})
+    else: 
+        available_action = 1
+        db.session.query(Game_Infantry).filter(
+            Game_Infantry.id == game.id).update(
+                {'turn' :  queue_turn.get()})
+    db.session.commit()
+    return round
 
 def move_projecile(projectile_id, game_id, direction):
     """Mueve el proyectil, y si colisiona se destruye
