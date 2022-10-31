@@ -84,6 +84,7 @@ def choose_plane_and_position():
 def fligth(id, player, course):
     game = air_force_game[int(id)]
     try:
+        print(game.new_commands)
         game.battlefield.check_course(course, player)
         command = MovePlane(course, player, game)
         game.add_command(command, player)
@@ -143,8 +144,8 @@ def create_projectile(id, player):
     command = LaunchProjectile(player, game)
 
     try:
-        dic = game.execute(command)
-        return jsonify(dic.to_dict())
+        game.add_command(command, player)
+        return Response(status=200)  # jsonify(dic.to_dict())
     except:
         return Response(status=400)
 
