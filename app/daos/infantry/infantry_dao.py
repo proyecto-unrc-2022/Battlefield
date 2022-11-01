@@ -1,4 +1,3 @@
-from math import fabs
 from telnetlib import GA
 from app import db
 from app.models.user import Profile
@@ -16,18 +15,13 @@ import copy
 queue_turn = None
 def add_figure(game_id, user_id ,entity_id, position_X, position_Y):
     
-    succes = validation_position(game_id, user_id, position_X, position_Y)
-
-    if(not(succes)):
-        return None
-
     game = db.session.query(Game_Infantry).filter_by(id = game_id).first()
 
 
-    diccionary_figure = {"1":{"hp":10,"velocidad":3,"tamaño":1,"direccion":0,"type":SOLDIER},
-                        "2":{"hp":20,"velocidad":5,"tamaño":2,"direccion":1,"type":HUMVEE},
-                        "3":{"hp":50,"velocidad":2,"tamaño":3,"direccion":0,"type":TANK},
-                        "4":{"hp":80,"velocidad":1,"tamaño":4,"direccion":0,"type":ARTILLERY}}
+    diccionary_figure = {1:{"hp":10,"velocidad":3,"tamaño":1,"direccion":0,"type":SOLDIER},
+                        2:{"hp":20,"velocidad":5,"tamaño":2,"direccion":1,"type":HUMVEE},
+                        3:{"hp":50,"velocidad":2,"tamaño":3,"direccion":0,"type":TANK},
+                        4:{"hp":80,"velocidad":1,"tamaño":4,"direccion":0,"type":ARTILLERY}}
     
     
     figure = Figure_infantry(id_game= game_id, id_user= user_id, 
@@ -38,6 +32,11 @@ def add_figure(game_id, user_id ,entity_id, position_X, position_Y):
                             pos_x=position_X, 
                             pos_y=position_Y, 
                             type=diccionary_figure[entity_id]["type"])
+    
+    succes = validation_position(game_id, user_id, figure)
+
+    if(not(succes)):
+        return None
 
     if(game.id_user2 == int(user_id)):
         figure.direccion = 4 
@@ -50,6 +49,26 @@ def add_figure(game_id, user_id ,entity_id, position_X, position_Y):
     
     return figure
 
+def validation_position(game_id, user_id, object):
+
+    succes = False
+
+    game = db.session.query(Game_Infantry).filter_by(id = game_id).first()
+
+    if(game.id_user1 == int(user_id)):
+        if(0 <= object.pos_x <= 9 and 0 <= object.pos_y <= 10):
+            
+            succes = True
+
+    if(game.id_user2 == int(user_id)):
+        if(11 <= object.pos_x <= 20 and 0 <= object.pos_y <= 10):
+            
+            succes = True
+
+    if(game.id_user2 == int(user_id)):
+        object.direccion = 2
+
+    return succes
 
 def move(game_id, user_id, direction, velocity):
     """Dado un user_id, una direccion y una velocidad, mueva su respectiva unidad en el juego
@@ -86,6 +105,7 @@ def move(game_id, user_id, direction, velocity):
             Figure_infantry.id_user == user_id, Figure_infantry.id_game == game_id).update(
                 {'hp' :  figure_opponent.hp - figure.hp})
     db.session.commit()
+    reduce_action(figure.id)
     return is_valid and not(exceeded_velocity_limit)
 
 def find_opponent(game_id, user_id):
@@ -120,9 +140,8 @@ def intersection(coord1, coords2):
 def shoot(user_id, game_id, direccion):
 
     figure = Figure_infantry.query.filter_by(id_game= game_id, id_user= user_id).first()
-
     if(figure_valid(figure, game_id, direccion)):
-
+        reduce_action(figure.id)
         return True
     else:
         return False
@@ -237,7 +256,7 @@ def ready(game_id, user_id):
     is_players_ready = False
     game = Game_Infantry.query.filter_by(id = game_id).first()
     if game.turn == None :
-        turn_list = queue_turn.queue
+        turn_list = list(queue_turn.queue)
         if (user_id in turn_list) and len(turn_list) > 0:
             turn_list.remove(user_id)
             queue_turn.queue = queue.deque(turn_list)
@@ -268,18 +287,34 @@ def next_turn(game):
     """
     global queue_turn
     round = False
-    if queue_turn == None and game.turn != None: #Este caso es por si el servidor se reinicia, pueda retomar los turnos
-        queue_turn = Queue() 
-        queue_turn.put(game.turn)
+    figure_user1 = Figure_infantry.query.filter_by(id = game.id_user1).first()
+    figure_user2 = Figure_infantry.query.filter_by(id = game.id_user2).first()
+    if queue_turn == None and game.turn != None:
+        #Este caso es por si el servidor se reinicia, pueda retomar los turnos 
+        queue_turn = queue.Queue()
+        if figure_user1.avail_action == 1 and figure_user1.avail_action == 1:
+            queue_turn.put(game.turn)
+            queue_turn.put(find_opponent(game.id, User.query.filter_by(id = game.turn).first().id).id)
+        elif figure_user1.avail_action == 1:
+            queue_turn.put(figure_user1.id)
+        elif figure_user2.avail_action == 1:
+            queue_turn.put(figure_user2.id)
     if queue_turn.empty():
+        #Cuando ya no hay mas turnos en la ronda
         queue_turn.put(game.turn)
         queue_turn.put(find_opponent(game.id, User.query.filter_by(id = game.turn).first().id).id)
         round = True
+        db.session.query(Figure_infantry).filter(
+            Figure_infantry.id_user == figure_user1.id, Figure_infantry.id_game == game.id).update(
+                {'avail_actions' : 1})
+        db.session.query(Figure_infantry).filter(
+            Figure_infantry.id_user == figure_user2.id, Figure_infantry.id_game == game.id).update(
+                {'avail_actions' : 1})
         db.session.query(Game_Infantry).filter(
             Game_Infantry.id == game.id).update(
                 {'turn' :  game.turn})
-    else: 
-        available_action = 1
+    else:
+        #Cuando falta algun turno en la ronda 
         db.session.query(Game_Infantry).filter(
             Game_Infantry.id == game.id).update(
                 {'turn' :  queue_turn.get()})
@@ -333,6 +368,7 @@ def move_projecile(projectile_id, game_id, direction):
                 {'pos_x' :  projectile.pos_x, 'pos_y' : projectile.pos_y, 'direccion' : direction})
         db.session.commit()
     return move
+
 
 def projectile_collision(projectile, game_id):
     """detecta si el proyectil dado se colisiona con los del resto del juego y los
@@ -430,28 +466,6 @@ def damage_projectile(projectile_id):
         db.session.query(Projectile).filter_by(id= other_projectile).destroy
         db.session.query(Projectile).filter_by(id= projectile_id).destroy
 
-def validation_position(game_id, user_id, object):
-
-    succes = False
-
-    game = db.session.query(Game_Infantry).filter_by(id = game_id).first()
-
-    if(game.id_user1 == int(user_id)):
-        if(0 <= object.pos_x <= 9 and 0 <= object.pos_y <= 10):
-            
-            succes = True
-
-    if(game.id_user2 == int(user_id)):
-        if(11 <= object.pos_x <= 20 and 0 <= object.pos_y <= 10):
-            
-            succes = True
-
-    if(game.id_user2 == int(user_id)):
-        object.direccion = 2
-
-    return succes
-
-
 def direc(dir, pos_x, pos_y):
 
     if dir in COORDS:
@@ -516,8 +530,40 @@ def intersec_Projectile_all(game_id):
             pos = damage_Projectile(projectile_all[i], figures)
     return pos
 
+def is_your_turn(game_id, user_id):
+    """Indica si es su turno
+
+    Args:
+        game_id (int): id del game en el que se vera si es su turno
+        user_id (int): id del user en el que se vera si es su turno
+
+    Returns:
+        bool: True si es el turno de ese user, False si no es su turno 
+    """
+    figure = Figure_infantry.query.filter_by(id_game = game_id, id_user = user_id).first()
+    game = Game_Infantry.query.filter_by(id = game_id).first()
+    is_your_turn = True
+    if figure.avail_actions == 0 or game.turn != user_id: is_your_turn = False
+    return is_your_turn
+
+def reduce_action(figure_id):
+    """Reduce la acciones disponibles de una fiura
+
+    Args:
+        figure_id (int): figura a la que se le reducira la accion
+    """
+    db.session.query(Figure_infantry).filter(
+            Figure_infantry.id_user == figure_id).update(
+                {'avail_actions' : 0})
+    db.session.commit()
+    
 
 def update(game_id):
+    #if next_turn and not(game_over):
+        #update_proyectile() #misiles y morteros 1°
+        #update_machine_gun() #ametralladora 2°
+        #update_first_player() #posicion y/o creacion de proyectiles 3°
+        #update_second_player() #posicion y/o creacion de proyectiles 4°
     pos = intersec_Projectile_all(game_id)
     return True
 
