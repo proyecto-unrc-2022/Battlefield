@@ -14,6 +14,7 @@ class NavyUtils:
     ZERO, ONE = 0, 1
     ROWS, COLS = 10, 20
     TRUE, FALSE = 1, 0
+    CANT_PLAYERS = 2
     INVERSE_COORDS = {
         "N": "S",
         "S": "N",
@@ -51,6 +52,14 @@ class NavyUtils:
         if self.free_valid_poisition(next_x, next_y, navy_game_id):
             return next_x, next_y
         return None
+
+    def get_user_id_from_header(self, header):
+        import jwt
+
+        from app import secret_token
+
+        decoded_jwt = jwt.decode(header.split()[1], secret_token, algorithms=["HS256"])
+        return decoded_jwt["sub"]
 
     # ---------- END OF CLASS METHODS --------- #
 

@@ -1,37 +1,40 @@
 from app import db
-from app.models.user import User
+from app.daos.user_dao import get_user_by_id
 from app.underwater.models.under_game import UnderGame
-from app.underwater.under_board import UnderBoard
 
-from .. import boards
+# from app.underwater.session import sessions
+# from app.underwater.session.under_game_session import UnderGameSession
+
+game_cache = {}
 
 
 class UnderGameDAO:
     def __init__(self, model):
         self.model = model
 
-    def create(self, host_id, visitor_id=None, height=10, width=20):
-        if db.session.query(User).where(User.id == host_id) == None:
-            return None
+    def create(self, host, visitor=None, height=10, width=20):
+        if host.under_game_host or host.under_game_visitor:
+            raise Exception("User of id %s is in another game" % host.id)
 
-        host = db.session.get(User, host_id)
-        if host.under_game_host != [] or host.under_game_visitor != []:
-            raise Exception("User of id %s is in another game" % host_id)
+        game = UnderGame(host=host, visitor=visitor, height=height, width=width)
 
-        game = UnderGame(host_id=host_id, height=height, width=width)
-        game.board.id = game.id
-        if visitor_id:
-            if db.session.query(User).where(User.id == visitor_id) == None:
-                return None
-            game.visitor_id = visitor_id
+        self.save(game)
 
-        db.session.add(game)
-        db.session.commit()
-        boards.update({game.id: game.board})
+        game.build_board()
+
+        game_cache.update({game.id: game})
         return game
 
     def get_by_id(self, game_id):
-        return db.session.get(UnderGame, game_id)
+        if game_id in game_cache.keys():
+            game = game_cache[game_id]
+        else:
+            game = db.session.get(self.model, game_id)
+            if game:
+                game.build_board()
+
+        db.session.add(game)
+        return game
 
     def save(self, game):
         db.session.add(game)

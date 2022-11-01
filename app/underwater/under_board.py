@@ -2,13 +2,20 @@ from app.underwater.models.submarine import Submarine
 
 
 class UnderBoard:
-    def __init__(self, id, height=10, width=20):
-        self.id = id
+    def __init__(self, height=10, width=20):
         self.height = height
         self.width = width
         self.matrix = []
-        for i in range(height):
+        for _ in range(height):
             self.matrix.append([None] * width)
+
+    @staticmethod
+    def build_from(game):
+        board = UnderBoard(height=game.get_height(), width=game.get_width())
+        for obj in game.submarines + game.torpedos:
+            for (x, y) in obj.get_positions():
+                board.matrix[x][y] = obj
+        return board
 
     def valid(self, p):
         x, y = p
@@ -18,9 +25,6 @@ class UnderBoard:
         x, y = pos
         if not self.valid(pos):
             raise Exception("Invalid coordinates (%s,%s)" % (x, y))
-        # if self.matrix[x][y]:
-        #     raise Exception("Position (%s,%s) is not available" % (x, y))
-
         self.matrix[x][y] = obj
 
     def place_object(self, obj):
@@ -62,30 +66,36 @@ class UnderBoard:
 
     def __str__(self):
         m = self.matrix
-        h = len(m)
-        w = len(m[0])
+        h = self.height
+        w = self.width
 
-        print("-" * (w * 4 + 1))
+        str = ""
+        str += "-" * (w * 4 + 1) + "\n"
         for i in range(h):
-            print("|", end="")
+            str += "|"
             for j in range(w):
                 if self.matrix[i][j]:
                     o = self.matrix[i][j]
                     if (o.x_position, o.y_position) == (i, j):
                         if type(o) is Submarine:
-                            print(" %s |" % o.player_id, end="")
+                            str += " %s |" % o.player.id
                         else:
-                            print(" * |", end="")
+                            str += " * |"
                     else:
-                        print(" 0 |", end="")
+                        str += " 0 |"
                 else:
-                    print("   |", end="")
-            print("")
-        print("-" * (w * 4 + 1))
+                    str += "   |"
+            str += "\n"
+        str += ("-" * (w * 4 + 1)) + "\n"
+        return str
 
     def objects_in_positions(self, pos_list):
         ret_list = []
         for (x, y) in pos_list:
-            if self.valid((x, y)) and self.matrix[x][y]:
+            if (
+                self.valid((x, y))
+                and self.matrix[x][y]
+                and self.matrix[x][y] not in ret_list
+            ):
                 ret_list.append(self.matrix[x][y])
-        return None if ret_list == [] else ret_list
+        return ret_list
