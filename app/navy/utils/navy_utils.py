@@ -52,6 +52,14 @@ class NavyUtils:
             return next_x, next_y
         return None
 
+    def get_user_id_from_header(self, header):
+        import jwt
+
+        from app import secret_token
+
+        decoded_jwt = jwt.decode(header.split()[1], secret_token, algorithms=["HS256"])
+        return decoded_jwt["sub"]
+
     # ---------- END OF CLASS METHODS --------- #
 
 
