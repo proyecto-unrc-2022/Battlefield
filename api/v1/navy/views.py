@@ -103,3 +103,11 @@ def delete_navy_game(id):
         ).to_json(),
         200,
     )
+
+
+@navy.get("/navy_active_games")
+@token_auth.login_required
+def get_navy_active_games():
+    games = navy_game_service.get_active_games()
+    json_games = list(map(lambda game: NavyGameDTO().dump(game), games))
+    return NavyResponse(status=200, data=json_games, message="Ok").to_json(), 200

@@ -6,6 +6,7 @@ from app.navy.utils.navy_utils import utils
 
 class ShipService:
     SHIP_NAMES = ["Destroyer", "Cruiser", "Battleship", "Corvette"]
+    SHIP_SIZES = [3, 3, 4, 2]
 
     def validate_request(self, request):
         from app.navy.validators.ship_request_validator import ShipRequestValidator
@@ -75,8 +76,7 @@ class ShipService:
         from app.navy.services.navy_game_service import navy_game_service
 
         self.delete_from_board(ship)
-
-        for _ in range(action.move):
+        for _ in range(int(action.move)):
             x, y = utils.get_next_position(ship.pos_x, ship.pos_y, ship.course)
             if utils.out_of_bounds(x, y):
                 self.load_to_board(ship)
