@@ -95,20 +95,14 @@ def choose_submarine(game_id, player_id):
     if not player:
         return Response("{'error':'player not found'}", status=404)
 
-    try:
-        sub = game.add_submarine(
-            player,
-            data["submarine_id"],
-            data["x_position"],
-            data["y_position"],
-            data["direction"],
-        )
-        if sub:
-            db.session.add(sub)
-    except Exception as e:
-        return Response("{'error': %s}" % str(e), status=409)
-
-    submarine_dao.save(sub)
+    sub = game.add_submarine(
+        player,
+        data["submarine_id"],
+        data["x_position"],
+        data["y_position"],
+        data["direction"],
+    )
+    game_dao.save(game)
 
     return "{'success': submarine placed}"
 
@@ -186,8 +180,8 @@ def update_game(game):
     if game_session.everyone_moved():
         game_session.execute_commands()
         game_session.invert_order()
-        for torpedo in game.get_torpedos():
-            torpedo.save()
+        for torpedo in game.torpedos:
             game_session.add_command(AdvanceTorpedo(torpedo))
     else:
         game_session.next_turn()
+    game_dao.save(game)

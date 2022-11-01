@@ -34,8 +34,7 @@ def step_impl(context):
         y = int(row["y_position"])
         d = int(row["direction"])
         sub = context.game.add_submarine(player, option_id, x, y, d)
-        sub.set_health(int(row["health"]))
-        submarine_dao.save(sub)
+        sub.health = int(row["health"])
 
 
 @given("the board is in the following state")
@@ -96,8 +95,8 @@ def step_impl(context):
 
 def compare_board(context):
     board = context.game.board.matrix
-    for i in range(context.game.get_height()):
-        for j in range(context.game.get_width()):
+    for i in range(context.game.height):
+        for j in range(context.game.width):
             if context.table[i][j] == "H":
                 assert (
                     type(board[i][j]) is Submarine

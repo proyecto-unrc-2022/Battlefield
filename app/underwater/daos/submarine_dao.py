@@ -1,11 +1,11 @@
 from app import db
-from app.underwater.models import Submarine
+from app.underwater.models.submarine import Submarine
 
 from .submerged_object_dao import SubmergedObjectDAO
 
 
 class SubmarineDAO(SubmergedObjectDAO):
-    def create_submarine(
+    def create(
         self,
         game_id,
         player_id,
@@ -14,7 +14,7 @@ class SubmarineDAO(SubmergedObjectDAO):
         y_position=None,
         direction=None,
     ):
-        sub = self.Submarine(game_id, player_id, stats)
+        sub = Submarine(game_id, player_id, stats)
         sub.x_position = x_position
         sub.y_position = y_position
         sub.direction = direction

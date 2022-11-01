@@ -7,7 +7,6 @@ class TorpedoLauncher:
         torpedo = Torpedo(
             game=sub.game,
             player=sub.player,
-            size=1,
             speed=sub.torpedo_speed,
             damage=sub.torpedo_damage,
         )

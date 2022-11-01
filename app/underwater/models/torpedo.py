@@ -20,7 +20,7 @@ class Torpedo(SubmergedObject):
     def __init__(self, game, player, **params):
         self.game = game
         self.player = player
-        self.size = params["size"]
+        self.size = 1
         self.speed = params["speed"]
         self.damage = params["damage"]
         if "x_position" in params.keys():
@@ -28,7 +28,7 @@ class Torpedo(SubmergedObject):
         if "y_position" in params:
             self.y_position = params["y_position"]
         if "direction" in params.keys():
-            self.x_position = params["direction"]
+            self.direction = params["direction"]
 
     def to_dict(self):
         dict = {

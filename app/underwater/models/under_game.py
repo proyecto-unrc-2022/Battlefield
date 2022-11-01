@@ -3,23 +3,21 @@ import json
 from sqlalchemy.orm import backref, relationship
 
 from app import db
-from app.models.user import User
-from app.underwater import boards
 from app.underwater.game_state import GameState
-from app.underwater.models.submarine import Submarine
-from app.underwater.models.submerged_object import SubmergedObject
-from app.underwater.models.torpedo import Torpedo
 from app.underwater.under_board import UnderBoard
 
 from ..daos.submarine_dao import submarine_dao
+from .submarine import Submarine
+from .submerged_object import SubmergedObject
+from .torpedo import Torpedo
 
 
 class UnderGame(db.Model):
     __tablename__ = "under_game"
     id = db.Column(db.Integer, primary_key=True)
 
-    host_id = db.Column(db.Integer, db.ForeignKey(User.id))
-    visitor_id = db.Column(db.Integer, db.ForeignKey(User.id))
+    host_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    visitor_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
     height = db.Column(db.Integer)
     width = db.Column(db.Integer)
@@ -37,7 +35,7 @@ class UnderGame(db.Model):
     )
 
     submarines = relationship("Submarine", back_populates="game")
-    torpedos = relationship("Torpedos", back_populates="game")
+    torpedos = relationship("Torpedo", back_populates="game")
 
     def __init__(self, host, visitor=None, height=10, width=20):
         self.host = host

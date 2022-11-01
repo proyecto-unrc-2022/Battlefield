@@ -1,5 +1,5 @@
 from app import db
-from app.underwater.models import SubmergedObject
+from app.underwater.models.submerged_object import SubmergedObject
 
 
 class SubmergedObjectDAO:

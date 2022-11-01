@@ -81,4 +81,4 @@ class SubmergedObject(db.Model):
         return self.x_position != None
 
     def in_game(self):
-        return self in self.game.submarines + self.game.torpedos
+        return self.game is not None
