@@ -23,7 +23,9 @@ def add_figure(game_id, user_id ,entity_id, position_X, position_Y):
                         3:{"hp":50,"velocidad":2,"tamaño":3,"direccion":2,"type":TANK},
                         4:{"hp":80,"velocidad":1,"tamaño":4,"direccion":2,"type":ARTILLERY}}
     
-    
+    if(int(entity_id) < 1 or int(entity_id) > 4):    
+        return None
+        
     figure = Figure_infantry(id_game= game_id, id_user= user_id, 
                             hp=diccionary_figure[entity_id]["hp"], 
                             velocidad=diccionary_figure[entity_id]["velocidad"], 
@@ -149,9 +151,9 @@ def shoot(user_id, game_id, direccion):
 #Este metodo es la creacion para los proyectiles
 def figure_valid(figure, game_id, direccion):
 
-    diccionary_projectile1 = {1:{"velocidad":0,"daño":5},
+    diccionary_projectile1 = {1:{"velocidad":0,"daño":1},
                               2:{"velocidad":0,"daño":2},
-                              3:{"velocidad":0,"daño":1}}
+                              3:{"velocidad":0,"daño":5}}
 
     diccionary_projectile2 = {2:{"velocidad":5,"daño":5},
                               3:{"velocidad":3,"daño":15},
@@ -194,29 +196,29 @@ def figure_valid(figure, game_id, direccion):
 def direction_of_projectile(figure, projectile, direccion):
     print(direccion)
     if(direccion == 0):
-        projectile.pos_x = figure.pos_x + COORDS[direccion+4][0]
-        projectile.pos_y = figure.pos_y + COORDS[direccion+4][1]
+        projectile.pos_x = figure.pos_x + COORDS_MISIL[direccion+4][0]
+        projectile.pos_y = figure.pos_y + COORDS_MISIL[direccion+4][1]
     elif(direccion == 1):
-        projectile.pos_x = figure.pos_x + COORDS[direccion+2][0]
-        projectile.pos_y = figure.pos_y + COORDS[direccion+2][1]
+        projectile.pos_x = figure.pos_x + COORDS_MISIL[direccion+2][0]
+        projectile.pos_y = figure.pos_y + COORDS_MISIL[direccion+2][1]
     elif(direccion == 2):
-        projectile.pos_x = figure.pos_x + COORDS[direccion][0]
-        projectile.pos_y = figure.pos_y + COORDS[direccion][1]
+        projectile.pos_x = figure.pos_x + COORDS_MISIL[direccion][0]
+        projectile.pos_y = figure.pos_y + COORDS_MISIL[direccion][1]
     elif(direccion == 3):
-        projectile.pos_x = figure.pos_x + COORDS[direccion-2][0]
-        projectile.pos_y = figure.pos_y + COORDS[direccion-2][1]
+        projectile.pos_x = figure.pos_x + COORDS_MISIL[direccion-2][0]
+        projectile.pos_y = figure.pos_y + COORDS_MISIL[direccion-2][1]
     elif(direccion == 4):
-        projectile.pos_x = figure.pos_x + COORDS[direccion-4][0]
-        projectile.pos_y = figure.pos_y + COORDS[direccion-4][1]
+        projectile.pos_x = figure.pos_x + COORDS_MISIL[direccion-4][0]
+        projectile.pos_y = figure.pos_y + COORDS_MISIL[direccion-4][1]
     elif(direccion == 5):
-        projectile.pos_x = figure.pos_x + COORDS[direccion+2][0]
-        projectile.pos_y = figure.pos_y + COORDS[direccion+2][1]
+        projectile.pos_x = figure.pos_x + COORDS_MISIL[direccion+2][0]
+        projectile.pos_y = figure.pos_y + COORDS_MISIL[direccion+2][1]
     elif(direccion == 6):
-        projectile.pos_x = figure.pos_x + COORDS[direccion][0]
-        projectile.pos_y = figure.pos_y + COORDS[direccion][1]
+        projectile.pos_x = figure.pos_x + COORDS_MISIL[direccion][0]
+        projectile.pos_y = figure.pos_y + COORDS_MISIL[direccion][1]
     elif(direccion == 7):
-        projectile.pos_x = figure.pos_x + COORDS[direccion-2][0]
-        projectile.pos_y = figure.pos_y + COORDS[direccion-2][1]
+        projectile.pos_x = figure.pos_x + COORDS_MISIL[direccion-2][0]
+        projectile.pos_y = figure.pos_y + COORDS_MISIL[direccion-2][1]
 
     return projectile
 
@@ -468,8 +470,8 @@ def damage_projectile(projectile_id):
 
 def direc(dir, pos_x, pos_y):
 
-    if dir in COORDS:
-        return (pos_x + COORDS[dir][0], pos_y + COORDS[dir][1])
+    if dir in COORDS_CUERPO:
+        return (pos_x + COORDS_CUERPO[dir][0], pos_y + COORDS_CUERPO[dir][1])
 
     return None
 
