@@ -18,10 +18,10 @@ def add_figure(game_id, user_id ,entity_id, position_X, position_Y):
     game = db.session.query(Game_Infantry).filter_by(id = game_id).first()
 
 
-    diccionary_figure = {1:{"hp":10,"velocidad":3,"tamaño":1,"direccion":0,"type":SOLDIER},
-                        2:{"hp":20,"velocidad":5,"tamaño":2,"direccion":1,"type":HUMVEE},
-                        3:{"hp":50,"velocidad":2,"tamaño":3,"direccion":0,"type":TANK},
-                        4:{"hp":80,"velocidad":1,"tamaño":4,"direccion":0,"type":ARTILLERY}}
+    diccionary_figure = {1:{"hp":10,"velocidad":3,"tamaño":1,"direccion":2,"type":SOLDIER},
+                        2:{"hp":20,"velocidad":5,"tamaño":2,"direccion":2,"type":HUMVEE},
+                        3:{"hp":50,"velocidad":2,"tamaño":3,"direccion":2,"type":TANK},
+                        4:{"hp":80,"velocidad":1,"tamaño":4,"direccion":2,"type":ARTILLERY}}
     
     
     figure = Figure_infantry(id_game= game_id, id_user= user_id, 
