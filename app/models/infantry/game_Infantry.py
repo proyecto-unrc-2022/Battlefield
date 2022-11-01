@@ -14,7 +14,7 @@ class Game_Infantry(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     id_user1 = db.Column(db.Integer, db.ForeignKey(User.id))
     id_user2 = db.Column(db.Integer, db.ForeignKey(User.id))   
-    turn = db.Column(db.Integer) 
+    turn = db.Column(db.Integer) #id del user
 
     #Foreign key
     user_1 = relationship("User", foreign_keys=[id_user1])
