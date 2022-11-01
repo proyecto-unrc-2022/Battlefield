@@ -58,13 +58,17 @@ Feature: game logic
     @air_force_game
     Scenario: Player_a move his plane in the same course
         Given a battlefield with player_a's plane 
+        Given a battlefield with player_b's plane 
         When player_a moves his plane in th same course
+        And player_b moves his plane in th same course
         Then 201 response code are returned
 
     @air_force_game
     Scenario: Player_a move his plane in new course
         Given a battlefield with player_a's plane 
+        Given a battlefield with player_b's plane 
         When player_a moves his plane in new valid course
+        And player_b moves his plane in new valid course
         Then 201 response code are returned
     
     @air_force_game

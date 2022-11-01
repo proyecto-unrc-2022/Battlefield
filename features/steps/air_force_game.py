@@ -272,7 +272,15 @@ def step_impl(context):
 def step_impl(context):
     players = context.client.get(url_for("air_force.get_players", id=0))
     players = players.json
-    context.player = players.get("player_a")
+    context.player_a = players.get("player_a")
+    context.plane = 1
+
+
+@given("a battlefield with player_b's plane")
+def step_impl(context):
+    players = context.client.get(url_for("air_force.get_players", id=0))
+    players = players.json
+    context.player_b = players.get("player_b")
     context.plane = 1
 
 
@@ -286,10 +294,25 @@ def step_impl(context):
         url_for(
             "air_force.fligth",
             id=0,
-            player=context.player,
+            player=context.player_a,
             course=context.course,
         )
     )
+    assert context.response.status_code is 201
+
+
+@when("player_b moves his plane in th same course")
+def step_impl(context):
+    print("a= ", context.player_a, "b", context.player_b)
+    context.response = context.client.put(
+        url_for(
+            "air_force.fligth",
+            id=0,
+            player=context.player_b,
+            course=4,
+        )
+    )
+    assert context.response.status_code is 201
 
 
 @when("player_a moves his plane in new valid course")
@@ -301,10 +324,24 @@ def step_impl(context):
         url_for(
             "air_force.fligth",
             id=0,
-            player=context.player,
+            player=context.player_a,
             course=1,
         )
     )
+    assert context.response.status_code is 201
+
+
+@when("player_b moves his plane in new valid course")
+def step_impl(context):
+    context.response = context.client.put(
+        url_for(
+            "air_force.fligth",
+            id=0,
+            player=context.player_b,
+            course=3,
+        )
+    )
+    assert context.response.status_code is 201
 
 
 @when("player_a moves his plane and colition with a limit")
@@ -316,7 +353,7 @@ def step_impl(context):
         url_for(
             "air_force.fligth",
             id=0,
-            player=context.player,
+            player=context.player_a,
             course=context.course,
         )
     )
@@ -333,7 +370,7 @@ def step_impl(context):
         url_for(
             "air_force.fligth",
             id=0,
-            player=context.player,
+            player=context.player_a,
             course=4,
         )
     )
