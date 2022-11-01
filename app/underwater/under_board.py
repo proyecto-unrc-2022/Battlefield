@@ -2,19 +2,16 @@ from app.underwater.models.submarine import Submarine
 
 
 class UnderBoard:
-    def __init__(self, id, height=10, width=20):
-        self.id = id
+    def __init__(self, height=10, width=20):
         self.height = height
         self.width = width
         self.matrix = []
-        for i in range(height):
+        for _ in range(height):
             self.matrix.append([None] * width)
 
     @staticmethod
     def build_from(game):
-        board = UnderBoard(
-            game.get_id(), height=game.get_height(), width=game.get_width()
-        )
+        board = UnderBoard(height=game.get_height(), width=game.get_width())
         for obj in game.submarines + game.torpedos:
             for (x, y) in obj.get_positions():
                 board.matrix[x][y] = obj
@@ -81,7 +78,7 @@ class UnderBoard:
                     o = self.matrix[i][j]
                     if (o.x_position, o.y_position) == (i, j):
                         if type(o) is Submarine:
-                            str += " %s |" % o.player_id
+                            str += " %s |" % o.player.id
                         else:
                             str += " * |"
                     else:

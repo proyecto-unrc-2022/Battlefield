@@ -5,7 +5,7 @@ from app.underwater.daos.submarine_dao import submarine_dao
 from app.underwater.daos.under_game_dao import game_dao
 from app.underwater.models.submarine import Submarine
 from app.underwater.models.torpedo import Torpedo
-from app.underwater.session import sessions
+from app.underwater.session import UnderGameSession, sessions
 
 ### BACKGROUND ###
 
@@ -16,7 +16,8 @@ from app.underwater.session import sessions
 def step_impl(context, h, w, username1, username2):
     host = context.players[username1]
     visitor = context.players[username2]
-    context.game = game_dao.create(host.id, visitor_id=visitor.id, height=h, width=w)
+    context.game = game_dao.create(host=host, visitor=visitor, height=h, width=w)
+    sessions.update({context.game.id: UnderGameSession.start_session_for(context.game)})
     assert context.game.host is host
     assert context.game.visitor is visitor
 

@@ -1,6 +1,3 @@
-import json
-from os import stat_result
-
 from flask import Response, jsonify, request
 
 from api import token_auth
@@ -14,9 +11,10 @@ from app.underwater.daos.under_game_dao import game_dao
 from app.underwater.models.under_game import UnderGame
 from app.underwater.session import sessions
 from app.underwater.session.under_game_session import UnderGameSession
-from app.underwater.under_dtos import game_dto
 
 from . import underwater
+
+# from app.underwater.under_dtos import game_dto
 
 
 @underwater.post("/reset")
@@ -31,9 +29,9 @@ def reset():
 
 
 @underwater.get("/game/<int:game_id>")
-def get_game(game_id):
-    game = game_dao.get_by_id(game_id)
-    return game_dto.dump(game)
+def get_game_state(game_id):
+    game_session = sessions[game_id]
+    return game_session.to_dict()
 
 
 @underwater.post("/game/new")
@@ -43,6 +41,9 @@ def new_game():
 
     host = get_user_by_id(data["host_id"])
 
+    if host.under_game_host or host.under_game_visitor:
+        return Response("{'error': 'player is in another game'}", status=409)
+
     height = 10
     width = 20
     if "height" in data.keys():
@@ -50,19 +51,16 @@ def new_game():
     if "width" in data.keys():
         width = data["width"]
 
-    try:
-        new_game = game_dao.create(data["host_id"], height=height, width=width)
+    game = game_dao.create(host=host, width=width, height=height)
+    new_session = UnderGameSession.start_session_for(game)
+    sessions.update({new_session.id: new_session})
 
-    except Exception as e:
-        return Response("{'error':%s}" % str(e), status=409)
-    return game_dto.dump(new_game)
+    return "{'game_id': '%d'}" % game.id
 
 
 @underwater.post("/game/<int:game_id>/join")
 def join_game(game_id):
     data = request.form.to_dict()
-    for key in data:
-        data[key] = int(data[key])
 
     visitor = get_user_by_id(data["visitor_id"])
     game = game_dao.get_by_id(game_id)
@@ -77,17 +75,16 @@ def join_game(game_id):
         )
 
     game.visitor = visitor
-
     game_session.add_player(visitor)
 
     game_dao.save(game)
-    return game_dto.dump(game)
+    return "{'success': 'user joined the game'}"
 
 
 @underwater.post("/game/<int:game_id>/<int:player_id>/choose_submarine")
 def choose_submarine(game_id, player_id):
     data = request.form.to_dict()
-    for key in data:
+    for key in data.keys():
         data[key] = int(data[key])
 
     game = game_dao.get_by_id(game_id)
@@ -99,18 +96,21 @@ def choose_submarine(game_id, player_id):
         return Response("{'error':'player not found'}", status=404)
 
     try:
-        game.add_submarine(
+        sub = game.add_submarine(
             player,
             data["submarine_id"],
             data["x_position"],
             data["y_position"],
             data["direction"],
         )
+        if sub:
+            db.session.add(sub)
     except Exception as e:
-        return Response("{'error':'%s'}" % str(e), status=409)
+        return Response("{'error': %s}" % str(e), status=409)
 
-    game_dao.save(game)
-    return game_dto.dump(game)
+    submarine_dao.save(sub)
+
+    return "{'success': submarine placed}"
 
 
 @underwater.post("/game/<int:game_id>/<int:player_id>/rotate_and_advance")
@@ -143,8 +143,7 @@ def rotate_and_advance(game_id, player_id):
     )
     update_game(game)
 
-    game_dao.save(game)
-    return game_dto.dump(game)
+    return "{'success': 'command enqueued'}"
 
 
 @underwater.post("/game/<int:game_id>/<int:player_id>/rotate_and_attack")
@@ -174,8 +173,7 @@ def rotate_and_attack(game_id, player_id):
     game_session.add_command(RotateAndAttack(game, submarine, direction=direction))
     update_game(game)
 
-    game_dao.save(game)
-    return game_dto.dump(game)
+    return "{'success': 'command enqueued'}"
 
 
 @underwater.get("/game/submarine_options")
