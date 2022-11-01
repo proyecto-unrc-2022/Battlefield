@@ -29,6 +29,7 @@ class ShipService:
             data["user_id"],
             data["navy_game_id"],
         )
+
         return ship_dao.add_or_update(new_ship)
 
     def load_to_board(self, ship):

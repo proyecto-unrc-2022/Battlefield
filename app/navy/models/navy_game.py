@@ -15,7 +15,7 @@ class NavyGame(db.Model):
     winner = db.Column(db.Integer)
     user1_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     user2_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-
+    ready_to_play = db.Column(db.Boolean, default=False)
     user_1 = relationship("User", foreign_keys=[user1_id])
     user_2 = relationship("User", foreign_keys=[user2_id])
 

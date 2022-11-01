@@ -14,6 +14,7 @@ class NavyUtils:
     ZERO, ONE = 0, 1
     ROWS, COLS = 10, 20
     TRUE, FALSE = 1, 0
+    CANT_PLAYERS = 2
     INVERSE_COORDS = {
         "N": "S",
         "S": "N",
