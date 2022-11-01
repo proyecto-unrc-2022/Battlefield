@@ -1,5 +1,5 @@
 #from turtle import back
-from pyexpat import model
+from enum import auto
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, SQLAlchemySchema, auto_field
 from marshmallow_sqlalchemy.fields import Nested
 from sqlalchemy.orm import relationship #investigar
@@ -20,11 +20,12 @@ class Figure_infantry(db.Model):
     pos_x = db.Column(db.Integer, nullable=False)
     pos_y = db.Column(db.Integer, nullable=False)
     figure_type = db.Column(db.Integer, nullable=False)
+    avail_actions = db.Column(db.Integer)
     
     game = relationship("Game_Infantry", foreign_keys=[id_game])
     user = relationship("User", foreign_keys=[id_user])
     
-    def __init__(self, id_user=None, id_game=None, hp=None, velocidad=None, tamaño=None, direccion=None, pos_x=None, pos_y=None, type=None):
+    def __init__(self, id_user=None, id_game=None, hp=None, velocidad=None, tamaño=None, direccion=None, pos_x=None, pos_y=None, type=None, avail_actions = None):
         self.id_user = id_user  
         self.id_game = id_game 
         self.hp = hp
@@ -34,7 +35,7 @@ class Figure_infantry(db.Model):
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.figure_type = type
-
+        self.avail_actions = avail_actions
 
 class Figure_Infantry_Schema(SQLAlchemySchema):
     class Meta:
@@ -51,3 +52,4 @@ class Figure_Infantry_Schema(SQLAlchemySchema):
     pos_x = auto_field()
     pos_y = auto_field()
     figure_type = auto_field()
+    avail_actions = auto_field()
