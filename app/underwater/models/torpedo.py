@@ -13,6 +13,7 @@ class Torpedo(SubmergedObject):
     damage = db.Column(db.Integer, nullable=False)
 
     player = relationship("User", backref=backref("torpedos"))
+    game = relationship("UnderGame", back_populates="torpedos")
 
     __mapper_args__ = {"polymorphic_identity": "torpedo"}
 
@@ -28,11 +29,6 @@ class Torpedo(SubmergedObject):
             self.y_position = params["y_position"]
         if "direction" in params.keys():
             self.x_position = params["direction"]
-        if game:
-            game.torpedos.append(self)
-
-    def get_damage(self):
-        return self.damage
 
     def to_dict(self):
         dict = {

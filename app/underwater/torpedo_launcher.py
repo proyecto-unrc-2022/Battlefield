@@ -4,7 +4,6 @@ from app.underwater.models.torpedo import Torpedo
 
 class TorpedoLauncher:
     def create_torpedo(self, sub):
-        x, y = sub.get_next_position()
         torpedo = Torpedo(
             game=sub.game,
             player=sub.player,

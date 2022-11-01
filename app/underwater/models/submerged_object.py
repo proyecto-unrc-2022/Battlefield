@@ -23,14 +23,6 @@ class SubmergedObject(db.Model):
         "polymorphic_on": type,
     }
 
-    def set_position(self, x_position=None, y_position=None, direction=None):
-        if x_position is not None:  # Needed for when direction=0 (evaluates to False)
-            self.x_position = x_position
-        if y_position is not None:
-            self.y_position = y_position
-        if direction is not None:
-            self.direction = direction
-
     def get_positions(self, direction=None):
         if direction is None:
             direction = self.direction
@@ -88,23 +80,5 @@ class SubmergedObject(db.Model):
     def is_placed(self):
         return self.x_position != None
 
-    def get_game(self):
-        return self.game
-
-    def get_speed(self):
-        return self.speed
-
-    def get_x_position(self):
-        return self.x_position
-
-    def get_y_position(self):
-        return self.y_position
-
-    def get_direction(self):
-        return self.direction
-
     def in_game(self):
         return self in self.game.submarines + self.game.torpedos
-
-    def save(self):
-        db.session.commit()
