@@ -19,6 +19,7 @@ class Submarine(SubmergedObject):
     torpedo_damage = db.Column(db.Float, nullable=False)
 
     player = relationship("User", backref=backref("submarine", uselist=False))
+    game = relationship("UnderGame", back_populates="submarines")
 
     __mapper_args__ = {"polymorphic_identity": "submarine"}
 
@@ -42,18 +43,9 @@ class Submarine(SubmergedObject):
             self.y_position = y_position
         if direction:
             self.direction = direction
-        if game:
-            self.game_id = game.id
-            game.submarines.append(self)
 
     def create_torpedo(self):
         return t_launcher.create_torpedo(self)
-
-    def get_health(self):
-        return self.health
-
-    def set_health(self, health):
-        self.health = health
 
     def to_dict(self):
         dict = {

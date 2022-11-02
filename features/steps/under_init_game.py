@@ -6,6 +6,7 @@ from flask import url_for
 from app import db
 from app.daos.user_dao import add_user
 from app.models.user import User
+from app.underwater.daos.session_dao import session_dao
 from app.underwater.daos.under_game_dao import game_dao
 
 # BACKGROUND
@@ -55,14 +56,15 @@ def step_impl(context):
 def step_impl(context, username, id):
     player = context.players[username]
     context.game = game_dao.create(player)
-    context.game.id = id
+    context.session = session_dao.start_session_for(context.game)
+    context.session.id = id
 
 
 @when("the user '{username}' asks to join the game of id '{id:d}'")
 def step_impl(context, username, id):
     player = context.players[username]
     context.page = context.client.post(
-        url_for("underwater.join_game", game_id=id), data={"visitor_id": player.id}
+        url_for("underwater.join_game", session_id=id), data={"visitor_id": player.id}
     )
     assert context.page
 

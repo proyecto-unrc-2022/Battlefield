@@ -1,11 +1,23 @@
-from app.underwater.daos.submarine_dao import submarine_dao
+from sqlalchemy.orm import relationship
+
+from app import db
 
 from .command import Command
 
 
 class SubmarineCommand(Command):
+    command_id = db.Column(db.Integer, db.ForeignKey("command.id"), primary_key=True)
+    submarine_id = db.Column(db.Integer, db.ForeignKey("submarine.id"))
+    direction = db.Column(db.Integer)
+
+    submarine = relationship("Submarine")
+
+    __mapper_args__ = {
+        "polymorphic_identity": "submarine_command",
+    }
+
     def __init__(self, game, submarine, **params):
-        super(SubmarineCommand, self).__init__(game, submarine.player, **params)
+        super().__init__(game, submarine.player, **params)
         self.submarine = submarine
 
     def get_submarine(self):
@@ -13,18 +25,39 @@ class SubmarineCommand(Command):
 
 
 class RotateAndAdvance(SubmarineCommand):
+    submarine_command_id = db.Column(
+        db.Integer, db.ForeignKey("submarine_command.command_id"), primary_key=True
+    )
+    steps = db.Column(db.Integer)
+
+    __mapper_args__ = {"polymorphic_identity": "rotate_and_advance"}
+
+    def __init__(self, game, submarine, **params):
+        super().__init__(game, submarine, **params)
+        self.direction = params["direction"]
+        self.steps = params["steps"]
+
     def execute(self):
         submarine = self.submarine
         if submarine.in_game():
-            self.game.rotate_object(submarine, self.params["direction"])
+            self.game.rotate_object(submarine, self.direction)
             if submarine.in_game():
-                self.game.advance_object(submarine, self.params["steps"])
+                self.game.advance_object(submarine, self.steps)
 
 
 class RotateAndAttack(SubmarineCommand):
+    submarine_command_id = db.Column(
+        db.Integer, db.ForeignKey("submarine_command.command_id"), primary_key=True
+    )
+    __mapper_args__ = {"polymorphic_identity": "rotate_and_attack"}
+
+    def __init__(self, game, submarine, **params):
+        super().__init__(game, submarine, **params)
+        self.direction = params["direction"]
+
     def execute(self):
         submarine = self.submarine
         if submarine.in_game():
-            self.game.rotate_object(submarine, self.params["direction"])
+            self.game.rotate_object(submarine, self.direction)
             if submarine.in_game():
                 self.game.attack(submarine)
