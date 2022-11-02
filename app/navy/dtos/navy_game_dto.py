@@ -23,8 +23,6 @@ class NavyGameDTO(SQLAlchemySchema):
     round = auto_field()
     turn = auto_field()
     ready_to_play = fields.Method("is_ready_to_play")
-    ships = Nested(ShipDTO, many=True)
-    missiles = Nested(MissileDTO, many=True)
 
     def is_ready_to_play(self, obj):
         if obj.ready_to_play:

@@ -164,6 +164,18 @@ class ShipService:
                 res.append((x, y))
         return res
 
+    def get_sight_range(self, ship):
+        border_point_x = ship.pos_x - ship.visibility
+        border_point_y = ship.pos_y - ship.visibility
+        return utils.get_distance(
+            ship.pos_x, ship.pos_y, border_point_x, border_point_y
+        )
+
+    def get_dto(self, ship):
+        from app.navy.dtos.ship_dto import ShipDTO
+
+        return ShipDTO().dump(ship)
+
     # -- End Private Methods -- #
 
 

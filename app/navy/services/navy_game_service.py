@@ -206,5 +206,42 @@ class NavyGameService:
                 games.append(game)
         return games
 
+    def get_board(self, navy_game_id, user_id):
+        from app.navy.services.missile_service import missile_service
+        from app.navy.services.ship_service import ship_service
+
+        if not self.games.get(navy_game_id):
+            self.load_game(navy_game_id)
+
+        # -------- NavyGameState reemplaza estas 3 lineas -----#
+        game_dict = self.games[navy_game_id].copy()
+        game_dict.pop("ships")
+        game_dict.pop("missiles")
+        # ------------------------------------------------------#
+
+        user_ships = ship_service.get_by(user_id=user_id, navy_game_id=navy_game_id)
+        set_ships = set([])
+        set_missiles = set([])
+
+        for ship in user_ships:
+            sight_range = ship_service.get_sight_range(ship)
+            for x, y in game_dict.keys():
+                if utils.get_distance(ship.pos_x, ship.pos_y, x, y) <= sight_range:
+                    visible_entity = self.get_from_board(ship.navy_game_id, x, y)
+                    self.add_to_set(visible_entity, set_ships, set_missiles, ship.id)
+
+        ships = list(map(ship_service.get_dto, set_ships))
+        missiles = list(map(missile_service.get_dto, set_missiles))
+
+        return {"ships": ships, "missiles": missiles}
+
+    def add_to_set(self, entity, set_ships, set_missiles, ship_id):
+        from app.navy.models.ship import Ship
+
+        if isinstance(entity, Ship) and entity.id != ship_id:
+            set_ships.add(entity)
+        elif isinstance(entity, Missile):
+            set_missiles.add(entity)
+
 
 navy_game_service = NavyGameService()

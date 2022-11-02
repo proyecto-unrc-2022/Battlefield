@@ -130,5 +130,10 @@ class MissileService:
 
         return True
 
+    def get_dto(self, missile):
+        from app.navy.dtos.missile_dto import MissileDTO
+
+        return MissileDTO().dump(missile)
+
 
 missile_service = MissileService()
