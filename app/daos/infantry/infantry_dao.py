@@ -248,7 +248,6 @@ def direction_of_projectile(figure, projectile, direccion):
 
     return projectile
 
-    
 def create_game(user_id):
     global queue_turn
     game = Game_Infantry(id_user1= user_id, id_user2= None)
@@ -261,6 +260,9 @@ def create_game(user_id):
 def join(game_id, user_id):
     global queue_turn
     game = db.session.query(Game_Infantry).filter_by(id = game_id).first()
+    if(queue_turn == None):
+        queue_turn = queue.Queue()
+        queue_turn.put(game.id_user1)
     if (game != None and game.id_user2 == None):
         game.id_user2 = user_id
         db.session.add(game)
