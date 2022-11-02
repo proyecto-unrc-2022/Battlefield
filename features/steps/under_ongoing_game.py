@@ -6,7 +6,7 @@ from app.underwater.daos.submarine_dao import submarine_dao
 from app.underwater.daos.under_game_dao import game_dao
 from app.underwater.models.submarine import Submarine
 from app.underwater.models.torpedo import Torpedo
-from app.underwater.session import UnderGameSession, sessions
+from app.underwater.session import UnderGameSession
 
 ### BACKGROUND ###
 
