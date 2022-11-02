@@ -89,7 +89,7 @@ def mov_action():
         return jsonify(figure_schema.dump(move_entity))
     return "Colision o velocidad excedida"
 
-@infantry.route("/shoot/user/<user_id>/game/<game_id>/direccion/<direccion>",methods=['POST'])
+@infantry.route("/game/<game_id>/user/<user_id>/direccion/<direccion>/shoot",methods=['POST'])
 def shoot_entity(user_id, game_id,direccion):
     
     #if(not(is_your_turn(game_id, user_id))) : return "No es tu turno"
