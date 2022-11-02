@@ -1,6 +1,6 @@
 import json
 
-from sqlalchemy.orm import backref, relationship
+from sqlalchemy.orm import backref, reconstructor, relationship
 
 from app import db
 from app.underwater.game_state import GameState
@@ -8,7 +8,6 @@ from app.underwater.under_board import UnderBoard
 
 from ..daos.submarine_dao import submarine_dao
 from .submarine import Submarine
-from .submerged_object import SubmergedObject
 from .torpedo import Torpedo
 
 
@@ -43,6 +42,10 @@ class UnderGame(db.Model):
         self.height = height
         self.width = width
         self.state = GameState.PREGAME
+        self.build_board()
+
+    @reconstructor
+    def init_on_load(self):
         self.build_board()
 
     def build_board(self):
