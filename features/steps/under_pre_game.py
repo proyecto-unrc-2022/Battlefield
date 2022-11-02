@@ -3,6 +3,7 @@ import json
 from behave import given, then, when
 from flask import url_for
 
+from app.underwater.daos.session_dao import session_dao
 from app.underwater.daos.under_game_dao import game_dao
 
 
@@ -11,6 +12,7 @@ def step_impl(context, id, username1, username2):
     host = context.players[username1]
     visitor = context.players[username2]
     context.game = game_dao.create(host, visitor)
+    context.session = session_dao.start_session_for(context.game)
     assert context.game.host is host
     assert context.game.visitor is visitor
 
@@ -43,7 +45,9 @@ def step_impl(context, username, sub_type, x, y, d):
     }
     context.page = context.client.post(
         url_for(
-            "underwater.choose_submarine", game_id=context.game.id, player_id=player.id
+            "underwater.choose_submarine",
+            session_id=context.session.id,
+            player_id=player.id,
         ),
         data=payload,
     )

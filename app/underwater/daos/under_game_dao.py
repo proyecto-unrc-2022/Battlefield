@@ -17,8 +17,6 @@ class UnderGameDAO:
         #     game = game_cache[game_id]
         # else:
         game = db.session.get(UnderGame, game_id)
-        if game:
-            game.build_board()
 
         return game
 

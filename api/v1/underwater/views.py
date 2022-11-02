@@ -1,16 +1,12 @@
-from flask import Response, jsonify, request
+from flask import Response, request
 
 from api import token_auth
 from app import db
 from app.daos.user_dao import add_user, get_user_by_id
-from app.models.user import User
-from app.underwater import boards
 from app.underwater.command import AdvanceTorpedo, RotateAndAdvance, RotateAndAttack
-from app.underwater.daos.submarine_dao import SubmarineDAO, submarine_dao
+from app.underwater.daos.session_dao import session_dao
 from app.underwater.daos.under_game_dao import game_dao
 from app.underwater.models.under_game import UnderGame
-from app.underwater.session import sessions
-from app.underwater.session.under_game_session import UnderGameSession
 
 from . import underwater
 
@@ -28,10 +24,9 @@ def reset():
     return Response("{'message': 'success'}", status=200)
 
 
-@underwater.get("/game/<int:game_id>")
-def get_game_state(game_id):
-    game_session = sessions[game_id]
-    return game_session.to_dict()
+@underwater.get("/game/<int:session_id>")
+def get_game_state(session_id):
+    return session_dao.get_by_id(session_id).to_dict()
 
 
 @underwater.post("/game/new")
@@ -52,71 +47,71 @@ def new_game():
         width = data["width"]
 
     game = game_dao.create(host=host, width=width, height=height)
-    new_session = UnderGameSession.start_session_for(game)
-    sessions.update({new_session.id: new_session})
+    new_session = session_dao.start_session_for(game)
 
-    return "{'game_id': '%d'}" % game.id
+    return "{'session_id': '%d'}" % new_session.id
 
 
-@underwater.post("/game/<int:game_id>/join")
-def join_game(game_id):
+@underwater.post("/game/<int:session_id>/join")
+def join_game(session_id):
     data = request.form.to_dict()
 
     visitor = get_user_by_id(data["visitor_id"])
-    game = game_dao.get_by_id(game_id)
-    game_session = sessions[game.id]
+    game_session = session_dao.get_by_id(session_id)
 
-    if game.visitor is not None:
+    if game_session.visitor is not None:
         return Response("{'error':'game does not have an available slot'}", status=409)
 
-    if visitor is game.host:
+    if visitor is game_session.host:
         return Response(
             "{'error':'you cannot be a visitor to your own game'}", status=409
         )
 
-    game.visitor = visitor
-    game_session.add_player(visitor)
+    game_session.add_visitor(visitor)
 
-    game_dao.save(game)
+    session_dao.save(game_session)
     return "{'success': 'user joined the game'}"
 
 
-@underwater.post("/game/<int:game_id>/<int:player_id>/choose_submarine")
-def choose_submarine(game_id, player_id):
+@underwater.post("/game/<int:session_id>/<int:player_id>/choose_submarine")
+def choose_submarine(session_id, player_id):
     data = request.form.to_dict()
     for key in data.keys():
         data[key] = int(data[key])
 
-    game = game_dao.get_by_id(game_id)
+    session = session_dao.get_by_id(session_id)
     player = get_user_by_id(player_id)
 
-    if not game:
+    if not session:
         return Response("{'error':'game not found'}", status=404)
     if not player:
         return Response("{'error':'player not found'}", status=404)
 
-    sub = game.add_submarine(
-        player,
-        data["submarine_id"],
-        data["x_position"],
-        data["y_position"],
-        data["direction"],
-    )
-    game_dao.save(game)
+    try:
+        sub = session.game.add_submarine(
+            player,
+            data["submarine_id"],
+            data["x_position"],
+            data["y_position"],
+            data["direction"],
+        )
+    except Exception as e:
+        return Response("{'error': %s}" % str(e), status=409)
+    session_dao.save(session)
 
     return "{'success': submarine placed}"
 
 
-@underwater.post("/game/<int:game_id>/<int:player_id>/rotate_and_advance")
-def rotate_and_advance(game_id, player_id):
+@underwater.post("/game/<int:session_id>/<int:player_id>/rotate_and_advance")
+def rotate_and_advance(session_id, player_id):
     data = request.form.to_dict()
     for key in data:
         data[key] = int(data[key])
 
-    game = game_dao.get_by_id(game_id)
+    session = session_dao.get_by_id(session_id)
     player = get_user_by_id(player_id)
 
-    if not game:
+    if not session:
         return Response("{'error':'game not found'}", status=404)
     if not player:
         return Response("{'error':'player not found'}", status=404)
@@ -124,49 +119,49 @@ def rotate_and_advance(game_id, player_id):
     submarine = player.submarine
     direction = data["direction"]
     steps = data["steps"]
-    game_session = sessions[game_id]
 
     if direction == (submarine.direction + 4) % 8:
         return Response("{'error':'submarines cant rotate 180 degrees'}", status=409)
 
-    if game_session.current_turn_player() is not player:
+    if session.current_turn_player() is not player:
         return Response("{'error': 'not your turn'}", status=409)
 
-    game_session.add_command(
-        RotateAndAdvance(game, submarine, direction=direction, steps=steps)
-    )
-    update_game(game)
+    c = RotateAndAdvance(session.game, submarine, direction=direction, steps=steps)
+    session.add_command(c)
+    print(c.name)
 
+    update_session(session)
     return "{'success': 'command enqueued'}"
 
 
-@underwater.post("/game/<int:game_id>/<int:player_id>/rotate_and_attack")
-def rotate_and_attack(game_id, player_id):
+@underwater.post("/game/<int:session_id>/<int:player_id>/rotate_and_attack")
+def rotate_and_attack(session_id, player_id):
     data = request.form.to_dict()
     for key in data:
         data[key] = int(data[key])
 
-    game = game_dao.get_by_id(game_id)
+    session = session_dao.get_by_id(session_id)
     player = get_user_by_id(player_id)
 
-    if not game:
+    if not session:
         return Response("{'error':'game not found'}", status=404)
     if not player:
         return Response("{'error':'player not found'}", status=404)
 
     submarine = player.submarine
     direction = data["direction"]
-    game_session = sessions[game.id]
 
     if direction == (submarine.direction + 4) % 8:
         return Response("{'error':'submarines cant rotate 180 degrees'}", status=409)
 
-    if game_session.current_turn_player() is not player:
+    if session.current_turn_player() is not player:
         return Response("{'error': 'not your turn'}", status=409)
 
-    game_session.add_command(RotateAndAttack(game, submarine, direction=direction))
-    update_game(game)
+    session.add_command(RotateAndAttack(session.game, submarine, direction=direction))
 
+    print(session.turn)
+    update_session(session)
+    print(session.turn)
     return "{'success': 'command enqueued'}"
 
 
@@ -175,13 +170,12 @@ def get_options():
     return UnderGame.get_options()
 
 
-def update_game(game):
-    game_session = sessions[game.id]
-    if game_session.everyone_moved():
-        game_session.execute_commands()
-        game_session.invert_order()
-        for torpedo in game.torpedos:
-            game_session.add_command(AdvanceTorpedo(torpedo))
+def update_session(session):
+    if session.everyone_moved():
+        session.execute_commands()
+        session.invert_order()
+        for torpedo in session.game.torpedos:
+            session.add_command(AdvanceTorpedo(torpedo))
     else:
-        game_session.next_turn()
-    game_dao.save(game)
+        session.next_turn()
+    session_dao.save(session)

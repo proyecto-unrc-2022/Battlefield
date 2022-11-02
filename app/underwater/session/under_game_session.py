@@ -1,12 +1,8 @@
 import json
 
-from sqlalchemy.orm import backref, relationship
+from sqlalchemy.orm import relationship
 
 from app import db
-from app.daos.user_dao import get_user_by_id
-from app.underwater.daos.under_game_dao import game_dao
-
-from ..command import Command, SubmarineCommand
 
 
 class UnderGameSession(db.Model):
@@ -34,28 +30,31 @@ class UnderGameSession(db.Model):
         self.turn = 0  # 0 is host, 1 is visitor
         self.order = 1  # 1 means forward, -1 means backward
 
-    @staticmethod
-    def start_session_for(game):
-        new_session = UnderGameSession(game, game.host, game.visitor)
-
-        db.session.add(new_session)
-        db.session.commit()
-        return new_session
+    def add_visitor(self, visitor):
+        self.visitor = visitor
+        self.game.visitor = visitor
 
     def add_command(self, c):
         self.commands.append(c)
+        db.session.add(c)
+        if c.player is self.host:
+            self.host_moved = True
+        else:
+            self.visitor_moved = True
 
     def next_turn(self):
         self.turn += self.order
-        self.turn = self.turn % 1
+        self.turn = self.turn % 2
 
     def execute_commands(self):
         for c in self.commands:
             c.execute()
         self.commands.clear()
+        self.host_moved = False
+        self.visitor_moved = False
 
     def invert_order(self):
-        self.__order *= -1
+        self.order *= -1
 
     def everyone_moved(self):
         return self.host_moved and self.visitor_moved
@@ -69,18 +68,7 @@ class UnderGameSession(db.Model):
         self.commands.clear()
 
     def to_dict(self):
-        # commands_to_dict = []  esto iria?
-        # i = 1
-        # for c in self.__commands:
-        #     commands_to_dict.update({"{}".format(i): c.__repr__()})
-        #     i += 1
-        dict = {
-            "turn": self.__turn,
-            "order": self.__order  # ,
-            # "commands": commands_to_dict,
-            # "game": self.game.to_dict
-            # "remaining_to_move" lo ponemos?
-        }
+        dict = {"turn": self.turn, "order": self.order}
         dict.update(self.game.to_dict())  # append game dict to this dict
         return dict
 
