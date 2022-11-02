@@ -69,7 +69,14 @@ def validation_position(game_id, user_id, object):
 
     return succes
 
-#### Validacion de juegos ####
+"""
+    Dado un game_id y un user_id, verifica que el creador de un projectile es un user del game
+    Args:
+        game_id (int) id del juego
+        user_id (int) id del usuario
+    Return:
+        boolean: (True si el user que pertenece a un juego, crea un shoot de ese game)
+"""
 
 def validation_shoot(game_id, user_id):
 
