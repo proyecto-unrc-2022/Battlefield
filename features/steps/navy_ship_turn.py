@@ -28,5 +28,4 @@ def step_impl(context, id, hp):
 @then("The ship with id '{id:d}' should be destroyed")
 def step_impl(context, id):
     ship = ship_service.get_by_id(id)
-    print(ship)
-    assert ship is None
+    assert not ship.is_alive

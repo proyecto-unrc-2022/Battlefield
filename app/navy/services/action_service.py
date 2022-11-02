@@ -19,17 +19,11 @@ class ActionService:
     def add(self, action: Action):
         action_dao.add_or_update(Action(**action))
 
-    def delete(self, action):
-        action_dao.delete(action)
-
-    def get_by_user(self, user_id, navy_game_id):
-        return action_dao.get_by_user(user_id, navy_game_id)
-
     def get_by_round(self, navy_game_id, round):
         return action_dao.get_by_round(navy_game_id, round)
 
     def execute(self, action):
-        ship = ship_service.get_by_id(action.ship_id)
+        ship = navy_game_service.get_ship_from_game(action.navy_game_id, action.ship_id)
         if ship_service.turn(ship, action.course):
             if action.attack:
                 return ship_service.attack(ship)

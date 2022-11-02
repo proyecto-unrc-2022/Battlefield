@@ -1,5 +1,4 @@
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, SQLAlchemySchema, auto_field
-from marshmallow_sqlalchemy.fields import Nested, fields
+from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
 
 from app.navy.models.missile import Missile
 

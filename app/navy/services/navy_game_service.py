@@ -82,37 +82,42 @@ class NavyGameService:
 
         ships = ship_service.get_by(navy_game_id=navy_game_id)
         missiles = missile_service.get(navy_game_id=navy_game_id)
+        ships = [ship for ship in ships if ship.is_alive]
+        missiles = [missile for missile in missiles if missile.is_alive]
         self.games[navy_game_id] = {
             "ships": ships,
             "missiles": missiles,
         }
-        self.load_missiles_to_board(navy_game_id)
-        self.load_ships_to_board(navy_game_id)
+        self.load_missiles(navy_game_id)
+        self.load_ships(navy_game_id)
 
-    def load_ships_to_board(self, navy_game_id):
+    def load_ships(self, navy_game_id):
         from app.navy.services.ship_service import ship_service
 
         ships = self.games[navy_game_id]["ships"]
         for ship in ships:
             ship_service.load_to_board(ship)
 
-    def load_missiles_to_board(self, navy_game_id):
+    def load_missiles(self, navy_game_id):
         from app.navy.services.missile_service import missile_service
 
         missiles = self.games[navy_game_id]["missiles"]
         for missile in missiles:
             missile_service.load_to_board(missile)
 
+    def get_missiles(self, navy_game_id):
+        return self.games[navy_game_id]["missiles"]
+
     def update_game(self, navy_game_id):
         from app.navy.services.action_service import action_service
         from app.navy.services.missile_service import missile_service
 
-        # if not self.games.get(navy_game_id):
-        self.load_game(navy_game_id)
+        if not self.games.get(navy_game_id):
+            self.load_game(navy_game_id)
 
         # game = self.games[navy_game_id]
         game_db = navy_game_dao.get_by_id(navy_game_id)
-        missiles = missile_service.get(navy_game_id=game_db.id)
+        missiles = missile_service.get_alives(navy_game_id)
         actions = action_service.get_by_round(navy_game_id, game_db.round)
 
         if self.update_missiles(missiles):
@@ -122,9 +127,22 @@ class NavyGameService:
                     navy_game_id
                 ):
                     return
+
         game = self.change_turn(game=game_db)
         game.round += 1
+        self.update_game_db(game_db.id)
         navy_game_dao.add_or_update(game)
+
+    def update_game_db(self, navy_game_id):
+        from app.navy.services.missile_service import missile_service
+        from app.navy.services.ship_service import ship_service
+
+        ships = self.games[navy_game_id]["ships"]
+        missiles = self.games[navy_game_id]["missiles"]
+        for ship in ships:
+            ship_service.update_db(ship)
+        for missile in missiles:
+            missile_service.update_db(missile)
 
     def update_missiles(self, missiles):
         from app.navy.services.missile_service import missile_service
@@ -155,18 +173,16 @@ class NavyGameService:
 
         game = self.get_by_id(navy_game_id)
 
-        ships_user1 = ship_service.get_by(
-            user_id=game.user1_id, navy_game_id=navy_game_id
-        )
-        ships_user2 = ship_service.get_by(
-            user_id=game.user2_id, navy_game_id=navy_game_id
-        )
+        ships_user1 = ship_service.get_alives(game.user1_id, navy_game_id)
+        ships_user2 = ship_service.get_alives(game.user2_id, navy_game_id)
 
-        if ships_user1 and ships_user2:
+        if any([ship.is_alive for ship in ships_user1]) and any(
+            [ship.is_alive for ship in ships_user2]
+        ):
             return False
 
-        if not ships_user2:
-            self.set_winner(game.user1_id, game=game)
+        if all([not ship.is_alive for ship in ships_user1]):
+            self.set_winner(game.user2_id, game=game)
         else:
             self.set_winner(game.user1_id, game=game)
 
@@ -180,15 +196,6 @@ class NavyGameService:
             navy_game_id=navy_game_id, round=game.round
         )
         return len(actions) == 2
-
-    def delete_entity(self, entity):
-        from app.navy.models.missile import Missile
-        from app.navy.models.ship import Ship
-
-        if isinstance(entity, Ship):
-            self.games[entity.navy_game_id]["ships"].remove(entity)
-        elif isinstance(entity, Missile):
-            self.games[entity.navy_game_id]["missiles"].remove(entity)
 
     def get_ship_from_game(self, navy_game_id, ship_id):
         ships = self.games[navy_game_id]["ships"]
@@ -242,6 +249,9 @@ class NavyGameService:
             set_ships.add(entity)
         elif isinstance(entity, Missile):
             set_missiles.add(entity)
+
+    def get_ships(self, navy_game_id):
+        return self.games[navy_game_id]["ships"]
 
 
 navy_game_service = NavyGameService()
