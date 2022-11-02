@@ -206,5 +206,34 @@ class NavyGameService:
                 games.append(game)
         return games
 
+    def get_board(self, navy_game_id, user_id):
+        from app.navy.dtos.missile_dto import MissileDTO
+        from app.navy.dtos.ship_dto import ShipDTO
+        from app.navy.models.ship import Ship
+        from app.navy.services.ship_service import ship_service
+
+        # if not self.games.get(navy_game_id):
+        self.load_game(navy_game_id)
+        game_dict = self.games[navy_game_id].copy()
+        game_dict.pop("ships")
+        game_dict.pop("missiles")
+        user_ships = ship_service.get_by(user_id=user_id, navy_game_id=navy_game_id)
+        set_ships = set([])
+        set_missiles = set([])
+
+        for ship in user_ships:
+            sight_range = ship_service.get_sight_range(ship)
+            for x, y in game_dict.keys():
+                if utils.get_distance(ship.pos_x, ship.pos_y, x, y) <= sight_range:
+                    entity = navy_game_service.get_from_board(ship.navy_game_id, x, y)
+                    if isinstance(entity, Ship) and entity.id != ship.id:
+                        set_ships.add(entity)
+                    elif isinstance(entity, Missile):
+                        set_missiles.add(entity)
+
+        ships = [ShipDTO().dump(ship) for ship in set_ships]
+        missiles = list(map(MissileDTO().dump, set_missiles))
+        return {"ships": ships, "missiles": missiles}
+
 
 navy_game_service = NavyGameService()

@@ -1,4 +1,4 @@
-from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
+from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field, fields
 
 from app.navy.models.ship import Ship
 
@@ -14,9 +14,6 @@ class ShipDTO(SQLAlchemySchema):
     hp = auto_field()
     size = auto_field()
     speed = auto_field()
-    visibility = auto_field()
-    missile_type_id = auto_field()
     pos_x = auto_field()
     pos_y = auto_field()
     course = auto_field()
-    user_id = auto_field()

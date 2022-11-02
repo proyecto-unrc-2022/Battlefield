@@ -1,3 +1,6 @@
+from math import sqrt
+
+
 class NavyUtils:
     # ---------- CLASS CONSTANTS --------- #
     COMPASS = {
@@ -60,6 +63,9 @@ class NavyUtils:
 
         decoded_jwt = jwt.decode(header.split()[1], secret_token, algorithms=["HS256"])
         return decoded_jwt["sub"]
+
+    def get_distance(self, x1, y1, x2, y2):
+        return sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
 
     # ---------- END OF CLASS METHODS --------- #
 
