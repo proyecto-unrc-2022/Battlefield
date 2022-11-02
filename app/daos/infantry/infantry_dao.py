@@ -40,9 +40,6 @@ def add_figure(game_id, user_id ,entity_id, position_X, position_Y):
     if(not(succes)):
         return None
 
-    if(game.id_user2 == int(user_id)):
-        figure.direccion = 4 
-
     if(figure):
         db.session.add(figure)
         db.session.commit()
@@ -68,9 +65,20 @@ def validation_position(game_id, user_id, object):
             succes = True
 
     if(game.id_user2 == int(user_id)):
-        object.direccion = 2
+        object.direccion = 6
 
     return succes
+
+#### Validacion de juegos ####
+
+def validation_shoot(game_id, user_id):
+
+    game = db.session.query(Game_Infantry).filter_by(id = game_id).first()
+
+    if(game.id_user1 == int(user_id) or game.id_user2 == int(user_id)):
+        return True
+    
+    return False
 
 def move(game_id, user_id, direction, velocity):
     """Dado un user_id, una direccion y una velocidad, mueva su respectiva unidad en el juego
@@ -142,6 +150,10 @@ def intersection(coord1, coords2):
 def shoot(user_id, game_id, direccion):
 
     figure = Figure_infantry.query.filter_by(id_game= game_id, id_user= user_id).first()
+    
+    if(not(validation_shoot(game_id, user_id))):
+        return False
+        
     if(figure_valid(figure, game_id, direccion)):
         reduce_action(figure.id)
         return True
@@ -150,6 +162,7 @@ def shoot(user_id, game_id, direccion):
 
 #Este metodo es la creacion para los proyectiles
 def figure_valid(figure, game_id, direccion):
+    
 
     diccionary_projectile1 = {1:{"velocidad":0,"daño":1},
                               2:{"velocidad":0,"daño":2},
