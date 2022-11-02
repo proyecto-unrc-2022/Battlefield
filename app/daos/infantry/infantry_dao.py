@@ -17,6 +17,8 @@ def add_figure(game_id, user_id ,entity_id, position_X, position_Y):
     
     game = db.session.query(Game_Infantry).filter_by(id = game_id).first()
 
+    if(not(validation_create(game_id, user_id))):
+        return None
 
     diccionary_figure = {1:{"hp":10,"velocidad":3,"tamaño":1,"direccion":2,"type":SOLDIER},
                         2:{"hp":20,"velocidad":5,"tamaño":2,"direccion":2,"type":HUMVEE},
@@ -69,21 +71,25 @@ def validation_position(game_id, user_id, object):
 
     return succes
 
-def validation_shoot(game_id, user_id):
+
+def validation_create(game_id, user_id):
 
     """
-    Dado un game_id y un user_id, verifica que el creador de un projectile es un user del game
+    Dado un game_id y un user_id, verifica que el creador de un projectile o figure es un user del game
     Args:
         game_id (int) id del juego
         user_id (int) id del usuario
     Return:
-        boolean: (True si el user que pertenece a un juego, crea un shoot de ese game)
+        boolean: (True si el user que pertenece a un juego, crea un shoot/figure de ese game)
     """
 
     game = db.session.query(Game_Infantry).filter_by(id = game_id).first()
 
-    if(game.id_user1 == int(user_id) or game.id_user2 == int(user_id)):
-        return True
+    if(game.id_user2 != None):
+        if(game.id_user1 == int(user_id) or game.id_user2 == int(user_id)):
+            return True
+        
+
     
     return False
 
@@ -158,7 +164,7 @@ def shoot(user_id, game_id, direccion):
 
     figure = Figure_infantry.query.filter_by(id_game= game_id, id_user= user_id).first()
     
-    if(not(validation_shoot(game_id, user_id))):
+    if(not(validation_create(game_id, user_id))):
         return False
         
     if(figure_valid(figure, game_id, direccion)):
