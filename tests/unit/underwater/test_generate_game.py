@@ -1,6 +1,6 @@
 from app.models.user import User
+from app.underwater.board.under_board import UnderBoard
 from app.underwater.models.under_game import UnderGame
-from app.underwater.under_board import UnderBoard
 
 
 def generate_game(h, w, players, sub_list, tor_list):
