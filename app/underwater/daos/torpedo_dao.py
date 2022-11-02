@@ -1,6 +1,6 @@
 from app import db
 from app.underwater.models import Torpedo
-
+from app.underwater.daos.submerged_object_dao import SubmergedObjectDAO
 
 class TorpedoDAO(SubmergedObjectDAO):
     def create(self, game, player, **params):

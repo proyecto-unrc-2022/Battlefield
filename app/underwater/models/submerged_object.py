@@ -1,7 +1,4 @@
-from sqlalchemy.orm import backref, relationship
-
 from app import db
-from app.underwater.game_state import GameState
 
 
 class SubmergedObject(db.Model):

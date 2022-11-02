@@ -1,4 +1,3 @@
-from app import db
 from app.underwater.models.torpedo import Torpedo
 
 
