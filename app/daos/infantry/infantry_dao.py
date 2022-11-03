@@ -17,6 +17,8 @@ def add_figure(game_id, user_id ,entity_id, position_X, position_Y):
     
     game = db.session.query(Game_Infantry).filter_by(id = game_id).first()
 
+    if(not(validation_create(game_id, user_id))):
+        return None
 
     diccionary_figure = {1:{"hp":10,"velocidad":3,"tamaño":1,"direccion":2,"type":SOLDIER},
                         2:{"hp":20,"velocidad":5,"tamaño":2,"direccion":2,"type":HUMVEE},
@@ -39,9 +41,6 @@ def add_figure(game_id, user_id ,entity_id, position_X, position_Y):
 
     if(not(succes)):
         return None
-
-    if(game.id_user2 == int(user_id)):
-        figure.direccion = 4 
 
     if(figure):
         db.session.add(figure)
@@ -68,9 +67,31 @@ def validation_position(game_id, user_id, object):
             succes = True
 
     if(game.id_user2 == int(user_id)):
-        object.direccion = 2
+        object.direccion = 6
 
     return succes
+
+
+def validation_create(game_id, user_id):
+
+    """
+    Dado un game_id y un user_id, verifica que el creador de un projectile o figure es un user del game
+    Args:
+        game_id (int) id del juego
+        user_id (int) id del usuario
+    Return:
+        boolean: (True si el user que pertenece a un juego, crea un shoot/figure de ese game)
+    """
+
+    game = db.session.query(Game_Infantry).filter_by(id = game_id).first()
+
+    if(game.id_user2 != None):
+        if(game.id_user1 == int(user_id) or game.id_user2 == int(user_id)):
+            return True
+        
+
+    
+    return False
 
 def move(game_id, user_id, direction, velocity):
     """Dado un user_id, una direccion y una velocidad, mueva su respectiva unidad en el juego
@@ -142,6 +163,10 @@ def intersection(coord1, coords2):
 def shoot(user_id, game_id, direccion):
 
     figure = Figure_infantry.query.filter_by(id_game= game_id, id_user= user_id).first()
+    
+    if(not(validation_create(game_id, user_id))):
+        return False
+        
     if(figure_valid(figure, game_id, direccion)):
         reduce_action(figure.id)
         return True
@@ -150,6 +175,7 @@ def shoot(user_id, game_id, direccion):
 
 #Este metodo es la creacion para los proyectiles
 def figure_valid(figure, game_id, direccion):
+    
 
     diccionary_projectile1 = {1:{"velocidad":0,"daño":1},
                               2:{"velocidad":0,"daño":2},
@@ -158,9 +184,7 @@ def figure_valid(figure, game_id, direccion):
     diccionary_projectile2 = {2:{"velocidad":5,"daño":5},
                               3:{"velocidad":3,"daño":15},
                               4:{"velocidad":20,"daño":30}}
-
-    figure.direccion = direccion
-
+    
     y = 1
     if(figure.figure_type == SOLDIER):
         while y != 4:
@@ -226,7 +250,6 @@ def direction_of_projectile(figure, projectile, direccion):
 
     return projectile
 
-    
 def create_game(user_id):
     global queue_turn
     game = Game_Infantry(id_user1= user_id, id_user2= None)
@@ -239,6 +262,9 @@ def create_game(user_id):
 def join(game_id, user_id):
     global queue_turn
     game = db.session.query(Game_Infantry).filter_by(id = game_id).first()
+    if(queue_turn == None):
+        queue_turn = queue.Queue()
+        queue_turn.put(game.id_user1)
     if (game != None and game.id_user2 == None):
         game.id_user2 = user_id
         db.session.add(game)
@@ -529,8 +555,6 @@ def intersec_Projectile_all(game_id):
     figures = figures_id_game(game_id)
 
     pos = None
-
-    print(figures)
 
     if(projectile_all != None):
         for i in range(len(projectile_all)):
