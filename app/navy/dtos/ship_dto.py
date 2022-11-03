@@ -1,4 +1,4 @@
-from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field, fields
+from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
 
 from app.navy.models.ship import Ship
 

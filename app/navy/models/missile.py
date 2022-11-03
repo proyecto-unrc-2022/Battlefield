@@ -17,6 +17,7 @@ class Missile(db.Model):
         db.Integer, db.ForeignKey("navy_games.id", ondelete="CASCADE")
     )
     order = db.Column(db.Integer)
+    is_alive = db.Column(db.Boolean, default=True)
 
     def __init__(
         self, speed, damage, course, pos_x, pos_y, ship_id, navy_game_id, order

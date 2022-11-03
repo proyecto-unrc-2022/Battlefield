@@ -32,6 +32,9 @@ class ShipService:
 
         return ship_dao.add_or_update(new_ship)
 
+    def update_db(self, ship):
+        ship_dao.add_or_update(ship)
+
     def load_to_board(self, ship):
         from app.navy.services.navy_game_service import navy_game_service
 
@@ -48,7 +51,7 @@ class ShipService:
             entity = navy_game_service.get_from_board(ship.navy_game_id, x, y)
             if entity:
                 self.act_accordingly(ship, entity)
-                if not self.is_alive(ship.id):
+                if not ship.is_alive:
                     return False
         return True
 
@@ -61,10 +64,7 @@ class ShipService:
         )
 
     def delete(self, ship):
-        from app.navy.services.navy_game_service import navy_game_service
-
-        navy_game_service.delete_entity(ship)
-        ship_dao.delete(ship)
+        ship.is_alive = False
 
     def delete_from_board(self, ship):
         from app.navy.services.navy_game_service import navy_game_service
@@ -81,17 +81,15 @@ class ShipService:
             x, y = utils.get_next_position(ship.pos_x, ship.pos_y, ship.course)
             if utils.out_of_bounds(x, y):
                 self.load_to_board(ship)
-                ship_dao.add_or_update(ship)
                 return True
 
             entity = navy_game_service.get_from_board(ship.navy_game_id, x, y)
             if entity:
                 self.act_accordingly(ship, entity)
-                if not self.is_alive(ship.id):
+                if not ship.is_alive:
                     return False
             ship.pos_x, ship.pos_y = x, y
 
-        ship_dao.add_or_update(ship)
         self.load_to_board(ship)
         return True
 
@@ -100,7 +98,6 @@ class ShipService:
         ship.course = new_course
         if self.can_load_to_board(ship):
             self.load_to_board(ship)
-            ship_dao.add_or_update(ship)
             return True
         return False
 
@@ -122,6 +119,7 @@ class ShipService:
         from app.navy.services.navy_game_service import navy_game_service
 
         if ship.hp - damage <= utils.ZERO:
+            ship.hp = utils.ZERO
             self.delete(ship)
             if navy_game_service.get_from_board(
                 ship.navy_game_id, ship.pos_x, ship.pos_y
@@ -129,7 +127,6 @@ class ShipService:
                 self.delete_from_board(ship)
         else:
             ship.hp -= damage
-            ship_dao.add_or_update(ship)
 
     def act_accordingly(self, ship, entity):
         from app.navy.models.missile import Missile
@@ -139,9 +136,6 @@ class ShipService:
 
         if isinstance(entity, Missile):
             self.act_accordingly_to_missile(ship, entity)
-
-    def is_alive(self, ship_id):
-        return ship_dao.get_by_id(ship_id)
 
     def act_accordingly_to_ship(self, ship, other_ship):
         old_hp = ship.hp
@@ -176,7 +170,11 @@ class ShipService:
 
         return ShipDTO().dump(ship)
 
-    # -- End Private Methods -- #
+    def get_alives(self, user_id, navy_game_id):
+        from app.navy.services.navy_game_service import navy_game_service
+
+        ships = navy_game_service.get_ships(navy_game_id=navy_game_id)
+        return [ship for ship in ships if ship.user_id == user_id and ship.is_alive]
 
 
 ship_service = ShipService()
