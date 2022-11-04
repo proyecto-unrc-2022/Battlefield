@@ -1,7 +1,7 @@
 import json
 
 from app.models.user import User
-from app.underwater.board.under_board import UnderBoard
+from app.underwater.board.board_mask import BoardMask
 from app.underwater.daos.under_game_dao import game_dao
 from app.underwater.game_state import GameState
 from app.underwater.models.submarine import Submarine
@@ -53,6 +53,7 @@ def generate_submarine(player, game, sub):
     new_sub.y_position = sub["y_coord"]
     new_sub.direction = sub["direction"]
     game.board.place_object(new_sub)
+    mask = BoardMask(game, new_sub)
     return new_sub
 
 
