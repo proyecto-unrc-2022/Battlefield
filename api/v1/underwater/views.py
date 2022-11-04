@@ -3,7 +3,12 @@ from flask import Response, request
 from api import token_auth
 from app import db
 from app.daos.user_dao import add_user, get_user_by_id
-from app.underwater.command import AdvanceTorpedo, RotateAndAdvance, RotateAndAttack
+from app.underwater.command import (
+    AdvanceTorpedo,
+    RotateAndAdvance,
+    RotateAndAttack,
+    SendRadarPulse,
+)
 from app.underwater.daos.session_dao import session_dao
 from app.underwater.daos.submarine_dao import submarine_dao
 from app.underwater.daos.under_game_dao import game_dao
@@ -163,9 +168,24 @@ def rotate_and_attack(session_id, player_id):
 
     session.add_command(RotateAndAttack(session.game, submarine, direction=direction))
 
-    print(session.turn)
     update_session(session)
-    print(session.turn)
+    return "{'success': 'command enqueued'}"
+
+
+@underwater.post("/game/<int:session_id>/<int:player_id>/send_radar_pulse")
+def send_radar_pulse(session_id, player_id):
+    session = session_dao.get_by_id(session_id)
+    player = get_user_by_id(player_id)
+
+    if not session:
+        return Response("{'error':'game not found'}", status=404)
+    if not player:
+        return Response("{'error':'player not found'}", status=404)
+
+    submarine = player.submarine
+
+    session.add_command(SendRadarPulse(session.game, submarine))
+    update_session(session)
     return "{'success': 'command enqueued'}"
 
 
