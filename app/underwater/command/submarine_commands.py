@@ -66,7 +66,7 @@ class SendRadarPulse(SubmarineCommand):
     submarine_command_id = db.Column(
         db.Integer, db.ForeignKey("submarine_command.command_id"), primary_key=True
     )
-    __mapper_args__ = {"polymorphic_identity": "rotate_and_attack"}
+    __mapper_args__ = {"polymorphic_identity": "send_radar_pulse"}
 
     def __init__(self, game, submarine, **params):
         super().__init__(game, submarine, **params)
