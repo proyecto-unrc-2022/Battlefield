@@ -91,3 +91,6 @@ class Submarine(SubmergedObject):
 
     def __repr__(self):
         return json.dumps(self.to_dict())
+
+    def update_visibility(self):
+        self.under_board_mask.update()

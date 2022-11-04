@@ -1,47 +1,44 @@
+import json
+
+from sqlalchemy.orm import backref, reconstructor, relationship
+
 from app import db
 from app.underwater.models.submarine import Submarine
 from app.underwater.models.torpedo import Torpedo
 
 
 class BoardMask(db.Model):
-    def __init__(self, game, player):
-        self.board = game.board
-        self.player = player
+    id = db.Column(db.Integer, primary_key=True)
+    board_mask = db.Column(db.String)
+    submarine_id = db.Column(db.Integer, db.ForeignKey("submarine.id"))
+
+    submarine = relationship(
+        "Submarine", backref=backref("under_board_mask", uselist=False)
+    )
+
+    def __init__(self, game, submarine):
+        self.submarine = submarine
         self.mask_dict = {}
         self.radar_cells = []
         self.visible_cells = []
+        self.board = game.board
+        self.update()
 
-    # def update_cell(self, player, i, j):
-    #     matrix = self.board.matrix
-    #     if (i, j) in player.submarine.vision_scope():
-    #         if matrix[i][j]:
-    #             d = {j: self.encode(matrix[i][j], player, i, j)}
-    #             self.mask_dict.update({i: d})
-    #     elif (i, j) in player.submarine.radar_scope():
-    #         if matrix[i][j]:
-    #             d = {j: "rP"}
-    #         else:
-    #             d = {j: "rN"}
-    #         self.mask_dict.update({i: d})
-
-    # def get_board(self, player):
-    #     matrix = self.board.matrix
-    #     visible_board = {}
-    #     for i in range(self.board.height):
-    #         for j in range(self.board.width):
-    #             if (i, j) in player.submarine.vision_scope():
-    #                 if matrix[i][j]:
-    #                     d = {j: self.encode(matrix[i][j], player, i, j)}
-    #                     visible_board.update({i: d})
-    #             elif (i, j) in player.submarine.radar_scope():
-    #                 if matrix[i][j]:
-    #                     d = {j: "rP"}
-    #                 else:
-    #                     d = {j: "rN"}
-    #                 visible_board.update({i: d})
+    @reconstructor
+    def retreive_mask(self):
+        self.mask_dict = json.loads(self.board_mask)
+        self.board = self.submarine.game.board
+        self.radar_cells = []
+        self.visible_cells = []
+        for i in self.mask_dict:
+            for j in self.mask_dict[i]:
+                if self.mask_dict[i][j][0] == "r":
+                    self.radar_cells.append((i, j))
+                else:
+                    self.visible_cells.append((i, j))
 
     def update(self):
-        new_visible_cells = self.player.submarine.get_vision_scope()
+        new_visible_cells = self.submarine.get_vision_scope()
 
         for cell in self.visible_cells:
             if not cell in new_visible_cells:
@@ -59,8 +56,7 @@ class BoardMask(db.Model):
 
         for pos in radar_scope:
             if not pos in vision_scope:
-                x, y = pos
-                code = self.__encode(self.board[x][y], x, y, radar=True)
+                code = self.__encode(self.board.get_cell_content(pos), pos, radar=True)
                 self.__add(pos, code)
                 self.radar_cells.append(pos)
 
@@ -83,13 +79,12 @@ class BoardMask(db.Model):
         self.radar_cells.clear()
 
     def __set_cell_visible(self, cell):
-        x, y = cell
-        code = self.__encode(self.board[x][y], x, y)
+        code = self.__encode(self.board.get_cell_content(cell), cell)
         self.__add(cell, code)
         if not cell in self.visible_cells:
             self.visible_cells.append(cell)
 
-    def __encode(self, obj, i, j, radar=False):
+    def __encode(self, obj, pos, radar=False):
         # RADAR
         if radar:
             if obj:
@@ -102,20 +97,26 @@ class BoardMask(db.Model):
         if not obj:
             return "_"
 
-        str = ""
-        if obj.player is self.player:
-            str += "F"
+        s = ""
+        if obj.player is self.submarine.player:
+            s += "F"
         else:
-            str += "E"
+            s += "E"
 
         if isinstance(obj, Submarine):
-            if (i, j) == obj.get_head_position():
-                str += "H"
+            if pos == obj.get_head_position():
+                s += "H"
             else:
-                str += "T"
+                s += "T"
 
         elif isinstance(obj, Torpedo):
-            str += "To"
+            s += "*"
 
-        str += str(obj.direction)
-        return str
+        s += str(obj.direction)
+        return s
+
+    def save(self):
+        self.board_mask = json.dumps(self.mask_dict)
+
+    def get_visible_board(self):
+        return self.mask_dict

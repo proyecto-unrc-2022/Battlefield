@@ -26,6 +26,9 @@ class SubmarineDAO(SubmergedObjectDAO):
 
     def save(self, sub):
         db.session.add(sub)
+        if hasattr(sub, "under_board_mask"):
+            sub.under_board_mask.save()
+            db.session.add(sub.under_board_mask)
         db.session.commit()
 
 

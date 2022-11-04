@@ -3,6 +3,7 @@ import json
 from sqlalchemy.orm import backref, reconstructor, relationship
 
 from app import db
+from app.underwater.board.board_mask import BoardMask
 from app.underwater.board.under_board import UnderBoard
 from app.underwater.game_state import GameState
 
@@ -84,11 +85,15 @@ class UnderGame(db.Model):
             if sub.player is player:
                 raise Exception("player already has a submarine")
 
-        sub = submarine_dao.create(self, player, sub_stats)
+        # sub = submarine_dao.create(self, player, sub_stats)
+        sub = Submarine(self, player, sub_stats)
         self.place(sub, x_coord, y_coord, direction)
+        BoardMask(self, sub)
 
         if len(self.submarines) == 2:
             self.set_state(GameState.ONGOING)
+
+        self.update_visibilites()
         return sub
 
     def place(self, obj, x_position, y_position, direction):
@@ -114,6 +119,8 @@ class UnderGame(db.Model):
             self.board.clear_all(obj.get_positions())
             obj.direction = direction
             self.board.place_object(obj)
+
+        self.update_visibilites()
 
     def advance_object(self, obj, n=None):
         if isinstance(obj, Torpedo):
@@ -141,6 +148,8 @@ class UnderGame(db.Model):
             obj.x_position = x
             obj.y_position = y
 
+        self.update_visibilites()
+
     def __destroy_object(self, obj):
         if obj.is_placed():
             self.board.clear_all(obj.get_positions())
@@ -166,6 +175,11 @@ class UnderGame(db.Model):
                 self.board.place(new_torpedo, next_cell)
                 new_torpedo.x_position, new_torpedo.y_position = next_cell
                 new_torpedo.direction = sub.direction
+
+            self.update_visibilites()
+
+    def send_radar_pulse(self, sub):
+        sub.player.under_board_mask.update()
 
     def solve_conflict(self, obj1, obj2):
         # Conflict types = "s-s, s-t, t-t"
@@ -228,3 +242,7 @@ class UnderGame(db.Model):
 
     def __repr__(self):
         return json.dumps(self.to_dict())
+
+    def update_visibilites(self):
+        for sub in self.submarines:
+            sub.update_visibility()
