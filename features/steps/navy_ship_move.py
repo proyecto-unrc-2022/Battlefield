@@ -18,7 +18,7 @@ def step_impl(context, pos_x, pos_y):
     assert ship1.pos_y == pos_y
 
 
-@when("The ship id '{id:d}' moves '{x}' positions")
+@when("The ship id '{id:d}' moves '{x:d}' positions")
 def step_impl(context, id, x):
     navy_game_service.load_game(context.game.id)
     ship1 = ship_service.get_by_id(id)

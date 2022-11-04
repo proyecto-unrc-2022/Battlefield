@@ -92,7 +92,6 @@ class TestUtils:
             pos_y,
             ship_id,
             navy_game_id,
-            order or 1,
         )
 
         return missile_dao.add_or_update(missile)

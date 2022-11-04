@@ -19,12 +19,14 @@ Feature: Turn a ship
 
     Scenario: A ship turns and collides with a missile and it dies
         Given The user '1' has a ship 'Destroyer' in '5','5' with course 'N' and hp '40'
+        And The user '2' has a ship 'Destroyer' in '2','11' with course 'N' and hp '100'
         And There is a missile at '5','6' with speed '3', course 'W' and damage '50'
         When The ship with id '1' turns to 'W'
         Then The ship with id '1' should be destroyed
 
     Scenario: A ship with full hp turns and collides with two missiles and die
         Given The user '1' has a ship 'Destroyer' in '5','5' with course 'N' and hp '40'
+        And The user '2' has a ship 'Destroyer' in '2','11' with course 'N' and hp '100'
         And There is a missile at '5','6' with speed '3', course 'W' and damage '50'
         And There is a missile at '5','7' with speed '3', course 'W' and damage '50'
         When The ship with id '1' turns to 'W'

@@ -35,6 +35,7 @@ Scenario: Ship collides with a missile and decreases its hp
 
 Scenario: Ship collides with a missile and is destroyed
     Given The user '1' has a ship 'Destroyer' in '5','5' with course 'N' and hp '60'
+    And The user '2' has a ship 'Destroyer' in '9','15' with course 'N' and hp '100'
     And There is a missile at '4','5' with speed '2', course 'E' and damage '80'
     When The ship id '1' moves '3' positions
     Then The ship with id '1' should be destroyed

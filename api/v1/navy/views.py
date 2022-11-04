@@ -22,7 +22,7 @@ def action():
         data = action_service.validate_request(request.json)
         action_service.add(data)
         if navy_game_service.should_update(data["navy_game_id"]):
-            navy_game_service.update_game(data["navy_game_id"])
+            navy_game_service.play_round(data["navy_game_id"])
         return (
             NavyResponse(201, data=request.json, message="Action added").to_json(),
             201,
@@ -88,7 +88,7 @@ def get_navy_game(id):
 def update_navy_game(id):
     try:
         validated_data = navy_game_service.validate_patch_request(request.json)
-        game = navy_game_service.join_second_player(validated_data, id)
+        game = navy_game_service.join(validated_data, id)
         return (
             NavyResponse(
                 200, data=NavyGameDTO().dump(game), message="Game updated."

@@ -27,7 +27,7 @@ def step_impl(context):
 def step_impl(context):
     data = {"user2_id": context.user2.id}
     id = context.game_created.id
-    context.game_created = navy_game_service.join_second_player(data, id)
+    context.game_created = navy_game_service.join(data, id)
 
 
 @when("I try to create a \"Destroyer\" ship in ('2', '3') position, and 'N' direction")
@@ -65,7 +65,7 @@ def step_impl(context):
 def step_impl(context):
     data = {"user2_id": context.user1.id}
     id = context.game_created.id
-    context.game_created = navy_game_service.join_second_player(data, id)
+    context.game_created = navy_game_service.join(data, id)
 
 
 @when("I try to create a \"Destroyer\" ship in ('5', '17') coords, and 'N' direction")
