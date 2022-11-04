@@ -74,3 +74,14 @@ class UnderGameSession(db.Model):
 
     def __repr__(self):
         return json.dumps(self.to_dict())
+
+    def get_visible_state(self, player):
+        d = {
+            "session_id": self.id,
+            "game_id": self.game.id,
+            "turn": self.turn,
+            "order": self.order,
+            "submarine": player.submarine.to_dict(),
+            "visible_board": player.submarine.under_board_mask.get_visible_board(),
+        }
+        return d

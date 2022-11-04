@@ -5,6 +5,7 @@ from app import db
 from app.daos.user_dao import add_user, get_user_by_id
 from app.underwater.command import AdvanceTorpedo, RotateAndAdvance, RotateAndAttack
 from app.underwater.daos.session_dao import session_dao
+from app.underwater.daos.submarine_dao import submarine_dao
 from app.underwater.daos.under_game_dao import game_dao
 from app.underwater.models.under_game import UnderGame
 
@@ -26,7 +27,9 @@ def reset():
 
 @underwater.get("/game/<int:session_id>")
 def get_game_state(session_id):
-    return session_dao.get_by_id(session_id).to_dict()
+    player = get_user_by_id(request.args.get("player_id"))
+    session = session_dao.get_by_id(session_id)
+    return session.get_visible_state(player)
 
 
 @underwater.post("/game/new")
@@ -95,6 +98,7 @@ def choose_submarine(session_id, player_id):
             data["y_position"],
             data["direction"],
         )
+        submarine_dao.save(sub)
     except Exception as e:
         return Response("{'error': %s}" % str(e), status=409)
     session_dao.save(session)
