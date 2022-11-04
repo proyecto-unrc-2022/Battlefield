@@ -179,7 +179,10 @@ class UnderGame(db.Model):
             self.update_visibilites()
 
     def send_radar_pulse(self, sub):
-        sub.player.under_board_mask.update()
+        sub.under_board_mask.get_radar_pulse()
+        for s in self.submarines:
+            if not sub.player is s.player:
+                s.return_radar_pulse(sub.under_board_mask)
 
     def solve_conflict(self, obj1, obj2):
         # Conflict types = "s-s, s-t, t-t"
