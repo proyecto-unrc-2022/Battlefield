@@ -88,7 +88,7 @@ def step_impl(context):
     from app.navy.daos.missile_dao import missile_dao
 
     missile = missile_dao.get_by_id(context.missile_test.id)
-    assert not missile
+    assert not missile.is_alive
 
 
 @then("The ship at '{pos_x:d}','{pos_y:d}' should be destroyed")
@@ -98,7 +98,7 @@ def step_impl(context, pos_x, pos_y):
 
     ship_map = navy_game_service.get_from_board(context.game.id, pos_x, pos_y)
     ship_bd = ship_dao.get_by_id(context.ship.id)
-    assert ship_map is None and ship_bd is None
+    assert ship_map is None and not ship_bd.is_alive
 
 
 @then("The ship at '{pos_x:d}','{pos_y:d}' should have '{hp:d}' hp")

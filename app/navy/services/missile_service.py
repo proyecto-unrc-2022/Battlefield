@@ -52,9 +52,8 @@ class MissileService:
             navy_game_id,
             self.get_prox_order(navy_game_id),
         )
-
         navy_game_service.games[navy_game_id]["missiles"].append(missile)
-        return missile_dao.add_or_update(missile)
+        return missile
 
     def get_prox_order(self, navy_game_id):
         return self.max_by_order(missile_dao.get_by_navy_game_id(navy_game_id)) + 1
@@ -67,6 +66,9 @@ class MissileService:
             temp = max(m.order, temp)
         return temp
 
+    def update_db(self, missile):
+        missile_dao.add_or_update(missile)
+
     def load_to_board(self, missile):
         navy_game_service.load_to_board(
             missile.navy_game_id, missile.pos_x, missile.pos_y, missile
@@ -77,9 +79,12 @@ class MissileService:
             missile.navy_game_id, missile.pos_x, missile.pos_y
         )
 
+    def get_alives(self, navy_game_id):
+        all_missiles = navy_game_service.get_missiles(navy_game_id)
+        return list(filter(lambda x: x.is_alive, all_missiles))
+
     def delete(self, missile):
-        navy_game_service.delete_entity(missile)
-        missile_dao.delete(missile)
+        missile.is_alive = False
 
     def act_accordingly(self, missile, x_conflict, y_conflict):
         self.delete(missile)
@@ -126,9 +131,13 @@ class MissileService:
         navy_game_service.load_to_board(
             missile.navy_game_id, missile.pos_x, missile.pos_y, missile
         )
-        missile_dao.add_or_update(missile)
 
         return True
+
+    def get_dto(self, missile):
+        from app.navy.dtos.missile_dto import MissileDTO
+
+        return MissileDTO().dump(missile)
 
 
 missile_service = MissileService()
