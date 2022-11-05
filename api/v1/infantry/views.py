@@ -9,7 +9,7 @@ from flask import Response, jsonify, request
 from app.daos.infantry.infantry_dao import *
 from app.models.infantry.game_Infantry import Game_Infantry, Game_Infantry_Schema
 from app.models.infantry.figure_infantry import Figure_infantry, Figure_Infantry_Schema
-from app.models.infantry.projectile_infantry import Projectile_Infantry_Schema, Projectile
+from app.models.infantry.projectile_infantry import Projectile_Infantry_Schema, Projectile_infantry
 from . import infantry
 
 game_schema= Game_Infantry_Schema()
@@ -95,7 +95,7 @@ def shoot_entity(user_id, game_id,direccion):
     #if(not(is_your_turn(game_id, user_id))) : return "No es tu turno"
     
     if(shoot(user_id, game_id, int(direccion))):
-        projectile = Projectile.query.order_by(Projectile.id.desc()).first()
+        projectile = Projectile_infantry.query.order_by(Projectile_infantry.id.desc()).first()
         return jsonify(projectile_schema.dump(projectile))
     else:
         return Response(status=404)

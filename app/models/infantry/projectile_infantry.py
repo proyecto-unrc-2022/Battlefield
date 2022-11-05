@@ -8,7 +8,7 @@ from app.models.user import User
 from app.models.infantry.game_Infantry import Game_Infantry
 
 
-class Projectile(db.Model):
+class Projectile_infantry(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     id_game = db.Column(db.Integer, db.ForeignKey(Game_Infantry.id))
@@ -35,7 +35,7 @@ class Projectile(db.Model):
 
 class Projectile_Infantry_Schema(SQLAlchemySchema):
     class Meta:
-        model= Projectile
+        model= Projectile_infantry
         include_relationships = True
         load_instance = True
 

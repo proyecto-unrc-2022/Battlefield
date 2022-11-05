@@ -4,7 +4,7 @@ from app.models.user import Profile
 from sqlalchemy import insert, select, update
 from ...models.infantry.figure_infantry import Figure_Infantry_Schema, Figure_infantry
 from ...models.infantry.game_Infantry import Game_Infantry
-from ...models.infantry.projectile_infantry import Projectile
+from ...models.infantry.projectile_infantry import Projectile_infantry
 from ...models.user import User
 from .constant import *
 import queue
@@ -188,7 +188,7 @@ def figure_valid(figure, game_id, direccion):
     y = 1
     if(figure.figure_type == SOLDIER):
         while y != 4:
-            projectile = Projectile(id_game= game_id, 
+            projectile = Projectile_infantry(id_game= game_id, 
                                     pos_x=0, 
                                     pos_y=0, 
                                     velocidad=diccionary_projectile1[y]["velocidad"], 
@@ -203,7 +203,7 @@ def figure_valid(figure, game_id, direccion):
             y = y + 1
         return True
     else:
-        projectile = Projectile(id_game= game_id, 
+        projectile = Projectile_infantry(id_game= game_id, 
                                 pos_x=0, 
                                 pos_y=0, 
                                 velocidad=diccionary_projectile2[figure.figure_type]["velocidad"], 
@@ -364,7 +364,7 @@ def move_projecile(projectile_id, game_id, direction):
     Returns:
         lista: retorna True si el proyectil se movio, o False si el proyectil se destruyo
     """
-    projectile = Projectile.query.filter_by(id = projectile_id, id_game = game_id).first()
+    projectile = Projectile_infantry.query.filter_by(id = projectile_id, id_game = game_id).first()
     figures = figures_id_game(game_id)
     move = True
     pos = (projectile.pos_x, projectile.pos_y)
@@ -395,8 +395,8 @@ def move_projecile(projectile_id, game_id, direction):
             move = False
         db.session.delete(projectile)    
     if move :
-        db.session.query(Projectile).filter(
-            Projectile.id == projectile_id, Projectile.id_game == game_id).update(
+        db.session.query(Projectile_infantry).filter(
+            Projectile_infantry.id == projectile_id, Projectile_infantry.id_game == game_id).update(
                 {'pos_x' :  projectile.pos_x, 'pos_y' : projectile.pos_y, 'direccion' : direction})
         db.session.commit()
     return move
@@ -415,7 +415,7 @@ def projectile_collision(projectile, game_id):
     """
     collision = False
     projectile_pos = (projectile.pos_x, projectile.pos_y)
-    projectiles = Projectile.query.filter_by(id_game = game_id).all()
+    projectiles = Projectile_infantry.query.filter_by(id_game = game_id).all()
     for i in range(len(projectiles)):
         opponent_projectil_pos = (projectiles[i].pos_x, projectiles[i].pos_y)
         if (projectile_pos == opponent_projectil_pos) and (projectile.id != projectiles[i].id):
@@ -431,7 +431,7 @@ def projectile_collision(projectile, game_id):
 #Falta diferenciar cual de los dos figures del game.
 def update_projectile(projectile_id):
 
-    game = db.session.query(Projectile).filter_by(id= projectile_id).first().id_game
+    game = db.session.query(Projectile_infantry).filter_by(id= projectile_id).first().id_game
     figure_1 = db.session.query(Figure_infantry).filter_by(id_game= game).first().id
     #figure_2 = db.session.query(Figure_infantry).filter_by(id_game= game).type
 
@@ -442,7 +442,7 @@ def update_projectile(projectile_id):
 #Borrar
 def damage_user(projectile_id, figure):
 
-    projectileId = db.session.query(Projectile).filter_by(id= projectile_id).first()
+    projectileId = db.session.query(Projectile_infantry).filter_by(id= projectile_id).first()
 
     figure_1 = db.session.query(Figure_infantry).filter_by(id= figure).first() #toma uno
 
@@ -463,7 +463,7 @@ def damage_user(projectile_id, figure):
 #Este metodo te retorna la direccion
 def return_direction(projectile_id):
 
-    projectile = db.session.query(Projectile).filter_by(id= projectile_id).first()
+    projectile = db.session.query(Projectile_infantry).filter_by(id= projectile_id).first()
 
     if(projectile.direction == EAST):
         projectile.pos_x = projectile.pos_x + 1 
@@ -491,12 +491,12 @@ def return_direction(projectile_id):
 
 #Este metodo hace daño entre los projectiles
 def damage_projectile(projectile_id):
-    game = db.session.query(Projectile).id_game
-    other_projectile = db.session.query(Projectile).order_by(id_game= game).id
+    game = db.session.query(Projectile_infantry).id_game
+    other_projectile = db.session.query(Projectile_infantry).order_by(id_game= game).id
 
     if(projectile_id.pos_x == other_projectile.pos_x and projectile_id.pos_y == other_projectile.pos_y):
-        db.session.query(Projectile).filter_by(id= other_projectile).destroy
-        db.session.query(Projectile).filter_by(id= projectile_id).destroy
+        db.session.query(Projectile_infantry).filter_by(id= other_projectile).destroy
+        db.session.query(Projectile_infantry).filter_by(id= projectile_id).destroy
 
 def direc(dir, pos_x, pos_y):
 
@@ -550,7 +550,7 @@ def damage_Projectile(projectile, figures):
 
 def intersec_Projectile_all(game_id):
 
-    projectile_all = Projectile.query.filter_by(id_game = game_id).all()
+    projectile_all = Projectile_infantry.query.filter_by(id_game = game_id).all()
 
     figures = figures_id_game(game_id)
 

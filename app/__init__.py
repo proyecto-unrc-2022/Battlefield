@@ -28,6 +28,9 @@ def create_app(environment="development"):
     from app.navy.models.missile import Missile
     from app.navy.models.navy_game import NavyGame
     from app.navy.models.ship import Ship
+    from app.models.infantry.game_Infantry import Game_Infantry
+    from app.models.infantry.figure_infantry import Figure_infantry
+    from app.models.infantry.projectile_infantry import Projectile_infantry
 
     secret_token = app.config["SECRET_KEY"]
 
@@ -38,14 +41,8 @@ def create_app(environment="development"):
     from api.v1.navy import navy as navy_blueprint
     from api.v1.underwater import underwater as underwater_blueprint
     from app.models.user import User
-<<<<<<< HEAD
-    from app.models.underwater.uw_game import UnderGame
-    from app.models.navy.dynamic_navy_models import DynamicShip, DynamicMissile, Game
-    from app.models.infantry.game_Infantry import Game_Infantry
-    from app.models.infantry.figure_infantry import Figure_infantry
-    from app.models.infantry.projectile_infantry import Projectile
-=======
->>>>>>> develop
+    
+    
 
     app.register_blueprint(navy_blueprint, url_prefix="/api/v1/navy")
     app.register_blueprint(auth_blueprint, url_prefix="/auth")
