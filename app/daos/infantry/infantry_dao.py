@@ -366,7 +366,7 @@ def next_turn(game):
     if queue_turn.empty():
         #Cuando ya no hay mas turnos en la ronda
         queue_turn.put(game.turn)
-        queue_turn.put(find_opponent(game.id, User.query.filter_by(id = game.turn).first().id).id)
+        queue_turn.put(find_opponent(game.id, User.query.filter_by(id = game.turn).first().id))
         round = True
         db.session.query(Figure_infantry).filter(
             Figure_infantry.id_user == figure_user1.id, Figure_infantry.id_game == game.id).update(
