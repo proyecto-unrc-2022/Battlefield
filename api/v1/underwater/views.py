@@ -1,6 +1,6 @@
 from flask import Response, request
 
-from api import token_auth
+from api import token_auth, verify_token
 from app import db
 from app.daos.user_dao import add_user, get_user_by_id
 from app.underwater.command import (
@@ -31,8 +31,10 @@ def reset():
 
 
 @underwater.get("/game/<int:session_id>")
+@token_auth.login_required
 def get_game_state(session_id):
-    player = get_user_by_id(request.args.get("player_id"))
+    token = request.headers["token"]
+    player = verify_token(token)
     session = session_dao.get_by_id(session_id)
     return session.get_visible_state(player)
 
