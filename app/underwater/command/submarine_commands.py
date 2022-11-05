@@ -56,8 +56,22 @@ class RotateAndAttack(SubmarineCommand):
         self.direction = params["direction"]
 
     def execute(self):
-        submarine = self.submarine
-        if submarine.in_game():
-            self.game.rotate_object(submarine, self.direction)
-            if submarine.in_game():
-                self.game.attack(submarine)
+        if self.submarine.in_game():
+            self.game.rotate_object(self.submarine, self.direction)
+            if self.submarine.in_game():
+                self.game.attack(self.submarine)
+
+
+class SendRadarPulse(SubmarineCommand):
+    submarine_command_id = db.Column(
+        db.Integer, db.ForeignKey("submarine_command.command_id"), primary_key=True
+    )
+    __mapper_args__ = {"polymorphic_identity": "send_radar_pulse"}
+
+    def __init__(self, game, submarine, **params):
+        super().__init__(game, submarine, **params)
+
+    def execute(self):
+        if self.submarine.in_game():
+            self.game.send_radar_pulse(self.submarine)
+        print(f"Submarine {self.submarine.id} sends radar pulse")

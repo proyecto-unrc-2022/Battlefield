@@ -1,9 +1,14 @@
 from flask import Response, request
 
-from api import token_auth
+from api import token_auth, verify_token
 from app import db
 from app.daos.user_dao import add_user, get_user_by_id
-from app.underwater.command import AdvanceTorpedo, RotateAndAdvance, RotateAndAttack
+from app.underwater.command import (
+    AdvanceTorpedo,
+    RotateAndAdvance,
+    RotateAndAttack,
+    SendRadarPulse,
+)
 from app.underwater.daos.session_dao import session_dao
 from app.underwater.daos.submarine_dao import submarine_dao
 from app.underwater.daos.under_game_dao import game_dao
@@ -26,19 +31,32 @@ def reset():
 
 
 @underwater.get("/game/<int:session_id>")
+@token_auth.login_required
 def get_game_state(session_id):
-    player = get_user_by_id(request.args.get("player_id"))
+    token = get_token(request)
+    player = get_player_from(token)
     session = session_dao.get_by_id(session_id)
+
+    if not player:
+        return Response("{'error'; 'could not find a player'}", status=404)
+    if not session:
+        return Response("{'error': 'could not find a session'}", status=404)
+
+    if not session.has_player(player):
+        return Response("{'error': 'invalid session'}]")
+
     return session.get_visible_state(player)
 
 
 @underwater.post("/game/new")
-# @token_auth.login_required
+@token_auth.login_required
 def new_game():
     data = request.form.to_dict()
+    token = get_token(request)
+    host = get_player_from(token)
 
-    host = get_user_by_id(data["host_id"])
-
+    if not host:
+        return Response("{'error': 'could not find a player'}", status=404)
     if host.under_game_host or host.under_game_visitor:
         return Response("{'error': 'player is in another game'}", status=409)
 
@@ -56,15 +74,17 @@ def new_game():
 
 
 @underwater.post("/game/<int:session_id>/join")
+@token_auth.login_required
 def join_game(session_id):
     data = request.form.to_dict()
-
-    visitor = get_user_by_id(data["visitor_id"])
+    token = get_token(request)
+    visitor = get_player_from(token)
     game_session = session_dao.get_by_id(session_id)
 
+    if not visitor:
+        return Response("{'error': 'could not find a player'}", status=409)
     if game_session.visitor is not None:
         return Response("{'error':'game does not have an available slot'}", status=409)
-
     if visitor is game_session.host:
         return Response(
             "{'error':'you cannot be a visitor to your own game'}", status=409
@@ -76,14 +96,16 @@ def join_game(session_id):
     return "{'success': 'user joined the game'}"
 
 
-@underwater.post("/game/<int:session_id>/<int:player_id>/choose_submarine")
-def choose_submarine(session_id, player_id):
+@underwater.post("/game/<int:session_id>/choose_submarine")
+@token_auth.login_required
+def choose_submarine(session_id):
     data = request.form.to_dict()
     for key in data.keys():
         data[key] = int(data[key])
 
+    token = get_token(request)
+    player = get_player_from(token)
     session = session_dao.get_by_id(session_id)
-    player = get_user_by_id(player_id)
 
     if not session:
         return Response("{'error':'game not found'}", status=404)
@@ -106,14 +128,16 @@ def choose_submarine(session_id, player_id):
     return "{'success': submarine placed}"
 
 
-@underwater.post("/game/<int:session_id>/<int:player_id>/rotate_and_advance")
-def rotate_and_advance(session_id, player_id):
+@underwater.post("/game/<int:session_id>/rotate_and_advance")
+@token_auth.login_required
+def rotate_and_advance(session_id):
     data = request.form.to_dict()
     for key in data:
         data[key] = int(data[key])
 
+    token = get_token(request)
+    player = get_player_from(token)
     session = session_dao.get_by_id(session_id)
-    player = get_user_by_id(player_id)
 
     if not session:
         return Response("{'error':'game not found'}", status=404)
@@ -130,22 +154,24 @@ def rotate_and_advance(session_id, player_id):
     if session.current_turn_player() is not player:
         return Response("{'error': 'not your turn'}", status=409)
 
-    c = RotateAndAdvance(session.game, submarine, direction=direction, steps=steps)
-    session.add_command(c)
-    print(c.name)
+    session.add_command(
+        RotateAndAdvance(session.game, submarine, direction=direction, steps=steps)
+    )
 
     update_session(session)
     return "{'success': 'command enqueued'}"
 
 
-@underwater.post("/game/<int:session_id>/<int:player_id>/rotate_and_attack")
-def rotate_and_attack(session_id, player_id):
+@underwater.post("/game/<int:session_id>/rotate_and_attack")
+@token_auth.verify_token
+def rotate_and_attack(session_id):
     data = request.form.to_dict()
     for key in data:
         data[key] = int(data[key])
 
+    token = get_token(request)
+    player = get_player_from(token)
     session = session_dao.get_by_id(session_id)
-    player = get_user_by_id(player_id)
 
     if not session:
         return Response("{'error':'game not found'}", status=404)
@@ -163,9 +189,26 @@ def rotate_and_attack(session_id, player_id):
 
     session.add_command(RotateAndAttack(session.game, submarine, direction=direction))
 
-    print(session.turn)
     update_session(session)
-    print(session.turn)
+    return "{'success': 'command enqueued'}"
+
+
+@underwater.post("/game/<int:session_id>/send_radar_pulse")
+@token_auth.login_required
+def send_radar_pulse(session_id):
+    token = get_token(request)
+    player = get_player_from(token)
+    session = session_dao.get_by_id(session_id)
+
+    if not session:
+        return Response("{'error':'game not found'}", status=404)
+    if not player:
+        return Response("{'error':'player not found'}", status=404)
+
+    submarine = player.submarine
+
+    session.add_command(SendRadarPulse(session.game, submarine))
+    update_session(session)
     return "{'success': 'command enqueued'}"
 
 
@@ -183,3 +226,15 @@ def update_session(session):
     else:
         session.next_turn()
     session_dao.save(session)
+
+
+def get_player_from(token):
+    try:
+        player = verify_token(token)
+    except Exception:
+        return None
+    return player
+
+
+def get_token(request):
+    return request.headers["authorization"].split()[1]  # Trim 'Bearer ' prefix
