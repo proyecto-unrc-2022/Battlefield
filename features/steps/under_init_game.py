@@ -21,7 +21,11 @@ def step_impl(context):
         new_user = db.session.query(User).where(User.username == row["username"]).one()
 
         payload = {"username": row["username"], "password": row["password"]}
-        context.page = context.client.post(url_for("auth.login"), data=payload)
+        headers = {"Content-Type": "application/json"}
+        context.page = context.client.post(
+            url_for("auth.login"), json=payload, headers=headers
+        )
+        print(context.page.text)
         response = json.loads(context.page.text)
         token = response["token"]
 

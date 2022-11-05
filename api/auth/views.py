@@ -14,8 +14,7 @@ CORS(auth)
 
 @auth.route("/login", methods=["POST"])
 def login():
-    # d = request.json
-    d = request.form.to_dict()
+    d = request.json
 
     user = db.session.scalars(
         select(User).where(User.username == d["username"])
