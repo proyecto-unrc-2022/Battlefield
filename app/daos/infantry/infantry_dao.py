@@ -325,6 +325,7 @@ def ready(game_id, user_id):
     global queue_turn
     is_players_ready = False
     game = Game_Infantry.query.filter_by(id = game_id).first()
+    if queue_turn == None: queue_turn = queue.Queue()
     if game.turn == None :
         turn_list = list(queue_turn.queue)
         if (user_id in turn_list) and len(turn_list) > 0:
