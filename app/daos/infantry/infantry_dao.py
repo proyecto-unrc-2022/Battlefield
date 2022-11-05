@@ -428,7 +428,7 @@ def move_projecile(projectile_id, game_id):
     if move :
         db.session.query(Projectile_infantry).filter(
             Projectile_infantry.id == projectile_id, Projectile_infantry.id_game == game_id).update(
-                {'pos_x' :  projectile.pos_x, 'pos_y' : projectile.pos_y, 'direccion' : direction})
+                {'pos_x' :  projectile.pos_x, 'pos_y' : projectile.pos_y, 'direccion' : projectile.direccion})
         db.session.commit()
     return move
 
