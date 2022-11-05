@@ -22,7 +22,7 @@ projectile_schema = Projectile_Infantry_Schema()
 #Lo que hace es avanzar turno, y cuando termina la ronda hace un update de todo, y ademas verifica si hay un ganador
 def update_round():
     if update(1): return "Hubo un ganador"
-    return "Se avanzo turno"
+    return "Se avanzo el turno o termino la ronda"
 
 @infantry.route("/user/<user_id>/game", methods=['POST'])
 def start_game(user_id):
