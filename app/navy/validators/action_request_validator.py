@@ -17,12 +17,6 @@ from app.navy.utils.navy_utils import utils
 
 
 class ActionRequestValidator(Schema):
-    @validates("user_id")
-    def validate_user_id(self, user_id):
-        user = db.session.query(User).filter_by(id=user_id).first()
-        if not user:
-            raise ValidationError("User not found")
-
     @validates("navy_game_id")
     def validate_navy_game_id(self, navy_game_id):
         from app.navy.models.navy_game import NavyGame
@@ -32,6 +26,8 @@ class ActionRequestValidator(Schema):
             raise ValidationError("Game not found")
         elif navy_game.winner:
             raise ValidationError("Game finished")
+        elif not navy_game.ready_to_play:
+            raise ValidationError("Game not ready to play")
 
     @validates_schema
     def check_move(self, in_data, **kwargs):
