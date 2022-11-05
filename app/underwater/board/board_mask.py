@@ -53,8 +53,8 @@ class BoardMask(db.Model):
     def get_radar_pulse(self):
         self.__clean_radar()
 
-        vision_scope = self.player.submarine.get_vision_scope()
-        radar_scope = self.player.submarine.get_radar_scope()
+        vision_scope = self.submarine.get_vision_scope()
+        radar_scope = self.submarine.get_radar_scope()
 
         for pos in radar_scope:
             if not pos in vision_scope:
@@ -74,7 +74,7 @@ class BoardMask(db.Model):
 
         if i_was_seen:
             for pos in enemy_positions:
-                if pos in self.visible_cells():
+                if pos in self.visible_cells:
                     continue
                 if pos in self.submarine.get_radar_scope():
                     self.__add(pos, "rP")
@@ -103,6 +103,8 @@ class BoardMask(db.Model):
         self.__add(cell, code)
         if not cell in self.visible_cells:
             self.visible_cells.add(cell)
+        if cell in self.radar_cells:
+            self.radar_cells.remove(cell)
 
     def __encode(self, obj, pos, radar=False):
         # RADAR

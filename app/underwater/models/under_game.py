@@ -182,7 +182,7 @@ class UnderGame(db.Model):
         sub.under_board_mask.get_radar_pulse()
         for s in self.submarines:
             if not sub.player is s.player:
-                s.return_radar_pulse(sub.under_board_mask)
+                s.under_board_mask.return_radar_pulse(sub.under_board_mask)
 
     def solve_conflict(self, obj1, obj2):
         # Conflict types = "s-s, s-t, t-t"
