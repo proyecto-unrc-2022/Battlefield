@@ -19,11 +19,13 @@ def step_impl(context):
     for row in context.table:
         add_user(row["username"], row["password"], row["email"])
         new_user = db.session.query(User).where(User.username == row["username"]).one()
-        context.players.update({row["username"]: new_user})
+
         payload = {"username": row["username"], "password": row["password"]}
         context.page = context.client.post(url_for("auth.login"), data=payload)
         response = json.loads(context.page.text)
         token = response["token"]
+
+        context.players.update({row["username"]: new_user})
         context.tokens.update({new_user.id: f"Bearer {token}"})
 
 
