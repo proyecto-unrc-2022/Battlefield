@@ -17,6 +17,13 @@ figure_schema = Figure_Infantry_Schema()
 projectile_schema = Projectile_Infantry_Schema()
 
 
+@infantry.route("/update", methods=['GET'])
+#Sirve para hacer test mas rapidos.
+#Lo que hace es avanzar turno, y cuando termina la ronda hace un update de todo, y ademas verifica si hay un ganador
+def update_round():
+    if update(1): return "Hubo un ganador"
+    return "Se avanzo turno"
+
 @infantry.route("/user/<user_id>/game", methods=['POST'])
 def start_game(user_id):
 
@@ -79,24 +86,25 @@ def mov_action():
     velocity = int(data["velocity"])
     course = int(data["course"])
     game_id = int(data["game_id"])
-   
     user_id = int(data["user_id"])
   
-   # if(not(is_your_turn(game_id, user_id))) : return "No es tu turno"
+    if(not(is_your_turn(game_id, int(user_id)))) : return "No es tu turno"
     
-    if(move(game_id, user_id, course, velocity)):
-        move_entity = Figure_infantry.query.filter_by(id_game = game_id, id_user = user_id).first()
-        return jsonify(figure_schema.dump(move_entity))
+    if(move_save(game_id, user_id, course, velocity)):
+        #move_entity = Figure_infantry.query.filter_by(id_game = game_id, id_user = user_id).first()
+        #return jsonify(figure_schema.dump(move_entity))
+        return "Accion realizada"
     return "Colision o velocidad excedida"
 
 @infantry.route("/game/<game_id>/user/<user_id>/direccion/<direccion>/shoot",methods=['POST'])
-def shoot_entity(user_id, game_id,direccion):
+def shoot_entity(user_id, game_id, direccion):
     
-    #if(not(is_your_turn(game_id, user_id))) : return "No es tu turno"
+    if(not(is_your_turn(game_id, int(user_id)))) : return "No es tu turno"
     
-    if(shoot(user_id, game_id, int(direccion))):
-        projectile = Projectile.query.order_by(Projectile.id.desc()).first()
-        return jsonify(projectile_schema.dump(projectile))
+    if(shoot_save(user_id, game_id, int(direccion))):
+        #projectile = Projectile.query.order_by(Projectile.id.desc()).first()
+        #return jsonify(projectile_schema.dump(projectile))
+        return "Accion realizada"
     else:
         return Response(status=404)
 
