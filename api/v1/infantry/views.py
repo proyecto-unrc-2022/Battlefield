@@ -52,6 +52,11 @@ def ready_to_play():
 @infantry.route("/game/<game_id>/user/<user_id>/join",methods=['POST'])
 def join_game(game_id, user_id):
 
+    game = Game_Infantry.query.filter_by(id= game_id).first()
+
+    if(game.id_user1 == int(user_id)):
+        return Response(status=404)
+
     if (join(game_id, int(user_id))):
 
         ready_game = Game_Infantry.query.filter_by(id = game_id).first()
@@ -99,7 +104,15 @@ def mov_action():
 @infantry.route("/game/<game_id>/user/<user_id>/direccion/<direccion>/shoot",methods=['POST'])
 def shoot_entity(user_id, game_id, direccion):
     
+    data = json.loads(request.data)
+    velocity = int(data["velocity"])
+
     if(not(is_your_turn(game_id, int(user_id)))) : return "No es tu turno"
+
+    figure = db.session.query(Figure_infantry).filter_by(id_user = user_id, id_game = game_id).first()
+
+    if(figure.figure_type == ARTILLERY and (velocity>=3 and velocity <=20)):
+        figure.velocidad = velocity
     
     if(shoot_save(user_id, game_id, int(direccion))):
         #projectile = Projectile.query.order_by(Projectile.id.desc()).first()
