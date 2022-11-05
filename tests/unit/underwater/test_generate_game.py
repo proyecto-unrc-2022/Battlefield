@@ -34,6 +34,8 @@ def generate_game(h, w, players, sub_list, tor_list):
                 )
                 game.board.place_object(torpedo)
 
+        submarine.under_board_mask.update()
+
     return game
 
 
