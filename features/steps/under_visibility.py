@@ -5,7 +5,6 @@ from flask import url_for
 def step_impl(context, username):
     player = context.players[username]
     visibility = context.session.get_visible_state(player)["visible_board"]
-    print(visibility)
     i = 0
     for row in context.table:
         for j in range(len(row)):
@@ -21,10 +20,9 @@ def step_impl(context, username):
 def step_impl(context, username):
     player = context.players[username]
     session = context.session
+    headers = {"authorization": context.tokens[player.id]}
     context.page = context.client.post(
-        url_for(
-            "underwater.send_radar_pulse", session_id=session.id, player_id=player.id
-        )
+        url_for("underwater.send_radar_pulse", session_id=session.id), headers=headers
     )
 
 

@@ -53,14 +53,11 @@ def step_impl(context, username, d, n):
         "direction": d,
         "steps": n,
     }
-    # print(context.game)
+    headers = {"authorization": context.tokens[player.id]}
     context.page = context.client.post(
-        url_for(
-            "underwater.rotate_and_advance",
-            session_id=context.session.id,
-            player_id=player.id,
-        ),
+        url_for("underwater.rotate_and_advance", session_id=context.session.id),
         data=payload,
+        headers=headers,
     )
 
     assert context.page
@@ -77,16 +74,12 @@ def step_impl(context):
 @when("the user '{username}' rotates the submarine with direction '{d:d}' and attacks")
 def step_impl(context, username, d):
     player = context.players[username]
-    payload = {
-        "direction": d,
-    }
+    payload = {"direction": d}
+    headers = {"authorization": context.tokens[player.id]}
     context.page = context.client.post(
-        url_for(
-            "underwater.rotate_and_attack",
-            session_id=context.session.id,
-            player_id=player.id,
-        ),
+        url_for("underwater.rotate_and_attack", session_id=context.session.id),
         data=payload,
+        headers=headers,
     )
     assert context.page
 

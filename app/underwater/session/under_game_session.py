@@ -85,3 +85,6 @@ class UnderGameSession(db.Model):
             "visible_board": player.submarine.under_board_mask.get_visible_board(),
         }
         return d
+
+    def has_player(self, player):
+        return self.host is player or self.visitor is player

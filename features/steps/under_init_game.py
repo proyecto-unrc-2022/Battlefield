@@ -15,10 +15,16 @@ from app.underwater.daos.under_game_dao import game_dao
 @given("there exist some users and they are logged in")
 def step_impl(context):
     context.players = {}
+    context.tokens = {}
     for row in context.table:
         add_user(row["username"], row["password"], row["email"])
         new_user = db.session.query(User).where(User.username == row["username"]).one()
         context.players.update({row["username"]: new_user})
+        payload = {"username": row["username"], "password": row["password"]}
+        context.page = context.client.post(url_for("auth.login"), data=payload)
+        response = json.loads(context.page.text)
+        token = response["token"]
+        context.tokens.update({new_user.id: f"Bearer {token}"})
 
 
 # CREATE A NEW GAME
@@ -27,8 +33,9 @@ def step_impl(context):
 @when("the user '{username}' asks for a new game")
 def step_impl(context, username):
     player = context.players[username]
+    headers = {"authorization": context.tokens[player.id]}
     context.page = context.client.post(
-        url_for("underwater.new_game"), data={"host_id": player.id}
+        url_for("underwater.new_game"), data={"host_id": player.id}, headers=headers
     )
 
     assert context.page
@@ -63,8 +70,10 @@ def step_impl(context, username, id):
 @when("the user '{username}' asks to join the game of id '{id:d}'")
 def step_impl(context, username, id):
     player = context.players[username]
+    payload = {"visitor_id": player.id}
+    headers = {"authorization": context.tokens[player.id]}
     context.page = context.client.post(
-        url_for("underwater.join_game", session_id=id), data={"visitor_id": player.id}
+        url_for("underwater.join_game", session_id=id), data=payload, headers=headers
     )
     assert context.page
 
