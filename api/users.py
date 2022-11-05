@@ -3,6 +3,7 @@ import json
 from click import password_option
 
 from flask import Blueprint, Response, jsonify, request
+from flask_cors import CORS
 from sqlalchemy import insert, select
 from werkzeug.security import generate_password_hash
 
@@ -14,6 +15,8 @@ from app.daos.user_dao import add_user
 users_bp = Blueprint("users", __name__, url_prefix="/users")
 user_schema = UserSchema()
 
+CORS(users_bp)
+
 
 @users_bp.route("", methods=["GET"])
 # @token_auth.login_required
@@ -23,6 +26,7 @@ def get_all_users():
     print(request.args.get(""))
 
     return jsonify(user_schema.dump(users, many=True))
+
 
 @users_bp.route("/<user_id>", methods=["GET"])
 # @token_auth.login_required

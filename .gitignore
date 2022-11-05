@@ -1,4 +1,9 @@
 venv/
+env/
+entorno/
+freeze
+req.txt
+.vscode/
 
 
 *.pyc
@@ -13,3 +18,4 @@ htmlcov/
 dist/
 build/
 *.egg-info/
+client/node_modules/

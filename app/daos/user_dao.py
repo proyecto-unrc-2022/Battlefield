@@ -14,6 +14,14 @@ def add_user(username, password, email):
     return user
 
 
+def get_user_by_id(user_id):
+    return db.session.get(User, user_id)
+
+
+def get_user_by_username(username):
+    return db.session.query(User).filter_by(username="joel").one_or_none()
+
+
 def hash_password(plaintext_password):
     return hashpw(plaintext_password, gensalt())
 
