@@ -126,7 +126,7 @@ def move(game_id, user_id, direction, velocity):
     is_valid = True
     figures = figures_id_game(game_id)
     figure = db.session.query(Figure_infantry).filter_by(id_user = user_id, id_game = game_id).first()
-    figure_opponent = Figure_infantry.query.filter_by(id_user = find_opponent(game_id, figure.id).id, id_game = game_id).first()
+    figure_opponent = Figure_infantry.query.filter_by(id_user = find_opponent(game_id, figure.id), id_game = game_id).first()
     aux_figure = copy.copy(figure)
     exceeded_velocity_limit = (velocity > figure.velocidad)
     for i in range(velocity):
@@ -163,7 +163,7 @@ def find_opponent(game_id, user_id):
     user_1 = game.user_1
     user_2 = game.user_2
     user_opponent = user_1 if user_1.id != user_id else user_2
-    return user_opponent
+    return user_opponent.id
 
 
 def intersection(coord1, coords2):
@@ -365,7 +365,6 @@ def next_turn(game):
     current_figure = Figure_infantry.query.filter_by(id = game.turn).first()
     if queue_turn.empty():
         #Cuando ya no hay mas turnos en la ronda
-        queue_turn.put(game.turn)
         queue_turn.put(find_opponent(game.id, User.query.filter_by(id = game.turn).first().id))
         round = True
         db.session.query(Figure_infantry).filter(
@@ -378,7 +377,7 @@ def next_turn(game):
             Game_Infantry.id == game.id).update(
                 {'turn' :  game.turn})
     elif current_figure.avail_actions != 1:
-        #Cuando falta algun turno en la ronda 
+        #Cuando falta algun turno en la ronda
         db.session.query(Game_Infantry).filter(
             Game_Infantry.id == game.id).update(
                 {'turn' :  queue_turn.get()})
@@ -640,7 +639,7 @@ def assis_server_restart(game):
             db.session.query(Game_Infantry).filter(
             Game_Infantry.id == game.id).update(
             {'turn' : game.id_user1})
-        queue_turn.put(find_opponent(game.id, User.query.filter_by(id = game.turn).first().id).id)
+        queue_turn.put(find_opponent(game.id, User.query.filter_by(id = game.turn).first().id))
         db.session.query(Figure_infantry).filter(
         Figure_infantry.id_user == figure_user1.id, Figure_infantry.id_game == game.id).update(
             {'avail_actions' : 1})
