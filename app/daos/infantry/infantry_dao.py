@@ -403,7 +403,7 @@ def next_turn(game):
     db.session.commit()
     return round
 
-def move_projecile(projectile_id, game_id):
+def move_projectile(projectile_id, game_id):
     """Mueve el proyectil, y si colisiona se destruye
 
     Args:
@@ -438,7 +438,7 @@ def move_projecile(projectile_id, game_id):
             pos = direc(projectile.direccion, pos[0], pos[1])
         projectile.pos_x = projectile.pos_x + (projectile.pos_x - pos[0])
         projectile.pos_y = projectile.pos_y + (projectile.pos_y - pos[1])
-        if projectile_collision(projectile, figures): 
+        if projectile_collision(projectile, game_id): 
             move = False
         elif damage_Projectile(projectile, figures): 
             move = False
@@ -702,7 +702,7 @@ def update_projectile(game):
         while projectile == None:
             projectile_id = projectile_queue.get()
             projectile = Projectile_infantry.query.filter_by(id = projectile_id, id_game = game.id).first()
-        move_projecile(projectile_id, game.id)
+        move_projectile(projectile_id, game.id)
         if((projectile.pos_x < 0 or projectile.pos_x > 20) or (projectile.pos_y < 0 or projectile.pos_y > 10)):
             print(projectile)
             db.session.delete(projectile)
