@@ -1,6 +1,7 @@
 from app.navy.daos.action_dao import action_dao
 from app.navy.models.action import Action
 from app.navy.services.ship_service import ship_service
+from app.navy.services.navy_game_service import navy_game_service
 from app.navy.validators.action_request_validator import ActionRequestValidator
 
 """ 
@@ -24,7 +25,8 @@ class ActionService:
         actions.sort(key=lambda x: x.user_id == turn, reverse=True)
         return actions
 
-    def can_execute(self, ship):
+    def can_execute(self, action):
+        ship = navy_game_service.get_ship_from_game(action.navy_game_id, action.ship_id)
         return ship_service.can_update(ship)
 
     def execute(self, action):

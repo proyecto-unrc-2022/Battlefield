@@ -1,7 +1,9 @@
 from app.navy.daos.ship_dao import ship_dao
 from app.navy.daos.ship_type_dao import ship_type_dao
+from app.navy.daos.navy_game_dao import navy_game_dao
 from app.navy.models.ship import Ship
 from app.navy.utils.navy_utils import utils
+from app.navy.services.navy_game_service import navy_game_service
 
 
 class ShipService:
@@ -29,8 +31,13 @@ class ShipService:
             data["user_id"],
             data["navy_game_id"],
         )
-
-        return ship_dao.add_or_update(new_ship)
+        added_ship = ship_dao.add_or_update(new_ship)
+        ships = ship_dao.get_by(navy_game_id=data["navy_game_id"])
+        if len(ships) == 2:
+            game = navy_game_service.get_by_id(data["navy_game_id"])
+            game.ready_to_play = True 
+            navy_game_dao.add_or_update(game)
+        return added_ship
 
     def update_db(self, ship):
         ship_dao.add_or_update(ship)

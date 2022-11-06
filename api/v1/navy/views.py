@@ -5,6 +5,7 @@ from api import token_auth
 from app.navy.daos.missile_type_dao import missile_type_dao
 from app.navy.daos.ship_type_dao import ship_type_dao
 from app.navy.dtos.navy_game_dto import NavyGameDTO
+from app.navy.dtos.navy_game_state_dto import NavyGameStateDTO
 from app.navy.services.action_service import action_service
 from app.navy.services.navy_game_service import navy_game_service
 from app.navy.services.ship_service import ship_service
@@ -74,7 +75,7 @@ def get_navy_game(id):
     user_id = token_auth.current_user().id
     game = navy_game_service.get_by_id(id)
     return (
-        NavyResponse(status=200, data=NavyGameDTO().dump(game), message="Ok").to_json(),
+        NavyResponse(status=200, data=NavyGameStateDTO(game.id, user_id).dump(), message="Ok").to_json(),
         200,
     )
 

@@ -74,7 +74,10 @@ class NavyGameService:
         self.games[navy_game_id][(x, y)] = entity
 
     def get_from_board(self, navy_game_id, x, y):
-        return self.games[navy_game_id].get((x, y))
+        entity = self.games[navy_game_id].get((x, y))
+        if entity.is_alive:
+            return entity
+        return None
 
     def load_game(self, navy_game_id):
         from app.navy.services.missile_service import missile_service
@@ -112,9 +115,9 @@ class NavyGameService:
         def proceed(self, navy_game_id):
             if not self.games.get(navy_game_id):
                 self.load_game(navy_game_id)
-                f(navy_game_id)
+                f(self, navy_game_id)
             else:
-                f(navy_game_id)
+                f(self, navy_game_id)
 
         return proceed
 
@@ -230,9 +233,8 @@ class NavyGameService:
         set_missiles = set([])
 
         for ship in user_ships:
-            sight_range = ship_service.get_sight_range(ship)
             for x, y in game_dict.keys():
-                if utils.get_distance(ship.pos_x, ship.pos_y, x, y) <= sight_range:
+                if utils.in_range(ship.pos_x, ship.pos_y, x, y, ship.visibility):
                     visible_entity = self.get_from_board(ship.navy_game_id, x, y)
                     self.add_to_set(visible_entity, set_ships, set_missiles, ship.id)
 
