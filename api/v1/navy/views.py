@@ -49,7 +49,8 @@ def new_ship():
 @token_auth.login_required
 def new_navy_game():
     try:
-        validated_data = navy_game_service.validate_post_request(request.json)
+        user1_id = token_auth.current_user().id
+        validated_data = navy_game_service.validate_post_request({"user1_id": user1_id})
         created_game = navy_game_service.add(validated_data)
         return (
             NavyResponse(
@@ -64,18 +65,15 @@ def new_navy_game():
 @navy.get("/navy_games")
 @token_auth.login_required
 def get_navy_games():
-    user_id = request.args.get("user_id")
-    if user_id:
-        games = navy_game_service.get_all(user_id)
-    else:
-        games = navy_game_service.get_all()
+    games = navy_game_service.get_all()
     json_games = list(map(lambda game: NavyGameDTO().dump(game), games))
     return NavyResponse(status=200, data=json_games, message="Ok").to_json(), 200
 
 
-@navy.get("/navy_games/<id>")
+@navy.get("/navy_games/<int:id>")
 @token_auth.login_required
 def get_navy_game(id):
+    user_id = token_auth.current_user().id
     game = navy_game_service.get_by_id(id)
     return (
         NavyResponse(status=200, data=NavyGameDTO().dump(game), message="Ok").to_json(),
@@ -83,11 +81,12 @@ def get_navy_game(id):
     )
 
 
-@navy.patch("/navy_games/<id>")
+@navy.patch("/navy_games/<int:id>")
 @token_auth.login_required
 def update_navy_game(id):
     try:
-        validated_data = navy_game_service.validate_patch_request(request.json)
+        user2_id = token_auth.current_user().id
+        validated_data = navy_game_service.validate_patch_request({"user2_id": user2_id})
         game = navy_game_service.join_second_player(validated_data, id)
         return (
             NavyResponse(
