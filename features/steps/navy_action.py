@@ -7,12 +7,13 @@ from steps.navy.test_utils import test_utils
 EXPECTED_ERRORS = {
     "Game not found": "navy_game_id",
     "Invalid move": "_schema",
-    "User not found": "user_id",
     "Must be one of: N, S, E, W, SE, SW, NE, NW.": "course",
     "Can't move more than 3 spaces": "_schema",
     "The movement is a negative distance": "_schema",
     "Invalid ship in game": "_schema",
     "Ship not found": "_schema",
+    "Game finished": "navy_game_id",
+    "No its your turn yet": "_schema",
 }
 
 
@@ -21,7 +22,9 @@ def step_impl(context):
 
     from app.navy.services.navy_game_service import navy_game_service
 
-    context.game = navy_game_service.add({"user1_id": context.user1.id})
+    data = {"user1_id": context.user1.id}
+    context.game = navy_game_service.add(data)
+    test_utils.add_test_game(context.game.id)
 
     assert context.game
 
@@ -93,31 +96,6 @@ def step_impl(context, error_msj):
     message = json.loads(context.page.text)
     value = EXPECTED_ERRORS[error_msj]
     assert message[value][0] == error_msj
-
-
-@when("I try to move in a game with a user that doesn't exist")
-def step_impl(context):
-
-    context.headers = {
-        "Content-Type": "application/json",
-        "Authorization": f'Bearer {context.token["token"]}',
-    }
-
-    context.page = context.client.post(
-        url_for("navy.action"),
-        json=test_utils.json_action(
-            -1,
-            context.ship.course,
-            0,
-            context.game.id,
-            context.ship.missile_type_id,
-            context.ship.id,
-            2,
-        ),
-        headers=context.headers,
-    )
-
-    assert context.page
 
 
 @when("I try to move in a game with an incorrect direction like '{course}'")
@@ -235,6 +213,92 @@ def step_impl(context):
             context.ship.missile_type_id,
             3,
             2,
+        ),
+        headers=context.headers,
+    )
+
+    assert context.page
+
+
+@given("The game is already finished")
+def step_impl(context):
+
+    from app.navy.services.navy_game_service import navy_game_service
+
+    data = {"user1_id": context.user1.id}
+    context.game = navy_game_service.add(data)
+
+    test_utils.add_test_game(context.game.id, winner=True)
+
+    assert context.game
+
+
+@when("I try to make an action in the ended game")
+def step_impl(context):
+
+    context.headers = {
+        "Content-Type": "application/json",
+        "Authorization": f'Bearer {context.token["token"]}',
+    }
+
+    context.page = context.client.post(
+        url_for("navy.action"),
+        json=test_utils.json_action(
+            context.user1.id,
+            context.ship.course,
+            0,
+            context.game.id,
+            context.ship.missile_type_id,
+            context.ship.id,
+            2,
+        ),
+        headers=context.headers,
+    )
+
+    assert context.page
+
+
+@when("I move the ship 3 positions to '{course}'")
+def step_impl(context, course):
+    context.headers = {
+        "Content-Type": "application/json",
+        "Authorization": f'Bearer {context.token["token"]}',
+    }
+
+    context.page = context.client.post(
+        url_for("navy.action"),
+        json=test_utils.json_action(
+            context.user1.id,
+            course,
+            0,
+            context.game.id,
+            context.ship.missile_type_id,
+            context.ship.id,
+            2,
+        ),
+        headers=context.headers,
+    )
+
+    assert context.page
+
+
+@when("I try to move the ship again")
+def step_impl(context):
+    context.headers = {
+        "Content-Type": "application/json",
+        "Authorization": f'Bearer {context.token["token"]}',
+    }
+
+    context.page = context.client.post(
+        url_for("navy.action"),
+        json=test_utils.json_action(
+            context.user1.id,
+            context.ship.course,
+            0,
+            context.game.id,
+            context.ship.missile_type_id,
+            context.ship.id,
+            3,
         ),
         headers=context.headers,
     )
