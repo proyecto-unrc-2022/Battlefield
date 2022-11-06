@@ -18,7 +18,7 @@ from . import navy
 @token_auth.login_required
 def action():
     try:
-
+        request.json["user_id"] = token_auth.current_user().id
         data = action_service.validate_request(request.json)
         action_service.add(data)
         if navy_game_service.should_update(data["navy_game_id"]):
