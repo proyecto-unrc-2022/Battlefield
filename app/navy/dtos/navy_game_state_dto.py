@@ -9,8 +9,10 @@ class NavyGameStateDTO:
         from app.navy.services.ship_service import ship_service
         from app.navy.utils.navy_utils import utils
 
-        user_ship = ship_service.get_by(user_id=user_id)[utils.ZERO]
-        return ShipDTO().dump(user_ship)
+        ships = ship_service.get_by(user_id=user_id)
+        if ships:
+            user_ship = ships[utils.ZERO]
+            return ShipDTO().dump(user_ship)
 
     def load_state(self):
         from app.navy.services.navy_game_service import navy_game_service

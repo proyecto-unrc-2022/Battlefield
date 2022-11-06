@@ -75,7 +75,7 @@ class NavyGameService:
 
     def get_from_board(self, navy_game_id, x, y):
         entity = self.games[navy_game_id].get((x, y))
-        if entity.is_alive:
+        if entity and entity.is_alive:
             return entity
         return None
 
