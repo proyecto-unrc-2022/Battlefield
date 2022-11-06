@@ -218,7 +218,6 @@ def shoot(user_id, game_id, direccion, velocity):
 
 #Este metodo es la creacion para los proyectiles
 def figure_valid(figure, game_id, direccion, velocity):
-    
 
     diccionary_projectile1 = {1:{"velocidad":0,"daño":1},
                               2:{"velocidad":0,"daño":2},
@@ -245,7 +244,7 @@ def figure_valid(figure, game_id, direccion, velocity):
             figure.pos_y = projectile.pos_y
             y = y + 1
         return True
-    else:
+    elif(figure.figure_type == SOLDIER or figure.figure_type == HUMVEE or figure.figure_type == TANK):
         projectile = Projectile_infantry(id_game= game_id, 
                                 pos_x=0, 
                                 pos_y=0, 
@@ -261,8 +260,10 @@ def figure_valid(figure, game_id, direccion, velocity):
             db.session.add(projectile)
             db.session.commit()
             return True
+    else:
+        return False
 
-    return False
+    
 
 #Este metodo toma la figura y el proyectil.
 #Setea las posiciones x e y para la creacion de los proyectiles
@@ -706,7 +707,7 @@ def update_users():
         if action[0] == "move":
             move(action[1], action[2], action[3], action[4])
         elif action[0] == "shoot":
-            shoot(action[1], action[2], action[3])
+            shoot(action[1], action[2], action[3], 3)
     return update
 
 def game_over(game):
