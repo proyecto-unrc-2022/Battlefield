@@ -204,20 +204,20 @@ def shoot_save(user_id, game_id, direccion):
 #Primero busca en la tabla Figura el personaje del usuario.
 #Luego pregunta si la direccion que quiere disparar es verdadero o no.
 #Si el disparo se puede realizar, pregunta cual es la figure y dependiendo cual es crea su respectivo proyectil. 
-def shoot(user_id, game_id, direccion):
+def shoot(user_id, game_id, direccion, velocity):
 
     figure = Figure_infantry.query.filter_by(id_game= game_id, id_user= user_id).first()
     
     if(not(validation_create(game_id, user_id))):
         return False
         
-    if(figure_valid(figure, game_id, direccion)):
+    if(figure_valid(figure, game_id, direccion, velocity)):
         return True
     else:
         return False
 
 #Este metodo es la creacion para los proyectiles
-def figure_valid(figure, game_id, direccion):
+def figure_valid(figure, game_id, direccion, velocity):
     
 
     diccionary_projectile1 = {1:{"velocidad":0,"daño":1},
@@ -226,7 +226,7 @@ def figure_valid(figure, game_id, direccion):
 
     diccionary_projectile2 = {2:{"velocidad":5,"daño":5},
                               3:{"velocidad":3,"daño":15},
-                              4:{"velocidad":20,"daño":30}}
+                              4:{"velocidad":velocity,"daño":30}}
     
     y = 1
     if(figure.figure_type == SOLDIER):
@@ -254,10 +254,14 @@ def figure_valid(figure, game_id, direccion):
                                 direccion= direccion,
                                 type=MISSILE)
         direction_of_projectile(figure, projectile, direccion)
-        db.session.add(projectile)
-        db.session.commit()
-        return True
-        
+    
+        if(figure.figure_type == ARTILLERY and (projectile.velocidad < 3 or projectile.velocidad > 20)):
+            return False
+        else:
+            db.session.add(projectile)
+            db.session.commit()
+            return True
+
     return False
 
 #Este metodo toma la figura y el proyectil.
