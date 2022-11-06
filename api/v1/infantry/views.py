@@ -109,12 +109,7 @@ def shoot_entity(user_id, game_id, direccion):
 
     if(not(is_your_turn(game_id, int(user_id)))) : return "No es tu turno"
 
-    figure = db.session.query(Figure_infantry).filter_by(id_user = user_id, id_game = game_id).first()
-
-    if(figure.figure_type == ARTILLERY and (velocity>=3 and velocity <=20)):
-        figure.velocidad = velocity
-    
-    if(shoot(user_id, game_id, int(direccion))):
+    if(shoot(user_id, game_id, int(direccion), velocity)):
         projectile = Projectile_infantry.query.order_by(Projectile_infantry.id.desc()).first()
         return jsonify(projectile_schema.dump(projectile))
     else:
