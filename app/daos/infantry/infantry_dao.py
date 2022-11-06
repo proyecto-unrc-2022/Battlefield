@@ -403,7 +403,7 @@ def move_projecile(projectile_id, game_id):
     move = True
     pos = (projectile.pos_x, projectile.pos_y)
     if projectile.type == MACHINE_GUN:
-        projectile_collision(projectile_id, game_id)
+        projectile_collision(projectile, game_id)
         damage_Projectile(projectile, figures)
         db.session.delete(projectile)
     elif projectile.type == MISSILE:       
@@ -689,6 +689,10 @@ def update_projectile(game):
             projectile_id = projectile_queue.get()
             projectile = Projectile_infantry.query.filter_by(id = projectile_id, id_game = game.id).first()
         move_projecile(projectile_id, game.id)
+        if((projectile.pos_x < 0 or projectile.pos_x > 20) or (projectile.pos_y < 0 or projectile.pos_y > 10)):
+            print(projectile)
+            db.session.delete(projectile)
+            db.session.commit()
     return update
              
 def update_users():
