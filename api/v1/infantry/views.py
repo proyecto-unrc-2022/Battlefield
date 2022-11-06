@@ -109,7 +109,7 @@ def shoot_entity(user_id, game_id, direccion):
 
     if(not(is_your_turn(game_id, int(user_id)))) : return "No es tu turno"
 
-    if(shoot(user_id, game_id, int(direccion), velocity)):
+    if(shoot_save(user_id, game_id, int(direccion), velocity)):
         projectile = Projectile_infantry.query.order_by(Projectile_infantry.id.desc()).first()
         return jsonify(projectile_schema.dump(projectile))
     else:
