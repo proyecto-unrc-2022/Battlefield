@@ -184,7 +184,7 @@ def intersection(coord1, coords2):
     return intersection
 
 
-def shoot_save(user_id, game_id, direccion):
+def shoot_save(user_id, game_id, direccion, velocity):
     """Guarda el movimiento realizado en una cola llamada players_actions
 
     Args:
@@ -196,7 +196,7 @@ def shoot_save(user_id, game_id, direccion):
     game = Game_Infantry.query.filter_by(id = game_id).first()
     figure = Figure_infantry.query.filter_by(id_game= game_id, id_user= user_id).first()
     assis_server_restart(game)
-    players_actions.put(("shoot", user_id, game_id, direccion))
+    players_actions.put(("shoot", user_id, game_id, direccion, velocity))
     reduce_action(figure.id)
     return True
 
@@ -228,6 +228,8 @@ def figure_valid(figure, game_id, direccion, velocity):
                               4:{"velocidad":velocity,"daño":30}}
     
     y = 1
+    print(velocity)
+    print(figure.figure_type)
     if(figure.figure_type == SOLDIER):
         while y != 4:
             projectile = Projectile_infantry(id_game= game_id, 
@@ -244,7 +246,7 @@ def figure_valid(figure, game_id, direccion, velocity):
             figure.pos_y = projectile.pos_y
             y = y + 1
         return True
-    elif(figure.figure_type == SOLDIER or figure.figure_type == HUMVEE or figure.figure_type == TANK):
+    elif(figure.figure_type == HUMVEE or figure.figure_type == TANK):
         projectile = Projectile_infantry(id_game= game_id, 
                                 pos_x=0, 
                                 pos_y=0, 
@@ -253,10 +255,22 @@ def figure_valid(figure, game_id, direccion, velocity):
                                 direccion= direccion,
                                 type=MISSILE)
         direction_of_projectile(figure, projectile, direccion)
-    
-        if(figure.figure_type == ARTILLERY and (projectile.velocidad < 3 or projectile.velocidad > 20)):
+        db.session.add(projectile)
+        db.session.commit()
+        return True
+    elif(figure.figure_type == ARTILLERY):
+        if((velocity < 3 or velocity > 20)):
             return False
         else:
+            projectile = Projectile_infantry(id_game= game_id, 
+                                pos_x=0, 
+                                pos_y=0, 
+                                velocidad=diccionary_projectile2[figure.figure_type]["velocidad"], 
+                                daño=diccionary_projectile2[figure.figure_type]["daño"], 
+                                direccion= direccion,
+                                type=MORTAR)
+            direction_of_projectile(figure, projectile, direccion)
+            print(projectile.velocidad)
             db.session.add(projectile)
             db.session.commit()
             return True
@@ -711,7 +725,8 @@ def update_users():
         if action[0] == "move":
             move(action[1], action[2], action[3], action[4])
         elif action[0] == "shoot":
-            shoot(action[1], action[2], action[3], 3)
+            print(action[1], action[2], action[3], action[4])
+            shoot(action[1], action[2], action[3], action[4])
     return update
 
 def game_over(game):
