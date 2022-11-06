@@ -192,7 +192,7 @@ class NavyGameService:
 
         game = navy_game_dao.get_by_id(navy_game_id)
         actions = action_service.get_by_round(
-            navy_game_id=navy_game_id, round=game.round
+            navy_game_id=navy_game_id, round=game.round, turn=game.turn
         )
         return len(actions) == utils.CANT_PLAYERS
 
