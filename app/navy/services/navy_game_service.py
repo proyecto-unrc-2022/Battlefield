@@ -165,7 +165,7 @@ class NavyGameService:
         game.winner = winner
         navy_game_dao.add_or_update(game)
 
-    def is_game_over(self, navy_game_id):
+    def is_over(self, navy_game_id):
         game = navy_game_dao.get_by_id(navy_game_id)
         is_game_over = True
         if game.winner:
@@ -185,28 +185,7 @@ class NavyGameService:
         from app.navy.services.ship_service import ship_service
 
         ships = ship_service.get_alives(user_id, navy_game_id)
-        return not any([ship.is_alive for ship in ships])
-
-    """  
-   def check_winner(self, navy_game_id):
-        from app.navy.services.ship_service import ship_service
-
-        game = self.get_by_id(navy_game_id)
-
-        ships_user1 = ship_service.get_alives(game.user1_id, navy_game_id)
-        ships_user2 = ship_service.get_alives(game.user2_id, navy_game_id)
-
-        if any([ship.is_alive for ship in ships_user1]) and any(
-            [ship.is_alive for ship in ships_user2]
-        ):
-            return False
-
-        if all([not ship.is_alive for ship in ships_user1]):
-            self.set_winner(game.user2_id, game=game)
-        else:
-            self.set_winner(game.user1_id, game=game)
-        return True
- """
+        return not ships
 
     def should_update(self, navy_game_id):
         from app.navy.services.action_service import action_service

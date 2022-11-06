@@ -89,25 +89,21 @@ class MissileService:
         self.delete_from_board(missile)
         self.delete(missile)
 
-    def can_update(f):
+    def can_update(update_position):
         def prepare_update(self, missile):
-            game_over = navy_game_service.is_game_over(missile.navy_game_id)
+            game_over = navy_game_service.is_over(missile.navy_game_id)
             if missile.is_alive and not game_over:
-                speed = missile.speed
-                f(self, missile)
-                missile.speed = speed
+                update_position(self, missile)
 
         return prepare_update
 
     def can_move_one(self, missile):
-        x, y = utils.get_next_position(missile.pos_x, missile.pos_y, missile.course)
-        return missile.is_alive and missile.speed > 0
+        return missile.is_alive
 
     def move_one(self, missile):
         missile.pos_x, missile.pos_y = utils.get_next_position(
             missile.pos_x, missile.pos_y, missile.course
         )
-        missile.speed -= 1
         return missile
 
     def act(self, missile):
@@ -120,8 +116,10 @@ class MissileService:
     @can_update
     def update_position(self, missile):
         self.delete_from_board(missile)
-        while self.can_move_one(missile):
+        dist = missile.speed
+        while self.can_move_one(missile) and dist > 0:
             self.move_one(missile)
+            dist -= 1
             self.act(missile)
 
         if missile.is_alive:

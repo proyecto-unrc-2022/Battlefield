@@ -12,7 +12,6 @@ from app.navy.validators.action_request_validator import ActionRequestValidator
 
 
 class ActionService:
-    actions = {1: ship_service.attack, 0: ship_service.update_position}
 
     def validate_request(self, request):
         return ActionRequestValidator().load(request)
@@ -34,7 +33,9 @@ class ActionService:
 
         ship = navy_game_service.get_ship_from_game(action.navy_game_id, action.ship_id)
         if ship_service.turn(ship, action.course):
-            self.actions[action.attack](ship, action)
-
+            if action.attack:
+                ship_service.attack(ship)
+            else:
+                ship_service.update_position(ship, action.move)
 
 action_service = ActionService()

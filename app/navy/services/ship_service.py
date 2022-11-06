@@ -77,9 +77,9 @@ class ShipService:
             for x, y in ships_positions:
                 navy_game_service.delete_from_board(ship.navy_game_id, x, y)
 
-    def can_move_one(self, ship, dist):
+    def can_move_one(self, ship):
         x, y = utils.get_next_position(ship.pos_x, ship.pos_y, ship.course)
-        return ship.is_alive and utils.in_of_bounds(x, y) and int(dist) > 0
+        return ship.is_alive and utils.in_of_bounds(x, y)
 
     def move_one(self, ship):
         ship.pos_x, ship.pos_y = utils.get_next_position(
@@ -95,12 +95,11 @@ class ShipService:
         if entity:
             self.act_accordingly(ship, entity)
 
-    def update_position(self, ship, action):
+    def update_position(self, ship, dist):
         self.delete_from_board(ship)
-
-        while self.can_move_one(ship, action.move):
+        while self.can_move_one(ship) and dist > 0:
             self.move_one(ship)
-            action.move -= 1
+            dist -= 1
             self.act(ship)
 
         if ship.is_alive:
@@ -109,7 +108,7 @@ class ShipService:
     def can_update(self, ship):
         from app.navy.services.navy_game_service import navy_game_service
 
-        game_over = navy_game_service.is_game_over(ship.navy_game_id)
+        game_over = navy_game_service.is_over(ship.navy_game_id)
         return ship.is_alive and not game_over
 
     def turn(self, ship, new_course):

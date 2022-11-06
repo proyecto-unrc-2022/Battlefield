@@ -32,4 +32,4 @@ def step_impl(context, id, x):
         context.user1.id,
         context.game.round,
     )
-    ship_service.update_position(ship1, action)
+    ship_service.update_position(ship1, action.move)
