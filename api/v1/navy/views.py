@@ -35,9 +35,7 @@ def action():
 @token_auth.login_required
 def new_ship():
     try:
-        request.json["user_id"] = utils.get_user_id_from_header(
-            request.headers["Authorization"]
-        )
+        request.json["user_id"] = token_auth.current_user().id
         data = ship_service.validate_request(request.json)
         ship_service.add(data)
         return NavyResponse(201, data=data, message="Ship added").to_json(), 201
