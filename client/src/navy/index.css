@@ -1,0 +1,8 @@
+.navy-text {
+  font-family: 'Black Ops One', cursive;
+}
+
+.bg-navy {
+  background-image: url("./assets/bg-navy.jpg");
+  background-size: cover;
+}
