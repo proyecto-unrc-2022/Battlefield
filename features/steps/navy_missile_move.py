@@ -17,7 +17,7 @@ def step_impl(context):
     from app.navy.services.navy_game_service import navy_game_service
 
     context.game = navy_game_service.add({"user1_id": context.user1.id})
-    context.game = navy_game_service.join_second_player(
+    context.game = navy_game_service.join(
         {"user2_id": context.user2.id}, context.game.id
     )
     assert context.game
@@ -37,6 +37,16 @@ def step_impl(context, ship_name, pos_x, pos_y, course, hp, id):
         user_id=id,
     )
 
+    """    
+ context.ship2 = test_utils.add_test_ship(
+        name="Destroyer",
+        pos_x=1,
+        pos_y=15,
+        course="N",
+        hp=hp,
+        navy_game_id=context.game.id,
+        user_id=2,
+    ) """
     from app.navy.services.ship_service import ship_service
 
     ships_db = ship_service.get_by(navy_game_id=context.game.id)
@@ -72,7 +82,11 @@ def step_impl(context):
     navy_game_service.load_game(context.game.id)
     old_x, old_y = context.missile_test.pos_x, context.missile_test.pos_y
     missile_service.update_position(context.missile_test)
-    assert not navy_game_service.get_from_board(context.game.id, old_x, old_y)
+    print("old_x, old_y", old_x, old_y)
+    print("new_x, new_y", context.missile_test.pos_x, context.missile_test.pos_y)
+
+    missile = navy_game_service.get_from_board(context.game.id, old_x, old_y)
+    assert missile is None
 
 
 @then("I should see the missile at the new position '{pos_x:d}','{pos_y:d}'")
@@ -97,7 +111,7 @@ def step_impl(context, pos_x, pos_y):
     from app.navy.services.navy_game_service import navy_game_service
 
     ship_map = navy_game_service.get_from_board(context.game.id, pos_x, pos_y)
-    ship_bd = ship_dao.get_by_id(context.ship.id)
+    ship_bd = ship_dao.get_by_id(1)
     assert ship_map is None and not ship_bd.is_alive
 
 
@@ -106,7 +120,7 @@ def step_impl(context, pos_x, pos_y, hp):
     from app.navy.daos.ship_dao import ship_dao
     from app.navy.services.navy_game_service import navy_game_service
 
-    ship_bd = ship_dao.get_by_id(context.ship.id)
-    ship = navy_game_service.get_ship_from_game(context.game.id, context.ship.id)
+    ship_bd = ship_dao.get_by_id(1)
+    ship = navy_game_service.get_ship_from_game(context.game.id, 1)
     assert ship.pos_x == pos_x and ship.pos_y == pos_y and ship.hp == hp
     assert ship_bd.pos_x == pos_x and ship_bd.pos_y == pos_y and ship_bd.hp == hp

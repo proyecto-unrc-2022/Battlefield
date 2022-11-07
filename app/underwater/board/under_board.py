@@ -11,7 +11,7 @@ class UnderBoard:
 
     @staticmethod
     def build_from(game):
-        board = UnderBoard(height=game.get_height(), width=game.get_width())
+        board = UnderBoard(height=game.height, width=game.width)
         for obj in game.submarines + game.torpedos:
             for (x, y) in obj.get_positions():
                 board.matrix[x][y] = obj
