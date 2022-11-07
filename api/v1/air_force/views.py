@@ -1,6 +1,7 @@
 import json
 
 from flask import Blueprint, Response, jsonify, request
+from flask_cors import CORS
 
 from api import token_auth
 from app.daos.airforce.plane_dao import add_machine_gun, add_plane
@@ -20,14 +21,14 @@ from app.models.airforce.plane import Plane, PlaneSchema, ProjectileSchema
 
 from . import air_force
 
-users_bp = Blueprint("airforce", __name__, url_prefix="/airforce")
+# CORS(air_force, resources={ r'/*': {'origins': '*'}}, supports_credentials=True)
 
 plane_schema = PlaneSchema()
 proj_schema = ProjectileSchema()
 air_force_game = []  # AirForceGame()#lista de juegos
 
 
-@air_force.route("/new_game/player/<player>", methods=["PUT"])
+@air_force.route("/new_game/player/<player>", methods=["POST"])
 def new_game(player):
     game = AirForceGame()
     air_force_game.append(game)
