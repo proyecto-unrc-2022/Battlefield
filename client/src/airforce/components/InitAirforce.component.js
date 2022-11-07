@@ -1,54 +1,47 @@
 import { Button } from "bootstrap";
 import React, { Component } from "react";
+import { json } from "react-router-dom";
 import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
+import AuthService from "../../services/auth.service";
+import UserService from "../../services/user.service";
+import airforceService from "../services/airforce.service";
 
 import AirForceService from "../services/airforce.service"
 
 export default class InitAirforce extends Component {
   constructor(props) {
-    super(props);
-
+    super(props)
     this.state = {
-      content: null,
+      user: 1,
+      gameId: null,
     };
-    }
-    inti(){
-        AirForceService.createAirforceGame().then(
-        () => {
-        this.props.router.navigate("/board");
-        window.location.reload();
-        });
-    } 
+  }
 
+  handleClik1 = () => {
+    const game = AirForceService.createAirforceGame().then(
+      () => {
+        window.location.href = "/airforce/lobby";
+      }
+    )
+  }
+  // Para que ande este metodo, hay que lograr obtener la id del juego creado arriba, sino tira error
+  handleClick2 = () => {
+    AirForceService.joinAirforceGame().then(
+      () => {
+        window.location.href = "/airforce/lobby";
+      }
+    )
+  }
 
   render() {
     return (
-      <div className="container">
-        <header className="jumbotron">
-          <h3>AirForceGame</h3>
-        </header>
-        <button onClick={this.inti}>  
-            "sdsadsa"
-        </button>
-
-        <Form
-            onSubmit={this.inti}
-            ref={(c) => {
-            this.form = c;
-            }}
-          >
-             <div className="form-group">
-                <button
-                    className="btn btn-primary btn-block"
-                >
-                    {this.state.loading && (
-                    <span className="spinner-border spinner-border-sm"></span>
-                    )}
-                    <span>Start Game</span>
-                </button>
-            </div>
-          </Form>
+      <div>
+       <h1 style={{textAlign: "center"}}>Air Force Game</h1>
+       <form>
+          <input  type="button" value="Create new game" onClick={this.handleClik1}/>
+          <input type="button" value="Join in game" onClick={this.handleClick2}/>
+       </form>
       </div>
     );
   }
