@@ -1,3 +1,6 @@
+from math import sqrt
+
+
 class NavyUtils:
     # ---------- CLASS CONSTANTS --------- #
     COMPASS = {
@@ -60,6 +63,16 @@ class NavyUtils:
 
         decoded_jwt = jwt.decode(header.split()[1], secret_token, algorithms=["HS256"])
         return decoded_jwt["sub"]
+
+    def in_range(self, x1, y1, x2, y2, sight):
+        x_min = x1 - sight 
+        y_min = y1 - sight
+        x_max = x1 + sight
+        y_max = y1 + sight
+        return x2 >= x_min and x2 <= x_max and y2 >= y_min and y2 <= y_max
+
+    def in_of_bounds(self, x, y):
+        return not self.out_of_bounds(x, y)
 
     # ---------- END OF CLASS METHODS --------- #
 

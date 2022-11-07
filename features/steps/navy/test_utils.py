@@ -1,4 +1,14 @@
 class TestUtils:
+    def add_test_game(self, navy_game_id, winner=False):
+        from app.navy.daos.navy_game_dao import navy_game_dao
+
+        navy_game = navy_game_dao.get_by_id(navy_game_id)
+        navy_game.ready_to_play = True
+        navy_game.winner = winner
+        navy_game_dao.add_or_update(navy_game)
+
+        return navy_game
+
     def json_action(
         self,
         user_id,
@@ -92,7 +102,6 @@ class TestUtils:
             pos_y,
             ship_id,
             navy_game_id,
-            order or 1,
         )
 
         return missile_dao.add_or_update(missile)

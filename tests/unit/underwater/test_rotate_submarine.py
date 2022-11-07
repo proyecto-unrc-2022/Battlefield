@@ -38,8 +38,8 @@ def test_crash_two_things_and_die():
     ]  # size = 3
     tor_list = [{"player": host, "x_coord": 2, "y_coord": 4, "direction": 2}]
     game = generate_game(6, 12, players, sub_list, tor_list)
-    sub1 = game.get_submarines()[0]
-    sub2 = game.get_submarines()[1]
+    sub1 = game.submarines[0]
+    sub2 = game.submarines[1]
 
     # ACTION TO TEST
     game.rotate_object(sub2, 2)
@@ -55,9 +55,9 @@ def test_crash_two_things_and_die():
     ]
 
     assert game.board.matrix == expected_board
-    assert len(game.get_submarines()) == 1
+    assert len(game.submarines) == 1
     assert game.is_finished()
-    assert sub1.get_health() == 10
+    assert sub1.health == 10
 
 
 def test_crash_two_things_and_loose_having_the_same_health():
@@ -96,8 +96,8 @@ def test_crash_two_things_and_loose_having_the_same_health():
     ]  # size = 3
     tor_list = [{"player": host, "x_coord": 2, "y_coord": 4, "direction": 2}]
     game = generate_game(6, 12, players, sub_list, tor_list)
-    sub1 = game.get_submarines()[0]
-    sub2 = game.get_submarines()[1]
+    sub1 = game.submarines[0]
+    sub2 = game.submarines[1]
 
     # ACTION TO TEST
     game.rotate_object(sub2, 2)
@@ -113,9 +113,9 @@ def test_crash_two_things_and_loose_having_the_same_health():
     ]
 
     assert game.board.matrix == expected_board
-    assert len(game.get_submarines()) == 1
+    assert len(game.submarines) == 1
     assert game.is_finished()
-    assert sub1.get_health() == 0
+    assert sub1.health == 0
 
 
 def test_crash_two_things_and_live():
@@ -154,8 +154,8 @@ def test_crash_two_things_and_live():
     ]  # size = 3
     tor_list = [{"player": host, "x_coord": 2, "y_coord": 4, "direction": 2}]
     game = generate_game(6, 12, players, sub_list, tor_list)
-    sub1 = game.get_submarines()[0]
-    sub2 = game.get_submarines()[1]
+    sub1 = game.submarines[0]
+    sub2 = game.submarines[1]
 
     # ACTION TO TEST
     game.rotate_object(sub2, 2)
@@ -171,9 +171,9 @@ def test_crash_two_things_and_live():
     ]
 
     assert game.board.matrix == expected_board
-    assert len(game.get_submarines()) == 1
+    assert len(game.submarines) == 1
     assert game.is_finished()
-    assert sub2.get_health() == 5
+    assert sub2.health == 5
 
 
 def test_rotate_and_crash_submarine_and_die():
@@ -212,8 +212,8 @@ def test_rotate_and_crash_submarine_and_die():
     ]  # size = 4
     tor_list = []
     game = generate_game(6, 6, players, sub_list, tor_list)
-    sub1 = game.get_submarines()[0]
-    sub2 = game.get_submarines()[1]
+    sub1 = game.submarines[0]
+    sub2 = game.submarines[1]
 
     # ACTION TO TEST
     game.rotate_object(sub2, 2)
@@ -229,9 +229,9 @@ def test_rotate_and_crash_submarine_and_die():
     ]
 
     assert game.board.matrix == expected_board
-    assert len(game.get_submarines()) == 1
+    assert len(game.submarines) == 1
     assert game.is_finished()
-    assert sub1.get_health() == 0
+    assert sub1.health == 0
 
 
 def test_rotate_and_crash_submarine_and_live():
@@ -270,11 +270,13 @@ def test_rotate_and_crash_submarine_and_live():
     ]  # size = 4
     tor_list = []
     game = generate_game(6, 6, players, sub_list, tor_list)
-    sub1 = game.get_submarines()[0]
-    sub2 = game.get_submarines()[1]
+    sub1 = game.submarines[0]
+    sub2 = game.submarines[1]
 
     # ACTION TO TEST
+    print(game)
     game.rotate_object(sub2, 2)
+    print(game)
 
     # ASSERT
     expected_board = [
@@ -287,9 +289,9 @@ def test_rotate_and_crash_submarine_and_live():
     ]
 
     assert game.board.matrix == expected_board
-    assert len(game.get_submarines()) == 1
+    assert len(game.submarines) == 1
     assert game.is_finished()
-    assert sub2.get_health() == 5
+    assert sub2.health == 5
 
 
 def test_rotate_and_crash_torpedo_and_die():
@@ -328,8 +330,8 @@ def test_rotate_and_crash_torpedo_and_die():
     ]  # size = 4
     tor_list = [{"player": host, "x_coord": 1, "y_coord": 1, "direction": 2}]
     game = generate_game(6, 6, players, sub_list, tor_list)
-    sub1 = game.get_submarines()[0]
-    sub2 = game.get_submarines()[1]
+    sub1 = game.submarines[0]
+    sub2 = game.submarines[1]
 
     # ACTION TO TEST
     game.rotate_object(sub2, 2)
@@ -346,8 +348,8 @@ def test_rotate_and_crash_torpedo_and_die():
 
     assert game.board.matrix == expected_board
     assert game.is_finished()
-    assert len(game.get_torpedos()) == 0
-    assert len(game.get_submarines()) == 1
+    assert len(game.torpedos) == 0
+    assert len(game.submarines) == 1
 
 
 def test_rotate_and_crash_torpedo_and_live():
@@ -386,8 +388,8 @@ def test_rotate_and_crash_torpedo_and_live():
     ]  # size = 4
     tor_list = [{"player": host, "x_coord": 1, "y_coord": 1, "direction": 2}]
     game = generate_game(6, 6, players, sub_list, tor_list)
-    sub1 = game.get_submarines()[0]
-    sub2 = game.get_submarines()[1]
+    sub1 = game.submarines[0]
+    sub2 = game.submarines[1]
 
     # ACTION TO TEST
     game.rotate_object(sub2, 2)
@@ -404,6 +406,6 @@ def test_rotate_and_crash_torpedo_and_live():
 
     assert game.board.matrix == expected_board
     assert game.is_ongoing()
-    assert len(game.get_torpedos()) == 0
-    assert len(game.get_submarines()) == 2
-    assert sub2.get_health() == 5
+    assert len(game.torpedos) == 0
+    assert len(game.submarines) == 2
+    assert sub2.health == 5

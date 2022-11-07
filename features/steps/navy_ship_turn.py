@@ -27,6 +27,5 @@ def step_impl(context, id, hp):
 
 @then("The ship with id '{id:d}' should be destroyed")
 def step_impl(context, id):
-    ship = ship_service.get_by_id(id)
-    print(ship)
-    assert ship is None
+    ship = navy_game_service.get_ship_from_game(context.game.id, id)
+    assert not ship.is_alive

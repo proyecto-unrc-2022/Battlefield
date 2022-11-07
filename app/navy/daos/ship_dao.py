@@ -1,5 +1,3 @@
-from operator import or_
-
 from app import db
 from app.navy.models.ship import Ship
 
@@ -12,10 +10,6 @@ class ShipDAO:
         db.session.add(ship)
         db.session.commit()
         return ship
-
-    def delete(self, ship):
-        db.session.delete(ship)
-        db.session.commit()
 
     def get_by_id(self, ship_id):
         return db.session.query(self.model).filter_by(id=ship_id).first()

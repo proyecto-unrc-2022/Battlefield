@@ -17,7 +17,7 @@ class Ship(db.Model):
     pos_x = db.Column(db.Integer, nullable=False)
     pos_y = db.Column(db.Integer, nullable=False)
     course = db.Column(db.String(2), nullable=False)
-
+    is_alive = db.Column(db.Boolean, default=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     navy_game_id = db.Column(db.Integer, db.ForeignKey("navy_games.id"))
 
