@@ -10,6 +10,7 @@ import Home from "./components/home.component";
 // import Profile from "./components/profile.component";
 import Board from "./components/board.component";
 import NavyMenu from "./navy/pages/NavyMenu";
+import NavyGames from "./navy/pages/NavyGames";
 
 class App extends Component {
   constructor(props) {
@@ -101,6 +102,7 @@ class App extends Component {
             {/* <Route path="/profile" element={<Profile />} /> */}
             <Route path="/board" element={<Board />} />
             <Route path="/navy" element={<NavyMenu />} />
+            <Route path="/navy/games" element={<NavyGames />} />
           </Routes>
         </div>
       </div>

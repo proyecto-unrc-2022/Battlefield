@@ -13,11 +13,11 @@ const NavyMenu = () => {
       </div>
       <div className="row">
         <div className="col-5 text-center mx-auto mt-3">
-          <NavyButton text="Create game" />
+          <NavyButton text="Create game" size={"large"} />
           <NavyMenuStars />
-          <NavyButton text="join a game" />
+          <NavyButton text="games" size={"large"} />
           <NavyMenuStars />
-          <NavyButton text="how to play" />
+          <NavyButton text="how to play" size={"large"} />
         </div>
       </div>
     </div>

@@ -2,9 +2,9 @@ import React from 'react'
 import "./NavyButton.css"
 import "./../index.css"
 
-const NavyButton = ({text}) => {
+const NavyButton = ({text, size, styles = {}}) => {
   return (
-    <div className='navy-button rounded w-100 border border-dark text-uppercase navy-text my-1'>{text}</div>
+    <div style={{...styles}} className={`navy-button navy-button-${size} rounded border border-dark text-uppercase navy-text my-1`}>{text}</div>
   )
 }
 
