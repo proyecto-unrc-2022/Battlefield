@@ -27,7 +27,7 @@ def step_impl(context):
 
 @when("create new game")
 def step_impl(context):
-    context.response = context.client.put(
+    context.response = context.client.post(
         url_for("air_force.new_game", player=context.player_a)
     )
     assert context.response.status_code is 200
@@ -403,7 +403,7 @@ def step_impl(context):
 
 @when("player_a create game")
 def step_impl(context):
-    context.response = context.client.put(
+    context.response = context.client.post(
         url_for("air_force.new_game", player=context.player_a)
     )  # deberia ser un post
     context.game_id = context.response.json.get("game_id")
