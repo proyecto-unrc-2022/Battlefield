@@ -25,7 +25,6 @@ class AirForceGame:
     def add_command(self, command, player):
 
         if self.player_cant_add_command(player):
-            print("a: ", self.player_a_ready, "b", self.player_b_ready)
             raise Exception("only one command per turn")
 
         if player == self.turn:
@@ -39,19 +38,20 @@ class AirForceGame:
             self.update_turn()
 
     def executeList(self):
-        self.battlefield.move_projectile(self.turn)
-
-        if self.turn != self.player_a:
+        if self.turn != self.player_a and not self.game_ended():
             self.battlefield.move_projectile(self.player_a)
-            self.battlefield.move_projectile(self.player_b)
+            if not self.game_ended():
+                self.battlefield.move_projectile(self.player_b)
         else:
-            self.battlefield.move_projectile(self.player_b)
-            self.battlefield.move_projectile(self.player_a)
-
-        for c in self.new_commands.get("first"):
-            c.execute()
-        for c in self.new_commands.get("second"):
-            c.execute()
+            if not self.game_ended():
+                self.battlefield.move_projectile(self.player_b)
+            if not self.game_ended():
+                self.battlefield.move_projectile(self.player_a)
+        if not self.game_ended():
+            for c in self.new_commands.get("first"):
+                c.execute()
+            for c in self.new_commands.get("second"):
+                c.execute()
         self.new_commands.get("first").clear()
         self.new_commands.get("second").clear()
         self.player_a_ready = False
@@ -79,6 +79,21 @@ class AirForceGame:
 
     def update_turn(self):
         self.turn = self.player_b if (self.turn == self.player_a) else self.player_a
+
+    def game_ended(self):
+        if (
+            self.get_player_plane(self.player_a) == []
+            or self.get_player_plane(self.player_b) == []
+        ):
+            return True
+        return False
+
+    def winner(self):
+        if self.get_player_plane(self.player_a) == []:
+            return self.player_b
+        elif self.get_player_plane(self.player_b) == []:
+            return self.player_a
+        return None
 
 
 class JoinGame:
@@ -187,11 +202,15 @@ class Shoot:
 
 class GetBattlefieldStatus:
     battlefield = None
+    air_force_game = None
 
-    def __init__(self, battlefield):
+    def __init__(self, battlefield, air_force_game):
         self.battlefield = battlefield
+        self.air_force_game = air_force_game
 
     def execute(self):
+        if self.air_force_game.game_ended():
+            return {"status": "end", "Winner": self.air_force_game.winner()}
         return self.battlefield.get_status()
 
     # def __str__(self):
