@@ -1,24 +1,37 @@
-import React from 'react'
-import wings from "./../assets/wings.svg"
-import NavyButton from './NavyButton'
-import NavyUserCard from './NavyUserCard'
+import React, { useEffect, useState } from "react";
+import wings from "./../assets/wings.svg";
+import NavyButton from "./NavyButton";
+import NavyUserCard from "./NavyUserCard";
+import UserService from "../../services/user.service";
+import "./NavyGameCard.css";
 
-const NavyGameCard = () => {
+const NavyGameCard = ({ game }) => {
+  const [user1, setUser1] = useState({});
+  const [user2, setUser2] = useState({});
+  useEffect(() => {
+    UserService.getUserBoard(game.user1_id).then((res) => {
+      setUser1(res.data);
+    });
+    UserService.getUserBoard(game.user2_id).then((res) => {
+      setUser2(res.data);
+    });
+  }, [game.user1_id, game.user2_id]);
+
   return (
-    <div className='navy-card-container d-flex flex-column align-items-center border border-dark'>
-      <div className=''>
-        <img src={wings} alt="Wings"/>
+    <div className="navy-card-container d-flex flex-column align-items-center border border-dark py-4">
+      <div className="w-100 d-flex justify-content-center mb-2">
+        <img src={wings} alt="Wings" />
       </div>
-      <div className='d-flex'>
-        <NavyUserCard />
-        <p className='navy-text'>VS.</p>
-        <NavyUserCard />
+      <div className="w-75 d-flex justify-content-around align-items-center">
+        <NavyUserCard username={user1.username} />
+        <p className="navy-text">VS.</p>
+        <NavyUserCard username={user2.username} rol={user2.username ? "guest" : "free"}/>
       </div>
-      <div className='text-center'> 
-        <NavyButton text={"join"} size={"small"}/>
+      <div className="text-center">
+        <NavyButton text={"join"} size={"small"} />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default NavyGameCard
+export default NavyGameCard;

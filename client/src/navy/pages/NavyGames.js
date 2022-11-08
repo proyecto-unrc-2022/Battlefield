@@ -21,7 +21,7 @@ const NavyGames = () => {
       </div>
       <div className="row">
         {games.map((game) => {
-          return <NavyGameCard key={game.id}/>;
+          return <NavyGameCard game={game} key={game.id}/>;
         })}
       </div>
     </div>
