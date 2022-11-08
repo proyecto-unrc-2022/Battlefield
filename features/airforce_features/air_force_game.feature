@@ -97,6 +97,9 @@ Feature: game logic
         And player_b join in this game
         And player_a choose a plane
         And player_b choose a plane
-        Then info of the battlefield are returned
+        And player_a shoot a missile and player_b move his plane
+        And player_a shoot second missile and player_b move his plane
+        Then game status are ended
+
 
 
