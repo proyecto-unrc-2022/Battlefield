@@ -73,6 +73,24 @@ def validation_position(game_id, user_id, object):
 
     return succes
 
+def validation_figure(game_id, user_id, object):
+
+    succes = False
+
+    game = db.session.query(Game_Infantry).filter_by(id = game_id).first()
+
+    if(game.id_user1 == int(user_id)):
+        if(0 <= object.pos_x <= 9 and 0 <= object.pos_y <= 10):
+            
+            succes = True
+
+    if(game.id_user2 == int(user_id)):
+        if(11 <= object.pos_x <= 20 and 0 <= object.pos_y <= 10):
+            
+            succes = True
+    
+    return succes
+
 
 def validation_create(game_id, user_id):
 
@@ -106,12 +124,16 @@ def move_save(game_id, user_id, direction, velocity):
     figure = db.session.query(Figure_infantry).filter_by(id_user = user_id, id_game = game_id).first()
     game = Game_Infantry.query.filter_by(id = game_id).first()
     exceeded_velocity_limit = (velocity > figure.velocidad)
+
     if not(exceeded_velocity_limit):
         assis_server_restart(game)
         players_actions.put(("move", game_id, user_id, direction, velocity))
         reduce_action(figure.id)
         success = True
-    return success
+    coor = direc(direction, figure.pos_x, figure.pos_y)
+    figure.pos_x = figure.pos_x + (figure.pos_x - coor[0])
+    figure.pos_y = figure.pos_y + (figure.pos_y - coor[1])
+    return success and validation_figure(game_id, user_id, figure)
 
 def move(game_id, user_id, direction, velocity):
     """Dado un user_id, una direccion y una velocidad, mueva su respectiva unidad en el juego
@@ -147,7 +169,7 @@ def move(game_id, user_id, direction, velocity):
             Figure_infantry.id_user == user_id, Figure_infantry.id_game == game_id).update(
                 {'hp' :  figure_opponent.hp - figure.hp})
     db.session.commit()
-    return is_valid and not(exceeded_velocity_limit)
+    return is_valid and not(exceeded_velocity_limit) 
 
 def find_opponent(game_id, user_id):
     """Encuentra el oponente de la id de la figura dada por parametro
