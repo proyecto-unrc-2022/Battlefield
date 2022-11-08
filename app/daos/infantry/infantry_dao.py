@@ -106,12 +106,16 @@ def move_save(game_id, user_id, direction, velocity):
     figure = db.session.query(Figure_infantry).filter_by(id_user = user_id, id_game = game_id).first()
     game = Game_Infantry.query.filter_by(id = game_id).first()
     exceeded_velocity_limit = (velocity > figure.velocidad)
+    
     if not(exceeded_velocity_limit):
         assis_server_restart(game)
         players_actions.put(("move", game_id, user_id, direction, velocity))
         reduce_action(figure.id)
         success = True
-    return success
+    coor = direc(direction, figure.pos_x, figure.pos_y)
+    figure.pos_x = figure.pos_x + (figure.pos_x - coor[0])
+    figure.pos_y = figure.pos_y + (figure.pos_y - coor[1])
+    return success and validation_position(game_id, user_id, figure)
 
 def move(game_id, user_id, direction, velocity):
     """Dado un user_id, una direccion y una velocidad, mueva su respectiva unidad en el juego
@@ -228,8 +232,6 @@ def figure_valid(figure, game_id, direccion, velocity):
                               4:{"velocidad":velocity,"daño":30}}
     
     y = 1
-    print(velocity)
-    print(figure.figure_type)
     if(figure.figure_type == SOLDIER):
         while y != 4:
             projectile = Projectile_infantry(id_game= game_id, 
@@ -675,21 +677,24 @@ def update_projectile(game):
     Args:
         game (Game_Infantry): game de donde se actualizaran los proyectiles
     Returns:
-        bool: retorna True si un proyectile fue actualiza, si ya no hay proyectiles por actualizar
-        retorna falso
+        Projectile_Infantry: retorna el projectil que se actualizo, si no se actualizo ningun projectil
+        retorna None
     """
     global projectile_queue
     update = True
+    projectile = None
     if projectile_queue == None:
         #Carga la cola con los proyectiles actualmente en el juego
         machine_gun_queue = queue.Queue()
         projectile_queue = queue.Queue()
         projectiles = Projectile_infantry.query.filter_by(id_game = game.id).order_by(Projectile_infantry.id.asc()).all()
-        for projectile in projectiles:
-            if projectile.type == MACHINE_GUN: 
-                machine_gun_queue.put(projectile.id)
+        for projectil in projectiles:
+            if projectil.type == MACHINE_GUN: 
+                #Los proyectiles tipo MACHINE_GUN van a una cola aparte, para luego
+                #ser agregadas al final de la cola de projectile_queue
+                machine_gun_queue.put(projectil.id)
             else:
-                projectile_queue.put(projectile.id)
+                projectile_queue.put(projectil.id)
         for i in range(machine_gun_queue.qsize()):
             projectile_queue.put(machine_gun_queue.get())
     if projectile_queue.qsize() == 0: 
@@ -698,16 +703,16 @@ def update_projectile(game):
         projectile_queue = None   
     if(projectile_queue != None):
         #Saca un proyectil de la cola y lo mueve
-        projectile = None
         while projectile == None:
             projectile_id = projectile_queue.get()
             projectile = Projectile_infantry.query.filter_by(id = projectile_id, id_game = game.id).first()
+        print(projectile.pos_x, projectile.pos_y)
         move_projectile(projectile_id, game.id)
+        print(projectile.pos_x, projectile.pos_y)
         if((projectile.pos_x < 0 or projectile.pos_x > 20) or (projectile.pos_y < 0 or projectile.pos_y > 10)):
-            print(projectile)
             db.session.delete(projectile)
             db.session.commit()
-    return update
+    return projectile
              
 def update_users():
     """Realiza una accion a la vez de la cola players_actions, es decir, desencola una accion y para que
@@ -717,17 +722,16 @@ def update_users():
         bool: True si se realizo alguna accion, False en caso contrario
     """
     global players_actions
-    update = True
+    succes = False
     if players_actions.qsize() == 0:
-        update = False
+        succes = False
     else:
         action = players_actions.get()
         if action[0] == "move":
-            move(action[1], action[2], action[3], action[4])
+            if move(action[1], action[2], action[3], action[4]) : succes = True
         elif action[0] == "shoot":
-            print(action[1], action[2], action[3], action[4])
-            shoot(action[1], action[2], action[3], action[4])
-    return update
+            if shoot(action[1], action[2], action[3], action[4]) : succes= True
+    return succes
 
 def game_over(game):
     """Verifica si hay un ganador
