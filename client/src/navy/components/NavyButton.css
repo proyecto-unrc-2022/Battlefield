@@ -1,0 +1,11 @@
+.navy-button {
+  border-width: medium !important;
+}
+
+.navy-button-large {
+  font-size: 3rem;
+}
+
+.navy-button-small {
+  font-size: 16px;
+}

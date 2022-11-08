@@ -9,6 +9,8 @@ import Login from "./components/login.component";
 import Home from "./components/home.component";
 // import Profile from "./components/profile.component";
 import Board from "./components/board.component";
+import NavyMenu from "./navy/pages/NavyMenu";
+import NavyGames from "./navy/pages/NavyGames";
 
 class App extends Component {
   constructor(props) {
@@ -41,7 +43,7 @@ class App extends Component {
     const { currentUser } = this.state;
 
     return (
-      <div>
+      <div className="min-vh-100 d-flex flex-column">
         <nav className="navbar navbar-expand navbar-dark bg-dark">
           <Link to={"/"} className="navbar-brand">
             Battlefield
@@ -50,6 +52,12 @@ class App extends Component {
             <li className="nav-item">
               <Link to={"/home"} className="nav-link">
                 Home
+              </Link>
+            </li>
+
+            <li className="nav-item">
+              <Link to={"/navy"} className="nav-link">
+                Navy
               </Link>
             </li>
 
@@ -86,13 +94,15 @@ class App extends Component {
           )}
         </nav>
 
-        <div className="container mt-3">
+        <div style={{flexGrow: "1"}} className="container-fluid d-flex flex-column p-0">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/home" element={<Home />} />
             <Route path="/login" element={<Login />} />
             {/* <Route path="/profile" element={<Profile />} /> */}
             <Route path="/board" element={<Board />} />
+            <Route path="/navy" element={<NavyMenu />} />
+            <Route path="/navy/games" element={<NavyGames />} />
           </Routes>
         </div>
       </div>
