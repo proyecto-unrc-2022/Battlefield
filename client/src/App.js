@@ -11,6 +11,7 @@ import Home from "./components/home.component";
 import Board from "./components/board.component";
 import NavyMenu from "./navy/pages/NavyMenu";
 import NavyGames from "./navy/pages/NavyGames";
+import NavyShipSelection from "./navy/pages/NavyShipSelection";
 
 class App extends Component {
   constructor(props) {
@@ -94,7 +95,10 @@ class App extends Component {
           )}
         </nav>
 
-        <div style={{flexGrow: "1"}} className="container-fluid d-flex flex-column p-0">
+        <div
+          style={{ flexGrow: "1" }}
+          className="container-fluid d-flex flex-column p-0"
+        >
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/home" element={<Home />} />
@@ -103,6 +107,10 @@ class App extends Component {
             <Route path="/board" element={<Board />} />
             <Route path="/navy" element={<NavyMenu />} />
             <Route path="/navy/games" element={<NavyGames />} />
+            <Route
+              path="/navy/ship_selection"
+              element={<NavyShipSelection />}
+            />
           </Routes>
         </div>
       </div>
