@@ -1,0 +1,39 @@
+.u-container {
+  background-image: url('sub-background.jpg');
+  background-size: contain;
+  display: flex;
+  flex-direction: column;
+  background-color: #162741;
+  color: white;
+  width: 100%;
+  min-height: 100%;
+  flex-grow: 1;
+}
+
+.u-title {
+  margin: 60px;
+  font-size: 64px;
+  text-align: center;
+}
+
+.u-options {
+  display: flex;
+  justify-content: center;
+}
+
+.u-big-button {
+  color: white;
+  width: auto;
+  font-size: 32px;
+  text-align: center;
+  border: 3px solid white;
+  margin: 30px;
+  padding: 5px 20px;
+}
+
+.u-big-button:hover {
+  background: white;
+  color: #162741;
+  border-color: #162741;
+  text-decoration: underline white;
+}
