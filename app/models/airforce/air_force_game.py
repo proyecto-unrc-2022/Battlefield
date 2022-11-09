@@ -216,3 +216,17 @@ class GetBattlefieldStatus:
     # def __str__(self):
     #     self.battlefield if self.battlefield is not None else "None"
     #     # self.battlefield.flying_obj if self.battlefield is not None else ""
+
+
+class CheckCourse:
+    course: None
+    game: None
+    player: None
+
+    def __init__(self, course, player, game):
+        self.course = course
+        self.game = game
+        self.player = player
+
+    def execute(self):
+        self.game.battlefield.check_course(self.course, self.player)
