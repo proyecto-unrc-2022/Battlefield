@@ -11,6 +11,7 @@ export default class AirforceLobby extends Component {
                 <h1 style={{textAlign:"center"}}>Welcome to the lobby</h1>
                 <header style={{textAlign:"center"}}> 
                         Waiting for player...
+                        <p>Game id:</p>
                 </header>
             </div>
         )
