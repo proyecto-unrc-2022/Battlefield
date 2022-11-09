@@ -4,18 +4,16 @@ import { json } from "react-router-dom";
 const API_URL = "http://127.0.0.1:5000/api/v1/air_force/";
 
 class AirForceService {
-    createAirforceGame( ){
+    createAirforceGame(){
       return axios
         .post(
-          API_URL + `new_game/player/1`,
+          API_URL + "new_game/player/1",
           {
             headers: {
               "Content-Type": "application/json",
             },
           }
-        ).then((response) => {
-          return response.data;
-        });
+        )
       }
 
     joinAirforceGame(){
