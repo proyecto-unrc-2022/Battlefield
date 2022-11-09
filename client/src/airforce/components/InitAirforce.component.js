@@ -5,27 +5,28 @@ import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import AuthService from "../../services/auth.service";
 import UserService from "../../services/user.service";
-import airforceService from "../services/airforce.service";
-
 import AirForceService from "../services/airforce.service"
 
 export default class InitAirforce extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
-      user: 1,
-      gameId: null,
+      gameId: "",
     };
   }
 
-  handleClik1 = () => {
-    const game = AirForceService.createAirforceGame().then(
-      () => {
-        window.location.href = "/airforce/lobby";
-      }
+
+  handleClik1() {
+    AirForceService.createAirforceGame().then(
+      (response) => {
+        this.setState({
+          gameId: response.data,
+        }); 
+      },
+      window.location.href = "/airforce/lobby"
     )
   }
-  // Para que ande este metodo, hay que lograr obtener la id del juego creado arriba, sino tira error
+  // Para que ande este metodo, hay que lograr obtener el id del juego creado arriba, sino tira error
   handleClick2 = () => {
     AirForceService.joinAirforceGame().then(
       () => {
@@ -39,8 +40,17 @@ export default class InitAirforce extends Component {
       <div>
        <h1 style={{textAlign: "center"}}>Air Force Game</h1>
        <form>
-          <input  type="button" value="Create new game" onClick={this.handleClik1}/>
-          <input type="button" value="Join in game" onClick={this.handleClick2}/>
+          <input 
+            className="createGame" 
+            type="button" 
+            value="Create new game" 
+            onClick={this.handleClik1.bind(this)}
+
+          />
+          <label>Game id:</label>
+          <input type="text" name="Game id" id="Game id" required/>
+
+          <input className="joinGame" type="button" value="Join game" onClick={this.handleClick2.bind(this)}/>
        </form>
       </div>
     );
