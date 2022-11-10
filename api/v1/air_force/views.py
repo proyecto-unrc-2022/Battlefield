@@ -3,13 +3,11 @@ import json
 from flask import Blueprint, Response, jsonify, request
 from flask_cors import CORS
 
-from api import token_auth
+from api import token_auth, verify_token
 from app.daos.airforce.plane_dao import add_machine_gun, add_plane, add_projectile
-from app.daos.airforce.plane_dao import get_plane as get_plane_dao
-from app.daos.airforce.plane_dao import get_projectile
-from app.daos.airforce.plane_dao import update_course as update_course_dao
 from app.models.airforce.air_force_game import (
     AirForceGame,
+    CheckCourse,
     ChoosePlane,
     GetBattlefieldStatus,
     GetPlayers,
@@ -25,11 +23,14 @@ from . import air_force
 
 plane_schema = PlaneSchema()
 proj_schema = ProjectileSchema()
-air_force_game = []  # AirForceGame()#lista de juegos
+air_force_game = []
 
 
-@air_force.route("/new_game/player/<player>", methods=["POST"])
-def new_game(player):
+@air_force.route("/new_game", methods=["POST"])
+@token_auth.login_required
+def new_game():
+    token = request.headers["authorization"].split()[1]
+    player = verify_token(token).id
     game = AirForceGame()
     air_force_game.append(game)
     game_id = len(air_force_game) - 1
@@ -41,8 +42,11 @@ def new_game(player):
     return jsonify({"game_id": game_id})
 
 
-@air_force.route("/join/game/<id>/player/<player>", methods=["PUT"])
-def join_in_game(player, id):
+@air_force.route("/join/game/<id>", methods=["PUT"])
+@token_auth.login_required
+def join_in_game(id):
+    token = request.headers["authorization"].split()[1]
+    player = verify_token(token).id
     game = air_force_game[int(id)]
     command = JoinGame(player=player, air_force_game=game)
     try:
@@ -50,6 +54,7 @@ def join_in_game(player, id):
     except:
         return Response(status=400)
     command = GetPlayers(game)
+    print(player)
     return jsonify(game.execute(command))
 
 
@@ -61,9 +66,11 @@ def get_players(id):
 
 
 @air_force.route("/choose_plane", methods=["PUT"])
+@token_auth.login_required
 def choose_plane_and_position():
+    token = request.headers["authorization"].split()[1]
+    player = verify_token(token).id
     game = air_force_game[int(request.json["id"])]
-    player = request.json["player"]
     plane = request.json["plane"]
     x = request.json["x"]
     y = request.json["y"]
@@ -71,25 +78,46 @@ def choose_plane_and_position():
 
     plane = Plane.query.filter_by(id=plane).first()
 
-    command = ChoosePlane(
-        course=course, plane=plane, x=x, y=y, player=player, air_force_game=game
-    )
     try:
+        command = ChoosePlane(
+            course=course, plane=plane, x=x, y=y, player=player, air_force_game=game
+        )
         dic = game.execute(command)
-        print(dic)
+        print("dicc", dic)
+        print("airforce game:", air_force_game)
         return jsonify(dic.to_dict())  # Response(status=201)
     except:
         return Response(status=400)
 
 
-@air_force.route("game_id/<id>/player/<player>/course/<course>/", methods=["PUT"])
-def fligth(id, player, course):
+@air_force.route("game_id/<id>//course/<course>/", methods=["PUT"])
+@token_auth.login_required
+def fligth(id, course):
+    token = request.headers["authorization"].split()[1]
+    player = verify_token(token).id
     game = air_force_game[int(id)]
     try:
-        game.battlefield.check_course(course, player)
+        game.execute(CheckCourse(course, player, game))
         command = MovePlane(course, player, game)
         game.add_command(command, player)
+        print("player_a", game.player_a, "player_b", game.player_b)
+        print("comandos en volar: ", game.new_commands)
         return Response(status=201)
+    except:
+        return Response(status=400)
+
+
+@air_force.route("/game/<id>/new_projectile", methods=["POST"])
+@token_auth.login_required
+def create_projectile(id):
+    token = request.headers["authorization"].split()[1]
+    player = verify_token(token).id
+    game = air_force_game[int(id)]
+    command = LaunchProjectile(player, game)
+    print("comandos en disparar: ", game.new_commands)
+    try:
+        game.add_command(command, player)
+        return Response(status=200)  # jsonify(dic.to_dict())
     except:
         return Response(status=400)
 
@@ -102,10 +130,10 @@ def get_battlefield_status(id):
     return jsonify(obj_list)
 
 
-@air_force.route("/game/plane/<plane_id>", methods=["GET"])
-def get_plane(plane_id):
-    plane = get_plane_dao(plane_id)
-    return jsonify(plane_schema.dump(plane))
+# @air_force.route("/game/plane/<plane_id>", methods=["GET"])
+# def get_plane(plane_id):
+# plane = get_plane_dao(plane_id)
+# return jsonify(plane_schema.dump(plane))
 
 
 @air_force.route("/players/<player>/plane", methods=["GET"])
@@ -114,17 +142,17 @@ def get_player_plane(player):
     return jsonify(plane)
 
 
-@air_force.route("/newplane", methods=["POST"])
-def put_plane():
-    name = request.json["name"]
-    size = request.json["size"]
-    speed = request.json["speed"]
-    health = request.json["health"]
-    course = request.json["course"]
-    coor_x = request.json["coor_x"]
-    coor_y = request.json["coor_y"]
-    p = add_plane(name, size, speed, health, course, coor_x, coor_y)
-    return jsonify(plane_schema.dump(p))
+# @air_force.route("/newplane", methods=["POST"])
+# def put_plane():
+#     name = request.json["name"]
+#     size = request.json["size"]
+#     speed = request.json["speed"]
+#     health = request.json["health"]
+#     course = request.json["course"]
+#     coor_x = request.json["coor_x"]
+#     coor_y = request.json["coor_y"]
+#     p = add_plane(name, size, speed, health, course, coor_x, coor_y)
+#     return jsonify(plane_schema.dump(p))
 
 
 @air_force.route("/initdb", methods=["POST"])
@@ -146,44 +174,6 @@ def init_db():
     return Response(status=200)
 
 
-@air_force.route("/updateCourse", methods=["PUT"])
-def update_course():
-    id_plane = request.json["id"]
-    new_course = request.json["course"]
-    old_course = Plane.query.filter_by(id=id_plane).first().course
-    if 2 == abs(new_course - old_course):
-        return Response(status=400)
-    else:
-        p = update_course_dao(id_plane, new_course)
-        return Response(status=201)  # or jsonify(plane_schema.dump(p))
-
-
-@air_force.route("/game/<id>/new_projectile/player/<player>", methods=["POST"])
-def create_projectile(id, player):
-    game = air_force_game[int(id)]
-    command = LaunchProjectile(player, game)
-
-    # try:
-    game.add_command(command, player)
-    return Response(status=200)  # jsonify(dic.to_dict())
-    # except:
-    #     return Response(status=400)
-
-
-# @air_force.route("/<player_projectile>/<course>", methods=["PUT"])
-# def move_projectile(player_projectile, course):
-#     move = air_force_game.battlefield.move_projectile(
-#         player=int(player_projectile), course=int(course)
-#     )
-#     return jsonify(move)
-
-
-@air_force.route("/attack")
-# @token_auth.login_required
-def attack():
-    return {"result": "booom!!!"}
-
-
 @air_force.route("/machine_gun", methods=["POST"])
 def create_machine_gun():
     damage_1 = request.json["damage_1"]
@@ -192,3 +182,8 @@ def create_machine_gun():
 
     m = add_machine_gun(damage_1, damage_2, damage_3)
     return jsonify(plane_schema.dump(m))
+
+
+@air_force.route("/attack", methods=["POST"])
+def attack():
+    return "boooom"
