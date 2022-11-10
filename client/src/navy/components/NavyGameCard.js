@@ -4,10 +4,23 @@ import NavyButton from "./NavyButton";
 import NavyUserCard from "./NavyUserCard";
 import UserService from "../../services/user.service";
 import "./NavyGameCard.css";
+import authService from "../../services/auth.service";
 
 const NavyGameCard = ({ game }) => {
   const [user1, setUser1] = useState({});
   const [user2, setUser2] = useState({});
+
+  const canJoin = () => {
+    const currentUser = authService.getCurrentUser();
+    return currentUser.sub !== game.user1_id && !game.user2_id  
+  }
+
+  const canReJoin = () => {
+    const currentUser = authService.getCurrentUser();
+    return currentUser.sub === game.user1_id || currentUser.sub === game.user2_id
+  }
+  
+
   useEffect(() => {
     UserService.getUserBoard(game.user1_id).then((res) => {
       setUser1(res.data);
@@ -27,9 +40,11 @@ const NavyGameCard = ({ game }) => {
         <p className="navy-text">VS.</p>
         <NavyUserCard username={user2.username} rol={user2.username ? "guest" : "free"}/>
       </div>
-      <div className="text-center">
-        <NavyButton text={"join"} size={"small"} />
-      </div>
+      {canJoin() ? (
+        <div className="text-center">
+          <NavyButton text={"join"} size={"small"} />
+        </div>
+      ) : null}
     </div>
   );
 };

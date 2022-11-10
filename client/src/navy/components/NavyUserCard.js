@@ -7,18 +7,21 @@ const NavyUserCard = ({username, rol="host"}) => {
 
   const styles = {
     "host": {
-      backgroundColor: "blue"
+      backgroundColor: "#2DA0ED",
+      boxShadow: 'inset 0px 0px 30px #0F0F0F'
     },
     "guest": {
-      backgroundColor: "red"
+      backgroundColor: "#E57C7C",
+      boxShadow: 'inset 0px 0px 30px #0F0F0F'
     },
     "free": {
-      backgroundColor: "green"
-    }
+      backgroundColor: "#9EAEBE",
+      boxShadow: 'inset 0px 0px 30px #0F0F0F'
+    }    
   }
 
   return (
-    <div style={styles[rol]} className='h-100'>
+    <div style={styles[rol]} className='h-100 border border-dark'>
       <div className='navy-user-card border border-bottom-0 border-dark p-1'>
         <div className='border border-dark rounded p-2 text-center'>
           <img src={user} alt="User"/>
