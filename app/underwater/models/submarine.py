@@ -19,6 +19,7 @@ class Submarine(SubmergedObject):
     torpedo_damage = db.Column(db.Float, nullable=False)
 
     player = relationship("User", backref=backref("submarine", uselist=False))
+    game = relationship("UnderGame", back_populates="submarines")
 
     __mapper_args__ = {"polymorphic_identity": "submarine"}
 
@@ -42,17 +43,9 @@ class Submarine(SubmergedObject):
             self.y_position = y_position
         if direction:
             self.direction = direction
-        if game:
-            game.submarines.append(self)
 
     def create_torpedo(self):
         return t_launcher.create_torpedo(self)
-
-    def get_health(self):
-        return self.health
-
-    def set_health(self, health):
-        self.health = health
 
     def to_dict(self):
         dict = {
@@ -76,5 +69,28 @@ class Submarine(SubmergedObject):
             dict.update({"game_id:": self.game.id})
         return dict
 
+    def __get_nearest_cells(self, delta):
+        positions = []
+        min_x = self.x_position - delta
+        min_y = self.y_position - delta
+        max_x = self.x_position + delta
+        max_y = self.y_position + delta
+
+        for x in range(min_x, max_x + 1):
+            for y in range(min_y, max_y + 1):
+                if self.game.board.valid((x, y)):
+                    positions.append((x, y))
+
+        return positions
+
+    def get_vision_scope(self):
+        return self.__get_nearest_cells(self.visibility)
+
+    def get_radar_scope(self):
+        return self.__get_nearest_cells(self.radar_scope)
+
     def __repr__(self):
         return json.dumps(self.to_dict())
+
+    def update_visibility(self):
+        self.under_board_mask.update()

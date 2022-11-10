@@ -1,9 +1,6 @@
 from marshmallow import fields
 from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
-from marshmallow_sqlalchemy.fields import Nested
 
-from app.navy.dtos.missile_dto import MissileDTO
-from app.navy.dtos.ship_dto import ShipDTO
 from app.navy.models.navy_game import NavyGame
 from app.navy.utils.navy_utils import utils
 
@@ -23,8 +20,6 @@ class NavyGameDTO(SQLAlchemySchema):
     round = auto_field()
     turn = auto_field()
     ready_to_play = fields.Method("is_ready_to_play")
-    ships = Nested(ShipDTO, many=True)
-    missiles = Nested(MissileDTO, many=True)
 
     def is_ready_to_play(self, obj):
         if obj.ready_to_play:

@@ -1,0 +1,25 @@
+{
+    "planes": [  
+        {
+            "name": "Hawker Tempest",
+            "size": 1,
+            "speed": 5,
+            "health": 10,
+            "cant_projectile": 2
+        },
+        {
+            "name": "Mitsubishi A6M Zero",
+            "size": 2,
+            "speed": 3,
+            "health": 20,
+            "cant_projectile": 4
+        }
+    ],
+    "projectile": [
+        {
+            "speed": 5,
+            "damage":10,
+            "plane": "Hawker Tempest"
+        }    
+    ]
+}

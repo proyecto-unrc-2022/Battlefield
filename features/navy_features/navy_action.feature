@@ -17,12 +17,6 @@ Feature: Actions before move
         When I try to move in a game with an invalid action like shoot and move
         Then I should see an error message 'Invalid move'
 
-    Scenario: User doesn't exist
-        Given Is my turn
-        And The user '1' has a 'Battleship' in '2','5' with course 'N'
-        When I try to move in a game with a user that doesn't exist
-        Then I should see an error message 'User not found'
-
     Scenario: Incorrect direction
         Given Is my turn
         And The user '1' has a 'Corvette' in '6','3' with course 'N'
@@ -54,4 +48,16 @@ Feature: Actions before move
         When I try to move user 2's ship
         Then I should see an error message 'Invalid ship in game'
 
+    Scenario: The game is over
+        Given The game is already finished
+        And The user '1' has a 'Destroyer' in '2','7' with course 'N'
+        When I try to make an action in the ended game
+        Then I should see an error message 'Game finished'
+
+    Scenario: Player make two consecutive actions
+        Given Is my turn
+        And The user '1' has a 'Battleship' in '2','5' with course 'N'
+        When I move the ship 3 positions to 'N'
+        And  I try to move the ship again
+        Then I should see an error message 'No its your turn yet'
 

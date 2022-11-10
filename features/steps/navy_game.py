@@ -29,9 +29,8 @@ def step_impl(context):
         "Content-Type": "application/json",
         "Authorization": f'Bearer {context.token["token"]}',
     }
-    body = {"user1_id": context.user1.id}
     context.page = context.client.post(
-        url_for("navy.new_navy_game"), json=body, headers=headers
+        url_for("navy.new_navy_game"), headers=headers
     )
     assert context.page
 
@@ -125,21 +124,19 @@ def step_impl(context):
 @given("A game by another user has been created")
 def step_impl(context):
     add_user("user2", "123", "user2@correo.com")
-    user2 = context.user1 = User.query.filter_by(username="user2").first()
+    user2 = User.query.filter_by(username="user2").first()
     data = {"user1_id": user2.id}
     context.game_created = navy_game_service.add(data)
 
 
 @when("I try to join to the game")
 def step_impl(context):
-    body = {"user2_id": context.user1.id}
     headers = {
         "Content-Type": "application/json",
         "Authorization": f'Bearer {context.token["token"]}',
     }
     context.page = context.client.patch(
         url_for("navy.update_navy_game", id=context.game_created.id),
-        json=body,
         headers=headers,
     )
     assert context.page
@@ -148,6 +145,7 @@ def step_impl(context):
 @then("The game should be updated")
 def step_impl(context):
     data = json.loads(context.page.text)["data"]
+    print(data)
     assert context.page.status_code == 200
     assert data["user2_id"] == context.user1.id
 

@@ -8,10 +8,6 @@ Feature: Create, get, update and delete a Navy Game
     When I create a new game 
     Then The game should be created
 
-  Scenario: Create a incorrect navy game
-    When I try to create a game with an incorrect request body
-    Then I should get an error 
-
   Scenario: Get all navy games
     Given Some games have been created  
     When I try to get all navy games in the app 
@@ -31,11 +27,6 @@ Feature: Create, get, update and delete a Navy Game
     Given A game by another user has been created  
     When I try to join to the game 
     Then The game should be updated 
-
-  Scenario: Join a incorrect second player to an existing navy game
-    Given A game by another user has been created  
-    When I try to join to the game with an incorrect user 
-    Then I should get an error
 
   Scenario: Delete a navy game
     Given Some games have been created  

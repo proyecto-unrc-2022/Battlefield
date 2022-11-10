@@ -4,7 +4,7 @@ from flask import Blueprint, Response, jsonify, request
 from flask_cors import CORS
 
 from api import token_auth
-from app.daos.airforce.plane_dao import add_machine_gun, add_plane
+from app.daos.airforce.plane_dao import add_machine_gun, add_plane, add_projectile
 from app.daos.airforce.plane_dao import get_plane as get_plane_dao
 from app.daos.airforce.plane_dao import get_projectile
 from app.daos.airforce.plane_dao import update_course as update_course_dao
@@ -76,6 +76,7 @@ def choose_plane_and_position():
     )
     try:
         dic = game.execute(command)
+        print(dic)
         return jsonify(dic.to_dict())  # Response(status=201)
     except:
         return Response(status=400)
@@ -96,7 +97,7 @@ def fligth(id, player, course):
 @air_force.route("get_battlefield_status/game_id/<id>", methods=["GET"])
 def get_battlefield_status(id):
     game = air_force_game[int(id)]
-    command = GetBattlefieldStatus(game.battlefield)
+    command = GetBattlefieldStatus(game.battlefield, game)
     obj_list = game.execute(command)
     return jsonify(obj_list)
 
@@ -126,6 +127,25 @@ def put_plane():
     return jsonify(plane_schema.dump(p))
 
 
+@air_force.route("/initdb", methods=["POST"])
+def init_db():
+    f = open("./api/v1/air_force/planes.json")
+    data = json.load(f)
+    for plane in data["planes"]:
+        name = plane["name"]
+        size = plane["size"]
+        speed = plane["speed"]
+        health = plane["health"]
+        cant_projectile = plane["cant_projectile"]
+        p = add_plane(name, size, speed, health, cant_projectile)
+    for projectile in data["projectile"]:
+        speed = projectile["speed"]
+        damage = projectile["damage"]
+        plane = Plane.query.filter_by(name=projectile["plane"]).first().id
+        add_projectile(speed=speed, damage=damage, plane_id=plane)
+    return Response(status=200)
+
+
 @air_force.route("/updateCourse", methods=["PUT"])
 def update_course():
     id_plane = request.json["id"]
@@ -143,11 +163,11 @@ def create_projectile(id, player):
     game = air_force_game[int(id)]
     command = LaunchProjectile(player, game)
 
-    try:
-        dic = game.execute(command)
-        return jsonify(dic.to_dict())
-    except:
-        return Response(status=400)
+    # try:
+    game.add_command(command, player)
+    return Response(status=200)  # jsonify(dic.to_dict())
+    # except:
+    #     return Response(status=400)
 
 
 # @air_force.route("/<player_projectile>/<course>", methods=["PUT"])
