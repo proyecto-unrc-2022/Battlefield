@@ -5,13 +5,14 @@ import React, { Component } from "react";
 
 export default class AirforceLobby extends Component {
 
-    render () {
+
+
+     render () {
         return (
             <div>
                 <h1 style={{textAlign:"center"}}>Welcome to the lobby</h1>
                 <header style={{textAlign:"center"}}> 
                         Waiting for player...
-                        <p>Game id:</p>
                 </header>
             </div>
         )

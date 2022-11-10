@@ -7,20 +7,22 @@ class AirForceService {
     createAirforceGame(){
       return axios
         .post(
-          API_URL + "new_game/player/1",
+          API_URL + `new_game/player/1`,
           {
             headers: {
               "Content-Type": "application/json",
             },
           }
-        )
+        ).then((response) => {
+          return response;
+        });
       }
 
-    joinAirforceGame(){
+    joinAirforceGame(gameId){
       return axios
         //pasarle el id del juego creado sino tira un 400 bad request, no encuentra el game 
         .put(
-          API_URL + `join/game/1/player/1`,
+          API_URL + `join/game/${gameId}/player/1`,
           {
             headers: {
               "Content-Type": "application/json",
