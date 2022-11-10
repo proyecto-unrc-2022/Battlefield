@@ -4,7 +4,7 @@ import { Routes, Route, Link } from "react-router-dom";
 import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import AirForceService from "../services/airforce.service"
-
+import AuthService from "../../services/auth.service";
 
 
 const TableHeader = () => {
@@ -41,10 +41,12 @@ export default class InitAirforce extends Component {
       (response) => {
         this.props.callBack(response.data)
         this.setState({createdId: response.data.game_id})
-      },
-      window.location.href = "/airforce/lobby"
+      }).catch(e => {
+        console.log(e);
+    });
+      // window.location.href = "/airforce/lobby"
 
-    )
+    
   }
   // Para que ande este metodo, hay que lograr obtener el id del juego creado arriba, sino tira error
   handleChange = (event) => {
@@ -59,7 +61,7 @@ export default class InitAirforce extends Component {
   handleClick2 = () => {
     AirForceService.joinAirforceGame(this.state.gameId).then(
       () => {
-        window.location.href = "/airforce/lobby";
+        // window.location.href = "/airforce/lobby";
       }
     )
   }
@@ -69,7 +71,8 @@ export default class InitAirforce extends Component {
     const {gameId} = this.state;
     return (
       <div>
-       <h1 style={{textAlign: "center"}}>Air Force Game</h1>
+       <h1 style={{textAlign: "center"}}>Air Force Game {console.log(AuthService.getCurrentUser().token)}
+</h1>
        <input className="createGame" 
           type="button" 
           value="Create new game" 
