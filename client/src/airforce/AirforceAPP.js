@@ -3,6 +3,7 @@ import { Routes, Route, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import InitAirforce from "./components/InitAirforce.component";
 import AirforceLobby from "./components/AirforceLobby.component";
+import "./index.css"
 
 
 
@@ -18,11 +19,9 @@ class AirforceAPP extends Component {
 
     render() {
         return (
-        <div className="container mt-3">
-            <Routes>
-                <Route path="/airforce" element={<InitAirforce callBack={this.handleCallback}/>}/>
-                <Route path="/airforce/lobby" element={<AirforceLobby gameId={this.state.gameInfo}/>}/>
-            </Routes>
+        <div className='container-af'>
+        <link href='https://fonts.googleapis.com/css?family=Emblema One' rel='stylesheet'></link>
+                <InitAirforce callBack={this.handleCallback}/>
         </div>
     )}
 }
