@@ -1,6 +1,6 @@
 .u-container {
   background-image: url('sub-background.jpg');
-  background-size: contain;
+  background-size: 100% 100%;
   display: flex;
   flex-direction: column;
   background-color: #162741;
@@ -8,6 +8,17 @@
   width: 100%;
   min-height: 100%;
   flex-grow: 1;
+}
+
+.u-small-container {
+  display: flex;
+  flex-direction: column;
+  width: 30%;
+  height: 30%;
+  margin: 30px auto;
+  padding: 20px;
+  border: 2px solid white;
+  border-radius: 3px;
 }
 
 .u-title {
@@ -29,11 +40,43 @@
   border: 3px solid white;
   margin: 30px;
   padding: 5px 20px;
+  border-radius: 5px;
 }
 
 .u-big-button:hover {
   background: white;
-  color: #162741;
-  border-color: #162741;
+  color: rgb(22, 39, 65);
+  border-color: rgb(22, 39, 65);
   text-decoration: underline white;
+}
+
+.u-button {
+  background: none;
+  color: white;
+  min-width: 60px;
+  padding: 0 10px;
+  font-size: 32px;
+  text-align: center;
+  border: 2px solid white;
+}
+
+.u-button:hover {
+  background: white;
+  color: rgb(22, 39, 65);
+  border-color: rgb(22, 39, 65);
+}
+
+.u-input-field {
+  padding: 10px;
+  margin: 10px;
+  flex-grow: 1;
+}
+
+.inline-block {
+  display: inline-block;
+  margin: 10px 10px;
+}
+
+#play-button {
+  margin-left: auto;
 }

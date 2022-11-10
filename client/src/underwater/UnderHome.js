@@ -1,17 +1,30 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
 import "./css/style.css"
+import UnderNewGame from "./UnderNewGame";
+import HomeButtons from "./UnderHomeButtons";
+import JoinGame from "./UnderJoinGame";
 
-function UnderHome() {
+export default function UnderHome() {
+  const [visibleComp, setVisibleComp] = useState("home");
+
+  function selectComponent(visibleComp) {
+    console.log(visibleComp);
+    switch (visibleComp) {
+      case "home":
+        return <HomeButtons setVisibleComp={setVisibleComp} />;
+      case "new":
+        return <UnderNewGame setVisibleComp={setVisibleComp} />;
+      case "join":
+        return <JoinGame setVisibleComp={setVisibleComp} />;
+      default:
+        return null;
+    }
+  }
+
   return (
     <div className="u-container">
       <div className="u-title">Battle Submarine</div>
-      <div className="u-options">
-        <Link style={{textDecoration: 'none'}} to={"/under-new-game"}><div className="u-big-button">New Game</div></Link>
-        <Link style={{textDecoration: 'none'}} to={"/under-join-game"}><div className="u-big-button">Join Game</div></Link>
-      </div>
+      {selectComponent(visibleComp)}
     </div>
   );
 }
-
-export default UnderHome;
