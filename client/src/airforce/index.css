@@ -1,0 +1,72 @@
+
+
+.container-af{
+   background-image: url("./images/airforce-bg.jpg"); 
+   background-size: cover;
+   background-repeat: no-repeat;
+   position: fixed;
+   padding: 0;
+   margin: 0;
+   width: 100%;
+   height: 100%;
+}
+
+.af-title{
+   color: black;
+   font-family: 'Emblema One';
+   font-size: 100px;
+}
+
+.create-game {
+   font-size: 50px;
+   transition-duration: 0.1s;
+   background-color: transparent;
+   border: 1px;
+   font-family: 'Emblema One';
+   border-radius: 10px;
+   position: fixed;
+   right: 400px;
+
+
+}
+
+.create-game:hover {
+   background-color: transparent;
+   border:1px solid rgb(0, 0, 0);
+   border-radius: 10px;
+   font-family: 'Emblema One';
+
+}
+
+
+.join-game {
+   font-size: 50px;
+   transition-duration: 0.1s;
+   background-color: transparent;
+   border: 1px;
+   font-family: 'Emblema One';
+   border-radius: 10px;
+   position: fixed;
+   right: 500px;
+   bottom: 300px
+
+}
+
+.join-game:hover {
+   background-color: transparent;
+   border:1px solid rgb(0, 0, 0);
+   border-radius: 10px;
+   font-family: 'Emblema One';
+}
+
+.id-game{
+   background-color: transparent;
+   border:1px solid rgb(0, 0, 0);
+   border-radius: 10px;
+   width: 50%;
+   padding: 12px 20px;
+   position: fixed;
+   bottom: 230px;
+   right: 320px;
+   margin: 8px 0;
+}
