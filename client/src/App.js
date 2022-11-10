@@ -11,7 +11,8 @@ import Home from "./components/home.component";
 import Board from "./components/board.component";
 import NavyMenu from "./navy/pages/NavyMenu";
 import NavyGames from "./navy/pages/NavyGames";
-
+import AirforceAPP from "./airforce/AirforceAPP";
+import AirforceLobby from "./airforce/components/AirforceLobby.component";
 class App extends Component {
   constructor(props) {
     super(props);
@@ -61,6 +62,13 @@ class App extends Component {
               </Link>
             </li>
 
+            <li className="nav-item">
+              <Link to={"/airforce/mainMenu"} className="nav-link">
+                Airforce
+              </Link>
+            </li>
+
+
             {currentUser && (
               <li className="nav-item">
                 <Link to={"/user"} className="nav-link">
@@ -103,6 +111,9 @@ class App extends Component {
             <Route path="/board" element={<Board />} />
             <Route path="/navy" element={<NavyMenu />} />
             <Route path="/navy/games" element={<NavyGames />} />
+            <Route path= "/airforce/mainMenu" element={<AirforceAPP />}/>
+            <Route path= "/airforce/game/lobby" element={<AirforceLobby />}/>
+
           </Routes>
         </div>
       </div>
