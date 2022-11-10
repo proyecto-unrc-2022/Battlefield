@@ -1,21 +1,38 @@
 import React, { useState } from "react";
+import axios from "axios";
 
-export default function UnderNewGame({setVisibleComp}) {
-  const [rangevalH, setRangevalH] = useState(10);  
-  const [rangevalW, setRangevalW] = useState(20); 
+const baseURL = "http://127.0.0.1:5000/api/v1/underwater";
+
+export default function UnderNewGame(props) {
+  const [height, setHeight] = useState(10);  
+  const [width, setWidth] = useState(20); 
+  const [post, setPost] = useState(null);
+
+  function onSubmit(e) {
+    e.preventDefault();
+
+    axios.post(
+      baseURL + "/game/new",
+      {},
+      {
+        headers: { 'Authorization': `Bearer ${props.token}` }
+      }
+    ).then((response) => {setPost(response.data);});
+    console.log(post);
+  }
 
   return (
-    <form>
       <div className="u-small-container">
+        <form onSubmit={onSubmit}>
         <div className="row">
           <div className="u-input-field">
             <label for="height">Height</label>
-            <input type={"range"} min="10" max="20" step="2" id="height" value={rangevalH} onChange={(event) => setRangevalH(event.target.value)}/>
-            <span style={{margin: "12px"}}>{rangevalH}</span>
+            <input type={"range"} min="10" max="20" step="2" id="height" value={height} onChange={(event) => setHeight(event.target.value)}/>
+            <span style={{margin: "12px"}}>{height}</span>
 
             <label for="width">Width</label>
-            <input type={"range"} min="20" max="40" step="2" id="width" value={rangevalW} onChange={(event) => setRangevalW(event.target.value)}/>
-            <span style={{margin: "12px"}}>{rangevalW}</span>
+            <input type={"range"} min="20" max="40" step="2" id="width" value={width} onChange={(event) => setWidth(event.target.value)}/>
+            <span style={{margin: "12px"}}>{width}</span>
           </div>
 
           <div className="u-input-field">
@@ -28,10 +45,10 @@ export default function UnderNewGame({setVisibleComp}) {
         </div>
 
         <div className="row u-input-field">
-          <div onClick={() => {setVisibleComp("home")}} className="u-button">‹</div>
+          <div onClick={() => {props.setVisibleComp("home")}} className="u-button">‹</div>
           <button id="play-button" className="u-button">Play</button>
         </div>
-      </div>
-    </form>
+      </form>
+    </div>
   );
 }

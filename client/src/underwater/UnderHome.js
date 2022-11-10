@@ -4,6 +4,8 @@ import UnderNewGame from "./UnderNewGame";
 import HomeButtons from "./UnderHomeButtons";
 import JoinGame from "./UnderJoinGame";
 
+const token = JSON.parse(localStorage.getItem("user")).token
+
 export default function UnderHome() {
   const [visibleComp, setVisibleComp] = useState("home");
 
@@ -13,7 +15,7 @@ export default function UnderHome() {
       case "home":
         return <HomeButtons setVisibleComp={setVisibleComp} />;
       case "new":
-        return <UnderNewGame setVisibleComp={setVisibleComp} />;
+        return <UnderNewGame token={token} setVisibleComp={setVisibleComp} />;
       case "join":
         return <JoinGame setVisibleComp={setVisibleComp} />;
       default:
