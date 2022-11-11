@@ -107,7 +107,7 @@ class App extends Component {
             <Route path="/board" element={<Board />} />
             <Route path="/navy" element={<NavyMenu />} />
             <Route path="/navy/games" element={<NavyGames />} />
-            <Route path="/navy/games/:id" element={<NavyLobby />} />
+            <Route path="/navy/games/:id/lobby" element={<NavyLobby />} />
           </Routes>
         </div>
       </div>
