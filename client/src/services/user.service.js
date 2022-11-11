@@ -10,8 +10,8 @@ class UserService {
     });
   }
 
-  getUserBoard() {
-    return axios.get(API_URL + "/1", { headers: authHeader() });
+  getUserBoard(id) {
+    return axios.get(API_URL + `/${id}`, { headers: authHeader() });
   }
 
   getModeratorBoard() {

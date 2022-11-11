@@ -56,12 +56,6 @@ class App extends Component {
               </Link>
             </li>
 
-            <li className="nav-item">
-              <Link to={"/navy"} className="nav-link">
-                Navy
-              </Link>
-            </li>
-
             {currentUser && (
               <li className="nav-item">
                 <Link to={"/user"} className="nav-link">
@@ -69,6 +63,15 @@ class App extends Component {
                 </Link>
               </li>
             )}
+
+            {currentUser && (
+              <li className="nav-item">
+                <Link to={"/navy"} className="nav-link">
+                  Navy
+                </Link>
+              </li>
+            )}
+
           </div>
 
           {currentUser ? (
