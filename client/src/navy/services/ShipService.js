@@ -9,6 +9,23 @@ class ShipService {
       headers: authHeader(),
     });
   }
+
+  postShip(ship) {
+    console.log(ship);
+    return axios.post(
+      API_URL + "/ships",
+      {
+        name: ship.name,
+        pos_x: ship.pos_x,
+        pos_y: ship.pos_y,
+        course: ship.course,
+        navy_game_id: ship.navy_game_id,
+      },
+      {
+        headers: authHeader(),
+      }
+    );
+  }
 }
 
 export default new ShipService();

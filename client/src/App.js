@@ -12,6 +12,7 @@ import Board from "./components/board.component";
 import NavyMenu from "./navy/pages/NavyMenu";
 import NavyGames from "./navy/pages/NavyGames";
 import NavyShipSelection from "./navy/pages/NavyShipSelection";
+import { NavyShipPlace } from "./navy/pages/NavyShipPlace";
 
 class App extends Component {
   constructor(props) {
@@ -71,7 +72,6 @@ class App extends Component {
                 </Link>
               </li>
             )}
-
           </div>
 
           {currentUser ? (
@@ -111,9 +111,14 @@ class App extends Component {
             <Route path="/navy" element={<NavyMenu />} />
             <Route path="/navy/games" element={<NavyGames />} />
             <Route
-              path="/navy/ship_selection"
+              path="/navy/games/:id/ship_selection"
               element={<NavyShipSelection />}
             />
+            <Route
+              path="/navy/games/:id/ship_selection/place_ship"
+              element={<NavyShipPlace />}
+            />
+
           </Routes>
         </div>
       </div>

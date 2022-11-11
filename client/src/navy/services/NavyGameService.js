@@ -9,6 +9,10 @@ class NavyGameService {
       headers: authHeader(),
     });
   }
+
+  getNavyGame(id) {
+    return axios.get(API_URL + `/${id}`, { headers: authHeader() });
+  }
 }
 
 export default new NavyGameService();

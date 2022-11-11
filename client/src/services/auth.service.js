@@ -33,8 +33,12 @@ class AuthService {
   }
 
   getCurrentUser() {
+    if (localStorage.getItem("user")) {
     const user = jwt_decode(JSON.parse(localStorage.getItem("user")).token);
-    return user;
+    return user;}
+    else {
+      return null;
+    }
   }
 }
 
