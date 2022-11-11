@@ -1,6 +1,6 @@
 from app import db
 from app.models.user import User
-from app.models.infantry.projectile_infantry import Projectile
+from app.models.infantry.projectile_infantry import Projectile_infantry
 from app.models.infantry.figure_infantry import Figure_infantry
 from app.models.infantry.game_Infantry import Game_Infantry
 
