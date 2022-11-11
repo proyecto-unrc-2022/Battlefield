@@ -35,6 +35,7 @@ class FlyingObject:
             "x": self.x,
             "y": self.y,
             "course": self.course,
+            "flying_obj_class": self.flying_obj.__class__.__name__,
         }
 
 
@@ -94,7 +95,7 @@ class Battlefield:
     def get_player_plane(self, player):
         return list(
             filter(
-                lambda x: x.player == player
+                lambda x: int(x.player) == int(player)
                 and x.flying_obj.__class__.__name__ == "Plane",
                 self.flying_objects,
             )
@@ -139,8 +140,8 @@ class Battlefield:
             if course == 2 or course == 4:
                 tupl = self.collision_x_projectile(obj[n], course)
                 if tupl != ():
-                    self.flying_objects.remove(tupl[0])
-                    self.flying_objects.remove(tupl[1])
+                    print("paseee por aca")
+                    self.projectile_collision(tupl[0].tupl[1])
                 else:
                     obj[n].update_position(course)
                     if obj[n].x >= 20 or obj[n].x <= 0:
@@ -148,12 +149,19 @@ class Battlefield:
             if course == 1 or course == 3:
                 tupl = self.collision_y_projectile(obj[n], course)
                 if tupl != ():
-                    self.flying_objects.remove(tupl[0])
-                    self.flying_objects.remove(tupl[1])
+                    self.projectile_collision(tupl[0], tupl[1])
                 else:
                     obj[n].update_position(course)
                     if obj[n].y >= 10 or obj[n].y <= 0:
                         self.flying_objects.remove(obj[n])
+
+    def projectile_collision(self, projectile, fly_obj):
+        if fly_obj.__class__.__name__ == "Plane":
+            fly_obj.health -= projectile.damage
+            self.flying_objects.remove if (fly_obj.health <= 0) else True
+        else:
+            self.flying_objects.remove(fly_obj)
+        self.flying_objects.remove(projectile)
 
     def collision_x_projectile(self, fly_obj, course):
         position = fly_obj.x
@@ -167,6 +175,7 @@ class Battlefield:
                     self.flying_objects,
                 )
             )
+            print("size: ", projectile_coll)
             if projectile_coll != []:
                 min_distance = min(projectile_coll, key=lambda p: p.x)
                 return (fly_obj, min_distance)
@@ -175,7 +184,8 @@ class Battlefield:
                 filter(
                     lambda p: p.y == fly_obj.y
                     and p.x < position
-                    and p.x >= position + speed,
+                    and p.x >= position + speed
+                    and p.flying_obj.__class__.__name__ == "Projectile",
                     self.flying_objects,
                 )
             )
@@ -192,7 +202,8 @@ class Battlefield:
                 filter(
                     lambda p: p.x == fly_obj.x
                     and p.y > position
-                    and p.y <= position + speed,
+                    and p.y <= position + speed
+                    and p.flying_obj.__class__.__name__ == "Projectile",
                     self.flying_objects,
                 )
             )
@@ -204,7 +215,8 @@ class Battlefield:
                 filter(
                     lambda p: p.x == fly_obj.x
                     and p.y < position
-                    and p.y >= position + speed,
+                    and p.y >= position + speed
+                    and p.flying_obj.__class__.__name__ == "Projectile",
                     self.flying_objects,
                 )
             )
@@ -252,9 +264,12 @@ class Battlefield:
         )
         if colision_obj != []:
             obj = min(colision_obj, key=lambda x: x.x + speed)
-            # raise Exception(obj.to_dict())
-            obj.flying_obj.health -= fly_obj.flying_obj.health
-            fly_obj.flying_obj.health -= obj.flying_obj.health
+            if obj.flying_obj.__class__.__name__ == "Projectile":
+                self.projectile_collision(obj, fly_obj)
+            else:
+                print(obj.__class__.__name__)
+                obj.flying_obj.health -= fly_obj.flying_obj.health
+                fly_obj.flying_obj.health -= obj.flying_obj.health
 
     def colision_y(self, plane, course):
         position = plane.y

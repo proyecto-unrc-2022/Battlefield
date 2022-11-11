@@ -163,7 +163,7 @@ def rotate_and_advance(session_id):
 
 
 @underwater.post("/game/<int:session_id>/rotate_and_attack")
-@token_auth.verify_token
+@token_auth.login_required
 def rotate_and_attack(session_id):
     data = request.form.to_dict()
     for key in data:

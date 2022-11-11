@@ -11,7 +11,9 @@ class NavyGameService {
   }
 
   getNavyGame(id) {
-    return axios.get(API_URL + `/${id}`, { headers: authHeader() });
+    return axios.get(API_URL + "/" + id, {
+      headers: authHeader(),
+    });
   }
 }
 
