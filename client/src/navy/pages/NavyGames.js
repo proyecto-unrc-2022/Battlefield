@@ -43,7 +43,6 @@ const NavyGames = () => {
   };
 
   const filterGames = (key) => {
-    console.log(key)
     if (key in filters) {
       filters[key]();
     } else {

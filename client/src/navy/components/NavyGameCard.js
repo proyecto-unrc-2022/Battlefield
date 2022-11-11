@@ -31,7 +31,8 @@ const NavyGameCard = ({ game }) => {
   }, [game.user1_id, game.user2_id]);
 
   return (
-    <div className="navy-card-container d-flex flex-column align-items-center border border-dark py-4">
+    <div className="navy-card-container d-flex flex-column align-items-center border border-dark pt-2 pb-4">
+      <p className="navy-text m-0">{game.id}</p>
       <div className="w-100 d-flex justify-content-center mb-2">
         <img src={wings} alt="Wings" />
       </div>
