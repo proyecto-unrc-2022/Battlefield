@@ -10,6 +10,12 @@ import Home from "./components/home.component";
 // import Profile from "./components/profile.component";
 import Board from "./components/board.component";
 
+//Borrar esto y la route
+import HomePage from "./infantry/pages/HomePage";
+import CreateGame from "./infantry/pages/CreateGame"
+import JoinGame from "./infantry/pages/JoinGame"
+
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -90,6 +96,9 @@ class App extends Component {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/home" element={<Home />} />
+            <Route path='/home_Infantry/' element={<HomePage/>} />
+            <Route path="/home_Infantry/create_game" element={<CreateGame/>} />
+            <Route path="/home_Infantry/join_game" element={<JoinGame/>} />
             <Route path="/login" element={<Login />} />
             {/* <Route path="/profile" element={<Profile />} /> */}
             <Route path="/board" element={<Board />} />

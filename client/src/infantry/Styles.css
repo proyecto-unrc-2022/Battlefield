@@ -1,0 +1,38 @@
+.Battlefield-Infantry{
+    font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif
+}
+
+.btn{
+
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
+}
+
+.bg-HomePage{
+
+    background-image: url("./Infantry.png");
+    background-position: center center;
+    background-size: cover;
+
+}
+
+.h1{
+    font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif
+}
+
+.Scroll {
+    height:200px;
+    width: auto;
+    overflow-y: scroll;
+    overflow-x:hidden;
+}
+
+.Scroll::-webkit-scrollbar{
+    
+    width: 12px;
+    height: 12px;
+}
+
+.Scroll::-webkit-scrollbar-thumb{
+    background: gray; /* color de la barra */
+    border-radius:5px;
+}
