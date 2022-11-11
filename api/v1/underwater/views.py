@@ -30,6 +30,18 @@ def reset():
     return Response("{'message': 'success'}", status=200)
 
 
+@underwater.get("/games")
+@token_auth.login_required
+def get_all_games():
+    retDict = {}
+    sessions = session_dao.get_all()
+
+    for session in sessions:
+        retDict.update({session.id: session.to_dict()})
+
+    return retDict
+
+
 @underwater.get("/game/<int:session_id>")
 @token_auth.login_required
 def get_game_state(session_id):
