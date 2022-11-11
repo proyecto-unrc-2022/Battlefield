@@ -41,12 +41,10 @@ export default class InitAirforce extends Component {
       (response) => {
         this.props.callBack(response.data)
         this.setState({createdId: response.data.game_id})
-      }).catch(e => {
-        console.log(e);
-    });
-      // window.location.href = "/airforce/lobby"
+      },
+      window.location.href = "/airforce/game/lobby"
 
-    
+    )
   }
   // Para que ande este metodo, hay que lograr obtener el id del juego creado arriba, sino tira error
   handleChange = (event) => {
@@ -61,7 +59,7 @@ export default class InitAirforce extends Component {
   handleClick2 = () => {
     AirForceService.joinAirforceGame(this.state.gameId).then(
       () => {
-        // window.location.href = "/airforce/lobby";
+        window.location.href = "/airforce/game/lobby";
       }
     )
   }
@@ -70,31 +68,35 @@ export default class InitAirforce extends Component {
   render() {
     const {gameId} = this.state;
     return (
-      <div>
-       <h1 style={{textAlign: "center"}}>Air Force Game {console.log(AuthService.getCurrentUser().token)}
-</h1>
-       <input className="createGame" 
+      <div className="container-af">
+       <h1 className="af-title"
+        style={{textAlign: "center"}}>Air Force Game</h1>
+
+       <button
+          className="create-game" 
           type="button" 
-          value="Create new game" 
-          onClick={this.handleClik1.bind(this)}/>
+          onClick={this.handleClik1.bind(this)}>
+          Create new game
+       </button>
+        
        <form>
-          <input 
+          <input className="join-game" 
+            type="submit" 
+            value="Join game" 
+            onClick={this.handleClick2.bind(this)}/>
+            <input className="id-game"
             type="text"
             placeholder="Game id"
             name="Game id" required 
             id="Game id"
             value={gameId}
-            onChange={this.handleChange}/>
-          <input className="joinGame" 
-            type="submit" 
-            value="Join game" 
-            onClick={this.handleClick2}/>
+            onChange={this.handleChange.bind(this)}/>
        </form>
-       <table style={{marginLeft: 800, marginTop: -50}}>
+        {/* <table style={{marginLeft: 800, marginTop: -50}}>
          <TableHeader />
          <TableBody id={this.state.createdId}/>
-       </table>
-       
+       </table> 
+        */}
       </div>
     );
   }
