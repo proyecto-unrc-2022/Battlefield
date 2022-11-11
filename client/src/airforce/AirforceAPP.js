@@ -19,9 +19,9 @@ class AirforceAPP extends Component {
 
     render() {
         return (
-        <div className='container-af'>
-        <link href='https://fonts.googleapis.com/css?family=Emblema One' rel='stylesheet'></link>
-                <InitAirforce callBack={this.handleCallback}/>
+        <div className='af-cont'>
+        <link href='https://fonts.googleapis.com/css?family=Silkscreen' rel='stylesheet'></link>
+            <InitAirforce callBack={this.handleCallback}/> 
         </div>
     )}
 }

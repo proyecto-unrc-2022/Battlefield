@@ -1,7 +1,7 @@
 
 
-.container-af{
-   background-image: url("./images/airforce-bg.jpg"); 
+.af-cont{
+   background-image: url("./images/airforce-bg-2.jpg"); 
    background-size: cover;
    background-repeat: no-repeat;
    position: fixed;
@@ -12,8 +12,8 @@
 }
 
 .af-title{
-   color: black;
-   font-family: 'Emblema One';
+   color: white;
+   font-family: 'Silkscreen';
    font-size: 100px;
 }
 
@@ -22,20 +22,19 @@
    transition-duration: 0.1s;
    background-color: transparent;
    border: 1px;
-   font-family: 'Emblema One';
+   font-family: 'Silkscreen';
    border-radius: 10px;
-   position: fixed;
-   right: 400px;
-
-
+   position: absolute;
+   left: 400px;
+   bottom: 450px;
+   color: white;
 }
 
 .create-game:hover {
+   @media screen and (min-width: 1224px);
    background-color: transparent;
-   border:1px solid rgb(0, 0, 0);
+   border:1px solid white;
    border-radius: 10px;
-   font-family: 'Emblema One';
-
 }
 
 
@@ -44,29 +43,32 @@
    transition-duration: 0.1s;
    background-color: transparent;
    border: 1px;
-   font-family: 'Emblema One';
+   font-family: 'Silkscreen';
    border-radius: 10px;
-   position: fixed;
-   right: 500px;
-   bottom: 300px
+   position: absolute;
+   left: 500px;
+   bottom: 145px;
+   color:white;
+
 
 }
 
 .join-game:hover {
    background-color: transparent;
-   border:1px solid rgb(0, 0, 0);
+   border:1px solid white;
    border-radius: 10px;
-   font-family: 'Emblema One';
 }
 
 .id-game{
    background-color: transparent;
-   border:1px solid rgb(0, 0, 0);
+   border:1px solid white;
    border-radius: 10px;
    width: 50%;
    padding: 12px 20px;
-   position: fixed;
-   bottom: 230px;
-   right: 320px;
+   position: absolute;
+   right: 350px;
+   bottom: 220px;
    margin: 8px 0;
+   color: white;
+   font-family: 'Silkscreen';
 }

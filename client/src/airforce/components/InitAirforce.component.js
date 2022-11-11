@@ -68,32 +68,35 @@ export default class InitAirforce extends Component {
   render() {
     const {gameId} = this.state;
     return (
-      <div className="airforce-bg">
+      <div className="container-af">
        <h1 className="af-title"
         style={{textAlign: "center"}}>Air Force Game</h1>
 
-       <input className="create-game" 
+       <button
+          className="create-game" 
           type="button" 
-          value="Create new game" 
-          onClick={this.handleClik1.bind(this)}/>
+          onClick={this.handleClik1.bind(this)}>
+          Create new game
+       </button>
+        
        <form>
           <input className="join-game" 
             type="submit" 
             value="Join game" 
-            onClick={this.handleClick2}/>
+            onClick={this.handleClick2.bind(this)}/>
             <input className="id-game"
             type="text"
             placeholder="Game id"
             name="Game id" required 
             id="Game id"
             value={gameId}
-            onChange={this.handleChange}/>
+            onChange={this.handleChange.bind(this)}/>
        </form>
-        <table style={{marginLeft: 800, marginTop: -50}}>
+        {/* <table style={{marginLeft: 800, marginTop: -50}}>
          <TableHeader />
          <TableBody id={this.state.createdId}/>
        </table> 
-       
+        */}
       </div>
     );
   }
