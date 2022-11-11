@@ -68,12 +68,13 @@ class UnderGameSession(db.Model):
         self.commands.clear()
 
     def to_dict(self):
-        dict = {"turn": self.turn, "order": self.order}
-        dict.update(self.game.to_dict())  # append game dict to this dict
-        return dict
-
-    def __repr__(self):
-        return json.dumps(self.to_dict())
+        return {
+            "turn": self.turn,
+            "order": self.order,
+            "host_id": self.host_id,
+            "visitor_id": self.visitor_id,
+            "game_state": self.game.state,
+        }
 
     def get_visible_state(self, player):
         d = {
