@@ -11,6 +11,12 @@ import Home from "./components/home.component";
 import Board from "./components/board.component";
 import NavyMenu from "./navy/pages/NavyMenu";
 import NavyGames from "./navy/pages/NavyGames";
+<<<<<<< HEAD
+import NavyShipSelection from "./navy/pages/NavyShipSelection";
+import { NavyShipPlace } from "./navy/pages/NavyShipPlace";
+=======
+import NavyLobby from "./navy/pages/NavyLobby";
+>>>>>>> navy-client-lobby
 
 class App extends Component {
   constructor(props) {
@@ -70,7 +76,6 @@ class App extends Component {
                 </Link>
               </li>
             )}
-
           </div>
 
           {currentUser ? (
@@ -97,7 +102,10 @@ class App extends Component {
           )}
         </nav>
 
-        <div style={{flexGrow: "1"}} className="container-fluid d-flex flex-column p-0">
+        <div
+          style={{ flexGrow: "1" }}
+          className="container-fluid d-flex flex-column p-0"
+        >
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/home" element={<Home />} />
@@ -106,6 +114,16 @@ class App extends Component {
             <Route path="/board" element={<Board />} />
             <Route path="/navy" element={<NavyMenu />} />
             <Route path="/navy/games" element={<NavyGames />} />
+            <Route
+              path="/navy/games/:id/ship_selection"
+              element={<NavyShipSelection />}
+            />
+            <Route
+              path="/navy/games/:id/ship_selection/place_ship"
+              element={<NavyShipPlace />}
+            />
+
+            <Route path="/navy/games/:id/lobby" element={<NavyLobby />} />
           </Routes>
         </div>
       </div>

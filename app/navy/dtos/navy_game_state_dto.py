@@ -18,6 +18,9 @@ class NavyGameStateDTO:
         from app.navy.services.navy_game_service import navy_game_service
 
         navy_game = navy_game_service.get_by_id(self.id)
+
+        self.host = navy_game.user1_id
+        self.guest = navy_game.user2_id
         self.rows = navy_game.board_rows
         self.cols = navy_game.board_colums
         self.ready_to_play = navy_game.ready_to_play
@@ -25,12 +28,13 @@ class NavyGameStateDTO:
         self.round = navy_game.round
         self.winner = navy_game.winner
         self.ship = self.load_ship(self.user_id)
-        self.shigt_range = navy_game_service.get_board(self.id, self.user_id)
+        self.sight_range = navy_game_service.get_board(self.id, self.user_id)
 
     def dump(self):
         return {
             "id": self.id,
-            "user_id": self.user_id,
+            "host": self.host,
+            "guest": self.guest,
             "rows": self.rows,
             "cols": self.cols,
             "ready_to_play": self.ready_to_play,
@@ -38,5 +42,5 @@ class NavyGameStateDTO:
             "round": self.round,
             "winner": self.winner,
             "ship": self.ship,
-            "shigt_range": self.shigt_range,
+            "sight_range": self.sight_range,
         }
