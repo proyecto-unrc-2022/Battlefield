@@ -18,6 +18,9 @@ class NavyGameStateDTO:
         from app.navy.services.navy_game_service import navy_game_service
 
         navy_game = navy_game_service.get_by_id(self.id)
+
+        self.host = navy_game.user1_id
+        self.guest = navy_game.user2_id
         self.rows = navy_game.board_rows
         self.cols = navy_game.board_colums
         self.ready_to_play = navy_game.ready_to_play
@@ -30,7 +33,8 @@ class NavyGameStateDTO:
     def dump(self):
         return {
             "id": self.id,
-            "user_id": self.user_id,
+            "host": self.host,
+            "guest": self.guest,
             "rows": self.rows,
             "cols": self.cols,
             "ready_to_play": self.ready_to_play,

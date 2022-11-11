@@ -6,7 +6,7 @@ import NavyTitle from "../components/NavyTitle";
 import ReactLoading from "react-loading";
 
 const NavyLobby = () => {
-  const id = useParams();
+  const {id} = useParams();
   const [game, setGame] = useState({});
 
   useEffect(() => {
