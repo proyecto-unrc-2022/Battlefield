@@ -8,7 +8,7 @@ export const NavyShipPlace = () => {
   const location = useLocation();
   const [ship, setShip] = useState(location.state.ship_selected);
   const [shipPlaced, setShipPlaced] = useState(false);
-  const navigates = useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (shipPlaced) {
@@ -16,7 +16,7 @@ export const NavyShipPlace = () => {
         NavyGameService.getNavyGame(ship.navy_game_id).then((resp) => {
           console.log(resp.data);
           if (resp.data.data.ready_to_play) {
-            navigates("/navy");
+            navigate(`/navy/games/${resp.data.data.id}/board`);
           }
         });
       }, 5000);
@@ -90,7 +90,7 @@ export const NavyShipPlace = () => {
               <span className="sr-only">Loading...</span>
             </div>
             <span className="text-center">
-              Waiting for the other player select him ship...
+              Waiting for the other player select his ship...
             </span>
           </div>
         ) : (

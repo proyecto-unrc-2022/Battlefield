@@ -14,6 +14,7 @@ import NavyGames from "./navy/pages/NavyGames";
 import NavyShipSelection from "./navy/pages/NavyShipSelection";
 import { NavyShipPlace } from "./navy/pages/NavyShipPlace";
 import NavyLobby from "./navy/pages/NavyLobby"
+import NavyBoard from "./navy/pages/NavyBoard";
 
 class App extends Component {
   constructor(props) {
@@ -121,6 +122,7 @@ class App extends Component {
             />
 
             <Route path="/navy/games/:id/lobby" element={<NavyLobby />} />
+            <Route path="/navy/games/:id/board" element={<NavyBoard />} />
           </Routes>
         </div>
       </div>

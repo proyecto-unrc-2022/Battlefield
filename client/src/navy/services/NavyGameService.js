@@ -21,6 +21,12 @@ class NavyGameService {
       headers: authHeader(),
     });
   }
+
+  patchNavyGame(id){
+    return axios.patch(API_URL + `/${id}`,{},{
+      headers: authHeader(),
+    });
+  }
 }
 
 export default new NavyGameService();

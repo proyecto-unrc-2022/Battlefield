@@ -1,11 +1,12 @@
 import React from "react";
 import NavyTitle from "../components/NavyTitle";
-import {  useState, useEffect } from "react";
+import {  useLayoutEffect,useState, useEffect } from "react";
 import ShipService from "../services/ShipService";
 import { Link ,useParams} from "react-router-dom";
 import NavyButton from "../components/NavyButton";
 import NavyShipCard from "../components/NavyShipCard";
 import { useNavigate } from "react-router-dom";
+import NavyGameService from "../services/NavyGameService";
 
 const NavyShipSelection = () => {
   const navigate = useNavigate();
@@ -15,7 +16,18 @@ const NavyShipSelection = () => {
     navy_game_id: id /* game.id */,
   });
 
+  useLayoutEffect(() => {
+    NavyGameService.getNavyGame(id).then((resp) => {
+      if (resp.data.data.ready_to_play) {
+        navigate(`/navy/games/${id}/board`);
+      }
+    });
+    
+  }, []) 
+
   useEffect(() => {
+
+
     ShipService.getShipTypes().then((resp) => {
       setShips(resp.data.data);
       console.log(resp.data.data);
