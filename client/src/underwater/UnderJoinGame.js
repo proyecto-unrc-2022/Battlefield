@@ -5,8 +5,17 @@ import authHeader from "../services/auth-header"
 
 const baseURL = "http://127.0.0.1:5000/api/v1/underwater";
 
+function SessionEntry({session}) {
+  return (
+    <li className="sesion-entry">
+      id: {session.id}, 
+      host: {session.host_id}
+      </li>
+  );
+}
+
 function GameList() {
-  const [games, setGames] = useState([]);
+  const [sessions, setSessions] = useState([]);
 
   useEffect(() => {
     axios.get(
@@ -14,16 +23,22 @@ function GameList() {
       {headers: authHeader()}
     ).then(
       (response) => {
-        setGames([]);
-        Object.keys(response.data).forEach(key => {games.push(response.data[key]);});
-        console.log(games);
+        setSessions([]);
+        console.log(response.data);
+        Object.keys(response.data).map(key => {console.log(response.data[key]); sessions.push(response.data[key])});
       }
     );
-  }, [])
+  }, []);
+
+  console.log(sessions);
 
   return (
-    <ul></ul>
-    )
+    <>
+      <ul>
+        {sessions.map(session => {return <SessionEntry session={session} />;})}
+      </ul>
+    </>
+  );
 
 }
 

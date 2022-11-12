@@ -22,7 +22,7 @@ export default function UnderHome() {
 
   return (
     <div className="u-container">
-      <div className="u-title">Battle Submarine</div>
+      <div className="u-title">SUBMARINE BATTLE</div>
       {selectComponent(visibleComp)}
     </div>
   );

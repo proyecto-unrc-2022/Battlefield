@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Glegoo:wght@400;700&display=swap');
+
+.u-font {
+    font-family: 'Glegoo', serif;
+}
+
 .u-container {
   background-image: url('sub-background.jpg');
   background-size: 100% 100%;
@@ -15,8 +21,8 @@
   flex-direction: column;
   width: 30%;
   height: 30%;
-  margin: 30px auto;
-  padding: 20px;
+  margin: 15px auto;
+  padding: 3px 30px 13px 30px;
   border: 2px solid white;
   border-radius: 3px;
 }
@@ -25,6 +31,8 @@
   margin: 60px;
   font-size: 64px;
   text-align: center;
+  font-family: 'Glegoo', serif;
+  font-size: 70px;
 }
 
 .u-options {
@@ -35,6 +43,7 @@
 .u-big-button {
   color: white;
   width: auto;
+  font-family: 'Glegoo', serif;
   font-size: 32px;
   text-align: center;
   border: 3px solid white;
@@ -58,6 +67,7 @@
   font-size: 32px;
   text-align: center;
   border: 2px solid white;
+  border-radius: 5px;
 }
 
 .u-button:hover {
@@ -70,6 +80,8 @@
   padding: 10px;
   margin: 10px;
   flex-grow: 1;
+  font-family: 'Glegoo', serif;
+  font-size: 18px;
 }
 
 .inline-block {
@@ -79,4 +91,8 @@
 
 #play-button {
   margin-left: auto;
+}
+
+.session-entry {
+  background: rgb(255, 255, 255,0.2);
 }
