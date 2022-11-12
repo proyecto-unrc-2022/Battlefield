@@ -102,7 +102,7 @@ class ShipService:
         if entity:
             self.act_accordingly(ship, entity)
 
-    def dupdate_position(self, ship, dist):
+    def update_position(self, ship, dist):
         self.delete_from_board(ship)
         while self.can_move_one(ship) and dist > 0:
             self.move_one(ship)
