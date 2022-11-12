@@ -23,17 +23,17 @@ const NavyGames = () => {
     setFilteredGames(
       games.filter(
         (game) =>
-          game.user1_id === currentUser.sub || game.user2_id === currentUser.sub
+          game.user_1.id === currentUser.sub || game.user_2?.id === currentUser.sub
       )
     );
   };
 
   const filterWaitingGames = () => {
-    setFilteredGames(games.filter((game) => !game.user2_id));
+    setFilteredGames(games.filter((game) => !game.user_2?.id));
   };
 
   const filterPlayingGames = () => {
-    setFilteredGames(games.filter((game) => game.user2_id));
+    setFilteredGames(games.filter((game) => game.user_2?.id));
   };
 
   const filters = {

@@ -11,12 +11,9 @@ import Home from "./components/home.component";
 import Board from "./components/board.component";
 import NavyMenu from "./navy/pages/NavyMenu";
 import NavyGames from "./navy/pages/NavyGames";
-<<<<<<< HEAD
 import NavyShipSelection from "./navy/pages/NavyShipSelection";
 import { NavyShipPlace } from "./navy/pages/NavyShipPlace";
-=======
-import NavyLobby from "./navy/pages/NavyLobby";
->>>>>>> navy-client-lobby
+import NavyLobby from "./navy/pages/NavyLobby"
 
 class App extends Component {
   constructor(props) {

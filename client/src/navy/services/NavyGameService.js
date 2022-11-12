@@ -15,6 +15,12 @@ class NavyGameService {
       headers: authHeader(),
     });
   }
+
+  postNavyGame(){
+    return axios.post(API_URL, {},{
+      headers: authHeader(),
+    });
+  }
 }
 
 export default new NavyGameService();

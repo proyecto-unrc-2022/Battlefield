@@ -7,15 +7,13 @@ import ReactLoading from "react-loading";
 
 const NavyLobby = () => {
   const {id} = useParams();
-  const [game, setGame] = useState({});
+  const [game, setGame] = useState(null);
 
   useEffect(() => {
     NavyGameService.getNavyGame(id).then((resp) => {
-      console.log(resp.data.data);
       setGame(resp.data.data);
     });
   }, []);
-  console.log(game);
 
   return (
     <div style={{ flexGrow: "1" }} className="container-fluid bg-navy">
@@ -26,7 +24,7 @@ const NavyLobby = () => {
       </div>
       <div className="row">
         <div className="col-12 row justify-content-center mt-4">
-          <NavyGameCard game={game} key={game.id} />
+          {game ? <NavyGameCard game={game} key={game.id} /> : null}
         </div>
       </div>
       <div className="row d-flex flex-column">

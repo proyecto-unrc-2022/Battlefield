@@ -1,3 +1,6 @@
+from app.models.user import User, UserSchema
+
+
 class NavyGameStateDTO:
     def __init__(self, id, user_id) -> None:
         self.id = id
@@ -18,9 +21,11 @@ class NavyGameStateDTO:
         from app.navy.services.navy_game_service import navy_game_service
 
         navy_game = navy_game_service.get_by_id(self.id)
+        user_1 = User.query.filter_by(id=navy_game.user1_id).first()
+        user_2 = User.query.filter_by(id=navy_game.user2_id).first()
 
-        self.host = navy_game.user1_id
-        self.guest = navy_game.user2_id
+        self.user_1 = UserSchema().dump(user_1)
+        self.user_2 = UserSchema().dump(user_2)
         self.rows = navy_game.board_rows
         self.cols = navy_game.board_colums
         self.ready_to_play = navy_game.ready_to_play
@@ -33,8 +38,8 @@ class NavyGameStateDTO:
     def dump(self):
         return {
             "id": self.id,
-            "host": self.host,
-            "guest": self.guest,
+            "user_1": self.user_1,
+            "user_2": self.user_2,
             "rows": self.rows,
             "cols": self.cols,
             "ready_to_play": self.ready_to_play,

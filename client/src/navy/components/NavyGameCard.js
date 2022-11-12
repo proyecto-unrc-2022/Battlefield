@@ -7,28 +7,24 @@ import "./NavyGameCard.css";
 import authService from "../../services/auth.service";
 
 const NavyGameCard = ({ game }) => {
-  const [user1, setUser1] = useState({});
-  const [user2, setUser2] = useState({});
+  const [user1, setUser1] = useState({})
+  const [user2, setUser2] = useState({})
 
   const canJoin = () => {
     const currentUser = authService.getCurrentUser();
-    return currentUser.sub !== game.user1_id && !game.user2_id  
+    return currentUser.sub !== game.user_1.id && (Object.keys(user2).length === 0)
   }
 
   const canReJoin = () => {
     const currentUser = authService.getCurrentUser();
-    return currentUser.sub === game.user1_id || currentUser.sub === game.user2_id
+    return currentUser.sub === game.user_1.id || currentUser.sub === game.user_2.id
   }
-  
 
   useEffect(() => {
-    UserService.getUserBoard(game.user1_id).then((res) => {
-      setUser1(res.data);
-    });
-    UserService.getUserBoard(game.user2_id).then((res) => {
-      setUser2(res.data);
-    });
-  }, [game.user1_id, game.user2_id]);
+    if (game.user_2){
+      setUser2(game.user_2)
+    }
+  }, [])
 
   return (
     <div className="navy-card-container d-flex flex-column align-items-center border border-dark pt-2 pb-4">
@@ -37,9 +33,9 @@ const NavyGameCard = ({ game }) => {
         <img src={wings} alt="Wings" />
       </div>
       <div className="w-75 d-flex justify-content-around align-items-center">
-        <NavyUserCard username={user1.username} />
+        <NavyUserCard username={game.user_1.username} />
         <p className="navy-text">VS.</p>
-        <NavyUserCard username={user2.username} rol={user2.username ? "guest" : "free"}/>
+        <NavyUserCard username={(Object.keys(user2).length !== 0) ? user2.username : ""} rol={(Object.keys(user2).length !== 0) ? "guest" : "free"}/>
       </div>
       {canJoin() ? (
         <div className="text-center">
