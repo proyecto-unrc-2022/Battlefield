@@ -62,6 +62,7 @@ class NavyGameService:
     def join(self, data, id):
         game = navy_game_dao.get_by_id(id)
         game.user2_id = data["user2_id"]
+        game.status = "WAITING_PICKS"
         navy_game_dao.add_or_update(game)
         return game
 

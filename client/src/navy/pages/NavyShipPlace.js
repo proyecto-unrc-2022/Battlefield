@@ -15,7 +15,7 @@ export const NavyShipPlace = () => {
       const interval = setInterval(() => {
         NavyGameService.getNavyGame(ship.navy_game_id).then((resp) => {
           console.log(resp.data);
-          if (resp.data.data.ready_to_play) {
+          if (resp.data.data.status === "STARTED") {
             navigate(`/navy/games/${resp.data.data.id}/board`);
           }
         });

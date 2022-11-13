@@ -3,7 +3,7 @@ class TestUtils:
         from app.navy.daos.navy_game_dao import navy_game_dao
 
         navy_game = navy_game_dao.get_by_id(navy_game_id)
-        navy_game.ready_to_play = True
+        navy_game.status = "STARTED"  
         navy_game.winner = winner
         navy_game_dao.add_or_update(navy_game)
 
@@ -85,8 +85,7 @@ class TestUtils:
         navy_game_id,
         missile_type,
         damage=None,
-        speed=None,
-        order=None,
+        speed=None
     ):
 
         from app.navy.daos.missile_dao import missile_dao

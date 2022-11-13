@@ -33,7 +33,7 @@ const NavyGameCard = ({ game }) => {
           navigate(`/navy/games/${game.id}/lobby`);
         });
       }
-    } else if (game.ready_to_play) {
+    } else if (game.status === "STARTED") {
       navigate(`/navy/games/${game.id}/board`);
     } else {
       navigate(`/navy/games/${game.id}/ship_selection`);

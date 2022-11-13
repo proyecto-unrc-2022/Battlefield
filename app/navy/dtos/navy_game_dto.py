@@ -19,11 +19,7 @@ class NavyGameDTO(SQLAlchemySchema):
     winner = auto_field()
     round = auto_field()
     turn = auto_field()
-    ready_to_play = fields.Method("is_ready_to_play")
+    status = auto_field()
     user_1 = Nested(UserSchema)
     user_2 = Nested(UserSchema)
 
-    def is_ready_to_play(self, obj):
-        if obj.ready_to_play:
-            return True
-        return len(set([ship.user_id for ship in obj.ships])) == utils.CANT_PLAYERS

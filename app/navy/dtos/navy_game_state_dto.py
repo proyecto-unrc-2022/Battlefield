@@ -28,7 +28,7 @@ class NavyGameStateDTO:
         self.user_2 = UserSchema().dump(user_2)
         self.rows = navy_game.board_rows
         self.cols = navy_game.board_colums
-        self.ready_to_play = navy_game.ready_to_play
+        self.status = navy_game.status
         self.turn = navy_game.turn
         self.round = navy_game.round
         self.winner = navy_game.winner
@@ -42,7 +42,7 @@ class NavyGameStateDTO:
             "user_2": self.user_2,
             "rows": self.rows,
             "cols": self.cols,
-            "ready_to_play": self.ready_to_play,
+            "status": self.status,
             "turn": self.turn,
             "round": self.round,
             "winner": self.winner,

@@ -35,7 +35,7 @@ class ShipService:
         ships = ship_dao.get_by(navy_game_id=data["navy_game_id"])
         if len(ships) == 2:
             game = navy_game_service.get_by_id(data["navy_game_id"])
-            game.ready_to_play = True
+            game.status = "STARTED"
             navy_game_dao.add_or_update(game)
         return added_ship
 

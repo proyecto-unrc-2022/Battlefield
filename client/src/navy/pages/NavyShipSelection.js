@@ -18,7 +18,7 @@ const NavyShipSelection = () => {
 
   useLayoutEffect(() => {
     NavyGameService.getNavyGame(id).then((resp) => {
-      if (resp.data.data.ready_to_play) {
+      if (resp.data.data.status === "STARTED") {
         navigate(`/navy/games/${id}/board`);
       }
     });
