@@ -8,7 +8,7 @@ const API_URL = "http://127.0.0.1:5000/api/v1/air_force/";
 class AirForceService {
     createAirforceGame(){
       return axios.post(
-          API_URL + `new_game`,{},
+          API_URL + "new_game",{},
           {
             headers: authHeader()
           }
@@ -27,8 +27,30 @@ class AirForceService {
             headers: authHeader()
           }
         ).then ((response) => {
-          return response.data;
+          return response;
         });
+    }
+
+    choosePlaneAndPosition(plane, course, coord_x, coord_y){
+      return axios
+        .put(
+          API_URL + "choose_plane",
+          {
+            plane,
+            course,
+            coord_x,
+            coord_y,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: authHeader(),
+            }
+            
+          }
+        ).then((response) => {
+          return response
+        })
     }
 }
 export default new AirForceService();
