@@ -18,17 +18,13 @@ class AirForceService {
       }
 
     joinAirforceGame(gameId){
-      console.log(gameId);
       return axios
-        //pasarle el id del juego creado sino tira un 400 bad request, no encuentra el game 
         .put(
           API_URL + `join/game/${gameId}`,{},
           {
             headers: authHeader()
           }
-        ).then ((response) => {
-          return response;
-        });
+        );
     }
 
     choosePlaneAndPosition(plane, course, coord_x, coord_y){
