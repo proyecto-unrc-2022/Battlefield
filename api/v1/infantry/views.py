@@ -24,6 +24,16 @@ def update_round():
     if update(1): return "Hubo un ganador"
     return "Se avanzo el turno o termino la ronda"
 
+@infantry.route("/figure", methods=['POST'])
+def get_figure():
+    data = json.loads(request.data)
+    print(data)
+    game_id = data["game_id"]
+    user_id = data["user_id"]
+    figure = Figure_infantry.query.filter_by(id_user = user_id, id_game = game_id).first()
+    print(figure)
+    return jsonify(figure_schema.dump(figure))
+
 @infantry.route("/next_turn", methods=['POST'])
 def next_turn_game():
     data = json.loads(request.data)
@@ -32,7 +42,6 @@ def next_turn_game():
     if not(next_turn(game)):
          return jsonify(game_schema.dump(game))
     return "Ronda terminada"
-
 
 @infantry.route("/update_user_actions", methods=['POST'])
 def update_actions_game():
@@ -65,12 +74,10 @@ def ready_to_play():
     user_id = data["user_id"]
     figure = Figure_infantry.query.filter_by(id_user = user_id).first()
     if figure == None: return "Aun no has elegido una unidad"
-    elif (ready(game_id, user_id)):  
+    else:
+        ready(game_id, user_id)  
         game = db.session.query(Game_Infantry).where(Game_Infantry.id == game_id).first()
         return jsonify(game_schema.dump(game))
-    else: return "Ya estas listo"
-
-    
 
 @infantry.route("/game/<game_id>/user/<user_id>/join",methods=['POST'])
 def join_game(game_id, user_id):
@@ -83,22 +90,14 @@ def join_game(game_id, user_id):
     return Response(status=404)
 
 
-
 @infantry.route("/game/<game_id>/user/<user_id>/figure/<type>/create_entity",methods=['POST'])
 def choose_figure(game_id, user_id, type):
-
     data = json.loads(request.data)
-    
     pos_x = data["pos_x"]
     pos_y = data["pos_y"]
-
     new_figure = add_figure(game_id, user_id, int(type), pos_x, pos_y)
-
     if(new_figure == None):
-
         return Response(status=404)
-
-
     return jsonify(figure_schema.dump(new_figure))
 
 @infantry.route("/move",methods=['POST'])
@@ -128,16 +127,6 @@ def shoot_entity(user_id, game_id, direccion):
     else:
         return Response(status=404)
 
-
-@infantry.route("/game/<game_id>/update",methods=['POST'])
-def updateProjectile(game_id):
-
-    update(game_id)
-   # terrain_validation(game_id)
-
-    #print(x)
-
-    return "ok"
 
 @infantry.route("games", methods=["GET"])
 # @token_auth.login_required
