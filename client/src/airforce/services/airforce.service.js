@@ -2,7 +2,7 @@ import axios from "axios";
 import { json } from "react-router-dom";
 import AuthService from "../../services/auth.service";
 import authHeader from "../../services/auth-header";
-const API_URL = "http://192.168.218.106:5000/api/v1/air_force/";
+const API_URL = "http://192.168.0.58:5000/api/v1/air_force/";
 
 
 class AirForceService {
@@ -36,22 +36,19 @@ class AirForceService {
         )
       }
 
-    choosePlaneAndPosition(plane, course, coord_x, coord_y){
+    choosePlaneAndPosition(plane, course, x, y, id){
       return axios
         .put(
           API_URL + "choose_plane",
           {
             plane,
             course,
-            coord_x,
-            coord_y,
+            x,
+            y,
+            id,
           },
           {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: authHeader(),
-            }
-            
+            headers: authHeader(),       
           }
         ).then((response) => {
           return response

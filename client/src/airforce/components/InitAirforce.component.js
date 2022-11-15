@@ -1,34 +1,8 @@
 import { Button } from "bootstrap";
 import React, { Component } from "react";
 import { Routes, Route, Link } from "react-router-dom";
-import Form from "react-validation/build/form";
-import Input from "react-validation/build/input";
 import AirForceService from "../services/airforce.service"
-import AuthService from "../../services/auth.service";
 
-
-const TableHeader = () => {
-  return(
-    <thead style={{textAlign: "center"}}>
-      <tr>
-        <th>Games available</th>
-      </tr>
-    </thead>
-  )
-}
-
-const TableBody = (props) => {
-  const idGame = props.id
-  return (
-   <tbody>
-      <tr>
-        <td>
-          {idGame}
-        </td>
-      </tr>
-   </tbody> 
-  )
-}
 export default class InitAirforce extends Component {
 
   state = {

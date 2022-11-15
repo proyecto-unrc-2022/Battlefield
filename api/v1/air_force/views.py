@@ -77,7 +77,6 @@ def choose_plane_and_position():
     course = request.json["course"]
 
     plane = Plane.query.filter_by(id=plane).first()
-
     try:
         command = ChoosePlane(
             course=course, plane=plane, x=x, y=y, player=player, air_force_game=game
@@ -120,13 +119,6 @@ def create_projectile(id):
         return Response(status=200)  # jsonify(dic.to_dict())
     except:
         return Response(status=400)
-
-
-@air_force.route("/game/<id>/ready", methods=["GET"])
-def game_ready(id):
-    game = air_force_game[int(id)]
-    ready = game.player_a != "" and game.player_b != ""
-    return jsonify({"ready": ready})
 
 
 @air_force.route("get_battlefield_status/game_id/<id>", methods=["GET"])
