@@ -1,10 +1,9 @@
 import { Button } from "bootstrap";
 import React, { Component } from "react";
 import { Routes, Route, Link } from "react-router-dom";
-import Form from "react-validation/build/form";
-import Input from "react-validation/build/input";
 import AirForceService from "../services/airforce.service"
-import AuthService from "../../services/auth.service";
+
+
 
 
 const TableHeader = () => {
@@ -44,7 +43,7 @@ export default class InitAirforce extends Component {
           this.props.callBack(response.data)
           console.log(response)
           this.setState({createdId: response.data.game_id})
-          window.location.href = "/airforce/game/lobby"
+          window.location.href = "/airforce/lobby"
         }
       },
         
