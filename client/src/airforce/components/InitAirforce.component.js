@@ -36,7 +36,7 @@ export default class InitAirforce extends Component {
     gameId: ""
   }
 
-  handleClik1 = () =>  {
+  newGameClik = () =>  {
     AirForceService.createAirforceGame().then(
       (response) => {
         const status_code = response.status;
@@ -44,25 +44,36 @@ export default class InitAirforce extends Component {
           this.props.callBack(response.data)
           console.log(response)
           this.setState({createdId: response.data.game_id})
-          window.location.href = "/airforce/game/lobby"
+          window.location.href = "/airforce/game/lobby/"+response.data.game_id
         }
       },
         
     )
   }
-  // Para que ande este metodo, hay que lograr obtener el id del juego creado arriba, sino tira error
-  handleChange = (event) => {
-    const { name, value } = event.target
-    this.setState({
-      gameId: value,
-    })
-    console.log(this.state)
 
+  joinGameClick = () =>  {
+    // alert('A name was submitted: ' + this.state.gameId);
+    AirForceService.joinAirforceGame(this.state.gameId).then(
+      (response) => {
+        if (response.status === 200){
+          window.location.href = "/airforce/game/lobby/"+this.state.gameId;
+        }
+      },
+        
+    )
+  }
+
+  // Para que ande este metodo, hay que lograr obtener el id del juego creado arriba, sino tira error
+  handleChange(event) {    
+    this.setState({gameId: event.target.value});  
   }
 
   handleClick2 = () => {
-    AirForceService.joinAirforceGame(this.state.gameId).then(
+    window.location.reload(false);
+    AirForceService.joinAirforceGame(3).then(
       (response) => {
+
+        console.log(response);
         const status_code = response.status;
         if(status_code === 200){
           window.location.href = "/airforce/game/lobby"
@@ -73,41 +84,39 @@ export default class InitAirforce extends Component {
 
 
   render() {
-    const {gameId} = this.state;
     return (
       <div className= "af-container" style={{textAlign: "center"}}>
       <link href='https://fonts.googleapis.com/css?family=Silkscreen' rel='stylesheet'></link>
         <h1 className="af-title">
           Air Force Game
         </h1>
+        
         <div>
           <button
               className="create-game" 
               type="button" 
-              onClick={this.handleClik1.bind(this)}>
+              onClick={this.newGameClik.bind(this)}>
               Create new game
           </button>
         </div>
         <div>
-          <form>
-             <div>
-                  <input className="id-game"
+          <div>
+          <input className="id-game"
                   type="text"
                   placeholder="Game id"
                   style={{textAlign: "center"}}
                   name="Game id" required 
                   id="Game id"
-                  value={gameId}
-                  onChange={this.handleChange.bind(this)}/>
-              </div>
-              <div>
-                <input className="join-game" 
-                  type="submit" 
-                  value="Join game" 
-                  onClick={this.handleClick2.bind(this)}/>
-              </div>
-          </form>
-        </div>
+                  onChange={this.handleChange.bind(this)}
+          />
+          </div>
+          <button
+            className="join-game" 
+            type="button" 
+            onClick={this.joinGameClick.bind(this)}>
+            Join in game
+          </button>
+        </div>        
       </div>
     );
   }

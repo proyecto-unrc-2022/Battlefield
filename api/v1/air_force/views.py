@@ -122,6 +122,13 @@ def create_projectile(id):
         return Response(status=400)
 
 
+@air_force.route("/game/<id>/ready", methods=["GET"])
+def game_ready(id):
+    game = air_force_game[int(id)]
+    ready = game.player_a != "" and game.player_b != ""
+    return jsonify({"ready": ready})
+
+
 @air_force.route("get_battlefield_status/game_id/<id>", methods=["GET"])
 def get_battlefield_status(id):
     game = air_force_game[int(id)]
