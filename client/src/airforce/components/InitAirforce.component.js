@@ -44,7 +44,7 @@ export default class InitAirforce extends Component {
           this.props.callBack(response.data)
           console.log(response)
           this.setState({createdId: response.data.game_id})
-          window.location.href = "/airforce/game/lobby"
+          window.location.href = "/airforce/game/lobby/"+response.data.game_id
         }
       },
         
@@ -56,7 +56,7 @@ export default class InitAirforce extends Component {
     AirForceService.joinAirforceGame(this.state.gameId).then(
       (response) => {
         if (response.status === 200){
-          window.location.href = "/airforce/game/lobby"
+          window.location.href = "/airforce/game/lobby/"+this.state.gameId;
         }
       },
         
