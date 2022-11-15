@@ -31,22 +31,22 @@ class AirForceService {
         });
     }
 
-    choosePlaneAndPosition(plane, course, coord_x, coord_y){
+    choosePlaneAndPosition(plane, course, x, y){
+      // const header = {
+      //   'Content-Type': 'application/json',
+      //   'Authorization': authHeader(),
+      // }
       return axios
         .put(
           API_URL + "choose_plane",
           {
             plane,
             course,
-            coord_x,
-            coord_y,
+            x,
+            y,
           },
           {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: authHeader(),
-            }
-            
+            headers: authHeader(),       
           }
         ).then((response) => {
           return response
