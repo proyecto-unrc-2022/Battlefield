@@ -2,7 +2,7 @@ import axios from "axios";
 import { json } from "react-router-dom";
 import AuthService from "../../services/auth.service";
 import authHeader from "../../services/auth-header";
-const API_URL = "http://127.0.0.1:5000/api/v1/air_force/";
+const API_URL = "http://192.168.218.106:5000/api/v1/air_force/";
 
 
 class AirForceService {
@@ -26,6 +26,15 @@ class AirForceService {
           }
         );
     }
+
+    airforceGameReady(gameId){
+      return axios.get(
+          API_URL + `game/${gameId}/ready`,{},
+          {
+            headers: authHeader()
+          }
+        )
+      }
 
     choosePlaneAndPosition(plane, course, coord_x, coord_y){
       return axios
