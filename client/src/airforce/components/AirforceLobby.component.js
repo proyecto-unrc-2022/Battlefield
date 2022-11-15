@@ -1,4 +1,3 @@
-import { Button } from "bootstrap";
 import React, { Component, useState} from "react";
 import AirforceService from "../services/airforce.service";
 
@@ -70,7 +69,6 @@ class AirforceLobby extends Component {
     }
         
     render() {
-        console.log(this.id());
         setInterval(() => {
             AirforceService.airforceGameReady(this.id()).then((response) => {
                 this.state.ready =  response.data.ready;
