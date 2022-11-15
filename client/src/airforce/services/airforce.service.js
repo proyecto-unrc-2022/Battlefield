@@ -2,7 +2,7 @@ import axios from "axios";
 import { json } from "react-router-dom";
 import AuthService from "../../services/auth.service";
 import authHeader from "../../services/auth-header";
-const API_URL = "http://127.0.0.1:5000/api/v1/air_force/";
+const API_URL = "http://192.168.218.106:5000/api/v1/air_force/";
 
 
 class AirForceService {
@@ -18,24 +18,25 @@ class AirForceService {
       }
 
     joinAirforceGame(gameId){
-      console.log(gameId);
       return axios
-        //pasarle el id del juego creado sino tira un 400 bad request, no encuentra el game 
         .put(
           API_URL + `join/game/${gameId}`,{},
           {
             headers: authHeader()
           }
-        ).then ((response) => {
-          return response;
-        });
+        );
     }
 
-    choosePlaneAndPosition(plane, course, x, y){
-      // const header = {
-      //   'Content-Type': 'application/json',
-      //   'Authorization': authHeader(),
-      // }
+    airforceGameReady(gameId){
+      return axios.get(
+          API_URL + `game/${gameId}/ready`,{},
+          {
+            headers: authHeader()
+          }
+        )
+      }
+
+    choosePlaneAndPosition(plane, course, coord_x, coord_y){
       return axios
         .put(
           API_URL + "choose_plane",
