@@ -1,4 +1,4 @@
-import React, { Component, useState} from "react";
+import React, { Component} from "react";
 import AirforceService from "../services/airforce.service";
 
 import { useParams } from "react-router-dom";
@@ -7,7 +7,7 @@ function withParams(Component) {
     return props => <Component {...props} params={useParams()} />;
   }
 
-class AirforceLobby extends Component {
+class ChoosePlane extends Component {
 
     
     state = {
@@ -18,6 +18,7 @@ class AirforceLobby extends Component {
         ready: false,
     }
     
+
     
     handleChangeCourse = (event) => {
         const {value} = event.target
@@ -53,37 +54,25 @@ class AirforceLobby extends Component {
         console.log(this.state.id)
     }
     
-    handleSubmit = () => {
-        AirforceService.choosePlaneAndPosition(this.state.id, this.state.course, this.state.coord_x, this.state.coord_y).then(
+    id(){
+        let { id } = this.props.params;
+        return id;
+    }
+
+    handleSubmit = (event) => {
+        event.preventDefault();
+        AirforceService.choosePlaneAndPosition(this.state.id, this.state.course, this.state.coord_x, this.state.coord_y, this.id()).then(
             console.log("player 1 is ready")
         )
     }
     
     
-    redirect = (id) => {
-        window.location.href = "/airforce/game/"+id+"/choose/plane"
-    }
-    
-    id(){
-        let { id } = this.props.params;
-        return id;
-    }
         
     render() {
-        setInterval(() => {
-            AirforceService.airforceGameReady(this.id()).then((response) => {
-                this.state.ready =  response.data.ready;
-            }
-            );
-            if(this.state.ready){
-                this.redirect(this.id());
-            }
-          }, 2000 ); 
             return (
               <div className="container-lobby" style={{textAlign: "center"}}>
-                <h1 style={{fontFamily: "Silkscreen"}}>Lobby ID = {this.id()}</h1>
                 <div className="select-plane">
-                    <h4 className="subtitle-1">Choose your plane</h4>
+                    <h2 className="subtitle-1">Choose your plane</h2>
                     <div className="planes-buttons" style={{display: "inline-block", verticalAlign: "middle", padding: "1rem 1rem"}} onClick={() => this.handleClick(1)}>
                         <abbr title= "Size: 1, Speed: 5, Health: 10, Projectile: 2">
                             <button className="button-p" >Hawker Tempest</button>
@@ -106,7 +95,7 @@ class AirforceLobby extends Component {
                     </div>
                 </div>
                 <div>
-                    <h4 className="subtitle-2">Choose the position and direction where you want to start</h4>
+                    <h2 className="subtitle-2">Choose the position and direction where you want to start</h2>
                     <form>
                         <abbr title="1- North 2- East 3- South 4- West">
                         <input className="input-bar" required type="text" placeholder="Course (1-4)"  onChange={this.handleChangeCourse}/>
@@ -123,4 +112,4 @@ class AirforceLobby extends Component {
     }
 }
 
-export default withParams(AirforceLobby);
+export default withParams(ChoosePlane);

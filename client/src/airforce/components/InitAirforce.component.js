@@ -3,31 +3,6 @@ import React, { Component } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import AirForceService from "../services/airforce.service"
 
-
-
-
-const TableHeader = () => {
-  return(
-    <thead style={{textAlign: "center"}}>
-      <tr>
-        <th>Games available</th>
-      </tr>
-    </thead>
-  )
-}
-
-const TableBody = (props) => {
-  const idGame = props.id
-  return (
-   <tbody>
-      <tr>
-        <td>
-          {idGame}
-        </td>
-      </tr>
-   </tbody> 
-  )
-}
 export default class InitAirforce extends Component {
 
   state = {
