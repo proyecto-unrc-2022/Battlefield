@@ -12,7 +12,7 @@ import Board from "./components/board.component";
 import NavyMenu from "./navy/pages/NavyMenu";
 import NavyGames from "./navy/pages/NavyGames";
 import AirforceAPP from "./airforce/AirforceAPP";
-import ChoosePlane from "./airforce/components/ChoosePlane.component";
+import ChoosePlane from "./airforce/components/AirforceChoosePlane";
 import Lobby from "./airforce/components/Lobby.component";
 class App extends Component {
   constructor(props) {
