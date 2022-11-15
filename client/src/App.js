@@ -12,8 +12,8 @@ import Board from "./components/board.component";
 import NavyMenu from "./navy/pages/NavyMenu";
 import NavyGames from "./navy/pages/NavyGames";
 import AirforceAPP from "./airforce/AirforceAPP";
-import AirforceLobby from "./airforce/components/AirforceLobby.component";
-import ChoosePlane from "./airforce/components/ChoosePlane.component";
+import ChoosePlane from "./airforce/components/AirforceChoosePlane";
+import AirforceLobby from "./airforce/components/AirforceLobby.component"
 class App extends Component {
   constructor(props) {
     super(props);
