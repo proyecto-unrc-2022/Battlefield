@@ -29,11 +29,11 @@ const NavyGames = () => {
   };
 
   const filterWaitingGames = () => {
-    setFilteredGames(games.filter((game) => !game.user_2?.id));
+    setFilteredGames(games.filter((game) => game.status === "WAITING_PLAYERS"));
   };
 
   const filterPlayingGames = () => {
-    setFilteredGames(games.filter((game) => game.user_2?.id));
+    setFilteredGames(games.filter((game) =>game.status === "STARTED" || game.status === "WAITING_PICKS"));
   };
 
   const filters = {

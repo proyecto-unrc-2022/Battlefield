@@ -21,7 +21,7 @@ const NavyGameCard = ({ game }) => {
   };
 
   const freeToJoin = () => {
-    return Object.keys(user2).length === 0;
+    return game.status === "WAITING_PLAYERS" 
   };
 
   const joinPlayer = () => {
@@ -55,7 +55,7 @@ const NavyGameCard = ({ game }) => {
 
   return (
     <div className="navy-card-container d-flex flex-column align-items-center border border-dark pt-2 pb-4">
-      <p className="navy-text m-0">{game.id}</p>
+      <p className="navy-text m-0">{game.status.replace("_", " ")}</p>
       <div className="w-100 d-flex justify-content-center mb-2">
         <img src={wings} alt="Wings" />
       </div>
@@ -72,6 +72,11 @@ const NavyGameCard = ({ game }) => {
           <NavyButton action={joinPlayer} text={"join"} size={"small"} />
         </div>
       ) : null}
+      <div className="d-flex justify-content-end w-75">
+        <p className="navy-text m-0 p-0">
+          GAME CODE: {game.id}</p>
+      </div>
+
     </div>
   );
 };

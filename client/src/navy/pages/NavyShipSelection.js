@@ -26,8 +26,6 @@ const NavyShipSelection = () => {
   }, []) 
 
   useEffect(() => {
-
-
     ShipService.getShipTypes().then((resp) => {
       setShips(resp.data.data);
       console.log(resp.data.data);

@@ -17,14 +17,13 @@ class NavyGame(db.Model):
     user2_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     user_1 = relationship("User", foreign_keys=[user1_id])
     user_2 = relationship("User", foreign_keys=[user2_id])
-    status = db.Column(db.String())
+    status = db.Column(db.String(), default="WAITING_PLAYERS")
     ships = relationship("Ship", back_populates="navy_game", cascade="all, delete")
     missiles = relationship(
         "Missile", back_populates="navy_game", cascade="all, delete"
     )
 
-    def __init__(self, board_rows, board_colums, user1_id, status="WAITING_PLAYERS", user2_id=None):
-        self.status = status
+    def __init__(self, board_rows, board_colums, user1_id, user2_id=None):
         self.board_colums = board_colums
         self.board_rows = board_rows
         self.user1_id = user1_id

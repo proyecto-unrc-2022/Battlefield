@@ -6,32 +6,7 @@ from app.navy.utils.navy_utils import utils
 from app.navy.validators.navy_game_patch_validator import NavyGamePatchValidator
 from app.navy.validators.navy_game_post_validator import NavyGamePostValidator
 from marshmallow import ValidationError
-
-""" Navy Game Service
-    This class is responsible for all the business logic related to the Navy Game
-    Attributes:
-        games (list): List of all the games in the system.
-    Methods:
-        This class provides the following methods:
-        validate_post_request(self, request)
-        validate_patch_request(self, request)
-        add(self,data)
-        join_second_player(self,data,id)
-        get_all(self,user_id=None)
-        get_by_id(self,id)
-        delete(self,id)
-        delete_in_map
-        add_in_map
-        get_from_map
-        update_game
-        change_turn
-        set_winner
-        end_game
-
-    You can view in github the source code of this class:
-    navy_game_service: https://github.com/proyecto-unrc-2022/Battlefield/tree/develop/app/navy
-"""
-
+from app.navy.utils.navy_game_statuses import FINISHED, STARTED, WAITING_PICKS, WAITING_PLAYERS
 
 class NavyGameService:
 
@@ -39,7 +14,6 @@ class NavyGameService:
 
     def validate_post_request(self, request):
         return NavyGamePostValidator().load(request)
-
     def validate_patch_request(self, request):
         if not bool(User.query.filter_by(id=request["user2_id"]).first()):
             raise ValidationError("User doesn't exist.")
@@ -62,7 +36,7 @@ class NavyGameService:
     def join(self, data, id):
         game = navy_game_dao.get_by_id(id)
         game.user2_id = data["user2_id"]
-        game.status = "WAITING_PICKS"
+        game.status = WAITING_PICKS
         navy_game_dao.add_or_update(game)
         return game
 
@@ -179,6 +153,7 @@ class NavyGameService:
 
     def set_winner(self, winner, game):
         game.winner = winner
+        game.status = FINISHED
         navy_game_dao.add_or_update(game)
 
     def is_over(self, navy_game_id):
