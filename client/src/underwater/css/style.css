@@ -16,6 +16,17 @@
   flex-grow: 1;
 }
 
+/* .u-blur-container {
+  background-image: url('sub-blur-background.jpg');
+  background-size: 100% 100%;
+  display: flex;
+  flex-direction: column;
+  color: white;
+  width: 100%;
+  min-height: 100%;
+  flex-grow: 1;
+} */
+
 .u-small-container {
   display: flex;
   flex-direction: column;
@@ -29,10 +40,16 @@
 
 .u-title {
   margin: 60px;
-  font-size: 64px;
   text-align: center;
   font-family: 'Glegoo', serif;
   font-size: 70px;
+}
+
+.u-titlecenter {
+  margin: 220px;
+  text-align: center;
+  font-family: 'Glegoo', serif;
+  font-size: 40px;
 }
 
 .u-options {
