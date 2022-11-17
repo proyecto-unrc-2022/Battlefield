@@ -1,12 +1,19 @@
+from marshmallow import ValidationError
+
 from app.models.user import User
 from app.navy.daos.navy_game_dao import navy_game_dao
 from app.navy.models.missile import Missile
 from app.navy.models.navy_game import NavyGame
+from app.navy.utils.navy_game_statuses import (
+    FINISHED,
+    STARTED,
+    WAITING_PICKS,
+    WAITING_PLAYERS,
+)
 from app.navy.utils.navy_utils import utils
 from app.navy.validators.navy_game_patch_validator import NavyGamePatchValidator
 from app.navy.validators.navy_game_post_validator import NavyGamePostValidator
-from marshmallow import ValidationError
-from app.navy.utils.navy_game_statuses import FINISHED, STARTED, WAITING_PICKS, WAITING_PLAYERS
+
 
 class NavyGameService:
 
@@ -14,18 +21,18 @@ class NavyGameService:
 
     def validate_post_request(self, request):
         return NavyGamePostValidator().load(request)
+
     def validate_patch_request(self, request):
         if not bool(User.query.filter_by(id=request["user2_id"]).first()):
             raise ValidationError("User doesn't exist.")
-        
+
         game = navy_game_service.get_by_id(request["game_id"])
         if bool(game.user1_id) and bool(game.user2_id):
-            raise ValidationError({"game_id" :"Can't join a game with two players"})
+            raise ValidationError({"game_id": "Can't join a game with two players"})
         if game.user1_id == request["user2_id"]:
             raise ValidationError({"game_id": "Can't join your own game"})
-        
+
         return {"user2_id": request["user2_id"]}
-        
 
     def add(self, data):
         new_game = NavyGame(utils.ROWS, utils.COLS, data["user1_id"])

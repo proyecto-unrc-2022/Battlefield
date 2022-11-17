@@ -19,7 +19,9 @@ from . import navy
 @token_auth.login_required
 def action():
     try:
-        request.json["user_id"] = utils.get_user_id_from_header(request.headers["Authorization"])
+        request.json["user_id"] = utils.get_user_id_from_header(
+            request.headers["Authorization"]
+        )
         data = action_service.validate_request(request.json)
         action_service.add(data)
         if navy_game_service.should_update(data["navy_game_id"]):
@@ -36,7 +38,9 @@ def action():
 @token_auth.login_required
 def new_ship():
     try:
-        request.json["user_id"] = utils.get_user_id_from_header(request.headers["Authorization"])
+        request.json["user_id"] = utils.get_user_id_from_header(
+            request.headers["Authorization"]
+        )
         data = ship_service.validate_request(request.json)
         ship_service.add(data)
         return NavyResponse(201, data=data, message="Ship added").to_json(), 201
@@ -75,7 +79,9 @@ def get_navy_game(id):
     user_id = utils.get_user_id_from_header(request.headers["Authorization"])
     game = navy_game_service.get_by_id(id)
     return (
-        NavyResponse(status=200, data=NavyGameStateDTO(game.id, user_id).dump(), message="Ok").to_json(),
+        NavyResponse(
+            status=200, data=NavyGameStateDTO(game.id, user_id).dump(), message="Ok"
+        ).to_json(),
         200,
     )
 
@@ -85,7 +91,9 @@ def get_navy_game(id):
 def update_navy_game(id):
     try:
         user2_id = utils.get_user_id_from_header(request.headers["Authorization"])
-        validated_data = navy_game_service.validate_patch_request({"user2_id": user2_id, "game_id": id})
+        validated_data = navy_game_service.validate_patch_request(
+            {"user2_id": user2_id, "game_id": id}
+        )
         game = navy_game_service.join(validated_data, id)
         return (
             NavyResponse(
