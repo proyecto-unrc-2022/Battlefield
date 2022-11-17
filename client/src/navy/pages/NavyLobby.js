@@ -3,7 +3,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import NavyGameService from "../services/NavyGameService";
 import NavyGameCard from "../components/NavyGameCard";
 import NavyTitle from "../components/NavyTitle";
-import ReactLoading from "react-loading";
 
 const NavyLobby = () => {
   const { id } = useParams();
@@ -48,9 +47,6 @@ const NavyLobby = () => {
         </div>
       </div>
       <div className="row d-flex flex-column">
-        <div className="d-flex justify-content-center mt-2">
-          <ReactLoading type="spin" color="#000" />
-        </div>
         <div className="d-flex justify-content-center mt-2">
           <NavyTitle text="Waiting for another player" size={5} />
         </div>
