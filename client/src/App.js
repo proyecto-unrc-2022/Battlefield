@@ -11,6 +11,11 @@ import Home from "./components/home.component";
 import Board from "./components/board.component";
 import NavyMenu from "./navy/pages/NavyMenu";
 import NavyGames from "./navy/pages/NavyGames";
+import NavyShipSelection from "./navy/pages/NavyShipSelection";
+import { NavyShipPlace } from "./navy/pages/NavyShipPlace";
+import NavyLobby from "./navy/pages/NavyLobby"
+import NavyBoard from "./navy/pages/NavyBoard";
+
 import AirforceAPP from "./airforce/AirforceAPP";
 import ChoosePlane from "./airforce/components/AirforceChoosePlane";
 import AirforceLobby from "./airforce/components/AirforceLobby.component"
@@ -78,6 +83,14 @@ class App extends Component {
                 </Link>
               </li>
             )}
+
+            {currentUser && (
+              <li className="nav-item">
+                <Link to={"/navy"} className="nav-link">
+                  Navy
+                </Link>
+              </li>
+            )}
           </div>
 
           {currentUser ? (
@@ -104,7 +117,10 @@ class App extends Component {
           )}
         </nav>
 
-        <div style={{flexGrow: "1"}} className="container-fluid d-flex flex-column p-0">
+        <div
+          style={{ flexGrow: "1" }}
+          className="container-fluid d-flex flex-column p-0"
+        >
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/home" element={<Home />} />
@@ -113,6 +129,17 @@ class App extends Component {
             <Route path="/board" element={<Board />} />
             <Route path="/navy" element={<NavyMenu />} />
             <Route path="/navy/games" element={<NavyGames />} />
+            <Route
+              path="/navy/games/:id/ship_selection"
+              element={<NavyShipSelection />}
+            />
+            <Route
+              path="/navy/games/:id/ship_selection/place_ship"
+              element={<NavyShipPlace />}
+            />
+
+            <Route path="/navy/games/:id/lobby" element={<NavyLobby />} />
+            <Route path="/navy/games/:id/board" element={<NavyBoard />} />
             <Route path= "/airforce/mainMenu" element={<AirforceAPP />}/>
             <Route path= "/airforce/game/lobby/:id" element={<AirforceLobby />}/>
             <Route path= "/airforce/game/:id/choose/plane" element={<ChoosePlane />}/>

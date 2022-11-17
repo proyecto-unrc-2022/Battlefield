@@ -1,0 +1,8 @@
+.navy-card-container {
+  background-color: #82B5EA;
+  width: 400px;
+  border-radius: 10px;
+  border: 2px solid #000000 !important;
+  box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+  box-shadow: -15px 15px 35px 20px rgba(0, 0, 0, 0.2), inset 0px -100px 100px -20px #245E6B;
+}
