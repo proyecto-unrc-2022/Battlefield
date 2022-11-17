@@ -77,7 +77,6 @@ def choose_plane_and_position():
     course = request.json["course"]
 
     plane = Plane.query.filter_by(id=plane).first()
-
     try:
         command = ChoosePlane(
             course=course, plane=plane, x=x, y=y, player=player, air_force_game=game
