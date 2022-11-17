@@ -1,4 +1,5 @@
-from sqlalchemy.orm import relationship
+from sqlalchemy import event
+from sqlalchemy.orm import Session, relationship
 
 from app import db
 
@@ -50,3 +51,38 @@ class Ship(db.Model):
         self.course = course
         self.user_id = user_id
         self.navy_game_id = navy_game_id
+
+
+@event.listens_for(Ship, "after_insert")
+def ship_change(mapper, connection, target):
+    from app.navy.models.navy_game import NavyGame
+    from app.navy.utils.navy_game_statuses import STARTED
+
+    navy_game = db.session.query(NavyGame).filter_by(id=target.navy_game_id).first()
+
+    user_1 = navy_game.user1_id
+    user_2 = navy_game.user2_id
+
+    ships_user1 = (
+        db.session.query(Ship)
+        .filter_by(navy_game_id=target.navy_game_id, user_id=user_1)
+        .all()
+    )
+
+    ships_user2 = (
+        db.session.query(Ship)
+        .filter_by(navy_game_id=target.navy_game_id, user_id=user_2)
+        .all()
+    )
+
+    if len(ships_user1) >= 1 and len(ships_user2) >= 1:
+
+        @event.listens_for(Session, "after_flush", once=True)
+        def receive_after_flush(session, context):
+            navy_game.status = "ddd"
+            db.session.add(navy_game)
+
+        event.listen(Session, "after_flush", receive_after_flush)
+
+    """A_table = NavyGame.__tablename__
+        connection.execute(navy_game) """
