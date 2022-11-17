@@ -70,6 +70,10 @@
   border-radius: 5px;
 }
 
+.u-small-button {
+  font-size: inherit;
+}
+
 .u-button:hover {
   background: white;
   color: rgb(22, 39, 65);
@@ -95,4 +99,20 @@
 
 .session-entry {
   background: rgb(255, 255, 255,0.2);
+}
+
+.u-list {
+  list-style-type: none;
+  width: 100%;
+  margin: 10px;
+  padding: 0px;
+}
+
+.u-list li {
+  background: #fff3;
+  display: flex;
+  justify-content: space-between;
+  margin: 5px;
+  padding: 5px;
+  font-size: 24px;
 }
