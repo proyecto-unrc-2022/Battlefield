@@ -116,7 +116,7 @@ class App extends Component {
             <Route path= "/airforce/mainMenu" element={<AirforceAPP />}/>
             <Route path= "/airforce/game/lobby/:id" element={<AirforceLobby />}/>
             <Route path= "/airforce/game/:id/choose/plane" element={<ChoosePlane />}/>
-            <Route path= "/airforce/gameBoard" element={<AirforceBoard/>}/>
+            <Route path= "/airforce/gameBoard" element={<AirforceBoard />}/>
           </Routes>
         </div>
       </div>
