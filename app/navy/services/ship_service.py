@@ -190,6 +190,11 @@ class ShipService:
 
         return ShipDTO().dump(ship)
 
+    def pos_in_range(self,ship,pos):
+        pos_x,pos_y = pos[0],pos[1]
+        return utils.in_range(ship.pos_x, ship.pos_y, pos_x,pos_y, ship.visibility)
+
+
     def get_alives(self, user_id, navy_game_id):
         from app.navy.services.navy_game_service import navy_game_service
 

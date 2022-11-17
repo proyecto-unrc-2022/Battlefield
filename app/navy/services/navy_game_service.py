@@ -203,41 +203,41 @@ class NavyGameService:
                 games.append(game)
         return games
 
-    def get_board(self, navy_game_id, user_id):
-        from app.navy.services.missile_service import missile_service
+    def get_visibility(self, navy_game_id, user_id):
         from app.navy.services.ship_service import ship_service
-
-        if not self.games.get(navy_game_id):
-            self.load_game(navy_game_id)
-
-        # -------- NavyGameState reemplaza estas 3 lineas -----#
-        game_dict = self.games[navy_game_id].copy()
-        game_dict.pop("ships")
-        game_dict.pop("missiles")
-        # ------------------------------------------------------#
-
+        game_board = self.get_board(navy_game_id)
         user_ships = ship_service.get_by(user_id=user_id, navy_game_id=navy_game_id)
-        set_ships = set([])
-        set_missiles = set([])
+        entities = set([])
 
         for ship in user_ships:
-            for x, y in game_dict.keys():
-                if utils.in_range(ship.pos_x, ship.pos_y, x, y, ship.visibility):
-                    visible_entity = self.get_from_board(ship.navy_game_id, x, y)
-                    self.add_to_set(visible_entity, set_ships, set_missiles, ship.id)
+            for pos in game_board:
+                if ship_service.pos_in_range(ship,pos):
+                    entities.add(game_board[pos])
+                    
+        ships_dto, missiles_dto = self.to_dto(entities,user_id)
+        return {"ships": ships_dto, "missiles": missiles_dto}
 
-        ships = list(map(ship_service.get_dto, set_ships))
-        missiles = list(map(missile_service.get_dto, set_missiles))
+    def get_board(self,navy_game_id):
+        if not navy_game_id in self.games:
+            self.load_game(navy_game_id=navy_game_id)
+        game_dict = self.games[navy_game_id].copy()
+        game_dict.pop("ships")  
+        game_dict.pop("missiles")
+        return game_dict
 
-        return {"ships": ships, "missiles": missiles}
-
-    def add_to_set(self, entity, set_ships, set_missiles, ship_id):
+    def to_dto(self, entities,user_id):
         from app.navy.models.ship import Ship
+        from app.navy.services.ship_service import ship_service
+        from app.navy.services.missile_service import missile_service
+        ships_dto = []
+        missiles_dto = []
 
-        if isinstance(entity, Ship) and entity.id != ship_id:
-            set_ships.add(entity)
-        elif isinstance(entity, Missile):
-            set_missiles.add(entity)
+        for entity in entities:
+            if isinstance(entity, Ship) and entity.user_id != user_id:
+                ships_dto.append(ship_service.get_dto(entity))
+            elif isinstance(entity, Missile):
+                missiles_dto.append(missile_service.get_dto(entity))
+        return ships_dto, missiles_dto
 
     def get_ships(self, navy_game_id):
         return self.games[navy_game_id]["ships"]
