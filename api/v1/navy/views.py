@@ -85,7 +85,7 @@ def get_navy_game(id):
 def update_navy_game(id):
     try:
         user2_id = utils.get_user_id_from_header(request.headers["Authorization"])
-        validated_data = navy_game_service.validate_patch_request({"user2_id": user2_id})
+        validated_data = navy_game_service.validate_patch_request({"user2_id": user2_id, "game_id": id})
         game = navy_game_service.join(validated_data, id)
         return (
             NavyResponse(
