@@ -24,15 +24,37 @@ def update_round():
     if update(1): return "Hubo un ganador"
     return "Se avanzo el turno o termino la ronda"
 
+
+@infantry.route("/game", methods=['POST'])
+#Obtiene los datos del juego
+def get_all_users_from_game():
+    users = []
+    data = json.loads(request.data)
+    game_id = int(data["game_id"])
+    game = Game_Infantry.query.filter_by(id = game_id).first()
+    return jsonify(game_schema.dump(game))
+
+@infantry.route("/projectiles", methods=['POST'])
+#Obtiene todos los projectiles
+def get_all_projectiles():
+    x = []
+    data = json.loads(request.data)
+    game_id = int(data["game_id"])
+    projectiles = Projectile_infantry.query.filter_by(id_game = game_id).all()
+    for projectile in projectiles:
+        x.append(projectile_schema.dump(projectile))
+    return jsonify(x)
+
 @infantry.route("/figure", methods=['POST'])
+#Obtiene una figura especifica
 def get_figure():
     data = json.loads(request.data)
-    print(data)
-    game_id = data["game_id"]
+    game_id = int(data["game_id"])
     user_id = data["user_id"]
+    figures = figures_id_game(game_id)
     figure = Figure_infantry.query.filter_by(id_user = user_id, id_game = game_id).first()
-    print(figure)
-    return jsonify(figure_schema.dump(figure))
+    #print(figure)
+    return jsonify({"data" : (figure_schema.dump(figures[figure.id-1][0])), "body" : figures[figure.id-1][1]})
 
 @infantry.route("/next_turn", methods=['POST'])
 def next_turn_game():
