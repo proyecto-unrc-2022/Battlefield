@@ -11,7 +11,8 @@ import Home from "./components/home.component";
 import Board from "./components/board.component";
 import NavyMenu from "./navy/pages/NavyMenu";
 import NavyGames from "./navy/pages/NavyGames";
-import UnderHome from "./underwater/UnderHome"
+import UnderHome from "./underwater/UnderHome";
+import UnderLoading from "./underwater/UnderLoading";
 
 class App extends Component {
   constructor(props) {
@@ -111,6 +112,7 @@ class App extends Component {
             <Route path="/navy" element={<NavyMenu />} />
             <Route path="/navy/games" element={<NavyGames />} />
             <Route path="/underwater" element={<UnderHome />} />
+            <Route path="/underloading" element={<UnderLoading/>} />
           </Routes>
         </div>
       </div>
