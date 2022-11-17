@@ -65,7 +65,7 @@ class NavyUtils:
         return decoded_jwt["sub"]
 
     def in_range(self, x1, y1, x2, y2, sight):
-        x_min = x1 - sight 
+        x_min = x1 - sight
         y_min = y1 - sight
         x_max = x1 + sight
         y_max = y1 + sight

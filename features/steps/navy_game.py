@@ -29,9 +29,7 @@ def step_impl(context):
         "Content-Type": "application/json",
         "Authorization": f'Bearer {context.token["token"]}',
     }
-    context.page = context.client.post(
-        url_for("navy.new_navy_game"), headers=headers
-    )
+    context.page = context.client.post(url_for("navy.new_navy_game"), headers=headers)
     assert context.page
 
 

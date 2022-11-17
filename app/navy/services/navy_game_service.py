@@ -1,12 +1,19 @@
+from marshmallow import ValidationError
+
 from app.models.user import User
 from app.navy.daos.navy_game_dao import navy_game_dao
 from app.navy.models.missile import Missile
 from app.navy.models.navy_game import NavyGame
+from app.navy.utils.navy_game_statuses import (
+    FINISHED,
+    STARTED,
+    WAITING_PICKS,
+    WAITING_PLAYERS,
+)
 from app.navy.utils.navy_utils import utils
 from app.navy.validators.navy_game_patch_validator import NavyGamePatchValidator
 from app.navy.validators.navy_game_post_validator import NavyGamePostValidator
-from marshmallow import ValidationError
-from app.navy.utils.navy_game_statuses import FINISHED, STARTED, WAITING_PICKS, WAITING_PLAYERS
+
 
 class NavyGameService:
 
@@ -14,18 +21,18 @@ class NavyGameService:
 
     def validate_post_request(self, request):
         return NavyGamePostValidator().load(request)
+
     def validate_patch_request(self, request):
         if not bool(User.query.filter_by(id=request["user2_id"]).first()):
             raise ValidationError("User doesn't exist.")
-        
+
         game = navy_game_service.get_by_id(request["game_id"])
         if bool(game.user1_id) and bool(game.user2_id):
-            raise ValidationError({"game_id" :"Can't join a game with two players"})
+            raise ValidationError({"game_id": "Can't join a game with two players"})
         if game.user1_id == request["user2_id"]:
             raise ValidationError({"game_id": "Can't join your own game"})
-        
+
         return {"user2_id": request["user2_id"]}
-        
 
     def add(self, data):
         new_game = NavyGame(utils.ROWS, utils.COLS, data["user1_id"])
@@ -205,30 +212,32 @@ class NavyGameService:
 
     def get_visibility(self, navy_game_id, user_id):
         from app.navy.services.ship_service import ship_service
+
         game_board = self.get_board(navy_game_id)
         user_ships = ship_service.get_by(user_id=user_id, navy_game_id=navy_game_id)
         entities = set([])
 
         for ship in user_ships:
             for pos in game_board:
-                if ship_service.pos_in_range(ship,pos):
+                if ship_service.pos_in_range(ship, pos):
                     entities.add(game_board[pos])
-                    
-        ships_dto, missiles_dto = self.to_dto(entities,user_id)
+
+        ships_dto, missiles_dto = self.to_dto(entities, user_id)
         return {"ships": ships_dto, "missiles": missiles_dto}
 
-    def get_board(self,navy_game_id):
+    def get_board(self, navy_game_id):
         if not navy_game_id in self.games:
             self.load_game(navy_game_id=navy_game_id)
         game_dict = self.games[navy_game_id].copy()
-        game_dict.pop("ships")  
+        game_dict.pop("ships")
         game_dict.pop("missiles")
         return game_dict
 
-    def to_dto(self, entities,user_id):
+    def to_dto(self, entities, user_id):
         from app.navy.models.ship import Ship
-        from app.navy.services.ship_service import ship_service
         from app.navy.services.missile_service import missile_service
+        from app.navy.services.ship_service import ship_service
+
         ships_dto = []
         missiles_dto = []
 
