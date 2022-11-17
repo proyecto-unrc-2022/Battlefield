@@ -124,6 +124,11 @@ class TestUtils:
         )
         action_dao.add_or_update(action)
         return action
+    
+    def generate_username_and_email(self, id):
+        username = "user" + id
+        email = "user" + id + "@user" + id + ".com"
+        return username, email
 
 
 test_utils = TestUtils()

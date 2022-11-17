@@ -1,8 +1,8 @@
 Feature: Actions before move
 
     Background: Login a user and initialize the app
-        Given I am logged in as "user1"
-        And another user exists as "user2"
+        Given a user '1' logged in
+        And a user '2' exists
         And the app is initialized
 
     Scenario: Game doesn't exist

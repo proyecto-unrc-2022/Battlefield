@@ -1,10 +1,10 @@
 Feature: Ship Movement
 
 Background: Login a user and initialize the app
-    Given I am logged in as "user1"
-    And another user exists as "user2"
+    Given a user '1' logged in
+    And a user '2' exists
     And the app is initialized
-    And the game is started
+    And the game started
 
 Scenario: Move without collision
     Given The user '1' has a ship 'Destroyer' in '5','5' with course 'N' and hp '60'

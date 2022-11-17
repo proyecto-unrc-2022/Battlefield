@@ -1,9 +1,9 @@
 Feature: Turn a ship
 
     Background: Login a user and initialized app with a game
-        Given I am logged in as "user1"
-        And another user exists as "user2"
-        And the game is started
+        Given a user '1' logged in
+        And a user '2' exists
+        And the game started
 
     Scenario: A ship turns and doesn't collide with anything
         Given The user '1' has a ship 'Destroyer' in '5','5' with course 'N' and hp '100'

@@ -3,22 +3,23 @@ import json
 from behave import *
 from flask import url_for
 
-from app import db
 from app.daos.user_dao import add_user
 from app.models.user import User
-from app.navy.models.navy_game import NavyGame
 from app.navy.services.navy_game_service import navy_game_service
+from steps.navy.test_utils import test_utils
 
 
-@given('I am logged in as "user1"')
-def step_impl(context):
-    add_user("user1", "12345", "user1@user1.com")
-    context.body = {"username": "user1", "password": "12345"}
+
+@given("a user '{id}' logged in")
+def step_impl(context, id):
+    username, email = test_utils.generate_username_and_email(id)
+    add_user(username, "12345", email)
+    context.body = {"username": username, "password": "12345"}
     context.headers = {"Content-Type": "application/json"}
     context.page = context.client.post(
         url_for("auth.login"), json=context.body, headers=context.headers
     )
-    context.user1 = User.query.filter_by(username="user1").first()
+    context.user1 = User.query.filter_by(username=username).first()
     context.token = json.loads(context.page.text)
     assert context.page
 
@@ -53,7 +54,7 @@ def step_impl(context):
     assert context.page
 
 
-@then("I should get an error")
+@then("an error should appear")
 def step_impl(context):
     assert context.page.status_code == 400
 

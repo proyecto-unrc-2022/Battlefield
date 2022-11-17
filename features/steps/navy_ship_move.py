@@ -3,7 +3,6 @@ import json
 from behave import *
 from steps.navy.test_utils import test_utils
 
-from app.navy.models.action import Action
 from app.navy.services.navy_game_service import navy_game_service
 from app.navy.services.ship_service import ship_service
 

@@ -11,7 +11,7 @@ def step_impl(context):
     assert context.token
 
 
-@given("the game is started")
+@given("the game started")
 def step_impl(context):
 
     from app.navy.services.navy_game_service import navy_game_service
@@ -38,7 +38,7 @@ def step_impl(context, ship_name, pos_x, pos_y, course, hp, id):
     )
 
     """    
- context.ship2 = test_utils.add_test_ship(
+    context.ship2 = test_utils.add_test_ship(
         name="Destroyer",
         pos_x=1,
         pos_y=15,

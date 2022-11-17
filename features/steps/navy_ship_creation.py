@@ -3,17 +3,16 @@ import json
 from behave import *
 from flask import url_for
 
-from app import db
 from app.daos.user_dao import add_user
 from app.models.user import User
-from app.navy.models.ship import Ship
 from app.navy.services.navy_game_service import navy_game_service
+from steps.navy.test_utils import test_utils
 
-
-@given('another user exists as "user2"')
-def step_impl(context):
-    add_user("user2", "123", "user2@user2.com")
-    context.user2 = User.query.filter_by(username="user2").first()
+@given("a user '{id}' exists")
+def step_impl(context, id):
+    username, email = test_utils.generate_username_and_email(id)
+    add_user(username, "123", email)
+    context.user2 = User.query.filter_by(username=username).first()
 
 
 @given("I've created a Navy Game")

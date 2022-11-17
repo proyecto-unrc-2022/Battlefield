@@ -1,8 +1,7 @@
-Feature: Create, get, update and delete a Navy Game
+Feature: Create, get, update and delete a Navy Game from API
 
   Background: Login a user and initialize the app
-    Given I am logged in as "user1"
-
+    Given a user '1' logged in
 
   Scenario: Create a navy game
     When I create a new game 
@@ -32,4 +31,3 @@ Feature: Create, get, update and delete a Navy Game
     Given Some games have been created  
     When I try to delete the game with id 1
     Then The game with id 1 should be deleted  
-
