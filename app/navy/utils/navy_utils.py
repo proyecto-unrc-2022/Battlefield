@@ -1,6 +1,3 @@
-from math import sqrt
-
-
 class NavyUtils:
     # ---------- CLASS CONSTANTS --------- #
     COMPASS = {
@@ -16,7 +13,6 @@ class NavyUtils:
     X, Y = 0, 1
     ZERO, ONE = 0, 1
     ROWS, COLS = 10, 20
-    TRUE, FALSE = 1, 0
     CANT_PLAYERS = 2
     INVERSE_COORDS = {
         "N": "S",
@@ -48,14 +44,6 @@ class NavyUtils:
             navy_game_id, x, y
         )
 
-    def next_free_position(self, x, y, course, navy_game_id):
-        from app.navy.services.navy_game_service import navy_game_service
-
-        next_x, next_y = self.get_next_position(x, y, course)
-        if self.free_valid_poisition(next_x, next_y, navy_game_id):
-            return next_x, next_y
-        return None
-
     def get_user_id_from_header(self, header):
         import jwt
 
@@ -65,7 +53,7 @@ class NavyUtils:
         return decoded_jwt["sub"]
 
     def in_range(self, x1, y1, x2, y2, sight):
-        x_min = x1 - sight 
+        x_min = x1 - sight
         y_min = y1 - sight
         x_max = x1 + sight
         y_max = y1 + sight

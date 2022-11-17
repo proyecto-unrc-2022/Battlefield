@@ -2,9 +2,9 @@ from marshmallow import fields
 from marshmallow_sqlalchemy import SQLAlchemySchema, auto_field
 from marshmallow_sqlalchemy.fields import Nested
 
+from app.models.user import UserSchema
 from app.navy.models.navy_game import NavyGame
 from app.navy.utils.navy_utils import utils
-from app.models.user import UserSchema
 
 
 class NavyGameDTO(SQLAlchemySchema):
@@ -22,4 +22,3 @@ class NavyGameDTO(SQLAlchemySchema):
     status = auto_field()
     user_1 = Nested(UserSchema)
     user_2 = Nested(UserSchema)
-
