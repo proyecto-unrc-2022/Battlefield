@@ -14,7 +14,8 @@ import Board from "./components/board.component";
 import HomePage from "./infantry/pages/HomePage";
 import CreateGame from "./infantry/pages/CreateGame"
 import JoinGame from "./infantry/pages/JoinGame"
-import GameInfantry from "./infantry/components/GameInfantry";
+import GameInfantry from "./infantry/components/gameInfantry.component";
+import InitGameInfantry from "./infantry/pages/InfantryGame";
 
 
 class App extends Component {
@@ -100,7 +101,7 @@ class App extends Component {
             <Route path='/home_Infantry/' element={<HomePage/>} />
             <Route path="/home_Infantry/create_game" element={<CreateGame/>} />
             <Route path="/home_Infantry/join_game" element={<JoinGame/>} />
-            <Route path="/infantry/game" element={<GameInfantry/>} />
+            <Route path="/infantry/game" element={<InitGameInfantry/>} />
             <Route path="/login" element={<Login />} />
             {/* <Route path="/profile" element={<Profile />} /> */}
             <Route path="/board" element={<Board />} />
