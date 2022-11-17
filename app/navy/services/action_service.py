@@ -4,13 +4,6 @@ from app.navy.services.navy_game_service import navy_game_service
 from app.navy.services.ship_service import ship_service
 from app.navy.validators.action_request_validator import ActionRequestValidator
 
-""" 
-    ActionService is responsible for handling all the business logic related to the actions game.
-    It is responsible for validating the actions, and executing them.
-
-    Note: This service is not responsible for the movement of the missiles, that logic is handled by the NavyGameService.
- """
-
 
 class ActionService:
     def validate_request(self, request):
