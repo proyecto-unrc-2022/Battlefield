@@ -1,5 +1,7 @@
 from marshmallow import ValidationError
 
+from marshmallow import ValidationError
+
 from app.models.user import User
 from app.navy.daos.navy_game_dao import navy_game_dao
 from app.navy.models.missile import Missile
@@ -43,7 +45,6 @@ class NavyGameService:
     def join(self, data, id):
         game = navy_game_dao.get_by_id(id)
         game.user2_id = data["user2_id"]
-        game.status = WAITING_PICKS
         navy_game_dao.add_or_update(game)
         return game
 

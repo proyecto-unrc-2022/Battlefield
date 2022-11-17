@@ -32,11 +32,10 @@ class ShipService:
             data["navy_game_id"],
         )
         added_ship = ship_dao.add_or_update(new_ship)
-        ships = ship_dao.get_by(navy_game_id=data["navy_game_id"])
+        """ ships = ship_dao.get_by(navy_game_id=data["navy_game_id"])
         if len(ships) == 2:
             game = navy_game_service.get_by_id(data["navy_game_id"])
-            game.status = "STARTED"
-            navy_game_dao.add_or_update(game)
+            navy_game_dao.add_or_update(game) """
         return added_ship
 
     def update_db(self, ship):
