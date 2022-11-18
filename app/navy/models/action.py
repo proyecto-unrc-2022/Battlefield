@@ -1,5 +1,6 @@
 from app import db
-
+from sqlalchemy import event
+from sqlalchemy.orm import Session
 
 class Action(db.Model):
 
@@ -34,3 +35,34 @@ class Action(db.Model):
         self.missile_type_id = missile_type_id
         self.user_id = user_id
         self.round = round
+
+@event.listens_for(Action, 'after_insert')
+def receive_after_create(mapper, connection, target):
+    from app.navy.services.navy_game_service import navy_game_service
+    navy_game_id = target.navy_game_id
+    if navy_game_service.should_update(navy_game_id):
+            navy_game_service.play_round(navy_game_id)
+    
+
+
+""" @event.listens_for(Action, 'after_commit')
+def receive_after_commit(Session):
+    return """
+
+
+""" @event.listens_for(Action, 'after_create')
+def create_version(target, connection, **kw):
+    id = target.navy_game_id
+    transaction = connection.begin()
+    # do something with the transaction, or the connection...
+    transaction.commit() """
+
+
+""" @event.listens_for(Action, "actions", propagate=True)
+def instrument_class(mapper, class_):
+    if mapper.local_table is not None:
+        trigger_for_table(mapper.local_table)
+
+def trigger_for_table(table):
+    trig_ddl = ""
+    event.listen(table, 'after_create', trig_ddl) """
