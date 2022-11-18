@@ -4,29 +4,6 @@ from app.navy.models.ship import Ship
 from app.navy.services.navy_game_service import navy_game_service
 from app.navy.utils.navy_utils import utils
 
-""" Missile Service
-
-    This class is responsible for the logic of the missiles in the game.
-    It is responsible for the creation of missiles, the movement of missiles, the attack of missiles,the deletion of missiles, etc.
-    
-    Attributes:
-        MISSILE_TYPES (list): List of missile types.
-
-    Methods:
-        add(self,navy_Game_id,ship_id,missile_type,pos_x,pos_y)
-        get(self,navy_game_id)
-        delete(self,missile)
-        move(self,missile)
-        mov_is_valid(self,missile,x,y)
-        act_accordingly(self,missile,x,y)
-           |-> act_accordingly_missile(self,other_missile)
-           |-> act_accordingly_ship(self,damage,ship)
-        
-    You can view in github the source code of this class:
-    missile_service: https://github.com/proyecto-unrc-2022/Battlefield/tree/develop/app/navy
-    
-"""
-
 
 class MissileService:
 

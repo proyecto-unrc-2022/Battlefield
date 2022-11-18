@@ -139,6 +139,7 @@ class NavyGameService:
     def save(self, game):
         from app.navy.services.missile_service import missile_service
         from app.navy.services.ship_service import ship_service
+        from app.navy.services.spectate_service import spectate_service
 
         ships = self.games[game.id]["ships"]
         missiles = self.games[game.id]["missiles"]
@@ -147,6 +148,7 @@ class NavyGameService:
         for missile in missiles:
             missile_service.update_db(missile)
         navy_game_dao.add_or_update(game)
+        spectate_service.add_round_game(game,ships,missiles)
 
     def run_missiles(self, game):
         from app.navy.services.missile_service import missile_service
