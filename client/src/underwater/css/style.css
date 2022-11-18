@@ -5,8 +5,6 @@
 }
 
 .u-container {
-  background-image: url('sub-background.jpg');
-  background-size: 100% 100%;
   display: flex;
   flex-direction: column;
   background-color: #162741;
@@ -14,6 +12,11 @@
   width: 100%;
   min-height: 100%;
   flex-grow: 1;
+}
+
+.u-background-image {
+  background-image: url('sub-background.jpg');
+  background-size: 100% 100%;
 }
 
 .u-small-container {
@@ -27,9 +30,19 @@
   border-radius: 3px;
 }
 
+.u-container-light-blue {
+  display: inline-block;
+  flex-grow: 1;
+  width: 70%;
+  height: 90%;
+  
+  margin: 20px auto;
+  background-color: #E3F5FF;
+  border-radius: 20px;
+}
+
 .u-motion-container {
   display: flex;
-  /* flex-direction: column; */
   width: 98%;
   height: 100%;
   justify-content: right;
