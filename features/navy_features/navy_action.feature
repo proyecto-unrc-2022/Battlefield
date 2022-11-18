@@ -60,4 +60,3 @@ Feature: Actions before move
         When I move the ship 3 positions to 'N'
         And  I try to move the ship again
         Then I should see an error message 'No its your turn yet'
-

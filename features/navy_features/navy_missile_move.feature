@@ -56,4 +56,3 @@ Feature: Move a missile
         When The missile moves
         Then Missile should be destroyed
         And The ship at '8','15' should have '1' hp
-

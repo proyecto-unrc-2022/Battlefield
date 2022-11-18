@@ -126,9 +126,8 @@ class TestUtils:
         return action
     
     def generate_username_and_email(self, id):
-        username = "user" + id
-        email = "user" + id + "@user" + id + ".com"
+        username = "user" + str(id)
+        email = "user" + str(id) + "@user" + str(id) + ".com"
         return username, email
-
 
 test_utils = TestUtils()
