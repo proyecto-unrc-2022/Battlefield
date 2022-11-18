@@ -50,7 +50,7 @@ def get_game_state(session_id):
     session = session_dao.get_by_id(session_id)
 
     if not player:
-        return Response('{"error"; "could not find a player"}', status=404)
+        return Response('{"error": "could not find a player"}', status=404)
     if not session:
         return Response('{"error": "could not find a session"}', status=404)
 
