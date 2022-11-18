@@ -63,12 +63,6 @@ class App extends Component {
             </li>
 
             <li className="nav-item">
-              <Link to={"/navy"} className="nav-link">
-                Navy
-              </Link>
-            </li>
-
-            <li className="nav-item">
               <Link to={"/airforce/mainMenu"} className="nav-link">
                 Airforce
               </Link>

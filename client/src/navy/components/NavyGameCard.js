@@ -7,7 +7,7 @@ import authService from "../../services/auth.service";
 import NavyGameService from "../services/NavyGameService";
 import { useNavigate } from "react-router-dom";
 
-const NavyGameCard = ({ game }) => {
+const NavyGameCard = ({ game, showButton = true }) => {
   const [user1, setUser1] = useState({});
   const [user2, setUser2] = useState({});
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ const NavyGameCard = ({ game }) => {
   };
 
   const freeToJoin = () => {
-    return game.status === "WAITING_PLAYERS" 
+    return game.status === "WAITING_PLAYERS";
   };
 
   const joinPlayer = () => {
@@ -67,16 +67,14 @@ const NavyGameCard = ({ game }) => {
           rol={Object.keys(user2).length !== 0 ? "guest" : "free"}
         />
       </div>
-      {canJoin() ? (
+      {showButton && canJoin() ? (
         <div className="text-center">
           <NavyButton action={joinPlayer} text={"join"} size={"small"} />
         </div>
       ) : null}
       <div className="d-flex justify-content-end w-75">
-        <p className="navy-text m-0 p-0">
-          GAME CODE: {game.id}</p>
+        <p className="navy-text m-0 p-0">GAME CODE: {game.id}</p>
       </div>
-
     </div>
   );
 };
