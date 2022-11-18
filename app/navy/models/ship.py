@@ -1,5 +1,5 @@
 from sqlalchemy import event
-from sqlalchemy.orm import Session, relationship
+from sqlalchemy.orm import relationship
 
 from app import db
 
@@ -75,18 +75,8 @@ def ship_change(mapper, connection, target):
     )
 
     if len(ships_user1) >= 1 and len(ships_user2) >= 1:
-
         connection.execute(
             "UPDATE navy_games SET status = 'STARTED' WHERE id = {}".format(
                 target.navy_game_id
             )
         )
-
-        """  @event.listens_for(Session, "after_flush", once=True)
-        def receive_after_flush(session, context):
-            navy_game.status = "ddd"
-            db.session.add(navy_game)
-
-        event.listen(Session, "after_flush", receive_after_flush)
-        """
-   

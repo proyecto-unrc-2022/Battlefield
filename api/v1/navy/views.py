@@ -1,4 +1,4 @@
-from flask import Response, jsonify, request
+from flask import jsonify, request
 from marshmallow import ValidationError
 
 from api import token_auth
@@ -24,8 +24,6 @@ def action():
         )
         data = action_service.validate_request(request.json)
         action_service.add(data)
-        if navy_game_service.should_update(data["navy_game_id"]):
-            navy_game_service.play_round(data["navy_game_id"])
         return (
             NavyResponse(201, data=request.json, message="Action added").to_json(),
             201,

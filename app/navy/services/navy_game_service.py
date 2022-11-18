@@ -1,7 +1,5 @@
 from marshmallow import ValidationError
 
-from marshmallow import ValidationError
-
 from app.models.user import User
 from app.navy.daos.navy_game_dao import navy_game_dao
 from app.navy.models.missile import Missile
