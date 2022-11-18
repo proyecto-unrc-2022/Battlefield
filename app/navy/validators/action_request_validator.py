@@ -81,7 +81,7 @@ class ActionRequestValidator(Schema):
             .all()
         )
         if actions:
-            raise ValidationError("No its your turn yet")
+            raise ValidationError("It's not your turn yet")
 
     def check_ship(self, in_data, **kwargs):
         ship = db.session.query(Ship).filter_by(id=in_data.get("ship_id")).first()

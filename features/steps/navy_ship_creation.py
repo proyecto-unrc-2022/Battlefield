@@ -3,46 +3,32 @@ import json
 from behave import *
 from flask import url_for
 
-from app.models.user import User
-from app.navy.services.navy_game_service import navy_game_service
-from steps.navy.test_utils import test_utils
 
-@given("the user '{id:d}' creates a NavyGame")
-def step_impl(context, id):
-    print(context.bodies)
-    print(context.pages)
-    print(context.users)
-    print(context.tokens)
-    data = {"user1_id": context.user1.id}
-    context.game_created = navy_game_service.add(data)
-
-@given('the user "{id}" joins the NavyGame')
-def step_impl(context, id):
-    data = {"user2_id": context.user2.id}
-    game_id = context.game_created.id
-    context.game_created = navy_game_service.join(data, game_id)
-
-
-@when('the user "{id}" creates a "{name}" in "{x:d}", "{y:d}" with course "{course}"')
-def step_impl(context, id, name, x, y, course):
-    """ headers = {
+@when("the user '{user_id:d}' creates a '{name}' in '{x:d}', '{y:d}' with course '{course}' for the NavyGame '{game_id:d}'")
+def step_impl(context, user_id, name, x, y, course, game_id):
+    headers = {
         "Content-Type": "application/json",
-        "Authorization": f'Bearer {context.token["token"]}',
+        "Authorization": f'Bearer {context.tokens[user_id]["token"]}',
     }
+    current_game = json.loads(context.games_created[game_id].text)["data"]
+    print(current_game)
     body = {
-        "name": "Destroyer",
-        "pos_x": 2,
-        "pos_y": 3,
-        "course": "N",
-        "user_id": context.user1.id,
-        "navy_game_id": context.game_created.id,
+        "name": name,
+        "pos_x": x,
+        "pos_y": y,
+        "course": course,
+        "user_id": context.users[user_id].id,
+        "navy_game_id": current_game["id"],
     }
-    context.page = context.client.post(
+    context.pages[user_id] = context.client.post(
         url_for("navy.new_ship"), json=body, headers=headers
     )
-    assert context.page
- """
+    assert context.pages[user_id]
 
-@then("the ship should be created successfully")
-def step_impl(context):
-    assert context.page.status_code == 201
+@then("the ship of user '{user_id:d}' should be created successfully")
+def step_impl(context, user_id):
+    assert context.pages[user_id].status_code == 201
+
+@then("the ship of user '{user_id:d}' shouldn't be created")
+def step_impl(context, user_id):
+    assert context.pages[user_id].status_code == 400

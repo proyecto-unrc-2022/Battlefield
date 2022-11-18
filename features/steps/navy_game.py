@@ -126,6 +126,23 @@ def step_impl(context, user_id, game_id):
         url_for("navy.update_navy_game", id=current_game["id"]),
         headers=headers,
     )
+    context.games_created[game_id] = context.pages[user_id]
+
+    assert context.pages[user_id]
+
+@given("the user '{user_id:d}' joined the NavyGame '{game_id:d}'")
+def step_impl(context, user_id, game_id):
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f'Bearer {context.tokens[user_id]["token"]}',
+    }
+    current_game = json.loads(context.games_created[game_id].text)["data"]
+    context.pages[user_id] = context.client.patch(
+        url_for("navy.update_navy_game", id=current_game["id"]),
+        headers=headers,
+    )
+    context.games_created[game_id] = context.pages[user_id]
+    
     assert context.pages[user_id]
 
 
@@ -186,8 +203,3 @@ def step_impl(context):
         url_for("navy.new_navy_game"), json=body, headers=headers
     )
     assert context.page
-
-
-@then("an error should appear")
-def step_impl(context):
-    assert context.page.status_code == 400

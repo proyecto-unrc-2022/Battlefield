@@ -4,18 +4,6 @@ from behave import *
 from flask import url_for
 from steps.navy.test_utils import test_utils
 
-EXPECTED_ERRORS = {
-    "Game not found": "navy_game_id",
-    "Invalid move": "_schema",
-    "Must be one of: N, S, E, W, SE, SW, NE, NW.": "course",
-    "Can't move more than 3 spaces": "_schema",
-    "The movement is a negative distance": "_schema",
-    "Invalid ship in game": "_schema",
-    "Ship not found": "_schema",
-    "Game finished": "navy_game_id",
-    "No its your turn yet": "_schema",
-}
-
 
 @given("Is my turn")
 def step_impl(context):
@@ -91,11 +79,11 @@ def step_impl(context):
     assert context.page
 
 
-@then("I should see an error message '{error_msj}'")
-def step_impl(context, error_msj):
-    message = json.loads(context.page.text)
-    value = EXPECTED_ERRORS[error_msj]
-    assert message[value][0] == error_msj
+@then("the user '{user_id:d}' should see an error message '{error_msg}'")
+def step_impl(context, user_id, error_msg):
+    message = json.loads(context.pages[user_id].text)
+    value = test_utils.EXPECTED_ERRORS[error_msg]
+    assert message[value][0] == error_msg
 
 
 @when("I try to move in a game with an incorrect direction like '{course}'")

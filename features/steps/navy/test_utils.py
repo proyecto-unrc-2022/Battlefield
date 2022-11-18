@@ -1,4 +1,20 @@
 class TestUtils:
+    
+    EXPECTED_ERRORS = {
+        "Game not found": "navy_game_id",
+        "Invalid move": "_schema",
+        "Must be one of: N, S, E, W, SE, SW, NE, NW.": "course",
+        "Can't move more than 3 spaces": "_schema",
+        "The movement is a negative distance": "_schema",
+        "Invalid ship in game": "_schema",
+        "Ship not found": "_schema",
+        "Game finished": "navy_game_id",
+        "It's not your turn yet": "_schema",
+        "Ship can't be builded out of range": "_schema",
+        "Must be one of: Destroyer, Cruiser, Battleship, Corvette.": "name",
+        "Ship can't be builded out of range": "_schema"
+    }
+
     def add_test_game(self, navy_game_id, winner=False):
         from app.navy.daos.navy_game_dao import navy_game_dao
 
