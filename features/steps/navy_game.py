@@ -5,22 +5,19 @@ from flask import url_for
 
 from app.daos.user_dao import add_user
 from app.models.user import User
-from app.navy.services.navy_game_service import navy_game_service
 from steps.navy.test_utils import test_utils
-
 
 @given("a user '{id:d}' logged in")
 def step_impl(context, id):
     username, email = test_utils.generate_username_and_email(id)
     add_user(username, "12345", email)
     context.headers = {"Content-Type": "application/json"}
-    
     try:    
         context.bodies[id] = {"username": username, "password": "12345"}
         context.pages[id] = context.client.post(
             url_for("auth.login"), json=context.bodies[id], headers=context.headers
         )
-        context.users[id]=User.query.filter_by(username=username).first()
+        context.users[id] = User.query.filter_by(username=username).first()
         context.tokens[id] = json.loads(context.pages[id].text)
     except:
         context.bodies = {}
@@ -168,13 +165,6 @@ def step_impl(context, user_id, game_id):
 @then("the user '{id:d}' should see that the NavyGame was deleted")
 def step_impl(context, id):
     assert context.pages[id].status_code == 200
-
-
-@given("a user '{id:d}' exists")                                            #TODO: Ver de borrar
-def step_impl(context, id):
-    username, email = test_utils.generate_username_and_email(id)
-    add_user(username, "123", email)
-    context.users[id] = User.query.filter_by(username=username).first()
 
 
 @when("I try to join to the game with an incorrect user")
