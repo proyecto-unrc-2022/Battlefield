@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import {Link} from "react-router-dom";
 import axios from "axios";
 import authHeader from "../services/auth-header"
 
@@ -43,7 +44,7 @@ export default function UnderNewGame(props) {
         </div>
 
         <div className="row u-input-field">
-          <div onClick={() => {props.setVisibleComp("home")}} className="u-button">‹</div>
+          <Link to="/underwater/menu" className="u-button">‹</Link>
           <button id="play-button" className="u-button">Play</button>
         </div>
       </form>

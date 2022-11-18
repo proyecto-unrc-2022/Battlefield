@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import "./css/style.css"
 import authHeader from "../services/auth-header"
@@ -50,7 +51,7 @@ function GameList({setAlertMessage, sessions, updateSessionsList}) {
 
 }
 
-export default function JoinGame(props) {
+export default function UnderJoinGame(props) {
   const [sessions, setSessions] = useState({});
   const [alertMessage, setAlertMessage] = useState(null);
 
@@ -70,7 +71,7 @@ export default function JoinGame(props) {
         <GameList setAlertMessage={setAlertMessage} sessions={sessions} updateSessionsList={updateSessionsList} />
       </div>
       <div className="row u-input-field">
-        <div onClick={() => {props.setVisibleComp("home")}} className="u-button">‹</div>
+        <Link to="/underwater/menu" className="u-button">‹</Link>
         <div onClick={updateSessionsList} id="play-button" className="u-button">Update</div>
       </div>
       {alertMessage != null ? <span className="alert-danger">{alertMessage}</span> : null}

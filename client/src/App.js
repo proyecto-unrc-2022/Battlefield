@@ -11,7 +11,11 @@ import Home from "./components/home.component";
 import Board from "./components/board.component";
 import NavyMenu from "./navy/pages/NavyMenu";
 import NavyGames from "./navy/pages/NavyGames";
+import UnderRoot from "./underwater/UnderRoot";
+import UnderMenu from "./underwater/UnderMenu";
 import UnderHome from "./underwater/UnderHome";
+import UnderNewGame from "./underwater/UnderNewGame";
+import UnderJoinGame from "./underwater/UnderJoinGame";
 import UnderLoading from "./underwater/UnderLoading";
 
 class App extends Component {
@@ -64,7 +68,7 @@ class App extends Component {
             </li>
 
             <li className="nav-item">
-              <Link to={"/underwater"} className="nav-link">
+              <Link to={"/underwater/menu"} className="nav-link">
                 Underwater
               </Link>
             </li>
@@ -111,7 +115,13 @@ class App extends Component {
             <Route path="/board" element={<Board />} />
             <Route path="/navy" element={<NavyMenu />} />
             <Route path="/navy/games" element={<NavyGames />} />
-            <Route path="/underwater" element={<UnderHome />} />
+            <Route path="/underwater" element={<UnderRoot />}>
+              <Route path="menu" element={<UnderMenu />}>
+                <Route index element={<UnderHome />} />
+                <Route path="new" element={<UnderNewGame />} />
+                <Route path="lobby" element={<UnderJoinGame />} />
+              </Route>
+            </Route>
             <Route path="/underloading" element={<UnderLoading/>} />
           </Routes>
         </div>
