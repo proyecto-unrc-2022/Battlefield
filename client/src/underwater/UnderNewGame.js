@@ -9,6 +9,7 @@ export default function UnderNewGame(props) {
   const [height, setHeight] = useState(10);  
   const [width, setWidth] = useState(20); 
   const [post, setPost] = useState(null);
+  const [alertMessage, setAlertMessage] = useState(null);
 
   function onSubmit(e) {
     e.preventDefault();
@@ -17,7 +18,12 @@ export default function UnderNewGame(props) {
       baseURL + "/game/new",
       {},
       {headers: authHeader()}
-    ).then((response) => {setPost(response.data);});
+    ).then((response) => {setPost(response.data);
+    }).catch(error => {
+      console.log(error.response.data);
+      setAlertMessage(error.response.data["error"]);
+    });
+
   }
 
   return (
@@ -47,6 +53,7 @@ export default function UnderNewGame(props) {
           <Link to="/underwater/menu" className="u-button">‹</Link>
           <button id="play-button" className="u-button">Play</button>
         </div>
+        {alertMessage != null ? <span className="u-alert-danger">{alertMessage}</span> : null}
       </form>
     </div>
   );
