@@ -69,8 +69,8 @@ def next_turn_game():
 def update_actions_game():
     data = json.loads(request.data)
     game_id = data["game_id"]
-    if update_users(): return Response(status=200)
-    return Response(status=404)
+    if update_users(): return "successful action"
+    return "no actions in queue"
     
 @infantry.route("/update_projectiles", methods=['POST'])
 def update_projectile_game():
@@ -79,7 +79,7 @@ def update_projectile_game():
         game = Game_Infantry.query.filter_by(id = game_id).first()
         projectile = update_projectile(game)
         if  projectile != None: return jsonify(projectile_schema.dump(projectile))
-        return Response(status=200)
+        return "empty update projectiles queue"
 
 @infantry.route("/user/<user_id>/game", methods=['POST'])
 def start_game(user_id):
