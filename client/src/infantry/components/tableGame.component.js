@@ -6,11 +6,11 @@ const FIGURE = 1
 const PROJECTILE = 2
 
 
-let table = (new Array(10)).fill().map(function(){ return new Array(20).fill(0);});
 export default class TableGame extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      game_id: null,
       figure1: null,
       figure2: null,
       projectiles: null
@@ -25,11 +25,25 @@ export default class TableGame extends Component {
       figure1 : f1["body"],
       figure2 : f2["body"],
       projectiles: projectiles
-    })
-    
+    }) 
   }
+  async componentDidUpdate(prevProps, prevState){
+    const f1 = await InfantryService.getFigure(1, 1)
+    const f2 = await InfantryService.getFigure(2, 1)
+    const projectiles = await InfantryService.getProjectile(1)
+    if(prevState.figure1 !== f1["body"] || prevState.figure2 !== f2["body"]
+    || prevState.projectiles !== projectiles){
+      this.setState({
+        figure1 : f1["body"],
+        figure2 : f2["body"],
+        projectiles: projectiles
+      }) 
+    }
+  }
+  
 
   render() {
+    let table = (new Array(10)).fill().map(function(){ return new Array(20).fill(0);});
     const casillas = [];
     if (this.state.figure1 != null && this.state.figure2 != null){
       this.state.figure1.map(coor => table[coor[1]][coor[0]] = FIGURE)
