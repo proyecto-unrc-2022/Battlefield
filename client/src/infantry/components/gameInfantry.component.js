@@ -17,14 +17,14 @@ export default class GameInfantry extends Component {
   }
 
   async componentDidMount(){
-    let game = await InfantryService.getUsers(this.state.game_id)
+    let game = await InfantryService.getGame(this.state.game_id)
     this.setState({
       player1_id: game["id_user1"],
       player2_id: game["id_user2"],
       turn : game["turn"]
     })
   }
-  
+
   render() {
     if(this.state.player1_id === null){return;}
     return (
@@ -37,10 +37,10 @@ export default class GameInfantry extends Component {
           </div>
           <div class="row align-items-center">
              <p class="col"></p>
-            <GameInfantryData class="col align-self-center" turn={this.state.turn}></GameInfantryData> 
+            <GameInfantryData class="col align-self-center" turn={this.state.turn} game_id={this.state.game_id}/> 
             <p class="col"></p>
           </div>
-              
+
         </div>    
       </div>
     )
