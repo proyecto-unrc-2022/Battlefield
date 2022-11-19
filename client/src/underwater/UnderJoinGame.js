@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./css/style.css"
 import authHeader from "../services/auth-header"
@@ -7,6 +7,7 @@ import authHeader from "../services/auth-header"
 const baseURL = "http://127.0.0.1:5000/api/v1/underwater";
 
 function SessionEntry(props) {
+  const navigate = useNavigate();
   function sendJoinRequest(event) {
     event.preventDefault();
 
@@ -15,7 +16,7 @@ function SessionEntry(props) {
       {},
       {headers: authHeader()}
     ).then(response => {
-      ; 
+      navigate("/underwater/game/" + props.id);
     }).catch(error => {
       console.log(error.response.data);
       props.setAlertMessage(error.response.data["error"]);
@@ -74,7 +75,7 @@ export default function UnderJoinGame(props) {
         <Link to="/underwater/menu" className="u-button">‹</Link>
         <div onClick={updateSessionsList} id="play-button" className="u-button">Update</div>
       </div>
-      {alertMessage != null ? <span className="alert-danger">{alertMessage}</span> : null}
+      {alertMessage != null ? <span className="u-alert-danger">{alertMessage}</span> : null}
     </div>
     )
 }
