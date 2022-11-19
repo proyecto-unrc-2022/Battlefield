@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import authService from "../services/auth.service";
 
 import UserService from "../services/user.service";
 
@@ -12,7 +13,8 @@ export default class BoardUser extends Component {
   }
 
   componentDidMount() {
-    UserService.getUserBoard().then(
+    const currentUser = authService.getCurrentUser()
+    UserService.getUserBoard(currentUser.sub).then(
       (response) => {
         this.setState({
           content: response.data,

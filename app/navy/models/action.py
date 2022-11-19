@@ -1,3 +1,5 @@
+from sqlalchemy import event
+
 from app import db
 
 
@@ -34,3 +36,12 @@ class Action(db.Model):
         self.missile_type_id = missile_type_id
         self.user_id = user_id
         self.round = round
+
+
+@event.listens_for(Action, "after_insert")
+def receive_after_create(mapper, connection, target):
+    from app.navy.services.navy_game_service import navy_game_service
+
+    navy_game_id = target.navy_game_id
+    if navy_game_service.should_update(navy_game_id):
+        navy_game_service.play_round(navy_game_id)
