@@ -33,7 +33,7 @@ class InfantryService{
         });
     }
 
-    async getUsers(game_id){
+    async getGame(game_id){
         let data = {game_id: game_id}
         return await axios.post(
             API_URL + "game",
@@ -44,7 +44,52 @@ class InfantryService{
                 },
             }
         ).then((response) =>{
+            return response.data
+        })
+    }
+
+    async next_turn(game_id){
+        let data = {game_id: game_id}
+        return await axios.post(
+            API_URL + "next_turn",
+            data,
+            {
+                headers:{
+                    "Content-Type": "application/json",
+                },
+            }
+        ).then((response) =>{
+            return response.data
+        })
+    }
+    async update_projectiles(game_id){
+        let data = {game_id: game_id}
+        return await axios.post(
+            API_URL + "update_projectiles",
+            data,
+            {
+                headers:{
+                    "Content-Type": "application/json",
+                },
+            }
+        ).then((response) =>{
             console.log(response.data)
+            return response.data
+        })
+    }
+    async update_actions(game_id){
+        let data = {game_id: game_id}
+        return await axios.post(
+            API_URL + "update_user_actions",
+            data,
+            {
+                headers:{
+                    "Content-Type": "application/json",
+                },
+            }
+        ).then((response) =>{
+            console.log(response.data)
+
             return response.data
         })
     }
