@@ -14,7 +14,7 @@ export default class FigureInfantryData extends Component {
             direccion: null,
             avail_actions: null
         }
-        this.updateData()
+        
     }
     updateData(){
         let data = InfantryService.getFigure(this.state.user_id, this.state.game_id)
@@ -30,6 +30,7 @@ export default class FigureInfantryData extends Component {
 
     }
     render(){
+        this.updateData()
         return <div>
             <h3>Player {this.state.user_id}</h3>
             <ul>
