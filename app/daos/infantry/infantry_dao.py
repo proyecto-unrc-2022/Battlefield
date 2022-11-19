@@ -402,8 +402,7 @@ def next_turn(game):
     figure_user2 = Figure_infantry.query.filter_by(id_user = game.id_user2).first()
     assis_server_restart(game)
     current_figure = Figure_infantry.query.filter_by(id_user = game.turn).first()
-    print(current_figure.avail_actions)
-    if queue_turn.empty() and current_figure.avail_actions == 0:
+    if queue_turn.empty() and (current_figure.avail_actions == 0 or current_figure.avail_actions == None):
         #Cuando ya no hay mas turnos en la ronda
         queue_turn.put(find_opponent(game.id, User.query.filter_by(id = game.turn).first().id))
         round = True
