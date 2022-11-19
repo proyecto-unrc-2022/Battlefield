@@ -13,6 +13,7 @@ import NavyMenu from "./navy/pages/NavyMenu";
 import NavyGames from "./navy/pages/NavyGames";
 import UnderRoot from "./underwater/UnderRoot";
 import UnderMenu from "./underwater/UnderMenu";
+import UnderGame from "./underwater/UnderGame";
 import UnderHome from "./underwater/UnderHome";
 import UnderNewGame from "./underwater/UnderNewGame";
 import UnderJoinGame from "./underwater/UnderJoinGame";
@@ -121,8 +122,10 @@ class App extends Component {
                 <Route path="new" element={<UnderNewGame />} />
                 <Route path="lobby" element={<UnderJoinGame />} />
               </Route>
+              <Route path="game/:id" element={<UnderGame />} >
+                <Route index element={<UnderLoading/>} />
+              </Route>
             </Route>
-            <Route path="/underloading" element={<UnderLoading/>} />
           </Routes>
         </div>
       </div>

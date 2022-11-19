@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import {Link} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import authHeader from "../services/auth-header"
 
 const baseURL = "http://127.0.0.1:5000/api/v1/underwater";
 
 export default function UnderNewGame(props) {
+  const navigate = useNavigate();
   const [height, setHeight] = useState(10);  
   const [width, setWidth] = useState(20); 
-  const [post, setPost] = useState(null);
   const [alertMessage, setAlertMessage] = useState(null);
 
   function onSubmit(e) {
@@ -18,7 +18,9 @@ export default function UnderNewGame(props) {
       baseURL + "/game/new",
       {},
       {headers: authHeader()}
-    ).then((response) => {setPost(response.data);
+    ).then((response) => {
+      const sessionId = response.data["session_id"];
+      navigate("/underwater/game/" + sessionId);
     }).catch(error => {
       console.log(error.response.data);
       setAlertMessage(error.response.data["error"]);
@@ -33,7 +35,7 @@ export default function UnderNewGame(props) {
           <div className="u-input-field">
             <label htmlFor="height">Height</label>
             <input type={"range"} min="10" max="20" step="2" id="height" value={height} onChange={(event) => setHeight(event.target.value)}/>
-            <span style={{'margin-left':'8px'}}>{height}</span>
+            <span style={{marginLeft:'8px'}}>{height}</span>
 
             <label for="width">Width</label>
             <input type={"range"} min="20" max="40" step="2" id="width" value={width} onChange={(event) => setWidth(event.target.value)}/>
