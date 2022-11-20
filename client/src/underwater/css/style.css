@@ -1,9 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Glegoo:wght@400;700&display=swap');
 
-.u-font {
-    font-family: 'Glegoo', serif;
-}
-
 .u-container {
   display: flex;
   flex-direction: column;
@@ -11,6 +7,7 @@
   color: white;
   width: 100%;
   flex-grow: 1;
+  font-family: 'Glegoo', serif;
 }
 
 .u-container a:hover {
@@ -26,7 +23,7 @@
 .u-small-container {
   display: flex;
   flex-direction: column;
-  width: 30%;
+  width: 40%;
   height: 30%;
   margin: 15px auto;
   padding: 3px 30px 13px 30px;
@@ -147,4 +144,13 @@
   margin: 5px;
   padding: 5px;
   font-size: 24px;
+}
+
+.u-alert-danger {
+  border-radius: 5px;
+  text-align: center;
+  background-color: rgb(31, 33, 43);
+  color: crimson;
+  margin: auto;
+  padding: 2px;
 }

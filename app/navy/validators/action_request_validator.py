@@ -26,7 +26,7 @@ class ActionRequestValidator(Schema):
             raise ValidationError("Game not found")
         elif navy_game.winner:
             raise ValidationError("Game finished")
-        elif not navy_game.ready_to_play:
+        elif not (navy_game.status == "STARTED"):
             raise ValidationError("Game not ready to play")
 
     @validates_schema
