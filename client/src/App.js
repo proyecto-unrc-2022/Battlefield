@@ -134,16 +134,16 @@ class App extends Component {
             <Route path="/board" element={<Board />} />
             <Route path="/navy" element={<NavyMenu />} />
             <Route path="/navy/games" element={<NavyGames />} />
+
             <Route path="/underwater" element={<UnderRoot />}>
               <Route path="menu" element={<UnderMenu />}>
                 <Route index element={<UnderHome />} />
                 <Route path="new" element={<UnderNewGame />} />
                 <Route path="lobby" element={<UnderJoinGame />} />
               </Route>
-              <Route path="game/:id" element={<UnderGame />} >
-                <Route index element={<UnderLoading/>} />
-              </Route>
+              <Route path="game/:id" element={<UnderGame />} />
             </Route>
+
             <Route
               path="/navy/games/:id/ship_selection"
               element={<NavyShipSelection />}
