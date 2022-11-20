@@ -1,6 +1,6 @@
 import React from "react";
 import NavyTitle from "../components/NavyTitle";
-import { useLayoutEffect, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import ShipService from "../services/ShipService";
 import { Link, useParams } from "react-router-dom";
 import NavyButton from "../components/NavyButton";
@@ -15,7 +15,7 @@ const NavyShipSelection = () => {
   const { id } = useParams();
   const [ships, setShips] = useState({});
   const [shipSelected, setShipSelected] = useState({
-    navy_game_id: id /* game.id */,
+    navy_game_id: id,
   });
   const [accessDenied, setAccessDenied] = useState(true);
 
@@ -41,9 +41,9 @@ const NavyShipSelection = () => {
     });
   }, []);
 
-  const selectShip = (name) => {
-    const ship = { ...shipSelected, name: name };
-    setShipSelected(ship);
+  const selectShip = (name, ship) => {
+    const navy_ship = { ...shipSelected, name: name, size: ship.size};
+    setShipSelected(navy_ship);
   };
 
   const goToPlaceToBoard = () => {
@@ -75,7 +75,7 @@ const NavyShipSelection = () => {
             </div>
           </div>
           <div
-            style={{ gap: "125px" }}
+            style={{ gap: "75px" }}
             className="row justify-content-center mb-3"
           >
             {Object.keys(ships).map((key) => (
@@ -84,15 +84,16 @@ const NavyShipSelection = () => {
                 ship={ships[key]}
                 name={key}
                 selectShip={selectShip}
+                selected={shipSelected.name === key}
               />
             ))}
           </div>
 
           <div className="row">
-            <div className="col-2 text-center mx-auto mt-2">
+            <div className="col-2 text-center mx-auto my-2">
               <NavyButton
                 action={goToPlaceToBoard}
-                text="Start Game"
+                text="Place Ship"
                 size={"medium"}
               />
             </div>

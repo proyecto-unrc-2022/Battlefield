@@ -5,6 +5,7 @@ import ShipService from "../services/ShipService";
 import NavyGameService from "../services/NavyGameService";
 import authService from "../../services/auth.service";
 import AccessDenied from "../components/AccessDenied";
+import GridShipPlace from "../components/GridShipPlace";
 
 export const NavyShipPlace = () => {
   const location = useLocation();
@@ -13,6 +14,9 @@ export const NavyShipPlace = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [accessDenied, setAccessDenied] = useState(true);
+  const [game, setGame] = useState(null);
+  const [course, setCourse] = useState("N");
+  const [selectedPosition, setSelectedPosition] = useState({ x: 1, y: 1 });
 
   useEffect(() => {
     if (!location.state) {
@@ -33,6 +37,10 @@ export const NavyShipPlace = () => {
           navigate(`/navy/games/${id}/lobby`);
         }
       }
+      if(resp.data.data.ship){
+        setShipPlaced(true)
+      }
+      setGame(resp.data.data);
     });
 
     if (shipPlaced) {
@@ -47,21 +55,31 @@ export const NavyShipPlace = () => {
     }
   }, [shipPlaced]);
 
-  const handleXCord = (e) => {
-    setShip((prev) => ({ ...prev, pos_x: e.target.value }));
+  const handleChangeCourse = (e) => {
+    setCourse(e.target.value);
   };
 
-  const handleYCord = (e) => {
-    setShip((prev) => ({ ...prev, pos_y: e.target.value }));
-  };
-
-  const handleCourse = (e) => {
-    setShip((prev) => ({ ...prev, course: e.target.value }));
+  const selectPosition = (x, y) => {
+    setSelectedPosition({
+      x: x,
+      y: y,
+    });
   };
 
   const placeShip = () => {
     setShipPlaced(true);
-    ShipService.postShip(ship).then((resp) => {
+    const shipToSend = {
+      navy_game_id: ship.navy_game_id,
+      name: ship.name,
+      course: course,
+      pos_x: selectedPosition.x,
+      pos_y: selectedPosition.y,
+    }
+    const currentUser = authService.getCurrentUser()
+    if(currentUser.sub === game.user_2.id){
+      shipToSend.pos_y += 10
+    }
+    ShipService.postShip(shipToSend).then((resp) => {
       console.log(resp);
     });
   };
@@ -76,45 +94,43 @@ export const NavyShipPlace = () => {
         />
       ) : (
         <>
-          <h1>Ship: {ship?.name}</h1>
-          <div className="row justify-content-center">
-            <div className="col-3 col-md-3 mx-auto">
-              <form>
-                <div className="form-group">
-                  <label htmlFor="x">X</label>
-                  <input
-                    onChange={handleXCord}
-                    type="number"
-                    className="form-control"
-                    id="x"
-                    placeholder="X"
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="y">Y</label>
-                  <input
-                    onChange={handleYCord}
-                    type="number"
-                    className="form-control"
-                    id="y"
-                    placeholder="Y"
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="y">COURSE</label>
-                  <input
-                    onChange={handleCourse}
-                    type="text"
-                    className="form-control"
-                    id="y"
-                    placeholder="N"
-                  />
-                </div>
-              </form>
+          <div
+            style={{ gap: "50px" }}
+            className="row justify-content-center align mt-3"
+          >
+            <div>
+              <p className="navy-text">Ship: {ship?.name}</p>
+            </div>
+            <div className="d-flex">
+              <p className="navy-text m-0 mr-1">Course:</p>
+              <select
+                onChange={handleChangeCourse}
+                className="custom-select custom-select-sm"
+              >
+                <option value={"N"}>N</option>
+                <option value={"S"}>S</option>
+                <option value={"E"}>E</option>
+                <option value={"W"}>W</option>
+                <option value={"NE"}>NE</option>
+                <option value={"NW"}>NW</option>
+                <option value={"SE"}>SE</option>
+                <option value={"SW"}>SW</option>
+              </select>
+            </div>
+            <div>
+              <p className="navy-text">{`X: ${selectedPosition.x}, Y: ${selectedPosition.y}`}</p>
             </div>
           </div>
-          <div className="row justify-content-center">
+          <div className="row mx-auto mt-3">
+            <GridShipPlace
+              course={course}
+              cols={game.cols}
+              rows={game.rows}
+              size={ship.size}
+              selectPosition={selectPosition}
+            />
+          </div>
+          <div className="row justify-content-center mt-3">
             {shipPlaced ? (
               <div className="row d-flex flex-column justify-content-center align-items-center">
                 <div className="spinner-border m-3" role="status">
@@ -127,8 +143,8 @@ export const NavyShipPlace = () => {
             ) : (
               <NavyButton
                 action={placeShip}
-                text="Place and Play"
-                size={"medium"}
+                text="Start Game"
+                size={"small"}
               />
             )}
           </div>
