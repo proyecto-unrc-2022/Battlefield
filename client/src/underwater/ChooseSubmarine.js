@@ -1,54 +1,40 @@
-import { useParams } from "react-router-dom";
-import AuthService from "../services/auth.service";
-import "./css/cards.css"
+import { useState, useEffect } from "react";
+import axios from "axios";
+import "./css/game-style.css"
+
+const optionsURL = "http://127.0.0.1:5000/api/v1/underwater/game/submarine_options";
+
+function SubmarineCard({stats}) {
+
+  return (
+    <a id={stats.key} href="#"><div className="card">
+      <img src="https://static-s.aa-cdn.net/img/ios/1451817911/973e1c13fd06634d7de878a801664cc5?v=1" alt="Submarine" />
+      <ul>
+        <li><strong>{stats.name}</strong></li>
+        <li>Size: {stats.size}</li>
+        <li>Speed: {stats.speed}</li>
+        <li>visibility: {stats.visibility}</li>
+        <li>radar_scope: {stats.radar_scope}</li>
+        <li>health: {stats.health}</li>
+        <li>torpedo_speed: {stats.torpedo_speed}</li>
+        <li>torpedo_damage: {stats.torpedo_damage}</li>
+      </ul>
+    </div></a>
+  );
+}
 
 export default function ChooseSubmarine() {
-  const { gameId } = useParams();
-  const user = AuthService.getCurrentUser();
+  const [options, setOptions] = useState(null);
+
+  useEffect(() => {
+    axios.get(optionsURL).then(response => { setOptions(response.data); })
+      .catch(error => {console.log(error);});
+  }, []);
 
   return (
     <div className="u-choose-submarine">
-      <h1>Choose your fighter</h1>
       <div className="cards-container">
-        <div className="card">
-          <img src="https://static-s.aa-cdn.net/img/ios/1451817911/973e1c13fd06634d7de878a801664cc5?v=1" alt="Submarine" />
-          <ul>
-            <li><strong>Saukko</strong></li>
-            <li>Size: 2</li>
-            <li>Speed: 5</li>
-            <li>visibility: 5</li>
-            <li>radar_scope: 8</li>
-            <li>health: 10</li>
-            <li>torpedo_speed: 5</li>
-            <li>torpedo_damage: 5</li>
-          </ul>
-        </div>
-        <div className="card">
-          <img src="https://static-s.aa-cdn.net/img/ios/1451817911/973e1c13fd06634d7de878a801664cc5?v=1" alt="Submarine" />
-          <ul>
-            <li><strong>Saukko</strong></li>
-            <li>Size: 2</li>
-            <li>Speed: 5</li>
-            <li>visibility: 5</li>
-            <li>radar_scope: 8</li>
-            <li>health: 10</li>
-            <li>torpedo_speed: 5</li>
-            <li>torpedo_damage: 5</li>
-          </ul>
-        </div>
-        <div className="card">
-          <img src="https://static-s.aa-cdn.net/img/ios/1451817911/973e1c13fd06634d7de878a801664cc5?v=1" alt="Submarine" />
-          <ul>
-            <li><strong>Saukko</strong></li>
-            <li>Size: 2</li>
-            <li>Speed: 5</li>
-            <li>visibility: 5</li>
-            <li>radar_scope: 8</li>
-            <li>health: 10</li>
-            <li>torpedo_speed: 5</li>
-            <li>torpedo_damage: 5</li>
-          </ul>
-        </div>
+        {options != null ? Object.keys(options).map(key => {return <SubmarineCard key={key} id={key} stats={options[key]} />}) : null}
       </div>
     </div>
   );
