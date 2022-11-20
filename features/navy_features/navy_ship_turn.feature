@@ -38,16 +38,16 @@ Feature: Turn a ship
         And the NavyGame '1' updates for user '1'
         And the NavyGame '1' updates for user '2'
         Then the user '1' should see his ship with the course 'W' at '5', '7' with '0' hp in the NavyGame '1'
-        And the user '2' should be the winner
+        And the user '2' should be the winner in the NavyGame '1'
 
     Scenario: A ship turns and collides with another ship
         Given the user '1' created a 'Cruiser' in '5', '10' with course 'N' and '100' hp in the NavyGame '1'
         And the user '2' created a 'Destroyer' in '5', '11' with course 'N' and '60' hp in the NavyGame '1'
         When the user '1' turns his ship to 'E' and moves it '3' cells for round '1' in NavyGame '1'
-        And the user '2' turns his ship to 'N' moves it '0' cells for round '1' in NavyGame '1'
+        And the user '2' turns his ship to 'N' and moves it '0' cells for round '1' in NavyGame '1'
         And the NavyGame '1' updates for user '1' and user '2'
         Then the user '2' should see his ship with the course 'N' at '5', '11' with '0' hp in the NavyGame '1'
-        And the user '1' should be the winner
+        And the user '1' should be the winner in the NavyGame '1'
 
     Scenario: A ship turns and collides with two missiles and dies
         Given the user '1' created a 'Cruiser' in '5', '' with course '' and '100' hp in the NavyGame '1'

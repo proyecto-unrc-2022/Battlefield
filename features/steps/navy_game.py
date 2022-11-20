@@ -11,11 +11,11 @@ from steps.navy.test_utils import test_utils
 def step_impl(context, user_id):
     username, email = test_utils.generate_username_and_email(user_id)
     add_user(username, "12345", email)
-    context.headers = {"Content-Type": "application/json"}
+    headers = {"Content-Type": "application/json"}
     try:    
         context.bodies[user_id] = {"username": username, "password": "12345"}
         context.pages[user_id] = context.client.post(
-            url_for("auth.login"), json=context.bodies[user_id], headers=context.headers
+            url_for("auth.login"), json=context.bodies[user_id], headers=headers
         )
         context.users[user_id] = User.query.filter_by(username=username).first()
         context.tokens[user_id] = json.loads(context.pages[user_id].text)
@@ -27,7 +27,7 @@ def step_impl(context, user_id):
         
         context.bodies.update({user_id:{"username": username, "password": "12345"}})
         context.pages[user_id] = context.client.post(
-            url_for("auth.login"), json=context.bodies[user_id], headers=context.headers
+            url_for("auth.login"), json=context.bodies[user_id], headers=headers
         )
         context.users[user_id]=User.query.filter_by(username=username).first()
         context.tokens[user_id] = json.loads(context.pages[user_id].text)
@@ -37,10 +37,7 @@ def step_impl(context, user_id):
 
 @when("the user '{user_id:d}' creates a NavyGame '{game_id:d}'")            
 def step_impl(context, user_id, game_id):
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f'Bearer {context.tokens[user_id]["token"]}',
-    }
+    headers = test_utils.get_header(context.tokens[user_id]) 
 
     context.pages[user_id] = context.client.post(
         url_for("navy.new_navy_game"), headers=headers
@@ -54,10 +51,7 @@ def step_impl(context, user_id, game_id):
 
 @given("the user '{user_id:d}' created a NavyGame '{game_id:d}'")           
 def step_impl(context, user_id, game_id):
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f'Bearer {context.tokens[user_id]["token"]}',
-    }
+    headers = test_utils.get_header(context.tokens[user_id]) 
     context.pages[user_id] = context.client.post(
         url_for("navy.new_navy_game"), headers=headers
     )
@@ -79,10 +73,7 @@ def step_impl(context, user_id):
 
 @when("the user '{user_id:d}' tries to get all NavyGames in the app")
 def step_impl(context,user_id):
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f'Bearer {context.tokens[user_id]["token"]}',
-    }
+    headers = test_utils.get_header(context.tokens[user_id]) 
     context.pages[user_id] = context.client.get(url_for("navy.get_navy_games"), headers=headers)
     assert context.pages[user_id]
 
@@ -96,10 +87,7 @@ def step_impl(context, user_id):
 
 @when("the user '{user_id:d}' tries to get the NavyGame '{game_id:d}'")
 def step_impl(context, user_id, game_id):
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f'Bearer {context.tokens[user_id]["token"]}',
-    }
+    headers = test_utils.get_header(context.tokens[user_id]) 
     context.pages[user_id] = context.client.get(
         url_for("navy.get_navy_game", id=game_id), headers=headers
     )
@@ -115,10 +103,7 @@ def step_impl(context, user_id, game_id):
 
 @when("the user '{user_id:d}' tries to join the NavyGame '{game_id:d}'")
 def step_impl(context, user_id, game_id):
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f'Bearer {context.tokens[user_id]["token"]}',
-    }
+    headers = test_utils.get_header(context.tokens[user_id]) 
     context.pages[user_id] = context.client.patch(
         url_for("navy.update_navy_game", id=game_id),
         headers=headers,
@@ -129,10 +114,7 @@ def step_impl(context, user_id, game_id):
 
 @given("the user '{user_id:d}' joined the NavyGame '{game_id:d}'")
 def step_impl(context, user_id, game_id):
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f'Bearer {context.tokens[user_id]["token"]}',
-    }
+    headers = test_utils.get_header(context.tokens[user_id]) 
     context.pages[user_id] = context.client.patch(
         url_for("navy.update_navy_game", id=game_id),
         headers=headers,
@@ -150,21 +132,40 @@ def step_impl(context, user_id):
 
 @when("the user '{user_id:d}' deletes the NavyGame '{game_id:d}'")
 def step_impl(context, user_id, game_id):
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f'Bearer {context.tokens[user_id]["token"]}',
-    }
+    headers = test_utils.get_header(context.tokens[user_id]) 
     context.pages[user_id] = context.client.delete(
         url_for("navy.delete_navy_game", id=game_id), headers=headers
     )
     assert context.pages[user_id]
 
 
-@then("the user '{id:d}' should see that the NavyGame was deleted")
-def step_impl(context, id):
-    assert context.pages[id].status_code == 200
+@then("the user '{user_id:d}' should see that the NavyGame was deleted")
+def step_impl(context, user_id):
+    assert context.pages[user_id].status_code == 200
 
 
+@when("the NavyGame '{game_id:d}' updates for user '{user_id:d}'")
+def step_impl(context, game_id, user_id):
+    headers = test_utils.get_header(context.tokens[user_id]) 
+    context.pages[user_id] = context.client.get(
+        url_for("navy.get_navy_game", id=game_id), headers=headers
+    )
+    assert context.pages[user_id]
+    
+@then("the user '{user_id:d}' should see his ship with the course '{course}' at '{pos_x:d}', '{pos_y:d}' with '{hp:d}' hp in the NavyGame '{game_id:d}'")
+def step_impl(context, user_id, course, pos_x, pos_y, hp, game_id):
+    ship_data = {}
+    
+    print(context.pages[user_id].text)          #TODO: Debo ver como traer la data del barco
+    assert False
+    assert context.pages[user_id].status_code == 200
+    assert context.pages[user_id].text == ship_data
+    
+@then("the user '{user_id:d}' should be the winner in the NavyGame '{game_id:d}'")
+def step_impl(context, user_id, game_id):
+    raise NotImplementedError()
+
+    
 @when("I try to join to the game with an incorrect user")
 def step_impl(context):
     body = {"user2_id": 500}

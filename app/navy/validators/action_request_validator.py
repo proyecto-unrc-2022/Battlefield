@@ -40,7 +40,6 @@ class ActionRequestValidator(Schema):
 
             if ship:
                 mov_ship = ship_type_dao.get_by(ship.name)["speed"]
-                print(in_data.get("move"))
                 if in_data.get("move") < 0:
                     raise ValidationError("The movement is a negative distance")
                 if in_data.get("move") > mov_ship:

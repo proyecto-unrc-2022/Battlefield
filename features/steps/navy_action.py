@@ -296,30 +296,24 @@ def step_impl(context):
 
 @when("the user '{user_id:d}' turns his ship to '{course}' and moves it '{distance:d}' cells for round '{round:d}' in NavyGame '{game_id:d}'")
 def step_impl(context, user_id, course, round,  distance, game_id):
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f'Bearer {context.tokens[user_id]["token"]}',
-    }
+    headers = test_utils.get_header(context.tokens[user_id]) 
     current_ship = context.ships[user_id]
     body = test_utils.json_action(user_id, course, 0, game_id, current_ship.missile_type_id, current_ship.id, distance, round)
     context.pages[user_id] = context.client.post(
         url_for("navy.action"), json=body, headers=headers
     )
-    print(context.pages[user_id].text)
+    print("mov" + context.pages[user_id].text)
     assert context.pages[user_id].status_code == 201
 
 
 @when("the user '{user_id:d}' turns his ship to '{course}' and attacks for round '{round:d}' in NavyGame '{game_id:d}'")
 def step_impl(context, user_id, course, round, game_id):
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f'Bearer {context.tokens[user_id]["token"]}',
-    }
+    headers = test_utils.get_header(context.tokens[user_id]) 
     current_ship = context.ships[user_id]
     body = test_utils.json_action(user_id, course, 1, game_id, current_ship.missile_type_id, current_ship.id, 0, round)
     context.pages[user_id] = context.client.post(
         url_for("navy.action"), json=body, headers=headers
     )
-    print(context.pages[user_id].text)
+    print("attack" + context.pages[user_id].text)
     
     assert context.pages[user_id].status_code == 201

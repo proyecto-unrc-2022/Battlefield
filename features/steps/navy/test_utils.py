@@ -145,5 +145,11 @@ class TestUtils:
         username = "user" + str(id)
         email = "user" + str(id) + "@user" + str(id) + ".com"
         return username, email
+    
+    def get_header(self, token):
+        return (    
+            {"Content-Type": "application/json",
+            "Authorization": f'Bearer {token["token"]}'}
+        )
 
 test_utils = TestUtils()

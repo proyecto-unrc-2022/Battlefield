@@ -7,10 +7,7 @@ from steps.navy.test_utils import test_utils
 
 @when("the user '{user_id:d}' creates a '{ship_name}' in '{pos_x:d}', '{pos_y:d}' with course '{course}' for the NavyGame '{game_id:d}'")
 def step_impl(context, user_id, ship_name, pos_x, pos_y, course, game_id):
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f'Bearer {context.tokens[user_id]["token"]}',
-    }
+    headers = test_utils.get_header(context.tokens[user_id]) 
     body = test_utils.json_ship(ship_name, pos_x, pos_y, course, user_id, game_id)
     context.pages[user_id] = context.client.post(
         url_for("navy.new_ship"), json=body, headers=headers
