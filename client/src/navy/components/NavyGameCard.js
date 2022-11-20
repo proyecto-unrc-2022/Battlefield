@@ -7,7 +7,7 @@ import authService from "../../services/auth.service";
 import NavyGameService from "../services/NavyGameService";
 import { useNavigate } from "react-router-dom";
 
-const NavyGameCard = ({ game, showButton = true }) => {
+const NavyGameCard = ({ game,button="join" }) => {
   const [user1, setUser1] = useState({});
   const [user2, setUser2] = useState({});
   const navigate = useNavigate();
@@ -40,6 +40,11 @@ const NavyGameCard = ({ game, showButton = true }) => {
     }
   };
 
+  const cancelGame = () => {
+    NavyGameService.deleteNavyGame(game.id).then((res) => {
+      navigate(`/navy`);
+    });};
+
   const canReJoin = () => {
     const currentUser = authService.getCurrentUser();
     return (
@@ -67,11 +72,16 @@ const NavyGameCard = ({ game, showButton = true }) => {
           rol={Object.keys(user2).length !== 0 ? "guest" : "free"}
         />
       </div>
-      {showButton && canJoin() ? (
+      {button === "join" && canJoin() ? (
         <div className="text-center">
           <NavyButton action={joinPlayer} text={"join"} size={"small"} />
         </div>
       ) : null}
+      {button === "cancel-game" ? (
+        <div className="text-center mt-2">
+          <NavyButton action={cancelGame} text={"Cancel Game"} size={"small"} />
+          </div>
+          ) : null}      
       <div className="d-flex justify-content-end w-75">
         <p className="navy-text m-0 p-0">GAME CODE: {game.id}</p>
       </div>

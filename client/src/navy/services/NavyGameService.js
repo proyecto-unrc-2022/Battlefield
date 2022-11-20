@@ -27,6 +27,12 @@ class NavyGameService {
       headers: authHeader(),
     });
   }
+
+  deleteNavyGame(id){
+    return axios.delete(API_URL + `/${id}`,{
+      headers: authHeader(),
+    });
+  }
 }
 
 export default new NavyGameService();

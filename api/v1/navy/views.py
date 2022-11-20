@@ -106,13 +106,22 @@ def update_navy_game(id):
 @navy.delete("/navy_games/<int:id>")
 @token_auth.login_required
 def delete_navy_game(id):
-    deleted_game = navy_game_service.delete(id)
-    return (
-        NavyResponse(
-            status=200, data=NavyGameDTO().dump(deleted_game), message="Game deleted."
-        ).to_json(),
-        200,
-    )
+    try:
+        from app.navy.validators.delete_game_validator import DeleteGameValidator
+        user_id = utils.get_user_id_from_header(request.headers["Authorization"])
+        validated_data = DeleteGameValidator().load(
+            {"game_id": id, "user_id": user_id}
+        )
+        deleted_game = navy_game_service.delete(validated_data["game_id"])
+        return (
+            NavyResponse(
+                200, data=NavyGameDTO().dump(deleted_game), message="Game deleted."
+            ).to_json(),
+            200,
+        )
+    except ValidationError as err:
+        return jsonify(err.messages), 400
+
 
 
 @navy.get("/navy_active_games")
