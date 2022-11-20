@@ -24,36 +24,6 @@ def step_impl(context):
 
 
 @given(
-    "The user '{id:d}' has a ship '{ship_name}' in '{pos_x:d}','{pos_y:d}' with course '{course}' and hp '{hp:d}'"
-)
-def step_impl(context, ship_name, pos_x, pos_y, course, hp, id):
-    context.ship = test_utils.add_test_ship(
-        name=ship_name,
-        pos_x=pos_x,
-        pos_y=pos_y,
-        course=course,
-        hp=hp,
-        navy_game_id=context.game.id,
-        user_id=id,
-    )
-
-    """    
-    context.ship2 = test_utils.add_test_ship(
-        name="Destroyer",
-        pos_x=1,
-        pos_y=15,
-        course="N",
-        hp=hp,
-        navy_game_id=context.game.id,
-        user_id=2,
-    ) """
-    from app.navy.services.ship_service import ship_service
-
-    ships_db = ship_service.get_by(navy_game_id=context.game.id)
-    assert context.ship in ships_db
-
-
-@given(
     "There is a missile at '{pos_x:d}','{pos_y:d}' with speed '{speed:d}', course '{course}' and damage '{damage:d}'"
 )
 def step_impl(context, pos_x, pos_y, speed, course, damage):

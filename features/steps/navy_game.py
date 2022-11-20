@@ -7,32 +7,32 @@ from app.daos.user_dao import add_user
 from app.models.user import User
 from steps.navy.test_utils import test_utils
 
-@given("a user '{id:d}' logged in")
-def step_impl(context, id):
-    username, email = test_utils.generate_username_and_email(id)
+@given("a user '{user_id:d}' logged in")
+def step_impl(context, user_id):
+    username, email = test_utils.generate_username_and_email(user_id)
     add_user(username, "12345", email)
     context.headers = {"Content-Type": "application/json"}
     try:    
-        context.bodies[id] = {"username": username, "password": "12345"}
-        context.pages[id] = context.client.post(
-            url_for("auth.login"), json=context.bodies[id], headers=context.headers
+        context.bodies[user_id] = {"username": username, "password": "12345"}
+        context.pages[user_id] = context.client.post(
+            url_for("auth.login"), json=context.bodies[user_id], headers=context.headers
         )
-        context.users[id] = User.query.filter_by(username=username).first()
-        context.tokens[id] = json.loads(context.pages[id].text)
+        context.users[user_id] = User.query.filter_by(username=username).first()
+        context.tokens[user_id] = json.loads(context.pages[user_id].text)
     except:
         context.bodies = {}
         context.pages = {}
         context.users = {}
         context.tokens = {}
         
-        context.bodies.update({id:{"username": username, "password": "12345"}})
-        context.pages[id] = context.client.post(
-            url_for("auth.login"), json=context.bodies[id], headers=context.headers
+        context.bodies.update({user_id:{"username": username, "password": "12345"}})
+        context.pages[user_id] = context.client.post(
+            url_for("auth.login"), json=context.bodies[user_id], headers=context.headers
         )
-        context.users[id]=User.query.filter_by(username=username).first()
-        context.tokens[id] = json.loads(context.pages[id].text)
+        context.users[user_id]=User.query.filter_by(username=username).first()
+        context.tokens[user_id] = json.loads(context.pages[user_id].text)
     
-    assert context.pages[id]
+    assert context.pages[user_id]
 
 
 @when("the user '{user_id:d}' creates a NavyGame '{game_id:d}'")            
@@ -69,6 +69,7 @@ def step_impl(context, user_id, game_id):
         
     assert context.pages[user_id]
     assert context.games_created
+    assert context.pages[user_id].status_code == 201
 
 
 @then("the user '{user_id:d}' should see that the NavyGame was created")
@@ -76,20 +77,20 @@ def step_impl(context, user_id):
     assert context.pages[user_id].status_code == 201
 
 
-@when("the user '{id:d}' tries to get all NavyGames in the app")
-def step_impl(context,id):
+@when("the user '{user_id:d}' tries to get all NavyGames in the app")
+def step_impl(context,user_id):
     headers = {
         "Content-Type": "application/json",
-        "Authorization": f'Bearer {context.tokens[id]["token"]}',
+        "Authorization": f'Bearer {context.tokens[user_id]["token"]}',
     }
-    context.pages[id] = context.client.get(url_for("navy.get_navy_games"), headers=headers)
-    assert context.pages[id]
+    context.pages[user_id] = context.client.get(url_for("navy.get_navy_games"), headers=headers)
+    assert context.pages[user_id]
 
 
-@then("the user '{id:d}' should get all NavyGames in the app")
-def step_impl(context, id):
-    data = json.loads(context.pages[id].text)["data"]
-    assert context.pages[id].status_code == 200
+@then("the user '{user_id:d}' should get all NavyGames in the app")
+def step_impl(context, user_id):
+    data = json.loads(context.pages[user_id].text)["data"]
+    assert context.pages[user_id].status_code == 200
     assert len(data) != 0
 
 
@@ -118,14 +119,13 @@ def step_impl(context, user_id, game_id):
         "Content-Type": "application/json",
         "Authorization": f'Bearer {context.tokens[user_id]["token"]}',
     }
-    current_game = json.loads(context.games_created[game_id].text)["data"]
     context.pages[user_id] = context.client.patch(
-        url_for("navy.update_navy_game", id=current_game["id"]),
+        url_for("navy.update_navy_game", id=game_id),
         headers=headers,
     )
     context.games_created[game_id] = context.pages[user_id]
-
     assert context.pages[user_id]
+
 
 @given("the user '{user_id:d}' joined the NavyGame '{game_id:d}'")
 def step_impl(context, user_id, game_id):
@@ -133,14 +133,12 @@ def step_impl(context, user_id, game_id):
         "Content-Type": "application/json",
         "Authorization": f'Bearer {context.tokens[user_id]["token"]}',
     }
-    current_game = json.loads(context.games_created[game_id].text)["data"]
     context.pages[user_id] = context.client.patch(
-        url_for("navy.update_navy_game", id=current_game["id"]),
+        url_for("navy.update_navy_game", id=game_id),
         headers=headers,
     )
     context.games_created[game_id] = context.pages[user_id]
-    
-    assert context.pages[user_id]
+    assert context.pages[user_id].status_code == 200
 
 
 @then("the user '{user_id:d}' should see that the NavyGame was updated")
