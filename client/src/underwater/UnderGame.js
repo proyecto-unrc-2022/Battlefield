@@ -1,23 +1,24 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import ChooseSubmarine from "./ChooseSubmarine";
+import PlaceSubmarine from "./PlaceSubmarine";
 import "./css/style.css"
 import "./css/game-style.css"
 
 export default function UnderGame() {
-  const [subWasChosen, setSubWasChosen] = useState(false);
+  const [chosenSubmarine, setChosenSubmarine] = useState(null);
   const [subWasPlaced, setSubWasPlaced] = useState(false);
   const [layout, setLayout] = useState(null);
 
   useEffect(() => {
-    if(subWasChosen) {
+    if(chosenSubmarine != null) {
       if(subWasPlaced)
         setLayout({main: null, bottom: null});
       else
-        setLayout({main: null, bottom: null});
+        setLayout({main: <PlaceSubmarine />, bottom: <h1>Place your submarine</h1>});
     } else
-      setLayout({main: <ChooseSubmarine />, bottom: <h1>Choose your fighter</h1>});
-  }, [subWasChosen, subWasPlaced]);
+      setLayout({main: <ChooseSubmarine setChosenSubmarine={setChosenSubmarine} />, bottom: <h1>Choose your fighter</h1>});
+  }, [chosenSubmarine, subWasPlaced]);
 
   return (
     <div className="u-container">

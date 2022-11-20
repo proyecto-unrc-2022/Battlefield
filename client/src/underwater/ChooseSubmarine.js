@@ -4,10 +4,13 @@ import "./css/game-style.css"
 
 const optionsURL = "http://127.0.0.1:5000/api/v1/underwater/game/submarine_options";
 
-function SubmarineCard({stats}) {
+function SubmarineCard({id, setChosenSubmarine, stats}) {
+  const onClick = () => {
+    setChosenSubmarine(id);
+  }
 
   return (
-    <a id={stats.key} href="#"><div className="card">
+    <a onClick={onClick} id={id} href="#"><div className="card">
       <img src="https://static-s.aa-cdn.net/img/ios/1451817911/973e1c13fd06634d7de878a801664cc5?v=1" alt="Submarine" />
       <ul>
         <li><strong>{stats.name}</strong></li>
@@ -23,7 +26,7 @@ function SubmarineCard({stats}) {
   );
 }
 
-export default function ChooseSubmarine() {
+export default function ChooseSubmarine({setChosenSubmarine}) {
   const [options, setOptions] = useState(null);
 
   useEffect(() => {
@@ -34,7 +37,7 @@ export default function ChooseSubmarine() {
   return (
     <div className="u-choose-submarine">
       <div className="cards-container">
-        {options != null ? Object.keys(options).map(key => {return <SubmarineCard key={key} id={key} stats={options[key]} />}) : null}
+        {options != null ? Object.keys(options).map(key => {return <SubmarineCard key={key} id={key} setChosenSubmarine={setChosenSubmarine} stats={options[key]} />}) : null}
       </div>
     </div>
   );
