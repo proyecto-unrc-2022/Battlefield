@@ -41,6 +41,7 @@ def step_impl(context, user_id, game_id):
         "Content-Type": "application/json",
         "Authorization": f'Bearer {context.tokens[user_id]["token"]}',
     }
+
     context.pages[user_id] = context.client.post(
         url_for("navy.new_navy_game"), headers=headers
     )
@@ -49,8 +50,7 @@ def step_impl(context, user_id, game_id):
     except:
         context.games_created = {}
         context.games_created[game_id] = context.pages[user_id]
-        
-        
+
 
 @given("the user '{user_id:d}' created a NavyGame '{game_id:d}'")           
 def step_impl(context, user_id, game_id):
