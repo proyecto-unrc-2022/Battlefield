@@ -6,9 +6,7 @@ from app.navy.models.missile import Missile
 from app.navy.models.navy_game import NavyGame
 from app.navy.utils.navy_game_statuses import (
     FINISHED,
-    STARTED,
-    WAITING_PICKS,
-    WAITING_PLAYERS,
+
 )
 from app.navy.utils.navy_utils import utils
 from app.navy.validators.navy_game_patch_validator import NavyGamePatchValidator

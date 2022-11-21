@@ -1,0 +1,9 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+      "title": "JSONPlaceholder",
+      "description": "Fake Online REST API for Testing and Prototyping",
+      "version": "0.0.1"
+    },
+    "paths": {}
+  }
