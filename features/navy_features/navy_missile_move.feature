@@ -1,58 +1,67 @@
 Feature: Move a missile
 
-    Background: Login a user and initialized app with a game
+    Background: Logged users and start a game
         Given a user '1' logged in
-        And a user '2' exists
-        And the app is initialized
-        And the game started
+        And a user '2' logged in
+        And the user '1' created a NavyGame '1'
+        And the user '2' joined the NavyGame '1'
 
     Scenario: Move to a valid position
-        Given The user '1' has a ship 'Destroyer' in '2','2' with course 'N' and hp '100'
-        And The user '2' has a ship 'Destroyer' in '2','11' with course 'N' and hp '100'
-        And There is a missile at '5','5' with speed '2', course 'E' and damage '50'
-        When The missile moves
-        Then I should see the missile at the new position '5','7'
+        Given the user '1' created a 'Destroyer' in '2', '2' with course 'N' and '60' hp in the NavyGame '1'
+        And the user '2' created a 'Destroyer' in '5', '11' with course 'N' and '60' hp in the NavyGame '1'
+        And a missile exists from user '2' in '5', '5' with course 'E', speed '2', and damage '50' in the NavyGame '1'
+        When the user '1' turns his ship to 'E' and moves it '0' cells for round '1' in NavyGame '1'
+        And the user '2' turns his ship to 'W' and moves it '0' cells for round '1' in NavyGame '1'
+        Then a missile with course 'E', speed '2', and damage '50' should be in '5', '7' in the NavyGame '1'
 
     Scenario: Move to the right border
-        Given The user '1' has a ship 'Destroyer' in '2','2' with course 'N' and hp '100'
-        And The user '2' has a ship 'Destroyer' in '2','11' with course 'N' and hp '100'
-        And There is a missile at '5','20' with speed '2', course 'E' and damage '50'
-        When The missile moves
-        Then Missile should be destroyed
+        Given the user '1' created a 'Destroyer' in '2', '2' with course 'N' and '60' hp in the NavyGame '1'
+        And the user '2' created a 'Destroyer' in '2', '11' with course 'N' and '60' hp in the NavyGame '1'
+        And a missile exists from user '2' in '5', '20' with course 'E', speed '2', and damage '50' in the NavyGame '1'
+        When the user '1' turns his ship to 'E' and moves it '0' cells for round '1' in NavyGame '1'
+        And the user '2' turns his ship to 'W' and moves it '0' cells for round '1' in NavyGame '1'
+        Then the missile '1' in NavyGame '1' should be destroyed
 
     Scenario: Move to the left border
-        Given The user '1' has a ship 'Destroyer' in '2','2' with course 'N' and hp '100'
-        And The user '2' has a ship 'Destroyer' in '2','11' with course 'N' and hp '100'
-        And There is a missile at '5','1' with speed '2', course 'W' and damage '50'
-        When The missile moves
-        Then Missile should be destroyed
+        Given the user '1' created a 'Destroyer' in '2', '2' with course 'N' and '60' hp in the NavyGame '1'
+        And the user '2' created a 'Destroyer' in '2', '11' with course 'N' and '60' hp in the NavyGame '1'
+        And a missile exists from user '2' in '5', '1' with course 'W', speed '2', and damage '50' in the NavyGame '1'
+        When the user '1' turns his ship to 'E' and moves it '0' cells for round '1' in NavyGame '1'
+        And the user '2' turns his ship to 'W' and moves it '0' cells for round '1' in NavyGame '1'
+        Then the missile '1' in NavyGame '1' should be destroyed
 
     Scenario: Move to the top border
-        Given The user '1' has a ship 'Destroyer' in '2','2' with course 'N' and hp '100'
-        And The user '2' has a ship 'Destroyer' in '2','11' with course 'N' and hp '100'
-        And There is a missile at '1','5' with speed '2', course 'N' and damage '50'
-        When The missile moves
-        Then Missile should be destroyed
+        Given the user '1' created a 'Destroyer' in '2', '2' with course 'N' and '60' hp in the NavyGame '1'
+        And the user '2' created a 'Destroyer' in '2', '11' with course 'N' and '60' hp in the NavyGame '1'
+        And a missile exists from user '2' in '1', '5' with course 'N', speed '2', and damage '50' in the NavyGame '1'
+        When the user '1' turns his ship to 'E' and moves it '0' cells for round '1' in NavyGame '1'
+        And the user '2' turns his ship to 'W' and moves it '0' cells for round '1' in NavyGame '1'
+        Then the missile '1' in NavyGame '1' should be destroyed
 
     Scenario: Move to the bottom border
-        Given The user '1' has a ship 'Destroyer' in '2','2' with course 'N' and hp '100'
-        And The user '2' has a ship 'Destroyer' in '2','11' with course 'N' and hp '100'
-        And There is a missile at '20','5' with speed '2', course 'E' and damage '50'
-        When The missile moves
-        Then Missile should be destroyed
+        Given the user '1' created a 'Destroyer' in '2', '2' with course 'N' and '60' hp in the NavyGame '1'
+        And the user '2' created a 'Destroyer' in '2', '11' with course 'N' and '60' hp in the NavyGame '1'
+        And a missile exists from user '2' in '20', '5' with course 'E', speed '2', and damage '50' in the NavyGame '1'
+        When the user '1' turns his ship to 'E' and moves it '0' cells for round '1' in NavyGame '1'
+        And the user '2' turns his ship to 'W' and moves it '0' cells for round '1' in NavyGame '1'
+        Then the missile '1' in NavyGame '1' should be destroyed
 
-    Scenario: Move to a position with a ship and destroy it
-        Given The user '1' has a ship 'Battleship' in '8','15' with course 'N' and hp '10'
-        And The user '2' has a ship 'Destroyer' in '2','11' with course 'N' and hp '100'
-        And There is a missile at '8','13' with speed '3', course 'E' and damage '50'
-        When The missile moves
-        Then Missile should be destroyed
-        And The ship at '8','15' should be destroyed
+    Scenario: Move to a position with a ship and a missile destroys it during update
+        Given the user '1' created a 'Destroyer' in '5', '5' with course 'N' and '60' hp in the NavyGame '1'
+        And the user '2' created a 'Destroyer' in '5', '15' with course 'N' and '60' hp in the NavyGame '1'
+        And a missile exists from user '2' in '6', '7' with course 'W', speed '3', and damage '60' in the NavyGame '1'
+        When the user '1' turns his ship to 'E' and moves it '0' cells for round '1' in NavyGame '1'
+        And the user '2' turns his ship to 'W' and moves it '0' cells for round '1' in NavyGame '1'
+        Then the user '1' should see his ship with the course 'N' at '5', '5' with '0' hp in the NavyGame '1'
+        And the missile '1' in NavyGame '1' should be destroyed
+        And the user '2' should be the winner in the NavyGame '1'
 
-    Scenario: Move to a position with a ship and hit it
-        Given The user '1' has a ship 'Battleship' in '8','15' with course 'N' and hp '51'
-        And The user '2' has a ship 'Destroyer' in '2','11' with course 'N' and hp '100'
-        And There is a missile at '8','13' with speed '3', course 'E' and damage '50'
-        When The missile moves
-        Then Missile should be destroyed
-        And The ship at '8','15' should have '1' hp
+    Scenario: Move to a position with a ship and a missile hits during update
+        Given the user '1' created a 'Destroyer' in '5', '5' with course 'N' and '60' hp in the NavyGame '1'
+        And the user '2' created a 'Destroyer' in '5', '15' with course 'N' and '60' hp in the NavyGame '1'
+        And a missile exists from user '2' in '6', '7' with course 'W', speed '3', and damage '30' in the NavyGame '1'
+        When the user '1' turns his ship to 'E' and moves it '0' cells for round '1' in NavyGame '1'
+        And the user '2' turns his ship to 'W' and moves it '0' cells for round '1' in NavyGame '1'
+        Then the user '1' should see his ship with the course 'N' at '5', '5' with '30' hp in the NavyGame '1'
+        And the missile '1' in NavyGame '1' should be destroyed
+        And the user '2' should be the winner in the NavyGame '1'

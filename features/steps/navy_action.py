@@ -302,7 +302,7 @@ def step_impl(context, user_id, course, round,  distance, game_id):
     context.pages[user_id] = context.client.post(
         url_for("navy.action"), json=body, headers=headers
     )
-    print("mov" + context.pages[user_id].text)
+    
     assert context.pages[user_id].status_code == 201
 
 
@@ -314,6 +314,5 @@ def step_impl(context, user_id, course, round, game_id):
     context.pages[user_id] = context.client.post(
         url_for("navy.action"), json=body, headers=headers
     )
-    print("attack" + context.pages[user_id].text)
     
     assert context.pages[user_id].status_code == 201
