@@ -94,7 +94,7 @@ class App extends Component {
           )}
         </nav>
 
-        <div className="container mt-3">
+        <div className="container-fluid d-flex flex-column p-0">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/home" element={<Home />} />

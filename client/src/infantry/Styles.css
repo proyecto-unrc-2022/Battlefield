@@ -10,7 +10,7 @@
 .bg-HomePage{
 
     background-image: url("./Infantry.png");
-    background-position: center center;
+    background-position: center 35%;
     background-size: cover;
 
 }
@@ -35,4 +35,5 @@
 .Scroll::-webkit-scrollbar-thumb{
     background: gray; /* color de la barra */
     border-radius:5px;
+    
 }

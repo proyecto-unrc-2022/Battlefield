@@ -17,15 +17,15 @@ export default function HomePage(){
 
 
     return(
-        <div className="container">
-            <div className="bg-HomePage bg-primary text-center ">
+        <div className="container-fluid bg-HomePage">
+            <div className="text-center ">
                 <br></br>
                 <br></br>
                 <div className="row">
 
                     <div className="col-5"></div>
 
-                    <div className="col">
+                    <div className="col align-self-center">
                         <br></br>
                         <br></br>
                         <br></br>
@@ -51,10 +51,7 @@ export default function HomePage(){
                     </div>
                     
                 </div>
-                <br></br>
-                <br></br>
-                <br></br>
-                
+                    
 
             </div>
             

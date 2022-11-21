@@ -11,7 +11,15 @@ class GameService {
 
     }
 
-    
+    createGame(id){
+        return axios.post(API_URL + `/user/${id}/game`,{} , {headers : authHeader()});
+    }
+
+    joinGame(id_game, id_user){
+        return axios.post(API_URL + `/game/${id_game}/user/${id_user}/join`,{} , {headers : authHeader()});
+
+    }
+
 
 }
 
