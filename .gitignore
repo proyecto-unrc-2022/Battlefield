@@ -4,6 +4,8 @@ entorno/
 freeze
 req.txt
 .vscode/
+config.py
+app/foo.db
 
 
 *.pyc

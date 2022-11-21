@@ -29,9 +29,7 @@ def step_impl(context):
         "Content-Type": "application/json",
         "Authorization": f'Bearer {context.token["token"]}',
     }
-    context.page = context.client.post(
-        url_for("navy.new_navy_game"), headers=headers
-    )
+    context.page = context.client.post(url_for("navy.new_navy_game"), headers=headers)
     assert context.page
 
 
@@ -145,9 +143,8 @@ def step_impl(context):
 @then("The game should be updated")
 def step_impl(context):
     data = json.loads(context.page.text)["data"]
-    print(data)
     assert context.page.status_code == 200
-    assert data["user2_id"] == context.user1.id
+    assert data["user_2"]["id"] == context.user1.id
 
 
 @when("I try to join to the game with an incorrect user")

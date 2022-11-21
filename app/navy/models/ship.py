@@ -1,3 +1,4 @@
+from sqlalchemy import event
 from sqlalchemy.orm import relationship
 
 from app import db
@@ -50,3 +51,32 @@ class Ship(db.Model):
         self.course = course
         self.user_id = user_id
         self.navy_game_id = navy_game_id
+
+
+@event.listens_for(Ship, "after_insert")
+def ship_change(mapper, connection, target):
+    from app.navy.models.navy_game import NavyGame
+
+    navy_game = db.session.query(NavyGame).filter_by(id=target.navy_game_id).first()
+
+    user_1 = navy_game.user1_id
+    user_2 = navy_game.user2_id
+
+    ships_user1 = (
+        db.session.query(Ship)
+        .filter_by(navy_game_id=target.navy_game_id, user_id=user_1)
+        .all()
+    )
+
+    ships_user2 = (
+        db.session.query(Ship)
+        .filter_by(navy_game_id=target.navy_game_id, user_id=user_2)
+        .all()
+    )
+
+    if len(ships_user1) >= 1 and len(ships_user2) >= 1:
+        connection.execute(
+            "UPDATE navy_games SET status = 'STARTED' WHERE id = {}".format(
+                target.navy_game_id
+            )
+        )
