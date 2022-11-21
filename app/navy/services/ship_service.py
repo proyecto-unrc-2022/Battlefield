@@ -31,11 +31,11 @@ class ShipService:
             data["user_id"],
             data["navy_game_id"],
         )
-        added_ship = ship_dao.add_or_update(new_ship)
+        added_ship = ship_dao.add(new_ship)
         return added_ship
 
-    def update_db(self, ship):
-        ship_dao.add_or_update(ship)
+    def update_all(self, ships):
+        ship_dao.update_all(ships)
 
     def load_to_board(self, ship):
         from app.navy.services.navy_game_service import navy_game_service

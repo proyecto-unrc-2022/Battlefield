@@ -36,14 +36,14 @@ class NavyGameService:
 
     def add(self, data):
         new_game = NavyGame(utils.ROWS, utils.COLS, data["user1_id"])
-        navy_game_dao.add_or_update(new_game)
+        navy_game_dao.add(new_game)
         self.games[new_game.id] = {}
         return new_game
 
     def join(self, data, id):
         game = navy_game_dao.get_by_id(id)
         game.user2_id = data["user2_id"]
-        navy_game_dao.add_or_update(game)
+        navy_game_dao.update(game, commit=True)
         return game
 
     def get_all(self, user_id=None):
@@ -140,11 +140,9 @@ class NavyGameService:
 
         ships = self.games[game.id]["ships"]
         missiles = self.games[game.id]["missiles"]
-        for ship in ships:
-            ship_service.update_db(ship)
-        for missile in missiles:
-            missile_service.update_db(missile)
-        navy_game_dao.add_or_update(game)
+        ship_service.update_all(ships)
+        missile_service.update_all(missiles)
+        navy_game_dao.update(game)
 
     def run_missiles(self, game):
         from app.navy.services.missile_service import missile_service
@@ -160,7 +158,7 @@ class NavyGameService:
     def set_winner(self, winner, game):
         game.winner = winner
         game.status = FINISHED
-        navy_game_dao.add_or_update(game)
+        navy_game_dao.update(game)
 
     def is_over(self, navy_game_id):
         game = navy_game_dao.get_by_id(navy_game_id)
