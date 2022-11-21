@@ -1,38 +1,55 @@
-.u-board-container {
-    width: 70%;
-    flex-grow: 0.7;
-    display: flex;
+.u-grid-20,.u-grid-24,.u-grid-28 {
     box-shadow: 3px 3px 10px rgba(156, 230, 234);
-    margin: 20px auto auto auto;
     background-image: url('board-bakcground.jpg');
     filter: brightness(200%);
+    height: 100%;
+    flex-grow: 1;
+    display: grid;
+    height: 100%;
 }
 
 .u-grid-20 {
-    flex-grow: 1;
-    display: grid;
     grid-template-columns: repeat(20, 1fr);
 }
 
 .u-grid-24 {
-    flex-grow: 1;
-    display: grid;
     grid-template-columns: repeat(24, 1fr);
 }
 
 .u-grid-28 {
-    flex-grow: 1;
-    display: grid;
     grid-template-columns: repeat(28, 1fr);
 }
 
 .u-cell {
-    box-shadow: 1px 1px 10px rgba(187, 239, 242, 0.1);
-    color:aliceblue;
+    box-shadow: 1px 1px 10px rgba(206, 241, 243, 0.1);
+    color: aliceblue;
     text-align: center;
-    display:block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
 }
 
 .u-cell:hover {
     background-color: rgb(61, 108, 132,.15);
+}
+
+.u-cell-nv {
+    background-color: rgb(0, 0, 0, 0.7);
+}
+
+.u-cell-FH7 {
+    background-image: url('submarine-head.png');
+}
+
+.u-cell-FH3 {
+    background-image: url('submarine-head.png');
+}
+
+.u-cell-FT3 {
+    background-image: url('submarine-tail.png');
+}
+
+.u-cell-FH0{
+    background-image: url('submarine-head.png');
 }

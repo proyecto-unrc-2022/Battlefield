@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./css/game-style.css"
 
-export default function PlaceSubmarine() {
+export default function PlaceSubmarine({setSubWasPlaced}) {
   const [cells, setCells] = useState([]);
 
   useEffect(() => {
@@ -15,11 +15,15 @@ export default function PlaceSubmarine() {
     setCells(cells);
   }, []);
 
+  function onClick() {
+    setSubWasPlaced(true);
+  }
+
   return (
     <div className="u-grid">
       {cells.map((row, i) => {
         return row.map((col, j) => {
-          return <div key={(i+1)*(j+1)} className="u-cell">{col}</div>
+          return <div onClick={onClick} key={(i+1)*(j+1)} className="u-cell">{col}</div>
         })
       })}
     </div>
