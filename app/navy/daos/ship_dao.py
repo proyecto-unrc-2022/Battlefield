@@ -6,10 +6,20 @@ class ShipDAO:
     def __init__(self, model):
         self.model = model
 
-    def add_or_update(self, ship):
+    def add(self, ship):
         db.session.add(ship)
         db.session.commit()
         return ship
+
+    def update(self, ship, commit=False):
+        db.session.add(ship)
+        if commit:
+            db.session.commit()
+
+    def update_all(self, ships, commit=False):
+        db.session.add_all(ships)
+        if commit:
+            db.session.commit()
 
     def get_by_id(self, ship_id):
         return db.session.query(self.model).filter_by(id=ship_id).first()

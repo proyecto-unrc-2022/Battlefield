@@ -52,8 +52,8 @@ class MissileService:
         navy_game_service.games[navy_game_id]["missiles"].append(missile)
         return missile
 
-    def update_db(self, missile):
-        missile_dao.add_or_update(missile)
+    def update_all(self, missiles):
+        missile_dao.load(missiles)
 
     def load_to_board(self, missile):
         navy_game_service.load_to_board(
