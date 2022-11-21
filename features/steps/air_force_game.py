@@ -6,7 +6,7 @@ from app import db
 from app.daos.airforce.plane_dao import add_plane
 from app.daos.user_dao import add_user
 from app.models.airforce.air_force_game import AirForceGame
-from app.models.airforce.utils import init_db
+from app.models.airforce.utils import init_db_planes
 from app.models.user import User
 
 url_for_plane_position = "air_force.choice_plane_and_position"
@@ -14,7 +14,7 @@ url_for_plane_position = "air_force.choice_plane_and_position"
 
 @given("init db")
 def step_impl(context):
-    init_db()
+    init_db_planes()
 
 
 @given("three logged user")
@@ -116,7 +116,7 @@ def step_impl(context):
     context.course = 2
     add_user(username="jhon", email="jhon@email", password="1234")
     context.player = 1
-    init_db()
+    init_db_planes()
     headers = {"Content-Type": "application/json"}
     user_a = {"username": "jhon", "password": "1234"}
     context.player_a_token = context.client.post(
@@ -199,7 +199,7 @@ def step_impl(context):
         "Conten-Type": "application/json",
         "Authorization": f"Bearer {context.player_b_token}",
     }
-    init_db()
+    init_db_planes()
 
 
 @when("player_b choose a plane and his position")
@@ -412,7 +412,7 @@ def step_impl(context):
         url_for("auth.login"), json=user_b, headers=headers
     ).json.get("token")
 
-    init_db()
+    init_db_planes()
     # assert context.response.status_code == 200
 
 
