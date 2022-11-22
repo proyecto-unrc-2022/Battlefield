@@ -59,14 +59,6 @@
   width: 100%;
 }
 
-
-.u-controls-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
 .u-grid {
   height: 100%;
   display: grid;
@@ -83,6 +75,7 @@
   flex-grow: 1;
   display: grid;
   height: 100%;
+  margin-bottom: -10px;
 }
 
 .u-grid-20 {
@@ -119,4 +112,26 @@
 
 .u-cell-nv:hover {
   background-color: rgb(0, 0, 0, .5);
+}
+
+.u-controls-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.u-right-controls {
+  display: flex;
+  height: 135px;
+}
+
+.u-left-controls {
+  display: flex;
+  height: 135px;
+}
+
+.u-direction-container {
+  background-image: url('board-bakcground.jpg');
+  width: 135px;
 }
