@@ -9,6 +9,7 @@ const baseURL = "http://127.0.0.1:5000/api/v1/underwater";
 
 export default function UnderBoard({id, height, width}) {
     const [board, setBoard] = useState([]);
+    const images = { "FH": require("./css/FH.png"), "FT": require("./css/FT.png") };
     
     function setDimention(w) {
         switch (w) {
@@ -54,7 +55,7 @@ export default function UnderBoard({id, height, width}) {
             {
                 board.map((row, i) =>{
                     return row.map((col, j) => {
-                        return (<UnderCell key={(i+1)*(j+1)} type={col} />);
+                        return (<UnderCell key={(i+1)*(j+1)} type={col} images={images} />);
                     })
                 })
             }
