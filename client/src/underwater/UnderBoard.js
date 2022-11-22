@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, {useEffect, useState} from 'react'; 
-import "./css/board.css"
+import "./css/game-style.css"
 import authHeader from "../services/auth-header"
 import UnderCell from './UnderCell';
 
@@ -9,7 +9,10 @@ const baseURL = "http://127.0.0.1:5000/api/v1/underwater";
 
 export default function UnderBoard({id, height, width}) {
     const [board, setBoard] = useState([]);
-    const images = { "FH": require("./css/FH.png"), "FT": require("./css/FT.png") };
+    const images = {
+        "FH": require("./css/FH.png"),
+        "FT": require("./css/FT.png"),
+    };
     
     function setDimention(w) {
         switch (w) {

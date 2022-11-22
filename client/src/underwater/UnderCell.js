@@ -1,5 +1,5 @@
 import React from 'react'; 
-import "./css/board.css"
+import "./css/game-style.css"
 
 export default function UnderCell({type, images}){ 
   const rotation = 45 * parseInt([type[type.length-1]]);
