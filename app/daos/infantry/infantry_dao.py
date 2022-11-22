@@ -205,13 +205,27 @@ def shoot_save(user_id, game_id, direccion, velocity):
         user_id (int): user id de quien dispara
         game_id (int): game id de donde se dispara
         direccion (int): direccion de a donde se dispara
+    Returns:
+        bool: True si se guardo el disparo, False si ocurrio algo
     """
     global players_actions
     game = Game_Infantry.query.filter_by(id = game_id).first()
     figure = Figure_infantry.query.filter_by(id_game= game_id, id_user= user_id).first()
-    assis_server_restart(game)
-    players_actions.put(("shoot", user_id, game_id, direccion, velocity))
-    reduce_action(figure.id)
+    if(not(validation_create(game_id, user_id))):
+        return False
+    projectile = Projectile_infantry(id_game= game_id, 
+                                pos_x=0, 
+                                pos_y=0, 
+                                velocidad=velocity, 
+                                daño=0, 
+                                direccion= direccion,
+                                type=MISSILE)
+    if(not(validation_figure(direction_of_projectile(figure, projectile, direccion)))):
+        return False
+    else:
+        assis_server_restart(game)
+        players_actions.put(("shoot", user_id, game_id, direccion, velocity))
+        reduce_action(figure.id)
     return True
 
 
@@ -221,9 +235,6 @@ def shoot_save(user_id, game_id, direccion, velocity):
 def shoot(user_id, game_id, direccion, velocity):
 
     figure = Figure_infantry.query.filter_by(id_game= game_id, id_user= user_id).first()
-    
-    if(not(validation_create(game_id, user_id))):
-        return False
         
     if(figure_valid(figure, game_id, direccion, velocity)):
         return True
