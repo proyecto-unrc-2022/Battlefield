@@ -2,10 +2,11 @@ import json
 
 from behave import *
 from flask import url_for
+from steps.navy.test_utils import test_utils
 
 from app.daos.user_dao import add_user
 from app.models.user import User
-from steps.navy.test_utils import test_utils
+
 
 
 @given("a user '{user_id:d}' logged in")
@@ -13,7 +14,7 @@ def step_impl(context, user_id):
     username, email = test_utils.generate_username_and_email(user_id)
     add_user(username, "12345", email)
     headers = {"Content-Type": "application/json"}
-    try:    
+    try:
         context.bodies[user_id] = {"username": username, "password": "12345"}
         context.pages[user_id] = context.client.post(
             url_for("auth.login"), json=context.bodies[user_id], headers=headers
@@ -25,20 +26,20 @@ def step_impl(context, user_id):
         context.pages = {}
         context.users = {}
         context.tokens = {}
-        
-        context.bodies.update({user_id:{"username": username, "password": "12345"}})
+
+        context.bodies.update({user_id: {"username": username, "password": "12345"}})
         context.pages[user_id] = context.client.post(
             url_for("auth.login"), json=context.bodies[user_id], headers=headers
         )
-        context.users[user_id]=User.query.filter_by(username=username).first()
+        context.users[user_id] = User.query.filter_by(username=username).first()
         context.tokens[user_id] = json.loads(context.pages[user_id].text)
-    
+
     assert context.pages[user_id]
 
 
 @given("the user '{user_id:d}' created a NavyGame '{game_id:d}'")           
 def step_impl(context, user_id, game_id):
-    headers = test_utils.get_header(context.tokens[user_id]) 
+    headers = test_utils.get_header(context.tokens[user_id])
     context.pages[user_id] = context.client.post(
         url_for("navy.new_navy_game"), headers=headers
     )
@@ -47,7 +48,7 @@ def step_impl(context, user_id, game_id):
     except:
         context.games_created = {}
         context.games_created[game_id] = context.pages[user_id]
-        
+
     assert context.pages[user_id]
     assert context.games_created
     assert context.pages[user_id].status_code == 201
@@ -90,7 +91,7 @@ def step_impl(context, user_id, game_id):
 
 @when("the user '{user_id:d}' tries to get the NavyGame '{game_id:d}'")
 def step_impl(context, user_id, game_id):
-    headers = test_utils.get_header(context.tokens[user_id]) 
+    headers = test_utils.get_header(context.tokens[user_id])
     context.pages[user_id] = context.client.get(
         url_for("navy.get_navy_game", id=game_id), headers=headers
     )
@@ -106,7 +107,7 @@ def step_impl(context,user_id):
 
 @when("the user '{user_id:d}' tries to join the NavyGame '{game_id:d}'")
 def step_impl(context, user_id, game_id):
-    headers = test_utils.get_header(context.tokens[user_id]) 
+    headers = test_utils.get_header(context.tokens[user_id])
     context.pages[user_id] = context.client.patch(
         url_for("navy.update_navy_game", id=game_id),
         headers=headers,
@@ -117,7 +118,7 @@ def step_impl(context, user_id, game_id):
 
 @when("the user '{user_id:d}' deletes the NavyGame '{game_id:d}'")
 def step_impl(context, user_id, game_id):
-    headers = test_utils.get_header(context.tokens[user_id]) 
+    headers = test_utils.get_header(context.tokens[user_id])
     context.pages[user_id] = context.client.delete(
         url_for("navy.delete_navy_game", id=game_id), headers=headers
     )
@@ -126,7 +127,7 @@ def step_impl(context, user_id, game_id):
 
 @when("the NavyGame '{game_id:d}' updates for user '{user_id:d}'")
 def step_impl(context, game_id, user_id):
-    headers = test_utils.get_header(context.tokens[user_id]) 
+    headers = test_utils.get_header(context.tokens[user_id])
     context.pages[user_id] = context.client.get(
         url_for("navy.get_navy_game", id=game_id), headers=headers
     )
@@ -194,7 +195,7 @@ def step_impl(context):
     assert context.page
 
 
-@when("I try to create a game with an incorrect request body")                        
+@when("I try to create a game with an incorrect request body")
 def step_impl(context):
     headers = {
         "Content-Type": "application/json",

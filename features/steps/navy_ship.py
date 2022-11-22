@@ -10,16 +10,17 @@ def step_impl(context, user_id, ship_name, pos_x, pos_y, course, hp, game_id):
     from app.navy.services.ship_service import ship_service
     
     try:
-        context.ships.update({user_id:
-            test_utils.add_test_ship(
-                name=ship_name,
-                pos_x=pos_x,
-                pos_y=pos_y,
-                course=course,
-                hp=hp,
-                navy_game_id=game_id,
-                user_id=user_id,
-            )
+        context.ships.update(
+            {
+                user_id: test_utils.add_test_ship(
+                    name=ship_name,
+                    pos_x=pos_x,
+                    pos_y=pos_y,
+                    course=course,
+                    hp=hp,
+                    navy_game_id=game_id,
+                    user_id=user_id,
+                )
             }
         )
     except:

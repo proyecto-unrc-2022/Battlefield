@@ -75,8 +75,5 @@ def ship_change(mapper, connection, target):
     )
 
     if len(ships_user1) >= 1 and len(ships_user2) >= 1:
-        connection.execute(
-            "UPDATE navy_games SET status = 'STARTED' WHERE id = {}".format(
-                target.navy_game_id
-            )
-        )
+        from app.navy.utils.navy_game_statuses import STARTED
+        connection.execute( f'UPDATE navy_games SET status = "{STARTED}" WHERE id = {target.navy_game_id}')

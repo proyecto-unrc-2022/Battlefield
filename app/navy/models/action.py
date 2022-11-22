@@ -1,3 +1,5 @@
+from weakref import WeakSet
+
 from sqlalchemy import event
 
 from app import db
@@ -38,10 +40,12 @@ class Action(db.Model):
         self.round = round
 
 
-@event.listens_for(Action, "after_insert")
-def receive_after_create(mapper, connection, target):
-    from app.navy.services.navy_game_service import navy_game_service
+@event.listens_for(db.session, "before_commit")
+def before_commit(session):
+    for obj in db.session:
+        if isinstance(obj, Action):
+            from app.navy.services.navy_game_service import navy_game_service
 
-    navy_game_id = target.navy_game_id
-    if navy_game_service.should_update(navy_game_id):
-        navy_game_service.play_round(navy_game_id)
+            if navy_game_service.should_update(obj.navy_game_id):
+                navy_game_service.play_round(obj.navy_game_id)
+                print("round played")
