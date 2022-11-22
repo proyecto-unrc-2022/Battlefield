@@ -1,5 +1,6 @@
-import React, { Component } from "react";
+import React, { Component, Alert } from "react";
 import InfantryService from "../services/infantry.service"
+
 
 const EAST = 2
 const SOUTH = 0
@@ -21,18 +22,23 @@ export default class FigureActions extends Component {
         }  
     }
 
-    action(direction, action, velocity){
+    async action(direction, action, velocity){
         if(action === "move"){
-            InfantryService.move(this.state.game_id, this.state.user_id,
+            let response = await InfantryService.move(this.state.game_id, this.state.user_id,
                 direction, velocity)
+                if(response === "Accion invalida"){
+                    return alert("Movimiento invalido")
+                }
+            return;
         }
         if(action === "shoot"){
-            InfantryService.shoot(this.state.game_id, this.state.user_id,
+            let response = await InfantryService.shoot(this.state.game_id, this.state.user_id,
                 direction)
+                if(response === "Accion invalida"){
+                    return alert("Movimiento invalido")
+                }
+                return;
         }
-        console.log(direction)
-        console.log(action)
-        console.log(velocity)
     }
     
     async componentDidMount(){
