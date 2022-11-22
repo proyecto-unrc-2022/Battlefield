@@ -107,7 +107,7 @@ class InfantryService{
     async shoot(game_id, user_id, course){
         let data = {velocity: 0}
         return await axios.post(
-            API_URL + "/game/", game_id, "/user/", user_id, "/direccion/", course,"/shoot",
+            API_URL + "game/" + game_id + "/user/" + user_id + "/direccion/" + course +"/shoot",
             data,
             {
                 headers:{
@@ -115,6 +115,7 @@ class InfantryService{
                 },
             }
         ).then((response) =>{
+            console.log(response.data)
             return response.data
         })
     }
