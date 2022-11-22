@@ -32,7 +32,7 @@ export default class GameInfantry extends Component {
         <div class="container">
           <div class="row align-items-start">
             <div class="col"><FigureInfantryData game_id={this.state.game_id} user_id={this.state.player1_id} /></div>
-            <div> <TableGame/></div>
+            <div> <TableGame game_id={this.state.game_id} player1_id={this.state.player1_id} player2_id={this.state.player2_id}/></div>
             <div class="col"><FigureInfantryData game_id={this.state.game_id} user_id={this.state.player2_id} /></div>
           </div>
           <div class="row align-items-center">
