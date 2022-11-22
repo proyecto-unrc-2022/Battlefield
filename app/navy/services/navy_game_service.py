@@ -137,6 +137,7 @@ class NavyGameService:
     def save(self, game):
         from app.navy.services.missile_service import missile_service
         from app.navy.services.ship_service import ship_service
+        from app.navy.services.spectate_service import spectate_service
 
         ships = self.games[game.id]["ships"]
         missiles = self.games[game.id]["missiles"]

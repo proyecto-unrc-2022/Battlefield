@@ -9,7 +9,6 @@ from marshmallow import (
 from sqlalchemy import and_, or_
 
 from app import db
-from app.models.user import User
 from app.navy.daos.ship_type_dao import ship_type_dao
 from app.navy.models.ship import Ship
 from app.navy.services.missile_service import missile_service
