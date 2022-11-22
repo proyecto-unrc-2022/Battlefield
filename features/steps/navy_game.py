@@ -8,7 +8,6 @@ from app.daos.user_dao import add_user
 from app.models.user import User
 
 
-
 @given("a user '{user_id:d}' logged in")
 def step_impl(context, user_id):
     username, email = test_utils.generate_username_and_email(user_id)
@@ -37,7 +36,7 @@ def step_impl(context, user_id):
     assert context.pages[user_id]
 
 
-@given("the user '{user_id:d}' created a NavyGame '{game_id:d}'")           
+@given("the user '{user_id:d}' created a NavyGame '{game_id:d}'")
 def step_impl(context, user_id, game_id):
     headers = test_utils.get_header(context.tokens[user_id])
     context.pages[user_id] = context.client.post(
@@ -56,7 +55,7 @@ def step_impl(context, user_id, game_id):
 
 @given("the user '{user_id:d}' joined the NavyGame '{game_id:d}'")
 def step_impl(context, user_id, game_id):
-    headers = test_utils.get_header(context.tokens[user_id]) 
+    headers = test_utils.get_header(context.tokens[user_id])
     context.pages[user_id] = context.client.patch(
         url_for("navy.update_navy_game", id=game_id),
         headers=headers,
@@ -65,19 +64,21 @@ def step_impl(context, user_id, game_id):
     assert context.pages[user_id].status_code == 200
 
 
-@given("the user '{user1_id:d}' created a NavyGame '{game_id:d}', but user '{user2_id:d}' won it")           
+@given(
+    "the user '{user1_id:d}' created a NavyGame '{game_id:d}', but user '{user2_id:d}' won it"
+)
 def step_impl(context, user1_id, game_id, user2_id):
     from app.navy.services.navy_game_service import navy_game_service
-    
+
     data = {"user1_id": user1_id}
     context.games_created[game_id] = navy_game_service.add(data)
     current_game = test_utils.add_test_game(game_id, user2_id)
     assert current_game.winner == context.games_created[game_id].winner == user2_id
 
 
-@when("the user '{user_id:d}' creates a NavyGame '{game_id:d}'")            
+@when("the user '{user_id:d}' creates a NavyGame '{game_id:d}'")
 def step_impl(context, user_id, game_id):
-    headers = test_utils.get_header(context.tokens[user_id]) 
+    headers = test_utils.get_header(context.tokens[user_id])
 
     context.pages[user_id] = context.client.post(
         url_for("navy.new_navy_game"), headers=headers
@@ -99,9 +100,11 @@ def step_impl(context, user_id, game_id):
 
 
 @when("the user '{user_id:d}' tries to get all NavyGames in the app")
-def step_impl(context,user_id):
-    headers = test_utils.get_header(context.tokens[user_id]) 
-    context.pages[user_id] = context.client.get(url_for("navy.get_navy_games"), headers=headers)
+def step_impl(context, user_id):
+    headers = test_utils.get_header(context.tokens[user_id])
+    context.pages[user_id] = context.client.get(
+        url_for("navy.get_navy_games"), headers=headers
+    )
     assert context.pages[user_id]
 
 
@@ -163,8 +166,8 @@ def step_impl(context, user_id):
 @then("the user '{user_id:d}' should see that the NavyGame was deleted")
 def step_impl(context, user_id):
     assert context.pages[user_id].status_code == 200
-    
-    
+
+
 @then("the user '{user_id:d}' should be the winner in the NavyGame '{game_id:d}'")
 def step_impl(context, user_id, game_id):
     current_game = json.loads(context.pages[user_id].text)["data"]
@@ -174,12 +177,7 @@ def step_impl(context, user_id, game_id):
     assert current_game["winner"] == user_id
     assert current_game["status"] == "FINISHED"
 
-    
-    
-    
-    
-    
-    
+
 @when("I try to join to the game with an incorrect user")
 def step_impl(context):
     body = {"user2_id": 500}
