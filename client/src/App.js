@@ -17,7 +17,7 @@ import NavyLobby from "./navy/pages/NavyLobby"
 import NavyBoard from "./navy/pages/NavyBoard";
 
 import AirforceAPP from "./airforce/AirforceAPP";
-import ChoosePlane from "./airforce/components/AirforceChoosePlane";
+import ChoosePlane from "./airforce/components/AirforceChoosePlane.component";
 import AirforceLobby from "./airforce/components/AirforceLobby.component"
 class App extends Component {
   constructor(props) {
