@@ -6,7 +6,7 @@ const optionsURL = "http://127.0.0.1:5000/api/v1/underwater/game/submarine_optio
 
 function SubmarineCard({id, setChosenSubmarine, stats}) {
   const onClick = () => {
-    setChosenSubmarine(id);
+    setChosenSubmarine(parseInt(id));
   }
 
   return (

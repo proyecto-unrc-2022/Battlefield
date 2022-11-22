@@ -1,7 +1,7 @@
 import React from 'react'; 
 import "./css/game-style.css"
 
-export default function UnderCell({type, images}){ 
+export default function UnderCell({placeSubmarine, x, y, type, images}){ 
   const rotation = 45 * parseInt([type[type.length-1]]);
 
   const style = {
@@ -16,5 +16,5 @@ export default function UnderCell({type, images}){
     else return null;
   }
 
-  return (<div className={"u-cell u-cell-" + type} >{image()}</div>)
+  return (<div onClick={_ => placeSubmarine(x,y)} className={"u-cell u-cell-" + type} >{image()}</div>)
 }
