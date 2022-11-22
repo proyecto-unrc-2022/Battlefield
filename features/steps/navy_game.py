@@ -64,6 +64,16 @@ def step_impl(context, user_id, game_id):
     assert context.pages[user_id].status_code == 200
 
 
+@given("the user '{user1_id:d}' created a NavyGame '{game_id:d}', but user '{user2_id:d}' won it")           
+def step_impl(context, user1_id, game_id, user2_id):
+    from app.navy.services.navy_game_service import navy_game_service
+    
+    data = {"user1_id": user1_id}
+    context.games_created[game_id] = navy_game_service.add(data)
+    current_game = test_utils.add_test_game(game_id, user2_id)
+    assert current_game.winner == context.games_created[game_id].winner == user2_id
+
+
 @when("the user '{user_id:d}' creates a NavyGame '{game_id:d}'")            
 def step_impl(context, user_id, game_id):
     headers = test_utils.get_header(context.tokens[user_id]) 

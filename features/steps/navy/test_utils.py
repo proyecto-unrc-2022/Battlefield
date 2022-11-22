@@ -2,12 +2,12 @@ class TestUtils:
     
     EXPECTED_ERRORS = {
         "Game not found": "navy_game_id",
-        "Invalid move": "_schema",
+        "Invalid action": "_schema",
         "Must be one of: N, S, E, W, SE, SW, NE, NW.": "course",
         "Can't move more than 3 spaces": "_schema",
         "The movement is a negative distance": "_schema",
         "Invalid ship in game": "_schema",
-        "Ship not found": "_schema",
+        "Game not ready to play": "navy_game_id",
         "Game finished": "navy_game_id",
         "It's not your turn yet": "_schema",
         "Ship can't be builded out of range": "_schema",

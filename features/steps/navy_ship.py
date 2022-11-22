@@ -63,11 +63,8 @@ def step_impl(context, user_id):
 def step_impl(context, user_id, course, pos_x, pos_y, hp, game_id):
     current_game = json.loads(context.pages[user_id].text)["data"]
     
-    print(context.pages[user_id])
-    
     assert context.pages[user_id].status_code == 200
     assert current_game["id"] == game_id
     assert current_game["ship"]["course"] == course
-    print(str(current_game["ship"]["pos_x"]) + " " + str(current_game["ship"]["pos_y"]))
     assert current_game["ship"]["pos_x"] == pos_x and current_game["ship"]["pos_y"] == pos_y
     assert current_game["ship"]["hp"] == hp

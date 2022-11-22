@@ -33,7 +33,7 @@ class ActionRequestValidator(Schema):
     def check_move(self, in_data, **kwargs):
 
         if in_data.get("attack") and in_data.get("move"):
-            raise ValidationError("Invalid move")
+            raise ValidationError("Invalid action")
 
         if not in_data.get("attack"):
             ship = db.session.query(Ship).filter_by(id=in_data.get("ship_id")).first()
