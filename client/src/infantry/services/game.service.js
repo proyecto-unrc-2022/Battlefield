@@ -20,6 +20,13 @@ class GameService {
 
     }
 
+    ready(id_game){
+        
+
+        return axios.post(API_URL + "/game", {"game_id" : id_game}, {headers : authHeader()});
+
+    }
+
 
 }
 
