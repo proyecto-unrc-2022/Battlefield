@@ -1,11 +1,27 @@
 class TestUtils:
+
+    EXPECTED_ERRORS = {
+        "Game not found": "navy_game_id",
+        "Invalid action": "_schema",
+        "Must be one of: N, S, E, W, SE, SW, NE, NW.": "course",
+        "Can't move more than 3 spaces": "_schema",
+        "The movement is a negative distance": "_schema",
+        "Invalid ship in game": "_schema",
+        "Game not ready to play": "navy_game_id",
+        "Game finished": "navy_game_id",
+        "It's not your turn yet": "_schema",
+        "Ship can't be builded out of range": "_schema",
+        "Must be one of: Destroyer, Cruiser, Battleship, Corvette.": "name",
+        "Ship can't be builded out of range": "_schema",
+    }
+
     def add_test_game(self, navy_game_id, winner=False):
         from app.navy.daos.navy_game_dao import navy_game_dao
 
         navy_game = navy_game_dao.get_by_id(navy_game_id)
         navy_game.status = "STARTED"
         navy_game.winner = winner
-        navy_game_dao.add_or_update(navy_game)
+        navy_game_dao.add(navy_game)
 
         return navy_game
 
@@ -74,7 +90,7 @@ class TestUtils:
             navy_game_id,
         )
 
-        return ship_dao.add_or_update(new_ship)
+        return ship_dao.add(new_ship)
 
     def add_test_missile(
         self,
@@ -103,7 +119,7 @@ class TestUtils:
             navy_game_id,
         )
 
-        return missile_dao.add_or_update(missile)
+        return missile_dao.add(missile)
 
     def add_action_test(
         self,
@@ -124,6 +140,17 @@ class TestUtils:
         )
         action_dao.add_or_update(action)
         return action
+
+    def generate_username_and_email(self, id):
+        username = "user" + str(id)
+        email = "user" + str(id) + "@user" + str(id) + ".com"
+        return username, email
+
+    def get_header(self, token):
+        return {
+            "Content-Type": "application/json",
+            "Authorization": f'Bearer {token["token"]}',
+        }
 
 
 test_utils = TestUtils()
