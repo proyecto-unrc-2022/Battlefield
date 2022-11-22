@@ -124,6 +124,7 @@ def choose_submarine(session_id):
     if not player:
         return Response('{"error":"player not found"}', status=404)
 
+    print(data)
     try:
         sub = session.game.add_submarine(
             player,

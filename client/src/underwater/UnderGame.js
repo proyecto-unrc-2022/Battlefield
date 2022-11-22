@@ -1,6 +1,8 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import axios from "axios";
+import authHeader from "../services/auth-header";
 import ChooseSubmarine from "./ChooseSubmarine";
 import PlaceSubmarine from "./PlaceSubmarine";
 import UnderBoard from "./UnderBoard";
@@ -10,19 +12,48 @@ import "./css/game-style.css"
 
 export default function UnderGame() {
   const params = useParams();
+  const width = 20;
+  const height = 10;
   const [chosenSubmarine, setChosenSubmarine] = useState(null);
-  const [subWasPlaced, setSubWasPlaced] = useState(false);
+  const [position, setPosition] = useState(null);
   const [layout, setLayout] = useState(null);
+  const URL = "http://localhost:5000/api/v1/underwater/game/" + params.id;
+
+  function sendChooseSubmarine() {
+    const headers = authHeader();
+    headers["Content-Type"] = "multipart/form-data";
+    axios.post(
+      URL + "/choose_submarine",
+      {
+        submarine_id: chosenSubmarine,
+        x_position: position.x,
+        y_position: position.y,
+        direction: position.direction
+      },
+      { headers: headers }
+    )
+  }
 
   useEffect(() => {
     if(chosenSubmarine != null) {
-      if(subWasPlaced)
-        setLayout({main: <UnderBoard id={params.id} width={20} height={10} />, bottom: <UnderControls />});
+      if(position != null) {
+        sendChooseSubmarine();
+        setLayout({
+          main: <UnderBoard id={params.id} width={width} height={height} />,
+          bottom: <UnderControls />
+        });
+      }
       else
-        setLayout({main: <PlaceSubmarine setSubWasPlaced={setSubWasPlaced} />, bottom: <h1>Place your submarine</h1>});
+        setLayout({
+          main: <PlaceSubmarine setPosition={setPosition} width={width} height={height} />, 
+          bottom: <h1>Place your submarine</h1>
+        });
     } else
-      setLayout({main: <ChooseSubmarine setChosenSubmarine={setChosenSubmarine} />, bottom: <h1>Choose your fighter</h1>});
-  }, [chosenSubmarine, subWasPlaced]);
+      setLayout({
+        main: <ChooseSubmarine setChosenSubmarine={setChosenSubmarine} />,
+        bottom: <h1>Choose your fighter</h1>
+      });
+  }, [chosenSubmarine, position]);
 
   return (
     <div className="u-container">
