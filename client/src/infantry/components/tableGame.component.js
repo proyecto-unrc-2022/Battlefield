@@ -10,7 +10,9 @@ export default class TableGame extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      game_id: null,
+      game_id: props.game_id,
+      player1_id: props.player1_id,
+      player2_id: props.player2_id,
       figure1: null,
       figure2: null,
       projectiles: null
@@ -18,9 +20,9 @@ export default class TableGame extends Component {
   }
 
   async componentDidMount(){
-    const f1 = await InfantryService.getFigure(1, 1)
-    const f2 = await InfantryService.getFigure(2, 1)
-    const projectiles = await InfantryService.getProjectile(1)
+    const f1 = await InfantryService.getFigure(this.state.player1_id, this.state.game_id)
+    const f2 = await InfantryService.getFigure(this.state.player2_id, this.state.game_id)
+    const projectiles = await InfantryService.getProjectile(this.state.game_id)
     this.setState({
       figure1 : f1["body"],
       figure2 : f2["body"],
