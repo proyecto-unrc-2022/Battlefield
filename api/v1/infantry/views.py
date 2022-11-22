@@ -133,7 +133,7 @@ def mov_action():
     if(move_save(game_id, user_id, course, velocity)):
         move_entity = Figure_infantry.query.filter_by(id_game = game_id, id_user = user_id).first()
         return jsonify(figure_schema.dump(move_entity))
-    return "Colision o velocidad excedida"
+    return "Accion invalida"
 
 @infantry.route("/game/<game_id>/user/<user_id>/direccion/<direccion>/shoot",methods=['POST'])
 def shoot_entity(user_id, game_id, direccion):
@@ -147,7 +147,7 @@ def shoot_entity(user_id, game_id, direccion):
         projectile = Projectile_infantry.query.order_by(Projectile_infantry.id.desc()).first()
         return jsonify(projectile_schema.dump(projectile))
     else:
-        return Response(status=404)
+        return "Accion invalida"
 
 
 @infantry.route("games", methods=["GET"])

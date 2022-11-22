@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useEffect } from "react";
 import "./TableGames.css";
 import InfantryService from "../services/infantry.service"
 
@@ -10,7 +10,9 @@ export default class TableGame extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      game_id: null,
+      game_id: props.game_id,
+      player1_id: props.player1_id,
+      player2_id: props.player2_id,
       figure1: null,
       figure2: null,
       projectiles: null
@@ -18,9 +20,9 @@ export default class TableGame extends Component {
   }
 
   async componentDidMount(){
-    const f1 = await InfantryService.getFigure(1, 1)
-    const f2 = await InfantryService.getFigure(2, 1)
-    const projectiles = await InfantryService.getProjectile(1)
+    const f1 = await InfantryService.getFigure(this.state.player1_id, this.state.game_id)
+    const f2 = await InfantryService.getFigure(this.state.player2_id, this.state.game_id)
+    const projectiles = await InfantryService.getProjectile(this.state.game_id)
     this.setState({
       figure1 : f1["body"],
       figure2 : f2["body"],
@@ -28,8 +30,8 @@ export default class TableGame extends Component {
     }) 
   }
   async componentDidUpdate(prevProps, prevState){
-    const f1 = await InfantryService.getFigure(1, 1)
-    const f2 = await InfantryService.getFigure(2, 1)
+    const f1 = await InfantryService.getFigure(this.state.player1_id, this.state.game_id)
+    const f2 = await InfantryService.getFigure(this.state.player2_id, this.state.game_id)
     const projectiles = await InfantryService.getProjectile(1)
     if(prevState.figure1 !== f1["body"] || prevState.figure2 !== f2["body"]
     || prevState.projectiles !== projectiles){
@@ -40,14 +42,19 @@ export default class TableGame extends Component {
       }) 
     }
   }
-  
+  is_it_on_map(coor){
+    if(coor[0] >= 0 && coor[0] < 20 && coor[1] >= 0 && coor[1] < 10){
+      return true
+    }
+    return false
+  }
 
   render() {
     let table = (new Array(10)).fill().map(function(){ return new Array(20).fill(0);});
     const casillas = [];
     if (this.state.figure1 != null && this.state.figure2 != null){
-      this.state.figure1.map(coor => table[coor[1]][coor[0]] = FIGURE)
-      this.state.figure2.map(coor => table[coor[1]][coor[0]] = FIGURE)
+      this.state.figure1.map(coor => {if(this.is_it_on_map(coor)){table[coor[1]][coor[0]] = FIGURE}})
+      this.state.figure2.map(coor => {if(this.is_it_on_map(coor)){table[coor[1]][coor[0]] = FIGURE}})
     }
     if(this.state.projectiles !=null){
       this.state.projectiles.map(projectile => table[projectile["pos_y"]][projectile["pos_x"]] = PROJECTILE)

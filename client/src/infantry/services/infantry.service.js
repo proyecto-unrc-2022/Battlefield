@@ -73,7 +73,6 @@ class InfantryService{
                 },
             }
         ).then((response) =>{
-            console.log(response.data)
             return response.data
         })
     }
@@ -88,8 +87,35 @@ class InfantryService{
                 },
             }
         ).then((response) =>{
+            return response.data
+        })
+    }
+    async move(game_id, user_id, course, velocity){
+        let data = {game_id: game_id, user_id: user_id, course: course, velocity: velocity}
+        return await axios.post(
+            API_URL + "move",
+            data,
+            {
+                headers:{
+                    "Content-Type": "application/json",
+                },
+            }
+        ).then((response) =>{
+            return response.data
+        })
+    }
+    async shoot(game_id, user_id, course){
+        let data = {velocity: 0}
+        return await axios.post(
+            API_URL + "game/" + game_id + "/user/" + user_id + "/direccion/" + course +"/shoot",
+            data,
+            {
+                headers:{
+                    "Content-Type": "application/json",
+                },
+            }
+        ).then((response) =>{
             console.log(response.data)
-
             return response.data
         })
     }
