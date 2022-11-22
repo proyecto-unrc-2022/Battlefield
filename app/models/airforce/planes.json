@@ -21,5 +21,17 @@
             "damage":10,
             "plane": "Hawker Tempest"
         }    
+    ],
+    "users": [
+        {
+            "username": "augusto",
+            "password":"1234",
+            "email": "augusto@email.com"
+        },
+        {
+            "username": "joaquin",
+            "password":"1234",
+            "email": "joaquin@email.com"
+        }
     ]
 }

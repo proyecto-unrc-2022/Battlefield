@@ -4,7 +4,12 @@ from flask import Blueprint, Response, jsonify, request
 from flask_cors import CORS
 
 from api import token_auth, verify_token
-from app.daos.airforce.plane_dao import add_machine_gun, add_plane, add_projectile
+from app.daos.airforce.plane_dao import (
+    add_machine_gun,
+    add_plane,
+    add_projectile,
+    get_all_planes,
+)
 from app.models.airforce.air_force_game import (
     AirForceGame,
     CheckCourse,
@@ -121,6 +126,13 @@ def create_projectile(id):
         return Response(status=400)
 
 
+@air_force.route("/game/<id>/ready", methods=["GET"])
+def game_ready(id):
+    game = air_force_game[int(id)]
+    ready = game.player_a != "" and game.player_b != ""
+    return jsonify({"ready": ready})
+
+
 @air_force.route("get_battlefield_status/game_id/<id>", methods=["GET"])
 def get_battlefield_status(id):
     game = air_force_game[int(id)]
@@ -129,48 +141,19 @@ def get_battlefield_status(id):
     return jsonify(obj_list)
 
 
-# @air_force.route("/game/plane/<plane_id>", methods=["GET"])
-# def get_plane(plane_id):
-# plane = get_plane_dao(plane_id)
-# return jsonify(plane_schema.dump(plane))
+@air_force.route("/get/planes", methods=["GET"])
+def get_plane():
+    plane = get_all_planes()
+    listPlane = {}
+    for p in plane:
+        listPlane[p.id] = plane_schema.dump(p)
+    return listPlane
 
 
 @air_force.route("/players/<player>/plane", methods=["GET"])
 def get_player_plane(player):
     plane = air_force_game.get_player_plane(player)
     return jsonify(plane)
-
-
-# @air_force.route("/newplane", methods=["POST"])
-# def put_plane():
-#     name = request.json["name"]
-#     size = request.json["size"]
-#     speed = request.json["speed"]
-#     health = request.json["health"]
-#     course = request.json["course"]
-#     coor_x = request.json["coor_x"]
-#     coor_y = request.json["coor_y"]
-#     p = add_plane(name, size, speed, health, course, coor_x, coor_y)
-#     return jsonify(plane_schema.dump(p))
-
-
-@air_force.route("/initdb", methods=["POST"])
-def init_db():
-    f = open("./api/v1/air_force/planes.json")
-    data = json.load(f)
-    for plane in data["planes"]:
-        name = plane["name"]
-        size = plane["size"]
-        speed = plane["speed"]
-        health = plane["health"]
-        cant_projectile = plane["cant_projectile"]
-        p = add_plane(name, size, speed, health, cant_projectile)
-    for projectile in data["projectile"]:
-        speed = projectile["speed"]
-        damage = projectile["damage"]
-        plane = Plane.query.filter_by(name=projectile["plane"]).first().id
-        add_projectile(speed=speed, damage=damage, plane_id=plane)
-    return Response(status=200)
 
 
 @air_force.route("/machine_gun", methods=["POST"])
