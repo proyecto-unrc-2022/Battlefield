@@ -74,7 +74,7 @@ const NavyLobby = () => {
           <div className="row">
             <div className="col-12 d-flex justify-content-center mt-4">
               {game ? (
-                <NavyGameCard showButton={false} game={game} key={game.id} />
+                <NavyGameCard button={"cancel-game"} game={game} key={game.id} />
               ) : null}
             </div>
           </div>
