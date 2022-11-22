@@ -5,13 +5,13 @@ const API_URL = "http://127.0.0.1:5000/api/users";
 
 class UserService {
   getPublicContent() {
-    return axios.get(API_URL + "", {
+    return axios.get(API_URL + "", {  
       headers: { "Content-Type": "application/json" },
     });
   }
 
-  getUserBoard() {
-    return axios.get(API_URL + "/1", { headers: authHeader() });
+  getUserBoard(id) {
+    return axios.get(API_URL + `/${id}`, { headers: authHeader() });
   }
 
   getModeratorBoard() {

@@ -1,5 +1,5 @@
 import axios from "axios";
-import AuthService from "../../services/auth.service";
+
 
 const API_URL = "http://127.0.0.1:5000/api/v1/infantry/";
 class InfantryService{

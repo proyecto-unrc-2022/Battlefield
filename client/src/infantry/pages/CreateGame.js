@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import gameService from "../services/game.service";
+import authService from "../../services/auth.service";
 import "../Styles.css"
 
 export default function CreateGame(){
@@ -10,14 +12,19 @@ export default function CreateGame(){
         navigate("/home_Infantry");
     }
 
+    const host = authService.getCurrentUser()
+
+    useEffect(() => {
+
+        gameService.createGame(host.sub)
+
+    },[])
+
     return(
-        <div className="container bg-HomePage">
+        <div className="container-fluid bg-HomePage ">
             
             <div className="row">
-                <div className="col text-white">
-                    <button onClick={back} type="button" className="btn btn-secondary m-3">Back</button>
-                    
-                </div>
+                
                 
             </div>
             <div className="row">

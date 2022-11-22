@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import gameService from "../services/game.service";
+
+import authService from "../../services/auth.service";
 import "../Styles.css"
 
 
@@ -12,22 +14,66 @@ export default function JoinGame(){
         navigate("/home_Infantry");
     }
 
+    const join= (idGame, idUser) =>{
+        gameService.joinGame(idGame, idUser)
+    }
+
     const [games, setGames] = useState([])
 
-    useEffect(() => {
+    const handleJoin = (uid) => {
+
+        const game = games.filter((game) => game.id === uid)
+        join(game[0].id, host.sub)
+
+    }
+
+
+
+    const get_Games = () => {
+
+         return(<div className="row">
+                <div className="col-5"></div>
+                <div className="col">
+                <h1 className="mb-4 text-center Battlefield-Infantry">Games Available</h1>
+                <div className="col rounded-5 text-center d-flex justify-content-center">
+                    
+                    
+                    <ul className="Scroll list-group w-50">
+                        {games.map(game => (  
+                            <li onClick={() => handleJoin(game.id)} key={game.id} className=" list-group-item ">  
+                                Games:{game.id} - User:{game.id_user1} -  {/* */}
+                                
+                                <button type="button" className="btn btn-secondary" onClick={() => handleJoin(game.id)}>Join</button>
+                            </li>
+                        ))}
+
+                        
+                    </ul>
+                </div>
+                </div>
+        </div>)
+
+
+    }
+
+    const get = () => {
 
         gameService.getGames().then((response) =>{
             setGames(response.data);
         })
-    }, []);
 
-    console.log(games)
 
-    
+    }
+
+    useEffect(() => {
+        get()
+    }, []);    
+
+    const host = authService.getCurrentUser()    
 
     return(
         
-        <div className="container bg-HomePage">
+        <div className="container-fluid bg-HomePage">
             
             <div className="row">
                 <div className="col text-white">
@@ -35,30 +81,9 @@ export default function JoinGame(){
                 </div>
                 
             </div>
-            <div className="row">
-                <div className="col-5"></div>
-                <div className="col">
-                <div className="col text-dark text-center d-flex justify-content-center flex-wrap">
-                    
-                    <h1 className="mb-3">Games Available</h1>
-                    <ul className="Scroll list-group w-50">
-                        {games.map(game => (  
-                            <li className="list-group-item ">  
-                                Games:{game.id} - User:{game.id_user1}  {/* */}
-                            </li>  
-                        ))}
-                        
-                    </ul>
-                        
-                </div>
-                </div>
-            </div>
-            <br></br>
-            <br></br>
-            <br></br>
-            <br></br>
-            <br></br>
-            <br></br>
+
+            {get_Games()}
+
             <br></br>
             <br></br>
             <br></br>
