@@ -117,9 +117,10 @@ def move_save(game_id, user_id, direction, velocity):
     aux_figure = copy.copy(figure)
     game = Game_Infantry.query.filter_by(id = game_id).first()
     exceeded_velocity_limit = (velocity > figure.velocidad)
-    coor = direc(direction, aux_figure.pos_x, aux_figure.pos_y)
-    aux_figure.pos_x = aux_figure.pos_x + (aux_figure.pos_x - coor[0])
-    aux_figure.pos_y = aux_figure.pos_y + (aux_figure.pos_y - coor[1])
+    for i in range(velocity):
+        coor = direc(direction, aux_figure.pos_x, aux_figure.pos_y)
+        aux_figure.pos_x = aux_figure.pos_x + (aux_figure.pos_x - coor[0])
+        aux_figure.pos_y = aux_figure.pos_y + (aux_figure.pos_y - coor[1])
     if not(exceeded_velocity_limit) and validation_figure(aux_figure):
         assis_server_restart(game)
         players_actions.put(("move", game_id, user_id, direction, velocity))
@@ -253,7 +254,9 @@ def figure_valid(figure, game_id, direccion, velocity):
                               4:{"velocidad":velocity,"daño":30}}
     
     y = 1
+    
     if(figure.figure_type == SOLDIER):
+        aux_figure = copy.copy(figure)
         while y != 4:
             projectile = Projectile_infantry(id_game= game_id, 
                                     pos_x=0, 
@@ -262,11 +265,13 @@ def figure_valid(figure, game_id, direccion, velocity):
                                     daño=diccionary_projectile1[y]["daño"], 
                                     direccion= direccion,
                                     type=MACHINE_GUN)
-            direction_of_projectile(figure, projectile, direccion)
+            direction_of_projectile(aux_figure, projectile, direccion)
+            figure.direccion = direccion
+            db.session.add(figure)
             db.session.add(projectile)
             db.session.commit()
-            figure.pos_x = projectile.pos_x
-            figure.pos_y = projectile.pos_y
+            aux_figure.pos_x = projectile.pos_x
+            aux_figure.pos_y = projectile.pos_y
             y = y + 1
         return True
     elif(figure.figure_type == HUMVEE or figure.figure_type == TANK):
@@ -278,6 +283,8 @@ def figure_valid(figure, game_id, direccion, velocity):
                                 direccion= direccion,
                                 type=MISSILE)
         direction_of_projectile(figure, projectile, direccion)
+        figure.direccion = direccion
+        db.session.add(figure)
         db.session.add(projectile)
         db.session.commit()
         return True
@@ -293,7 +300,8 @@ def figure_valid(figure, game_id, direccion, velocity):
                                 direccion= direccion,
                                 type=MORTAR)
             direction_of_projectile(figure, projectile, direccion)
-            print(projectile.velocidad)
+            figure.direccion = direccion
+            db.session.add(figure)
             db.session.add(projectile)
             db.session.commit()
             return True
