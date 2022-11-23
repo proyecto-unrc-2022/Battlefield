@@ -54,5 +54,27 @@ class AirForceService {
           return response
         })
     }
+
+  createProjectile(gameId){
+    return axios
+      .post(
+        API_URL + `game/${gameId}/new_projectile`,{},
+        {
+          headers: authHeader()
+        }
+      ).then((response) => {
+        return response
+      })
+  }
+
+  fligth(gameId, planeCourse){
+    return axios
+      .put(
+        API_URL + `game_id/${gameId}/course/${planeCourse}/`,{},
+        {
+          headers: authHeader()
+        }
+      )
+  }
 }
 export default new AirForceService();
