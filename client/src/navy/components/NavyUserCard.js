@@ -40,6 +40,7 @@ const NavyUserCard = ({username, rol="host"}) => {
         </div>
         
       </div>
+      
     </div>
   )
 }

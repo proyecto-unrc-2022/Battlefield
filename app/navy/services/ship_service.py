@@ -31,16 +31,11 @@ class ShipService:
             data["user_id"],
             data["navy_game_id"],
         )
-        added_ship = ship_dao.add_or_update(new_ship)
-        ships = ship_dao.get_by(navy_game_id=data["navy_game_id"])
-        if len(ships) == 2:
-            game = navy_game_service.get_by_id(data["navy_game_id"])
-            game.status = "STARTED"
-            navy_game_dao.add_or_update(game)
+        added_ship = ship_dao.add(new_ship)
         return added_ship
 
-    def update_db(self, ship):
-        ship_dao.add_or_update(ship)
+    def update_all(self, ships):
+        ship_dao.update_all(ships)
 
     def load_to_board(self, ship):
         from app.navy.services.navy_game_service import navy_game_service
@@ -189,6 +184,10 @@ class ShipService:
         from app.navy.dtos.ship_dto import ShipDTO
 
         return ShipDTO().dump(ship)
+
+    def pos_in_range(self, ship, pos):
+        pos_x, pos_y = pos[0], pos[1]
+        return utils.in_range(ship.pos_x, ship.pos_y, pos_x, pos_y, ship.visibility)
 
     def get_alives(self, user_id, navy_game_id):
         from app.navy.services.navy_game_service import navy_game_service

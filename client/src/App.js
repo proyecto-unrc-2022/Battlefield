@@ -17,7 +17,7 @@ import NavyLobby from "./navy/pages/NavyLobby"
 import NavyBoard from "./navy/pages/NavyBoard";
 
 import AirforceAPP from "./airforce/AirforceAPP";
-import ChoosePlane from "./airforce/components/AirforceChoosePlane";
+import ChoosePlane from "./airforce/components/AirforceChoosePlane.component";
 import AirforceLobby from "./airforce/components/AirforceLobby.component"
 import AirforceBoard from "./airforce/components/AirforceBoard";
 class App extends Component {
@@ -60,12 +60,6 @@ class App extends Component {
             <li className="nav-item">
               <Link to={"/home"} className="nav-link">
                 Home
-              </Link>
-            </li>
-
-            <li className="nav-item">
-              <Link to={"/navy"} className="nav-link">
-                Navy
               </Link>
             </li>
 

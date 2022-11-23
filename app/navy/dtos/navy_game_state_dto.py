@@ -33,7 +33,7 @@ class NavyGameStateDTO:
         self.round = navy_game.round
         self.winner = navy_game.winner
         self.ship = self.load_ship(self.user_id)
-        self.sight_range = navy_game_service.get_board(self.id, self.user_id)
+        self.sight_range = navy_game_service.get_visibility(self.id, self.user_id)
 
     def dump(self):
         return {

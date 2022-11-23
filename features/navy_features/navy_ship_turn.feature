@@ -1,45 +1,63 @@
 Feature: Turn a ship
 
-    Background: Login a user and initialized app with a game
-        Given I am logged in as "user1"
-        And another user exists as "user2"
-        And the game is started
+    Background: Logged users and start a game
+        Given a user '1' logged in
+        And a user '2' logged in
+        And the user '1' created a NavyGame '1'
+        And the user '2' joined the NavyGame '1'
 
-    Scenario: A ship turns and doesn't collide with anything
-        Given The user '1' has a ship 'Destroyer' in '5','5' with course 'N' and hp '100'
-        When The ship with id '1' turns to 'W'
-        Then I should see the ship '1' with the new course 'W'
+    Scenario: Ship turns without collision
+        Given the user '1' created a 'Destroyer' in '5', '5' with course 'N' and '60' hp in the NavyGame '1'
+        And the user '2' created a 'Destroyer' in '5', '15' with course 'S' and '60' hp in the NavyGame '1'
+        When the user '1' turns his ship to 'E' and moves it '0' cells for round '1' in NavyGame '1'
+        And the user '2' turns his ship to 'W' and moves it '0' cells for round '1' in NavyGame '1'
+        And the NavyGame '1' updates for user '1'
+        And the NavyGame '1' updates for user '2'
+        Then the user '1' should see his ship with the course 'E' at '5', '5' with '60' hp in the NavyGame '1'
+        Then the user '2' should see his ship with the course 'W' at '5', '15' with '60' hp in the NavyGame '1'
 
-    Scenario: A ship turns and collides with a missile and stills alive
-        Given The user '1' has a ship 'Destroyer' in '5','5' with course 'N' and hp '100'
-        And There is a missile at '5','6' with speed '3', course 'W' and damage '50'
-        When The ship with id '1' turns to 'W'
-        Then I should see the ship '1' with the new course 'W'
-        And The ship with id '1' should have '50' hp
+    Scenario: Ship turns, collides with a missile and decreases its hp
+        Given the user '1' created a 'Destroyer' in '5', '5' with course 'N' and '60' hp in the NavyGame '1'
+        And the user '2' created a 'Destroyer' in '5', '15' with course 'S' and '60' hp in the NavyGame '1'
+        And a missile exists from user '2' in '5', '7' with course 'W', speed '1', and damage '30' in the NavyGame '1'
+        When the user '1' turns his ship to 'W' and moves it '0' cells for round '1' in NavyGame '1'
+        And the user '2' turns his ship to 'S' and moves it '0' cells for round '1' in NavyGame '1'
+        And the NavyGame '1' updates for user '1'
+        Then the user '1' should see his ship with the course 'W' at '5', '5' with '30' hp in the NavyGame '1'
+        And the missile '1' in NavyGame '1' should be destroyed
 
-    Scenario: A ship turns and collides with a missile and it dies
-        Given The user '1' has a ship 'Destroyer' in '5','5' with course 'N' and hp '40'
-        And The user '2' has a ship 'Destroyer' in '2','11' with course 'N' and hp '100'
-        And There is a missile at '5','6' with speed '3', course 'W' and damage '50'
-        When The ship with id '1' turns to 'W'
-        Then The ship with id '1' should be destroyed
+    Scenario: Ship turns, collides with a missile and is destroyed
+        Given the user '1' created a 'Destroyer' in '5', '5' with course 'N' and '60' hp in the NavyGame '1'
+        And the user '2' created a 'Battleship' in '5', '15' with course 'S' and '80' hp in the NavyGame '1'
+        And a missile exists from user '2' in '3', '7' with course 'SW', speed '1', and damage '60' in the NavyGame '1'
+        When the user '1' turns his ship to 'SW' and moves it '0' cells for round '1' in NavyGame '1'
+        And the user '2' turns his ship to 'S' and moves it '0' cells for round '1' in NavyGame '1'
+        And the NavyGame '1' updates for user '1'
+        And the NavyGame '1' updates for user '2'
+        Then the user '1' should see his ship with the course 'SW' at '5', '5' with '0' hp in the NavyGame '1'
+        And the missile '1' in NavyGame '1' should be destroyed
+        And the user '2' should be the winner in the NavyGame '1'
 
-    Scenario: A ship with full hp turns and collides with two missiles and die
-        Given The user '1' has a ship 'Destroyer' in '5','5' with course 'N' and hp '40'
-        And The user '2' has a ship 'Destroyer' in '2','11' with course 'N' and hp '100'
-        And There is a missile at '5','6' with speed '3', course 'W' and damage '50'
-        And There is a missile at '5','7' with speed '3', course 'W' and damage '50'
-        When The ship with id '1' turns to 'W'
-        Then The ship with id '1' should be destroyed
+    Scenario: Ship turns and collides with another ship
+        Given the user '1' created a 'Cruiser' in '5', '10' with course 'N' and '100' hp in the NavyGame '1'
+        And the user '2' created a 'Destroyer' in '5', '11' with course 'N' and '60' hp in the NavyGame '1'
+        When the user '1' turns his ship to 'E' and moves it '3' cells for round '1' in NavyGame '1'
+        And the user '2' turns his ship to 'N' and moves it '0' cells for round '1' in NavyGame '1'
+        And the NavyGame '1' updates for user '1'
+        And the NavyGame '1' updates for user '2'
+        Then the user '2' should see his ship with the course 'N' at '5', '11' with '-40' hp in the NavyGame '1'
+        And the user '1' should be the winner in the NavyGame '1'
 
-    Scenario: A ship turns and collides with another ship and wins
-        Given The user '1' has a ship 'Destroyer' in '5','5' with course 'N' and hp '100'
-        And The user '2' has a ship 'Cruiser' in '5','6' with course 'N' and hp '60'
-        When The ship with id '1' turns to 'W'
-        Then The ship with id '2' should be destroyed
-
-    Scenario: A ship turns and collides with another ship and lose
-        Given The user '1' has a ship 'Destroyer' in '5','5' with course 'N' and hp '60'
-        And The user '2' has a ship 'Cruiser' in '5','6' with course 'N' and hp '100'
-        When The ship with id '1' turns to 'W'
-        Then The ship with id '1' should be destroyed
+    Scenario: Ship turns and collides with two missiles and dies
+        Given the user '1' created a 'Battleship' in '5', '5' with course 'N' and '80' hp in the NavyGame '1'
+        And the user '2' created a 'Destroyer' in '5', '15' with course 'S' and '60' hp in the NavyGame '1'
+        And a missile exists from user '2' in '3', '3' with course 'SE', speed '1', and damage '40' in the NavyGame '1'
+        And a missile exists from user '2' in '2', '2' with course 'SE', speed '1', and damage '40' in the NavyGame '1'
+        When the user '1' turns his ship to 'SE' and moves it '0' cells for round '1' in NavyGame '1'
+        And the user '2' turns his ship to 'S' and moves it '0' cells for round '1' in NavyGame '1'
+        And the NavyGame '1' updates for user '1'
+        And the NavyGame '1' updates for user '2'
+        Then the user '1' should see his ship with the course 'SE' at '5', '5' with '0' hp in the NavyGame '1'
+        And the missile '1' in NavyGame '1' should be destroyed
+        And the missile '2' in NavyGame '1' should be destroyed
+        And the user '2' should be the winner in the NavyGame '1'
