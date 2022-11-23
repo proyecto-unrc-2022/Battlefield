@@ -50,6 +50,8 @@ class BoardMask(db.Model):
         for cell in new_visible_cells:
             self.__set_cell_visible(cell)
 
+        self.save()
+
     def get_radar_pulse(self):
         self.__clean_radar()
 

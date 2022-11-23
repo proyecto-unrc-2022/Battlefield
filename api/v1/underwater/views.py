@@ -111,9 +111,7 @@ def join_game(session_id):
 @underwater.post("/game/<int:session_id>/choose_submarine")
 @token_auth.login_required
 def choose_submarine(session_id):
-    data = request.form.to_dict()
-    for key in data.keys():
-        data[key] = int(data[key])
+    data = request.json
 
     token = get_token(request)
     player = get_player_from(token)
@@ -124,7 +122,6 @@ def choose_submarine(session_id):
     if not player:
         return Response('{"error":"player not found"}', status=404)
 
-    print(data)
     try:
         sub = session.game.add_submarine(
             player,
@@ -144,9 +141,7 @@ def choose_submarine(session_id):
 @underwater.post("/game/<int:session_id>/rotate_and_advance")
 @token_auth.login_required
 def rotate_and_advance(session_id):
-    data = request.form.to_dict()
-    for key in data:
-        data[key] = int(data[key])
+    data = request.json
 
     token = get_token(request)
     player = get_player_from(token)
@@ -178,9 +173,7 @@ def rotate_and_advance(session_id):
 @underwater.post("/game/<int:session_id>/rotate_and_attack")
 @token_auth.login_required
 def rotate_and_attack(session_id):
-    data = request.form.to_dict()
-    for key in data:
-        data[key] = int(data[key])
+    data = request.json
 
     token = get_token(request)
     player = get_player_from(token)

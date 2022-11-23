@@ -82,9 +82,15 @@ class UnderGameSession(db.Model):
             "game_id": self.game.id,
             "turn": self.turn,
             "order": self.order,
-            "submarine": player.submarine.to_dict(),
-            "visible_board": player.submarine.under_board_mask.get_visible_board(),
         }
+        # Show submarine only if it exists
+        if player.submarine:
+            d.update(
+                {
+                    "submarine": player.submarine.to_dict(),
+                    "visible_board": player.submarine.under_board_mask.get_visible_board(),
+                }
+            )
         return d
 
     def has_player(self, player):
