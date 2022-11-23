@@ -37,13 +37,13 @@ export default function UnderNewGame(props) {
             <input type={"range"} min="10" max="20" step="2" id="height" value={height} onChange={(event) => setHeight(event.target.value)}/>
             <span style={{marginLeft:'8px'}}>{height}</span>
 
-            <label for="width">Width</label>
+            <label htmlFor="width">Width</label>
             <input type={"range"} min="20" max="40" step="2" id="width" value={width} onChange={(event) => setWidth(event.target.value)}/>
-            <span style={{'margin-left':'8px'}}>{width}</span>
+            <span style={{marginLeft:'8px'}}>{width}</span>
           </div>
 
           <div className="u-input-field">
-            <label className="inline-block" for="players">Players</label>
+            <label className="inline-block" htmlFor="players">Players</label>
             <select type="select" id="players">
               <option value="2">2</option>
               <option value="4">4</option>

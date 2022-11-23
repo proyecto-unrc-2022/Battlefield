@@ -22,7 +22,7 @@ export default function PlaceSubmarine(props) {
   }
 
   return (
-    <div className={"u-grid-" + props.width}>
+    <div style={{height: 976/2 + "px"}} className={"u-grid-" + props.width}>
       {cells.map((row, i) => {
         return row.map((_, j) => {
           return (<UnderCell placeSubmarine={placeSubmarine} key={(i+1)*(j+1)} x={i} y={j} className="u-cell" type="" images={null} />);

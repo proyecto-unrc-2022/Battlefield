@@ -1,10 +1,12 @@
 .u-game-container {
-  display: flex;
+  background: #E3F5FF;
   flex-direction: column;
   align-items: center;
-  flex: 1;
-  width: 60%;
+  width: 55%;
   align-self: center;
+  padding: 40px;
+  border-radius: 25px;
+  margin-top: 40px;
 }
 
 .u-bottom-div {
@@ -16,9 +18,8 @@
 
 .u-screen {
   background: #2C546E;
-  width: 1000px;
-  height: 500px;
-  margin: 40px 50px 25px 50px;
+  width: 100%;
+  margin-bottom:40px;
 }
 
 .cards-container {
@@ -69,7 +70,7 @@
 
 .u-grid-20,.u-grid-24,.u-grid-28 {
   box-shadow: 3px 3px 10px rgba(156, 230, 234);
-  background-image: url('board-bakcground.jpg');
+  background-image: url('board-background.png');
   background-size: cover;
   filter: brightness(200%);
   height: 100%;
@@ -120,15 +121,13 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  padding: 0px 20px;
 }
 
-.u-right-controls {
+.u-left-controls,.u-right-controls {
   display: flex;
-  height: 135px;
-}
-
-.u-left-controls {
-  display: flex;
+  gap: 20px;
+  align-items: center;
   height: 135px;
 }
 
@@ -152,4 +151,23 @@
   display: grid;
   grid-template-columns: 3fr 2fr 3fr;
   grid-template-rows: 3fr 2fr 3fr;
+}
+
+.u-game-button {
+  color: white;
+  text-align: center;
+  border: none;
+  background-color: #2F6ECD;
+  border-radius: 5px;
+  box-shadow: 3px 3px rgb(14, 28, 105);
+}
+
+.u-game-button:hover {
+  background-color: rgb(62, 102, 180)}
+
+.u-game-button:active {
+  background-color: #1420a1;
+  box-shadow: 0px 0px rgb(14, 28, 105);
+  transform: translateY(3px);
+  transform: translateX(3px);
 }

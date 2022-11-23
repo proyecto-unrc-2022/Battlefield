@@ -16,5 +16,5 @@ export default function UnderCell({placeSubmarine, x, y, type, images}){
     else return null;
   }
 
-  return (<div onClick={_ => placeSubmarine(x,y)} className={"u-cell u-cell-" + type} >{image()}</div>)
+  return (<div onClick={placeSubmarine == null ? null : _ => placeSubmarine(x,y)} className={"u-cell u-cell-" + type} >{image()}</div>)
 }

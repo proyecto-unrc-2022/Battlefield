@@ -7,43 +7,13 @@ import UnderCell from './UnderCell';
 const baseURL = "http://127.0.0.1:5000/api/v1/underwater";
 
 
-export default function UnderBoard({id, height, width}) {
-  const [board, setBoard] = useState([]);
+export default function UnderBoard({board, height, width}) {
   const images = {
     "FH": require("./css/FH.png"),
     "FT": require("./css/FT.png"),
   };
 
-  function getVisibility() {
-    axios.get(
-      baseURL + "/game/" + id,
-      {headers: authHeader()}
-    ).then(response => {
-      console.log(response.data.visible_board);
-      let visibility = response.data.visible_board;
-      let cells = []
-      for(let i = 0; i<height; i++){
-        cells.push([])
-        for (let j = 0; j< width; j++){
-          if(visibility[i] === undefined){
-            cells[i].push("nv");
-          }else{
-            let visibility_i = visibility[i]
-            if(visibility_i[j] === undefined){
-              cells[i].push("nv");
-            }else{
-              cells[i].push(visibility[i][j]);
-            }
-          }
-        }
-      }
-      setBoard(cells);
-    }).catch(error => {console.log(error)})
-  }
-
-  useEffect(() =>{
-    getVisibility();
-  }, []);
+  useEffect(_ => console.log("Board updated", board), [board])
 
   return (
     <div className={"u-grid-" + width}>
@@ -54,6 +24,6 @@ export default function UnderBoard({id, height, width}) {
           })
         })
       }
-          </div>
+    </div>
   )
 }
