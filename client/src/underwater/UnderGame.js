@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import authHeader from "../services/auth-header";
@@ -17,7 +17,9 @@ export default function UnderGame() {
   const [chosenSubmarine, setChosenSubmarine] = useState(null);
   const [position, setPosition] = useState(null);
   const [layout, setLayout] = useState(null);
+  const requestWasSent = useRef(false);
   const URL = "http://localhost:5000/api/v1/underwater/game/" + params.id;
+
 
   function sendChooseSubmarine() {
     const headers = authHeader();
@@ -37,10 +39,13 @@ export default function UnderGame() {
   useEffect(() => {
     if(chosenSubmarine != null) {
       if(position != null) {
-        sendChooseSubmarine();
+        if(!requestWasSent.current) {
+          sendChooseSubmarine();
+          requestWasSent.current = true;
+        }
         setLayout({
           main: <UnderBoard id={params.id} width={width} height={height} />,
-          bottom: <UnderControls />
+          bottom: <UnderControls position={position}  setPosition={setPosition}/>
         });
       }
       else

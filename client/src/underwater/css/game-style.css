@@ -18,7 +18,7 @@
   background: #2C546E;
   width: 1000px;
   height: 500px;
-  margin: 50px;
+  margin: 40px 50px 25px 50px;
 }
 
 .cards-container {
@@ -132,7 +132,24 @@
   height: 135px;
 }
 
-.u-direction-container {
-  background-image: url('board-bakcground.jpg');
-  width: 135px;
+.u-overlap-1 {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  z-index: 1;
+}
+
+.u-overlap-2 {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  z-index: 2;
+}
+
+.u-direction-grid {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 3fr 2fr 3fr;
+  grid-template-rows: 3fr 2fr 3fr;
 }
