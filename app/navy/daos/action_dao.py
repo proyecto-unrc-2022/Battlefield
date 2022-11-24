@@ -17,5 +17,12 @@ class ActionDAO:
             .all()
         )
 
+    def get_by_user_round(self, navy_game_id, round, user_id):
+        return (
+            db.session.query(self.model)
+            .filter_by(navy_game_id=navy_game_id, round=round, user_id=user_id)
+            .first()
+        )
+
 
 action_dao = ActionDAO(Action)
