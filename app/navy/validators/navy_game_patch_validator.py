@@ -1,21 +1,19 @@
-from marshmallow import Schema, ValidationError, fields, validates
-
-from app.models.user import User
+from marshmallow import Schema, ValidationError, fields, validates_schema
 
 
 class NavyGamePatchValidator(Schema):
-    user2_id = fields.Integer(required=True)
+
+    user2_id = fields.Integer()
     game_id = fields.Integer(required=True)
 
-    @validates("user2_id")
-    def validate_user_existence(self, value):
-        if not bool(User.query.filter_by(id=value).first()):
-            raise ValidationError("User doesn't exist.")
+    @validates_schema
+    def validate_game(self, in_data, **kwargs):
+        from app.navy.daos.navy_game_dao import navy_game_dao
+        from app.navy.utils.navy_game_statuses import WAITING_PLAYERS
 
-    @validates("game_id")
-    def validate_game(self, value):
-        from app.navy.services.navy_game_service import navy_game_service
-
-        game = navy_game_service.get_by_id(value)
-        if bool(game.user1_id) and bool(game.user2_id):
+        game = navy_game_dao.get_by_id(in_data["game_id"])
+        if not (game.status == WAITING_PLAYERS):
             raise ValidationError("Can't join a game with two players")
+
+        if game.user1_id == in_data["user2_id"]:
+            raise ValidationError("Can't join your own game")

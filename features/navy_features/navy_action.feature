@@ -22,7 +22,7 @@ Feature: Creation of an action.
 
     Scenario: Move with a negative distance
         When the user '1' turns his ship to 'E' and moves it '-1' cells for round '1' in NavyGame '1'
-        Then the user '1' should see an error message 'The movement is a negative distance'
+        Then the user '1' should see an error message 'The move is a negative distance'
 
     Scenario: Move with incorrect range of distance
         When the user '1' turns his ship to 'E' and moves it '4' cells for round '1' in NavyGame '1'
@@ -32,7 +32,7 @@ Feature: Creation of an action.
         Given the user '1' created a NavyGame '2'
         Given the user '2' joined the NavyGame '2'
         When the user '1' turns his ship to 'E' and moves it '4' cells for round '1' in NavyGame '2'
-        Then the user '1' should see an error message 'Game not ready to play'
+        Then the user '1' should see an error message 'Game not started yet'
 
     Scenario: Move the other users ship
         When the user '1' turns users '2' ship to 'E' and moves it '4' cells for round '1' in NavyGame '1'
