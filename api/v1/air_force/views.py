@@ -92,8 +92,9 @@ def choose_plane_and_position():
         print("dicc", dic)
         print("airforce game:", air_force_game)
         return jsonify(dic.to_dict())  # Response(status=201)
-    except:
-        return Response(status=400)
+    except Exception as e:
+        print(e)
+        return Response(str(e), status=400)
 
 
 @air_force.route("game_id/<id>//course/<course>/", methods=["PUT"])
@@ -109,8 +110,8 @@ def fligth(id, course):
         print("player_a", game.player_a, "player_b", game.player_b)
         print("comandos en volar: ", game.new_commands)
         return Response(status=201)
-    except:
-        return Response(status=400)
+    except Exception as e:
+        return Response(str(e), status=400)
 
 
 @air_force.route("/game/<id>/new_projectile", methods=["POST"])
@@ -124,8 +125,9 @@ def create_projectile(id):
     try:
         game.add_command(command, player)
         return Response(status=200)  # jsonify(dic.to_dict())
-    except:
-        return Response(status=400)
+    except Exception as e:
+        print(e)
+        return Response(str(e), status=400)
 
 
 @air_force.route("/game/<id>/ready", methods=["GET"])
