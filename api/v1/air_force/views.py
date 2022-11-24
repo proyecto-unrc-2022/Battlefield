@@ -14,11 +14,13 @@ from app.models.airforce.air_force_game import (
     AirForceGame,
     CheckCourse,
     ChoosePlane,
+    GameReady,
     GetBattlefieldStatus,
     GetPlayers,
     JoinGame,
     LaunchProjectile,
     MovePlane,
+    PlayersHavePlane,
 )
 from app.models.airforce.plane import Plane, PlaneSchema, ProjectileSchema
 
@@ -129,8 +131,15 @@ def create_projectile(id):
 @air_force.route("/game/<id>/ready", methods=["GET"])
 def game_ready(id):
     game = air_force_game[int(id)]
-    ready = game.player_a != "" and game.player_b != ""
-    return jsonify({"ready": ready})
+    command = GameReady(game)
+    return jsonify(game.execute(command))
+
+
+@air_force.route("/game/<id>/players/have/plane", methods=["GET"])
+def game_players_have_plane(id):
+    game = air_force_game[int(id)]
+    command = PlayersHavePlane(game)
+    return jsonify(game.execute(command))
 
 
 @air_force.route("get_battlefield_status/game_id/<id>", methods=["GET"])
