@@ -18,33 +18,10 @@ export default function UnderGame() {
   const [chosenSubmarine, setChosenSubmarine] = useState(null);
   const [position, setPosition] = useState(null);
   const [layout, setLayout] = useState(null);
-  const [board, setBoard] = useState([]);
   const requestWasSent = useRef(false);
   const [visibleState, setVisibleState] = useState(null);
   const URL = "http://localhost:5000/api/v1/underwater/game/" + sessionId;
 
-
-  function getVisibility() {
-    const visibility = visibleState.visible_board;
-    const cells = []
-    for (let i = 0; i < height; i++) {
-      cells.push([])
-      for (let j = 0; j < width; j++) {
-        if (visibility[i] === undefined) {
-          cells[i].push("nv");
-        } else {
-          let visibility_i = visibility[i]
-          if (visibility_i[j] === undefined) {
-            cells[i].push("nv");
-          } else {
-            cells[i].push(visibility[i][j]);
-          }
-        }
-      }
-    }
-    console.log("Updating board", cells);
-    setBoard(cells);
-  }
 
   function sendChooseSubmarine() {
     const headers = authHeader();
@@ -71,8 +48,6 @@ export default function UnderGame() {
     })
   }
 
-  useEffect(_ => {if(visibleState != null) {getVisibility()}}, [visibleState]);
-
   useEffect(_ => {
     if(chosenSubmarine != null) {
       if(position != null) {
@@ -81,7 +56,7 @@ export default function UnderGame() {
           requestWasSent.current = true;
         }
         setLayout({
-          main: <UnderBoard board={board} width={width} height={height} />,
+          main: <UnderBoard visibleState={visibleState} width={width} height={height} />,
           bottom: <UnderControls visibleState={visibleState} updateVisibleState={updateVisibleState} position={position} setPosition={setPosition}/>
         });
       }
@@ -95,7 +70,7 @@ export default function UnderGame() {
         main: <ChooseSubmarine setChosenSubmarine={setChosenSubmarine} />,
         bottom: <h1>Choose your fighter</h1>
       });
-  }, [chosenSubmarine, position, board]);
+  }, [chosenSubmarine, position, visibleState]);
 
   return (
     <div className="u-container">
