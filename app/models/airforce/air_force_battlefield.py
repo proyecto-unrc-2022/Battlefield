@@ -1,3 +1,6 @@
+from app.models.airforce.plane import Projectile
+
+
 class FlyingObject:
     player = None
     flying_obj = None
@@ -113,7 +116,11 @@ class Battlefield:
         y = plane.y
 
         plane_model = plane.flying_obj
-        obj = plane_model.projectile[0]
+        obj = Projectile.query.filter_by(plane_id=plane_model.id).first()
+        print("\n\n\n plane: ", plane_model.name, "\n\n\n projectile: ", obj)
+        # obj = plane_model.projectile[0]
+
+        print("\n\n\nplayer: ", player, "plane: ", plane)
 
         fly_obj = FlyingObject(player, obj, x, y, course)
         if course == 1:
@@ -156,6 +163,7 @@ class Battlefield:
                         self.flying_objects.remove(obj[n])
 
     def projectile_collision(self, projectile, fly_obj):
+        print("planeeee", fly_obj)
         if fly_obj.__class__.__name__ == "Plane":
             fly_obj.health -= projectile.damage
             self.flying_objects.remove if (fly_obj.health <= 0) else True
@@ -184,8 +192,7 @@ class Battlefield:
                 filter(
                     lambda p: p.y == fly_obj.y
                     and p.x < position
-                    and p.x >= position + speed
-                    and p.flying_obj.__class__.__name__ == "Projectile",
+                    and p.x >= position + speed,
                     self.flying_objects,
                 )
             )
@@ -202,8 +209,7 @@ class Battlefield:
                 filter(
                     lambda p: p.x == fly_obj.x
                     and p.y > position
-                    and p.y <= position + speed
-                    and p.flying_obj.__class__.__name__ == "Projectile",
+                    and p.y <= position + speed,
                     self.flying_objects,
                 )
             )
@@ -215,8 +221,7 @@ class Battlefield:
                 filter(
                     lambda p: p.x == fly_obj.x
                     and p.y < position
-                    and p.y >= position + speed
-                    and p.flying_obj.__class__.__name__ == "Projectile",
+                    and p.y >= position + speed,
                     self.flying_objects,
                 )
             )
