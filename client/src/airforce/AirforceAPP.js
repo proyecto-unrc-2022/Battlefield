@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import InitAirforce from "./components/InitAirforce.component";
-import "./index.css"
+import AirforceMainMenu from "./components/AirforceMainMenu.component";
+
 
 
 
@@ -19,7 +19,7 @@ class AirforceAPP extends Component {
     render() {
         return (
         <div>
-            <InitAirforce callBack={this.handleCallback}/> 
+            <AirforceMainMenu callBack={this.handleCallback}/> 
         </div>
     )}
 }
