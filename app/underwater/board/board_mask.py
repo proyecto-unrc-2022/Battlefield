@@ -64,6 +64,8 @@ class BoardMask(db.Model):
                 self.__add(pos, code)
                 self.radar_cells.add(pos)
 
+        self.save()
+
     def return_radar_pulse(self, enemy_mask):
         my_positions = self.submarine.get_positions()
         enemy_positions = enemy_mask.submarine.get_positions()
@@ -82,15 +84,19 @@ class BoardMask(db.Model):
                     self.__add(pos, "rP")
                     self.radar_cells.add(pos)
 
+        self.save()
+
     def __add(self, pos, code):
-        x, y = pos
+        x = str(pos[0])
+        y = str(pos[1])
         if x in self.mask_dict.keys():
             self.mask_dict[x].update({y: code})
         else:
             self.mask_dict.update({x: {y: code}})
 
     def __remove(self, pos):
-        x, y = pos
+        x = str(pos[0])
+        y = str(pos[1])
         self.mask_dict[x].pop(y)
         if self.mask_dict[x] == {}:
             self.mask_dict.pop(x)

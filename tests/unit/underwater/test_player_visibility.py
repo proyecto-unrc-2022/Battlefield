@@ -8,10 +8,12 @@ def matrix_view_to_dict(matrix):
     for i in range(len(matrix)):
         for j in range(len(matrix[0])):
             if matrix[i][j]:
-                if i in result_dict.keys():
-                    result_dict[i].update({j: matrix[i][j]})
+                si = str(i)
+                sj = str(j)
+                if si in result_dict.keys():
+                    result_dict[si].update({sj: matrix[i][j]})
                 else:
-                    result_dict.update({i: {j: matrix[i][j]}})
+                    result_dict.update({si: {sj: matrix[i][j]}})
     return result_dict
 
 

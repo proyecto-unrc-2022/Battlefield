@@ -1,5 +1,6 @@
 import React from 'react'; 
 import "./css/game-style.css"
+import { GoPrimitiveDot } from "react-icons/go";
 
 export default function UnderCell({placeSubmarine, x, y, type, images}){ 
   const rotation = 45 * parseInt([type[type.length-1]]);
@@ -13,6 +14,8 @@ export default function UnderCell({placeSubmarine, x, y, type, images}){
       const typeCode = type.substring(0,2);
       return <img style={style} src={images[typeCode]} width="100%" />
     }
+    if(/rP/.test(type))
+      return <GoPrimitiveDot style={{color: "cyan"}} />
     else return null;
   }
 

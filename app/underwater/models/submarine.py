@@ -37,11 +37,11 @@ class Submarine(SubmergedObject):
         self.torpedo_speed = stats["torpedo_speed"]
         self.torpedo_damage = stats["torpedo_damage"]
 
-        if x_position:
+        if x_position is not None:
             self.x_position = x_position
-        if y_position:
+        if y_position is not None:
             self.y_position = y_position
-        if direction:
+        if direction is not None:
             self.direction = direction
 
     def create_torpedo(self):
@@ -59,11 +59,11 @@ class Submarine(SubmergedObject):
             "torpedo_speed": self.torpedo_speed,
             "torpedo_damage": self.torpedo_damage,
         }
-        if self.x_position:
+        if self.x_position is not None:
             dict.update({"x_position": self.x_position})
-        if self.y_position:
+        if self.y_position is not None:
             dict.update({"y_position": self.y_position})
-        if self.direction:
+        if self.direction is not None:
             dict.update({"direction": self.direction})
         if self.game:
             dict.update({"game_id:": self.game.id})

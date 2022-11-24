@@ -116,6 +116,14 @@
   background-color: rgb(0, 0, 0, .5);
 }
 
+.u-cell-rP, .u-cell-rN {
+  background-color: rgba(0, 13, 10, 0.7);
+}
+
+.u-cell-rP:hover, .u-cell-rN:hover {
+  background-color: rgba(0, 13, 10, 0.6);
+}
+
 .u-controls-container {
   display: flex;
   justify-content: space-between;
