@@ -1,5 +1,3 @@
-from weakref import WeakSet
-
 from sqlalchemy import event
 
 from app import db
@@ -48,4 +46,3 @@ def before_commit(session):
 
             if navy_game_service.should_update(obj.navy_game_id):
                 navy_game_service.play_round(obj.navy_game_id)
-                print("round played")

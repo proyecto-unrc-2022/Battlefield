@@ -69,10 +69,11 @@ def step_impl(context, user_id, game_id):
 )
 def step_impl(context, user1_id, game_id, user2_id):
     from app.navy.services.navy_game_service import navy_game_service
+    from app.navy.utils.navy_game_statuses import FINISHED
 
     data = {"user1_id": user1_id}
     context.games_created[game_id] = navy_game_service.add(data)
-    current_game = test_utils.add_test_game(game_id, user2_id)
+    current_game = test_utils.add_test_game(game_id, user2_id, FINISHED)
     assert current_game.winner == context.games_created[game_id].winner == user2_id
 
 
