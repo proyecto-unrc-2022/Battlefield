@@ -1,5 +1,10 @@
 .navy-button {
   border-width: medium !important;
+  border-color: black !important;
+}
+
+.navy-button-xlarge {
+  font-size: 5rem;
 }
 
 .navy-button-large {
