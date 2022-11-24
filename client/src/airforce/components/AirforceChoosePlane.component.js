@@ -94,7 +94,7 @@ class ChoosePlane extends Component {
             if(this.state.ready){
                 this.redirect(this.id());
             }
-          }, 2000 ); 
+          }, 20000 ); 
 
         // console.log("state " + JSON.parse(localStorage.getItem('planes')).name);
         this.planes();

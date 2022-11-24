@@ -7,22 +7,22 @@ const GameRoom = () => {
     const {id} = useParams()
     
     const handleClickMoveNorth = () => {// course 1 north, 2 east, 3 south, 4 west
-        console.log(id)
         airforceService.fligth(id,1);
     }
     const handleClickMoveEast = () => {// course 1 north, 2 east, 3 south, 4 west
-        console.log(id)
         airforceService.fligth(id,2);
     }
     const handleClickMoveSouth = () => {// course 1 north, 2 east, 3 south, 4 west
-        console.log(id)
         airforceService.fligth(id,3);
     }
     const handleClickMoveWest = () => {// course 1 north, 2 east, 3 south, 4 west
-        console.log(id)
         airforceService.fligth(id,4);
     }
 
+    const handleClickLaunchProjectile = () => {// course 1 north, 2 east, 3 south, 4 west
+        airforceService.createProjectile(id);
+    }
+    
         return(
             <div className="battlefield">
                 <div>
@@ -52,9 +52,9 @@ const GameRoom = () => {
                             </form>
                         </div>
                         <div className="action-buttons">
-                            <button>
-                                Launch Projectile
-                            </button>
+                            <form style={{display: "inline"}} onSubmit={e => e.preventDefault()}>
+                                <button onClick = {handleClickLaunchProjectile} > Launch Projectile </button>
+                            </form>
                         </div>
                     </div>
                 </div>
