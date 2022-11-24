@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation, useParams } from "react-router-dom";
+import { useNavigate, useLocation, useParams, Link } from "react-router-dom";
 import NavyButton from "../components/NavyButton";
 import ShipService from "../services/ShipService";
 import NavyGameService from "../services/NavyGameService";
 import authService from "../../services/auth.service";
 import AccessDenied from "../components/AccessDenied";
 import GridShipPlace from "../components/GridShipPlace";
+import NavyTitle from "../components/NavyTitle";
 
 export const NavyShipPlace = () => {
   const location = useLocation();
@@ -16,7 +17,7 @@ export const NavyShipPlace = () => {
   const [accessDenied, setAccessDenied] = useState(true);
   const [game, setGame] = useState(null);
   const [course, setCourse] = useState("N");
-  const [selectedPosition, setSelectedPosition] = useState({ x: 1, y: 1 });
+  const [selectedPosition, setSelectedPosition] = useState({ x: 5, y: 5 });
 
   useEffect(() => {
     if (!location.state) {
@@ -94,6 +95,20 @@ export const NavyShipPlace = () => {
         />
       ) : (
         <>
+        <div className="row justify-content-between p-2 align-items-center">
+            <Link
+              to={"/navy"}
+              className="navy-text"
+              style={{ textDecoration: "none" }}
+            >
+              Navy Battleship
+            </Link>
+          </div>
+          <div className="row">
+            <div className="col-12 text-center">
+              <NavyTitle text="Ship Place" size={4} />
+            </div>
+          </div>
           <div
             style={{ gap: "50px" }}
             className="row justify-content-center align mt-3"

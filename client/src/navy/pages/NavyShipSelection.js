@@ -47,7 +47,9 @@ const NavyShipSelection = () => {
   };
 
   const goToPlaceToBoard = () => {
-    navigate("place_ship", { state: { ship_selected: shipSelected } });
+    if("name" in shipSelected){
+      navigate("place_ship", { state: { ship_selected: shipSelected } });
+    }
   };
 
   return (
