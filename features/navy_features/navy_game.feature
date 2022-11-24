@@ -1,35 +1,31 @@
-Feature: Create, get, update and delete a Navy Game
+Feature: Create, get, update and delete a Navy Game from API
 
-  Background: Login a user and initialize the app
-    Given I am logged in as "user1"
+    Background: Login users
+        Given a user '1' logged in
 
+    Scenario: Create a NavyGame
+        When the user '1' creates a NavyGame '1'
+        Then the user '1' should see that the NavyGame was created
 
-  Scenario: Create a navy game
-    When I create a new game 
-    Then The game should be created
+    Scenario: Get all NavyGames
+        Given a user '2' logged in
+        And the user '1' created a NavyGame '1'
+        And the user '2' created a NavyGame '2'
+        When the user '1' tries to get all NavyGames in the app 
+        Then the user '1' should get all NavyGames in the app
 
-  Scenario: Get all navy games
-    Given Some games have been created  
-    When I try to get all navy games in the app 
-    Then I should get all navy games in the app 
-  
-  Scenario: Get all navy games by user
-    Given Some games have been created  
-    When I try to get all navy games for user1 
-    Then I should get all navy games for user1 
+    Scenario: Get a NavyGame by id
+        Given the user '1' created a NavyGame '1'
+        When the user '1' tries to get the NavyGame '1'
+        Then the user '1' should get the NavyGame '1'
 
-  Scenario: Get a navy game by id
-    Given Some games have been created  
-    When I try to get the game with id 1
-    Then I should get the game with id 1  
+    Scenario: A user joins a created NavyGame
+        Given a user '2' logged in
+        And the user '2' created a NavyGame '1'
+        When the user '1' tries to join the NavyGame '1'
+        Then the user '1' should see that the NavyGame was updated
 
-  Scenario: Join a second player to an existing navy game
-    Given A game by another user has been created  
-    When I try to join to the game 
-    Then The game should be updated 
-
-  Scenario: Delete a navy game
-    Given Some games have been created  
-    When I try to delete the game with id 1
-    Then The game with id 1 should be deleted  
-
+    Scenario: Delete a NavyGame
+        Given the user '1' created a NavyGame '1'
+        When the user '1' deletes the NavyGame '1'
+        Then the user '1' should see that the NavyGame was deleted

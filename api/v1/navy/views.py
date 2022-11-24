@@ -1,4 +1,4 @@
-from flask import Response, jsonify, request
+from flask import jsonify, request
 from marshmallow import ValidationError
 
 from api import token_auth
@@ -19,11 +19,11 @@ from . import navy
 @token_auth.login_required
 def action():
     try:
-        request.json["user_id"] = utils.get_user_id_from_header(request.headers["Authorization"])
+        request.json["user_id"] = utils.get_user_id_from_header(
+            request.headers["Authorization"]
+        )
         data = action_service.validate_request(request.json)
         action_service.add(data)
-        if navy_game_service.should_update(data["navy_game_id"]):
-            navy_game_service.play_round(data["navy_game_id"])
         return (
             NavyResponse(201, data=request.json, message="Action added").to_json(),
             201,
@@ -36,7 +36,9 @@ def action():
 @token_auth.login_required
 def new_ship():
     try:
-        request.json["user_id"] = utils.get_user_id_from_header(request.headers["Authorization"])
+        request.json["user_id"] = utils.get_user_id_from_header(
+            request.headers["Authorization"]
+        )
         data = ship_service.validate_request(request.json)
         ship_service.add(data)
         return NavyResponse(201, data=data, message="Ship added").to_json(), 201
@@ -75,7 +77,9 @@ def get_navy_game(id):
     user_id = utils.get_user_id_from_header(request.headers["Authorization"])
     game = navy_game_service.get_by_id(id)
     return (
-        NavyResponse(status=200, data=NavyGameStateDTO(game.id, user_id).dump(), message="Ok").to_json(),
+        NavyResponse(
+            status=200, data=NavyGameStateDTO(game.id, user_id).dump(), message="Ok"
+        ).to_json(),
         200,
     )
 
@@ -85,7 +89,9 @@ def get_navy_game(id):
 def update_navy_game(id):
     try:
         user2_id = utils.get_user_id_from_header(request.headers["Authorization"])
-        validated_data = navy_game_service.validate_patch_request({"user2_id": user2_id, "game_id": id})
+        validated_data = navy_game_service.validate_patch_request(
+            {"user2_id": user2_id, "game_id": id}
+        )
         game = navy_game_service.join(validated_data, id)
         return (
             NavyResponse(
@@ -100,13 +106,22 @@ def update_navy_game(id):
 @navy.delete("/navy_games/<int:id>")
 @token_auth.login_required
 def delete_navy_game(id):
-    deleted_game = navy_game_service.delete(id)
-    return (
-        NavyResponse(
-            status=200, data=NavyGameDTO().dump(deleted_game), message="Game deleted."
-        ).to_json(),
-        200,
-    )
+    try:
+        from app.navy.validators.delete_game_validator import DeleteGameValidator
+        user_id = utils.get_user_id_from_header(request.headers["Authorization"])
+        validated_data = DeleteGameValidator().load(
+            {"game_id": id, "user_id": user_id}
+        )
+        deleted_game = navy_game_service.delete(validated_data["game_id"])
+        return (
+            NavyResponse(
+                200, data=NavyGameDTO().dump(deleted_game), message="Game deleted."
+            ).to_json(),
+            200,
+        )
+    except ValidationError as err:
+        return jsonify(err.messages), 400
+
 
 
 @navy.get("/navy_active_games")

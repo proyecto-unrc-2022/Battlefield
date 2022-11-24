@@ -4,7 +4,7 @@ entorno/
 freeze
 req.txt
 .vscode/
-config.py
+
 
 
 *.pyc
@@ -20,3 +20,5 @@ dist/
 build/
 *.egg-info/
 client/node_modules/
+config.py
+app/foo.db

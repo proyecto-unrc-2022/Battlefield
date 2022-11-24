@@ -2,7 +2,8 @@ import axios from "axios";
 import { json } from "react-router-dom";
 import AuthService from "../../services/auth.service";
 import authHeader from "../../services/auth-header";
-const API_URL = "http://192.168.0.58:5000/api/v1/air_force/";
+
+const API_URL = "http://192.168.1.55:5000/api/v1/air_force/";
 
 
 class AirForceService {
@@ -53,6 +54,32 @@ class AirForceService {
         ).then((response) => {
           return response
         })
+    }
+
+  createProjectile(gameId){
+    return axios
+      .post(
+        API_URL + `game/${gameId}/new_projectile`,{},
+        {
+          headers: authHeader()
+        }
+      ).then((response) => {
+        return response
+      })
+  }
+
+  fligth(gameId, planeCourse){
+    return axios
+      .put(
+        API_URL + `game_id/${gameId}/course/${planeCourse}/`,{},
+        {
+          headers: authHeader()
+        }
+      )
+  }
+    getPlanes(){
+      return axios
+      .get(API_URL + "/get/planes",{},{})
     }
 }
 export default new AirForceService();

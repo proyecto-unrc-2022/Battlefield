@@ -26,21 +26,20 @@ class ActionRequestValidator(Schema):
             raise ValidationError("Game not found")
         elif navy_game.winner:
             raise ValidationError("Game finished")
-        elif not (navy_game.status == "STARTED"): 
+        elif not (navy_game.status == "STARTED"):
             raise ValidationError("Game not ready to play")
 
     @validates_schema
     def check_move(self, in_data, **kwargs):
 
         if in_data.get("attack") and in_data.get("move"):
-            raise ValidationError("Invalid move")
+            raise ValidationError("Invalid action")
 
         if not in_data.get("attack"):
             ship = db.session.query(Ship).filter_by(id=in_data.get("ship_id")).first()
 
             if ship:
                 mov_ship = ship_type_dao.get_by(ship.name)["speed"]
-                print(in_data.get("move"))
                 if in_data.get("move") < 0:
                     raise ValidationError("The movement is a negative distance")
                 if in_data.get("move") > mov_ship:
@@ -81,7 +80,7 @@ class ActionRequestValidator(Schema):
             .all()
         )
         if actions:
-            raise ValidationError("No its your turn yet")
+            raise ValidationError("It's not your turn yet")
 
     def check_ship(self, in_data, **kwargs):
         ship = db.session.query(Ship).filter_by(id=in_data.get("ship_id")).first()
