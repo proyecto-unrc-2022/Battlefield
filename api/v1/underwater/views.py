@@ -12,11 +12,29 @@ from app.underwater.command import (
 from app.underwater.daos.session_dao import session_dao
 from app.underwater.daos.submarine_dao import submarine_dao
 from app.underwater.daos.under_game_dao import game_dao
+from app.underwater.message_announcer import MessageAnnouncer, announcers, format_sse
 from app.underwater.models.under_game import UnderGame
 
 from . import underwater
 
 # from app.underwater.under_dtos import game_dto
+
+
+@underwater.get("/game/<int:session_id>/listen")
+def listen(session_id):
+
+    if session_id not in announcers.keys():
+        announcers.update({session_id.id: MessageAnnouncer()})
+
+    announcer = announcers[session_id]
+
+    def stream():
+        messages = announcer.listen()
+        while True:
+            msg = messages.get()
+            yield msg
+
+    return Response(stream(), mimetype="text/event-stream")
 
 
 @underwater.post("/reset")
@@ -102,6 +120,9 @@ def join_game(session_id):
         )
 
     game_session.add_visitor(visitor)
+
+    msg = format_sse(json.dumps({"message": "joined"}))
+    announcers[session_id].announce("")
 
     session_dao.save(game_session)
     return '{"success": "user joined the game"}'
@@ -229,6 +250,9 @@ def update_session(session):
         session.invert_order()
         for torpedo in session.game.torpedos:
             session.add_command(AdvanceTorpedo(torpedo))
+
+        msg = format_sse(data=json.dumps({"message": "commands executed"}))
+        announcers[session.id].announce(msg)
     else:
         session.next_turn()
     session_dao.save(session)
