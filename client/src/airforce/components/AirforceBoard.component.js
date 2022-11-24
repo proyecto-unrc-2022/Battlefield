@@ -1,5 +1,5 @@
  import React, { Component, useRef, useEffect} from "react";
-import airforceService from "../services/airforce.service";
+import AirforceService from "../services/airforce.service";
 import { useParams } from "react-router-dom";
 import "./AirforceBoard.css"
 
@@ -12,27 +12,23 @@ function withParams(Component) {
 
 export default function AirforceBoard(){
 
-    var x = 5;
-    var y = 5;
-    var cell;
+    let id = localStorage.getItem("id")
+    let course = localStorage.getItem("course")
+    let x = localStorage.getItem("coord_x")
+    let y = localStorage.getItem("coord_y")
+    let cell;
      
-    useEffect(() => {
+    useEffect((x,y) => {
         cell = document.getElementById(`(${x},${y})`)
-        cell.innerHTML = "X";
+        cell.innerHTML = "->";
     }, []);
 
-   const id = () =>{
-        let { id } = this.props.params;
-        return id;
-    }
-
     const handleClick = () => {
-        airforceService.fligth(2,2).then(
-            (response) => {
-                cell.innerHTML = "";
-                x = x + 5;
-                cell = document.getElementById(`(${x},${y})`)
-                cell.innerHTML = "X"
+        AirforceService.fligth(id,course).then(
+           (response) => {
+               if(response.status === 201){
+               }
+              
             }
         )
     }
@@ -41,30 +37,32 @@ export default function AirforceBoard(){
     <div className="battlefield">
                 <div className="board">
                 <table>
-                    <tbody>
-                    <tr>
+                <thead>
+                    <tr>   
                          <th></th>
-                        <th>1</th>
-                        <th>2</th>
-                        <th>3</th>
-                        <th>4</th>
-                        <th>5</th>
-                        <th>6</th>
-                        <th>7</th>
-                        <th>8</th>
-                        <th>9</th>
-                        <th>10</th>
-                        <th>11</th>
-                        <th>12</th>
-                        <th>13</th>
-                        <th>14</th>
-                        <th>15</th>
-                        <th>16</th>
-                        <th>17</th>
-                        <th>18</th>
-                        <th>19</th>
-                        <th>20</th>
-                    </tr>
+                         <th>1</th>
+                         <th>2</th>
+                         <th>3</th>
+                         <th>4</th>
+                         <th>5</th>
+                         <th>6</th>
+                         <th>7</th>
+                         <th>8</th>
+                         <th>9</th>
+                         <th>10</th>
+                         <th>11</th>
+                         <th>12</th>
+                         <th>13</th>
+                         <th>14</th>
+                         <th>15</th>
+                         <th>16</th>
+                         <th>17</th>
+                         <th>18</th>
+                         <th>19</th>
+                         <th>20</th>
+                     </tr>
+                    </thead>
+                    <tbody>
                         <tr>
                         <th>1</th>
                             <td><div id="(1,1)"></div></td>

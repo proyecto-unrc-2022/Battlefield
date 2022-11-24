@@ -1,14 +1,15 @@
 import React, { Component} from "react";
+import { Routes, Route, useParams, useNavigate} from "react-router-dom";
 import AirforceService from "../services/airforce.service";
-
-import { useParams } from "react-router-dom";
+import GameRoom from "./AirforceGameRoom.component"
+import "./AirforceChoosePlane.css"
 
 function withParams(Component) {
-    return props => <Component {...props} params={useParams()} />;
+    return props => <Component {...props} param={useParams()}/>;
   }
 
 class ChoosePlane extends Component {
-
+ 
     
     state = {
         id: null,
@@ -17,7 +18,9 @@ class ChoosePlane extends Component {
         coord_y: null,
         ready: false,
         planes: null,
+        ready: false,
     }
+
     
 
     
@@ -26,7 +29,6 @@ class ChoosePlane extends Component {
         this.setState({
             course: value
         })
-        console.log(this.state.course)
         
     }
     
@@ -35,7 +37,6 @@ class ChoosePlane extends Component {
         this.setState({
             coord_x: value
         })
-        console.log(this.state.coord_x)
         
     }
     
@@ -44,7 +45,6 @@ class ChoosePlane extends Component {
         this.setState({
             coord_y: value
         })
-        console.log(this.state.coord_y)
         
     }
     
@@ -52,23 +52,34 @@ class ChoosePlane extends Component {
         this.setState({
             id: idPlane
         })
-        console.log(this.state.id)
     }
     
     id(){
-        let { id } = this.props.params;
+        let { id } = this.props.param;
         return id;
     }
 
+
     handleSubmit = (event) => {
         event.preventDefault();
+        console.log(JSON.parse(localStorage.getItem("user")))
         AirforceService.choosePlaneAndPosition(this.state.id, this.state.course, this.state.coord_x, this.state.coord_y, this.id()).then(
-            console.log("player 1 is ready")
+            (response) => {
+                if (response.status === 200) 
+                localStorage.setItem("id", this.id())
+                localStorage.setItem("coord_x", this.state.coord_x)
+                localStorage.setItem("coord_y", this.state.coord_y)
+                localStorage.setItem("course", this.state.course)
+                window.location.href = "/airforce/game/"+this.id()+"/room"
+                
+
+            }
         )
     }
     
     planes(){
         AirforceService.getPlanes().then((response) => {
+            console.log( JSON.stringify(response.data))
             localStorage.setItem("planes", JSON.stringify(response.data));
         });
     }
@@ -83,9 +94,9 @@ class ChoosePlane extends Component {
         // console.log("state " + JSON.parse(localStorage.getItem('planes')).name);
         this.planes();
         this.state.planes = JSON.parse(localStorage.getItem('planes'));
-        console.log("planes " + this.state.planes);
         return (
-              <div className="container-lobby" style={{textAlign: "center"}}>
+              <div className="container-choosePlane" style={{textAlign: "center"}}>
+               <link href='https://fonts.googleapis.com/css?family=Silkscreen' rel='stylesheet'></link>
                 <div className="select-plane">
                     <h2 className="subtitle-1">Choose your plane</h2>
                     <div>

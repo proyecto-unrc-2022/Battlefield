@@ -24,20 +24,26 @@
 }
 
 table{    
-    background-color: black;
     margin-left: auto;
     margin-right: auto;
     margin-top: 65px;
+    border-collapse: separate;
+    border-spacing: 2px;
 }
 
 th{
+    
     color: white;
 }
-
+thead {
+    background-color: transparent;
+}
 
 td{
-    border: 2px solid;
-    border-color: rgb(255, 255, 255);
+    color: black;
+    border: 1px solid;
+    border-radius: 10px;
+    border-color: black;
     width: 40px;
     height: 40px;
 }

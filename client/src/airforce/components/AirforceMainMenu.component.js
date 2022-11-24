@@ -2,8 +2,9 @@ import { Button } from "bootstrap";
 import React, { Component } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import AirForceService from "../services/airforce.service"
+import "./AirforceMainMenu.css"
 
-export default class InitAirforce extends Component {
+export default class AirforceMainMenu extends Component {
 
   state = {
     createdId: "",
