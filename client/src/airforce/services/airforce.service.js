@@ -3,7 +3,7 @@ import { json } from "react-router-dom";
 import AuthService from "../../services/auth.service";
 import authHeader from "../../services/auth-header";
 
-const API_URL = "http://192.168.1.55:5000/api/v1/air_force/";
+const API_URL = "http://127.0.0.1:5000/api/v1/air_force/";
 
 
 class AirForceService {
@@ -37,6 +37,14 @@ class AirForceService {
         )
       }
 
+    airforceChoosePlaneReady(gameId){
+      return axios.get(
+        API_URL + `game/${gameId}/players/have/plane`,{},
+        {
+          headers: authHeader()
+        }
+      )
+    }
     choosePlaneAndPosition(plane, course, x, y, id){
       return axios
         .put(

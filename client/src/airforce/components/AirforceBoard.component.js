@@ -1,8 +1,8 @@
  import React, { Component, useRef, useEffect} from "react";
-import AirforceService from "../services/airforce.service";
-import { useParams } from "react-router-dom";
+import airforceService from "../services/airforce.service";
 import "./AirforceBoard.css"
 
+export default function AirforceBoard(p,q){
 
 
 function withParams(Component) {
@@ -34,7 +34,7 @@ export default function AirforceBoard(){
     }
 
     return(
-    <div className="battlefield">
+            
                 <div className="board">
                 <table>
                 <thead>
@@ -296,28 +296,6 @@ export default function AirforceBoard(){
                     </tbody>
                 </table>
                 </div>
-                <div className="board-buttons">
-                    <div className="action-buttons">
-                        <form style={{display: "inline"}}>
-                            <button onClick = {handleClick} >Move</button>
-                        </form>
-                    </div>
-                    <div className="action-buttons">
-                       <button >
-                        Rotate Left
-                       </button> 
-                    </div>
-                    <div className="action-buttons">
-                       <button>
-                        Rotate Rigth
-                       </button> 
-                    </div>
-                    <div className="action-buttons">
-                        <button>
-                            Launch Projectile
-                        </button>
-                    </div>
-                </div>
-            </div>
         )
     }
+}

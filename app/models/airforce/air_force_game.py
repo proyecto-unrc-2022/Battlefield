@@ -105,7 +105,6 @@ class JoinGame:
         self.player = player
 
     def execute(self):
-
         if self.air_force_game.player_a == "":
             self.air_force_game.player_a = self.player
             self.air_force_game.turn = self.player
@@ -230,3 +229,29 @@ class CheckCourse:
 
     def execute(self):
         self.game.battlefield.check_course(self.course, self.player)
+
+
+class GameReady:
+    game: None
+
+    def __init__(self, game):
+        self.game = game
+
+    def execute(self):
+        ready = self.game.player_a != "" and self.game.player_b != ""
+        return {"status": ready}
+
+
+class PlayersHavePlane:
+    game: None
+
+    def __init__(self, game):
+        self.game = game
+
+    def execute(self):
+        ready = (
+            self.game.battlefield.get_player_plane(self.game.player_a) != []
+            and self.game.battlefield.get_player_plane(self.game.player_b) != []
+        )
+
+        return {"status": ready}

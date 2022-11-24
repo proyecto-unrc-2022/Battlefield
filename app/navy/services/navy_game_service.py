@@ -4,35 +4,17 @@ from app.models.user import User
 from app.navy.daos.navy_game_dao import navy_game_dao
 from app.navy.models.missile import Missile
 from app.navy.models.navy_game import NavyGame
-from app.navy.utils.navy_game_statuses import (
-    FINISHED,
-    STARTED,
-    WAITING_PICKS,
-    WAITING_PLAYERS,
-)
+from app.navy.utils.navy_game_statuses import FINISHED
 from app.navy.utils.navy_utils import utils
 from app.navy.validators.navy_game_patch_validator import NavyGamePatchValidator
-from app.navy.validators.navy_game_post_validator import NavyGamePostValidator
 
 
 class NavyGameService:
 
     games = {}
 
-    def validate_post_request(self, request):
-        return NavyGamePostValidator().load(request)
-
     def validate_patch_request(self, request):
-        if not bool(User.query.filter_by(id=request["user2_id"]).first()):
-            raise ValidationError("User doesn't exist.")
-
-        game = navy_game_service.get_by_id(request["game_id"])
-        if bool(game.user1_id) and bool(game.user2_id):
-            raise ValidationError({"game_id": "Can't join a game with two players"})
-        if game.user1_id == request["user2_id"]:
-            raise ValidationError({"game_id": "Can't join your own game"})
-
-        return {"user2_id": request["user2_id"]}
+        return NavyGamePatchValidator().load(request)
 
     def add(self, data):
         new_game = NavyGame(utils.ROWS, utils.COLS, data["user1_id"])
@@ -106,7 +88,7 @@ class NavyGameService:
 
     def execute_cache(f):
         def proceed(self, navy_game_id):
-            if not self.games.get(navy_game_id):
+            if not self.games.get(navy_game_id) or self.games.get(navy_game_id) == {}:
                 self.load_game(navy_game_id)
                 f(self, navy_game_id)
             else:
@@ -198,15 +180,6 @@ class NavyGameService:
                 return ship
         return None
 
-    def get_active_games(self):
-        keys_games = self.games.keys()
-        games = []
-        for key in keys_games:
-            game = self.get_by_id(key)
-            if not game.winner:
-                games.append(game)
-        return games
-
     def get_visibility(self, navy_game_id, user_id):
         from app.navy.services.ship_service import ship_service
 
@@ -223,7 +196,7 @@ class NavyGameService:
         return {"ships": ships_dto, "missiles": missiles_dto}
 
     def get_board(self, navy_game_id):
-        if not self.games.get(navy_game_id):
+        if not self.games.get(navy_game_id) or self.games.get(navy_game_id) == {}:
             self.load_game(navy_game_id=navy_game_id)
         game_dict = self.games[navy_game_id].copy()
         game_dict.pop("ships")
