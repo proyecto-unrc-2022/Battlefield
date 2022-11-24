@@ -2,7 +2,7 @@ from app.models.user import User, UserSchema
 
 
 class NavyGameStateDTO:
-    def __init__(self, id, user_id) -> None:
+    def __init__(self, id, user_id):
         self.id = id
         self.user_id = user_id
         self.load_state()
@@ -26,8 +26,8 @@ class NavyGameStateDTO:
 
         self.user_1 = UserSchema().dump(user_1)
         self.user_2 = UserSchema().dump(user_2)
-        self.rows = navy_game.board_rows
-        self.cols = navy_game.board_colums
+        self.rows = navy_game.rows
+        self.cols = navy_game.cols
         self.status = navy_game.status
         self.turn = navy_game.turn
         self.round = navy_game.round
