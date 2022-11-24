@@ -1,44 +1,22 @@
  import React, { Component, useRef, useEffect} from "react";
 import airforceService from "../services/airforce.service";
-import { useParams } from "react-router-dom";
 import "./AirforceBoard.css"
 
+export default function AirforceBoard(p,q){
 
-
-function withParams(Component) {
-    return props => <Component {...props} params={useParams()} />;
-  }
-
-
-export default function AirforceBoard(){
-
-    var x = 5;
-    var y = 5;
+    var x = p;
+    var y = q;
     var cell;
-     
+    
     useEffect(() => {
         cell = document.getElementById(`(${x},${y})`)
         cell.innerHTML = "X";
     }, []);
 
-   const id = () =>{
-        let { id } = this.props.params;
-        return id;
-    }
 
-    const handleClick = () => {
-        airforceService.fligth(2,2).then(
-            (response) => {
-                cell.innerHTML = "";
-                x = x + 5;
-                cell = document.getElementById(`(${x},${y})`)
-                cell.innerHTML = "X"
-            }
-        )
-    }
 
     return(
-    <div className="battlefield">
+            
                 <div className="board">
                 <table>
                     <tbody>
@@ -298,28 +276,5 @@ export default function AirforceBoard(){
                     </tbody>
                 </table>
                 </div>
-                <div className="board-buttons">
-                    <div className="action-buttons">
-                        <form style={{display: "inline"}}>
-                            <button onClick = {handleClick} >Move</button>
-                        </form>
-                    </div>
-                    <div className="action-buttons">
-                       <button >
-                        Rotate Left
-                       </button> 
-                    </div>
-                    <div className="action-buttons">
-                       <button>
-                        Rotate Rigth
-                       </button> 
-                    </div>
-                    <div className="action-buttons">
-                        <button>
-                            Launch Projectile
-                        </button>
-                    </div>
-                </div>
-            </div>
         )
     }

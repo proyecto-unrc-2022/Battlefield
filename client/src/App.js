@@ -20,6 +20,7 @@ import AirforceAPP from "./airforce/AirforceAPP";
 import ChoosePlane from "./airforce/components/AirforceChoosePlane.component";
 import AirforceLobby from "./airforce/components/AirforceLobby.component"
 import AirforceBoard from "./airforce/components/AirforceBoard";
+import GameRoom from "./airforce/components/AirforceGameRoom.component";
 class App extends Component {
   constructor(props) {
     super(props);
@@ -137,7 +138,7 @@ class App extends Component {
             <Route path= "/airforce/mainMenu" element={<AirforceAPP />}/>
             <Route path= "/airforce/game/lobby/:id" element={<AirforceLobby />}/>
             <Route path= "/airforce/game/:id/choose/plane" element={<ChoosePlane />}/>
-            <Route path= "/airforce/gameBoard" element={<AirforceBoard />}/>
+            <Route path= "/airforce/game/:id/gameRoom" element={<GameRoom />}/>
           </Routes>
         </div>
       </div>

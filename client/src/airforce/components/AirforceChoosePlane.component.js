@@ -77,9 +77,25 @@ class ChoosePlane extends Component {
         return "Size: " + this.state.planes[key].size + "\nSpeed:" + this.state.planes[key].speed + "\nHealth: " 
         + this.state.planes[key].health + "\nProjectile: " + this.state.planes[key].cant_projecile;
     }
+
+    redirect = (id) => {
+        window.location.href = "/airforce/game/"+id+"/gameRoom"
+    }
     
         
-    render() {          
+    render() {        
+        
+        setInterval(() => {
+            AirforceService.airforceChoosePlaneReady(this.id()).then((response) => {
+                this.state.ready =  response.data.status;
+            }
+            );
+            console.log("ssss" + this.state.ready);
+            if(this.state.ready){
+                this.redirect(this.id());
+            }
+          }, 20000 ); 
+
         // console.log("state " + JSON.parse(localStorage.getItem('planes')).name);
         this.planes();
         this.state.planes = JSON.parse(localStorage.getItem('planes'));
