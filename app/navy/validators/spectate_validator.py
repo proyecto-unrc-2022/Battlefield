@@ -13,7 +13,12 @@ class SpectateValidator(Schema):
         from app.navy.models.navy_game import NavyGame
         navy_game = db.session.query(NavyGame).filter_by(id=in_data.get("navy_game_id")).first()
         round = in_data.get("round")
+        if not navy_game:
+            raise ValidationError("Game doesn't exist.")
 
+        if navy_game.status != "STARTED":
+            raise ValidationError("Game hasn't started yet.")
+        
         if not navy_game.round - round >= 2 :
             raise ValidationError("Invalid round") 
 

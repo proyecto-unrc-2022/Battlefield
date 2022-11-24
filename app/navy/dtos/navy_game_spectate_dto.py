@@ -1,5 +1,4 @@
 from app.navy.services.spectate_service import spectate_service
-from marshmallow_sqlalchemy.fields import Nested
 class NavyGameSpectateDTO():
 
     def __init__(self,navy_game_id,round):
@@ -19,7 +18,6 @@ class NavyGameSpectateDTO():
     def dump(self):
         from app.navy.dtos.navy_game_dto import NavyGameDTO
         return {
-            "id": self.navy_game_id,
             "game": NavyGameDTO().dump(self.game),
             "ships": self.ships,
             "missiles": self.missiles
