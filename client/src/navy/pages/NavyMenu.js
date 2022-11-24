@@ -19,7 +19,7 @@ const NavyMenu = () => {
   };
 
   return (
-    <div style={{ flexGrow: "1" }} className="container-fluid bg-navy">
+    <div style={{ flexGrow: "1" }} className="container-fluid bg-menu">
       <div className="row">
         <div className="col-12 text-center">
           <NavyLogo size={"xlarge"} />
