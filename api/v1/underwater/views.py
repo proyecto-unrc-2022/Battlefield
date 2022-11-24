@@ -88,7 +88,6 @@ def new_game():
 @underwater.post("/game/<int:session_id>/join")
 @token_auth.login_required
 def join_game(session_id):
-    data = request.form.to_dict()
     token = get_token(request)
     visitor = get_player_from(token)
     game_session = session_dao.get_by_id(session_id)
@@ -111,7 +110,8 @@ def join_game(session_id):
 @underwater.post("/game/<int:session_id>/choose_submarine")
 @token_auth.login_required
 def choose_submarine(session_id):
-    data = request.json
+    print(request.is_json)
+    data = request.get_json()
 
     token = get_token(request)
     player = get_player_from(token)

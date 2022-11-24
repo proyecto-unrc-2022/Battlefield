@@ -8,11 +8,13 @@ def step_impl(context, username):
     i = 0
     for row in context.table:
         for j in range(len(row)):
+            si = str(i)
+            sj = str(j)
             if row[j] == "":
-                assert i not in visibility or j not in visibility[i]
+                assert si not in visibility or sj not in visibility[si]
             else:
-                assert i in visibility and j in visibility[i]
-                assert row[j] == visibility[i][j]
+                assert si in visibility and sj in visibility[si]
+                assert row[j] == visibility[si][sj]
         i += 1
 
 
@@ -24,11 +26,3 @@ def step_impl(context, username):
     context.page = context.client.post(
         url_for("underwater.send_radar_pulse", session_id=session.id), headers=headers
     )
-
-
-def dict_to_matrix(d, height, width):
-    m = [[None] * width] * height
-    for i in d:
-        for j in d[i]:
-            m[i][j] = d[i][j]
-    return m

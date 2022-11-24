@@ -53,10 +53,13 @@ def step_impl(context, username, d, n):
         "direction": d,
         "steps": n,
     }
-    headers = {"authorization": context.tokens[player.id]}
+    headers = {
+        "authorization": context.tokens[player.id],
+        "Content-Type": "application/json",
+    }
     context.page = context.client.post(
         url_for("underwater.rotate_and_advance", session_id=context.session.id),
-        data=payload,
+        json=payload,
         headers=headers,
     )
 
@@ -75,10 +78,13 @@ def step_impl(context):
 def step_impl(context, username, d):
     player = context.players[username]
     payload = {"direction": d}
-    headers = {"authorization": context.tokens[player.id]}
+    headers = {
+        "authorization": context.tokens[player.id],
+        "Content-Type": "application/json",
+    }
     context.page = context.client.post(
         url_for("underwater.rotate_and_attack", session_id=context.session.id),
-        data=payload,
+        json=payload,
         headers=headers,
     )
     assert context.page
