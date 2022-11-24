@@ -5,6 +5,7 @@ import AccessDenied from "../components/AccessDenied";
 import ActionCard from "../components/ActionCard";
 import EntityDetails from "../components/EntityDetails";
 import GridGame from "../components/GridGame";
+import NavyButton from "../components/NavyButton";
 import NavyGameService from "../services/NavyGameService";
 
 const NavyBoard = () => {
@@ -127,6 +128,12 @@ const NavyBoard = () => {
               <div className="row justify-content-center mt-5">
                 <div className="col-10">
                   <ActionCard />
+                </div>
+              </div>
+              <div className="row justify-content-center my-3">
+                <div style={{gap: "1rem"}} className="col-10 d-flex justify-content-center">
+                  <NavyButton text={"Send action"}/>
+                  <NavyButton text={"Refresh"}/>
                 </div>
               </div>
             </div>
