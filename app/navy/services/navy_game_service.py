@@ -19,6 +19,7 @@ class NavyGameService:
     def add(self, data):
         new_game = NavyGame(utils.ROWS, utils.COLS, data["user1_id"])
         navy_game_dao.add(new_game)
+        self.games[new_game.id] = {}
         return new_game
 
     def join(self, data, id):
