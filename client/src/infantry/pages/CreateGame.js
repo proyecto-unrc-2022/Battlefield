@@ -14,7 +14,7 @@ export default function CreateGame(){
     const navigate = useNavigate();
 
     const event= () =>{
-        navigate("/home_Infantry");
+        navigate("/home_Infantry/choose_character");
     }
 
     const host = authService.getCurrentUser()
@@ -44,8 +44,9 @@ export default function CreateGame(){
             console.log(gameWait)
             if(gameWait.id_user2 != null){
                 event()
+                localStorage.setItem("id_game", creatGame.id)
             }
-        }, 10000);
+        }, 8000);
         return () => clearTimeout(timer);
     }, [creatGame, gameWait]);
 
@@ -54,6 +55,21 @@ export default function CreateGame(){
             
             <div className="row">
                 
+                <div className="col">
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+                    <br></br>
+
+                </div>
                 
             </div>
             <div className="row">

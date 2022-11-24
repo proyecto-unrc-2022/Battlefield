@@ -16,6 +16,7 @@ import CreateGame from "./infantry/pages/CreateGame"
 import JoinGame from "./infantry/pages/JoinGame"
 import GameInfantry from "./infantry/components/gameInfantry.component";
 import InitGameInfantry from "./infantry/pages/InfantryGame";
+import ChooseCharacter from "./infantry/pages/ChooseCharacter";
 
 
 class App extends Component {
@@ -68,6 +69,14 @@ class App extends Component {
                 </Link>
               </li>
             )}
+
+            {currentUser && (
+              <li className="nav-item">
+                <Link to={"/home_Infantry"} className="nav-link">
+                  Infantry
+                </Link>
+              </li>
+            )}
           </div>
 
           {currentUser ? (
@@ -101,6 +110,7 @@ class App extends Component {
             <Route path='/home_Infantry/' element={<HomePage/>} />
             <Route path="/home_Infantry/create_game" element={<CreateGame/>} />
             <Route path="/home_Infantry/join_game" element={<JoinGame/>} />
+            <Route path="/home_Infantry/choose_character" element={<ChooseCharacter/>} />
             <Route path="/infantry/game" element={<InitGameInfantry/>} />
             <Route path="/login" element={<Login />} />
             {/* <Route path="/profile" element={<Profile />} /> */}

@@ -14,16 +14,22 @@ export default function JoinGame(){
         navigate("/home_Infantry");
     }
 
+    const redirc = () =>{
+        navigate("/home_Infantry/choose_character");
+    }
+
     const join= (idGame, idUser) =>{
         gameService.joinGame(idGame, idUser)
     }
 
     const [games, setGames] = useState([])
 
-    const handleJoin = (uid) => {
+    const handleJoin = (id) => {
 
-        const game = games.filter((game) => game.id === uid)
+        const game = games.filter((game) => game.id === id)
         join(game[0].id, host.sub)
+        localStorage.setItem("id_game", game[0].id)
+        redirc()
 
     }
 
@@ -67,6 +73,7 @@ export default function JoinGame(){
 
     useEffect(() => {
         get()
+        
     }, []);    
 
     const host = authService.getCurrentUser()    
