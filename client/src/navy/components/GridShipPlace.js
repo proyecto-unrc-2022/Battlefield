@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import "./GridShipPlace.css"
 import CellShipPlace from "./CellShipPlace"
+import ShipService from '../services/ShipService'
 
 const GridShipPlace = ({course, size, rows, cols, selectPosition}) => {
   const arr = Array(rows).fill(Array(cols / 2).fill(1));
@@ -10,39 +11,13 @@ const GridShipPlace = ({course, size, rows, cols, selectPosition}) => {
 
   const rowAndColtoIndex = (row, col) => (row * 10) + (col + 1);
 
-  const compass = {
-    N: { x: -1, y: 0 },
-    S: { x: 1, y: 0 },
-    E: { x: 0, y: 1 },
-    W: { x: 0, y: -1 },
-    NE: { x: -1, y: 1 },
-    NW: { x: -1, y: -1 },
-    SE: { x: 1, y: 1 },
-    SW: { x: 1, y: -1 },
-  };
-
-  const inverseCoords = {
-    N: "S",
-    S: "N",
-    W: "E",
-    E: "W",
-    SE: "NW",
-    NW: "SE",
-    SW: "NE",
-    NE: "SW",
-  };
-
-  const outOfRange = (row, col) => {
-    return row < 1 || row > 10 || col < 1 || col > 10;
-  };
-
   const handleMouseEnter = (row, col, index) => {
     const hovered = [index];
     let invalid = false;
     for (let i = 0; i < size - 1 && !invalid; i++) {
-      row = row + compass[inverseCoords[course]].x;
-      col = col + compass[inverseCoords[course]].y;
-      if (outOfRange(row, col)) {
+      row = row + ShipService.compass[ShipService.inverseCoords[course]].x;
+      col = col + ShipService.compass[ShipService.inverseCoords[course]].y;
+      if (ShipService.outOfRange(row, col)) {
         invalid = true;
       } else {
         hovered.push((row - 1) * 10 + col);
@@ -65,9 +40,9 @@ const GridShipPlace = ({course, size, rows, cols, selectPosition}) => {
     let newRow = row;
     let newCol = col;
     for (let i = 0; i < size - 1 && !invalid; i++) {
-      newRow = newRow + compass[inverseCoords[course]].x;
-      newCol = newCol + compass[inverseCoords[course]].y;
-      if (outOfRange(newRow, newCol)) {
+      newRow = newRow + ShipService.compass[ShipService.inverseCoords[course]].x;
+      newCol = newCol + ShipService.compass[ShipService.inverseCoords[course]].y;
+      if (ShipService.outOfRange(newRow, newCol)) {
         invalid = true;
       }
     }
@@ -77,7 +52,7 @@ const GridShipPlace = ({course, size, rows, cols, selectPosition}) => {
   };
 
   return (
-    <div className='grid'>
+    <div className='grid-ship-place'>
       {arr.map((el, row) => {
         return el.map((elem, col) => {
           return (

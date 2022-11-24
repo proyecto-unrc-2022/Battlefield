@@ -38,8 +38,8 @@ export const NavyShipPlace = () => {
           navigate(`/navy/games/${id}/lobby`);
         }
       }
-      if(resp.data.data.ship){
-        setShipPlaced(true)
+      if (resp.data.data.ship) {
+        setShipPlaced(true);
       }
       setGame(resp.data.data);
     });
@@ -75,10 +75,10 @@ export const NavyShipPlace = () => {
       course: course,
       pos_x: selectedPosition.x,
       pos_y: selectedPosition.y,
-    }
-    const currentUser = authService.getCurrentUser()
-    if(currentUser.sub === game.user_2.id){
-      shipToSend.pos_y += 10
+    };
+    const currentUser = authService.getCurrentUser();
+    if (currentUser.sub === game.user_2.id) {
+      shipToSend.pos_y += 10;
     }
     ShipService.postShip(shipToSend).then((resp) => {
       console.log(resp);
@@ -95,7 +95,7 @@ export const NavyShipPlace = () => {
         />
       ) : (
         <>
-        <div className="row justify-content-between p-2 align-items-center">
+          <div className="row justify-content-between p-2 align-items-center">
             <Link
               to={"/navy"}
               className="navy-text"
@@ -156,11 +156,7 @@ export const NavyShipPlace = () => {
                 </span>
               </div>
             ) : (
-              <NavyButton
-                action={placeShip}
-                text="Start Game"
-                size={"small"}
-              />
+              <NavyButton action={placeShip} text="Start Game" size={"small"} />
             )}
           </div>
         </>

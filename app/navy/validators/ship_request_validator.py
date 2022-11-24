@@ -53,14 +53,14 @@ class ShipRequestValidator(Schema):
             if game.user1_id == user.id:
                 for x, y in ship_positions:
                     if utils.out_of_bounds(x, y) or (
-                        utils.ONE > y or game.board_colums / 2 <= y
+                        utils.ONE > y or game.board_colums / 2 < y
                     ):
                         raise ValidationError("Ship can't be builded out of range")
 
             if game.user2_id == user.id:
                 for x, y in ship_positions:
                     if utils.out_of_bounds(x, y) or (
-                        utils.COLS / 2 >= y or game.board_colums <= y
+                        utils.COLS / 2 >= y or game.board_colums < y
                     ):
                         raise ValidationError("Ship can't be builded out of range")
 
