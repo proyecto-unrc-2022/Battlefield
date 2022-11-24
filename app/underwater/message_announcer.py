@@ -8,8 +8,10 @@ class MessageAnnouncer:
         self.listeners = []
 
     def listen(self):
+        print("Adding listener")
         q = queue.Queue(maxsize=5)
         self.listeners.append(q)
+        q.put_nowait(format_sse(data="You have successfully connected"))
         return q
 
     def announce(self, msg):

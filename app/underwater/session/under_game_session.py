@@ -80,6 +80,8 @@ class UnderGameSession(db.Model):
         d = {
             "session_id": self.id,
             "game_id": self.game.id,
+            "host_id": self.host_id,
+            "visitor_id": self.visitor_id,
             "turn": self.turn,
             "order": self.order,
         }

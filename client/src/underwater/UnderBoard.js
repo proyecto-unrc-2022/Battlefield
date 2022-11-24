@@ -13,6 +13,8 @@ export default function UnderBoard({visibleState, height, width}) {
   };
 
   function getVisibility() {
+    if(visibleState == null || visibleState.visible_board == undefined)
+      return
     const visibility = visibleState.visible_board;
     const cells = []
     for (let i = 0; i < height; i++) {

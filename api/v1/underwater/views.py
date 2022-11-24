@@ -1,3 +1,5 @@
+import json
+
 from flask import Response, request
 
 from api import token_auth, verify_token
@@ -22,9 +24,6 @@ from . import underwater
 
 @underwater.get("/game/<int:session_id>/listen")
 def listen(session_id):
-
-    if session_id not in announcers.keys():
-        announcers.update({session_id.id: MessageAnnouncer()})
 
     announcer = announcers[session_id]
 
@@ -100,6 +99,9 @@ def new_game():
     game = game_dao.create(host=host, width=width, height=height)
     new_session = session_dao.start_session_for(game)
 
+    print(f"Creating announcer for game session {new_session.id}")
+    announcers.update({new_session.id: MessageAnnouncer()})
+
     return '{"session_id": "%d"}' % new_session.id
 
 
@@ -121,8 +123,8 @@ def join_game(session_id):
 
     game_session.add_visitor(visitor)
 
-    msg = format_sse(json.dumps({"message": "joined"}))
-    announcers[session_id].announce("")
+    msg = format_sse(data="joined")
+    announcers[session_id].announce(msg)
 
     session_dao.save(game_session)
     return '{"success": "user joined the game"}'
