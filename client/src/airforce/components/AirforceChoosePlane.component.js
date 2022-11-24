@@ -16,6 +16,7 @@ class ChoosePlane extends Component {
         coord_x: null,
         coord_y: null,
         ready: false,
+        planes: null,
     }
     
 
@@ -66,32 +67,52 @@ class ChoosePlane extends Component {
         )
     }
     
+    planes(){
+        AirforceService.getPlanes().then((response) => {
+            localStorage.setItem("planes", JSON.stringify(response.data));
+        });
+    }
+
+    title(key){
+        return "Size: " + this.state.planes[key].size + "\nSpeed:" + this.state.planes[key].speed + "\nHealth: " 
+        + this.state.planes[key].health + "\nProjectile: " + this.state.planes[key].cant_projecile;
+    }
+
+    redirect = (id) => {
+        window.location.href = "/airforce/game/"+id+"/gameRoom"
+    }
     
         
-    render() {
-            return (
+    render() {        
+        
+        setInterval(() => {
+            AirforceService.airforceChoosePlaneReady(this.id()).then((response) => {
+                this.state.ready =  response.data.status;
+            }
+            );
+            console.log("ssss" + this.state.ready);
+            if(this.state.ready){
+                this.redirect(this.id());
+            }
+          }, 20000 ); 
+
+        // console.log("state " + JSON.parse(localStorage.getItem('planes')).name);
+        this.planes();
+        this.state.planes = JSON.parse(localStorage.getItem('planes'));
+        console.log("planes " + this.state.planes);
+        return (
               <div className="container-lobby" style={{textAlign: "center"}}>
                 <div className="select-plane">
                     <h2 className="subtitle-1">Choose your plane</h2>
-                    <div className="planes-buttons" style={{display: "inline-block", verticalAlign: "middle", padding: "1rem 1rem"}} onClick={() => this.handleClick(1)}>
-                        <abbr title= "Size: 1, Speed: 5, Health: 10, Projectile: 2">
-                            <button className="button-p" >Hawker Tempest</button>
-                        </abbr>
-                    </div>
-                    <div className="planes-buttons"  style={{display: "inline-block", verticalAlign: "middle", padding: "1rem 1rem"}} onClick={() => this.handleClick(2)}>
-                        <abbr title= "Size: 2, Speed: 3, Health: 20, Projectile: 4">
-                            <button className="button-p" >Mitsubishi A6M Zero</button>
-                        </abbr>
-                    </div>
-                    <div className="planes-buttons"  style={{display: "inline-block", verticalAlign: "middle", padding: "1rem 1rem"}} onClick={() => this.handleClick(3)}>
-                        <abbr title= "Size: 3, Speed: 2, Health: 40, Projectile: 4">
-                            <button className="button-p" >Douglas A-20 Havoc</button>
-                        </abbr>
-                    </div>
-                    <div className="planes-buttons"  style={{display: "inline-block", verticalAlign: "middle", padding: "1rem 1rem"}} onClick={() => this.handleClick(4)}>
-                        <abbr title= "Size: 4, Speed: 1, Health: 80, Projectile: 4">
-                            <button className="button-p" >Boeing B-17 Flying Fortress</button>
-                        </abbr>
+                    <div>
+                    {   Object.keys(this.state.planes).map((key) => (
+                        <div className="planes-buttons" style={{display: "inline-block", verticalAlign: "middle", padding: "1rem 1rem"}} onClick={() => this.handleClick(key)}>
+                            <abbr title= {this.title(key)}>
+                                <button className="button-p" >{this.state.planes[key].name}</button>
+                            </abbr>
+                        </div>
+                        ))
+                    }
                     </div>
                 </div>
                 <div>

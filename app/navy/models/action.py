@@ -1,5 +1,3 @@
-from weakref import WeakSet
-
 from sqlalchemy import event
 
 from app import db

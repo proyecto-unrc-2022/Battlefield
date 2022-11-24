@@ -1,5 +1,8 @@
 Feature: game logic
-    
+
+    Background: some requirement of this test
+    Given init db
+
     @air_force_game
     Scenario: User start new game
         Given three logged user

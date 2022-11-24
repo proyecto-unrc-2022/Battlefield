@@ -1,25 +1,22 @@
-from marshmallow import (
-    Schema,
-    ValidationError,
-    fields,
-    validates_schema,
-)
+from marshmallow import Schema, ValidationError, fields, validates_schema
 
-from app.models.user import User
 
 class DeleteGameValidator(Schema):
+
     game_id = fields.Integer(required=True)
-    user_id = fields.Integer(required=True)
+    user_id = fields.Integer()
+
     @validates_schema
     def validate_game(self, in_data, **kwargs):
-        from app.navy.services.navy_game_service import navy_game_service
+        from app.navy.daos.navy_game_dao import navy_game_dao
+        from app.navy.utils.navy_game_statuses import WAITING_PLAYERS
 
-        game = navy_game_service.get_by_id(in_data['game_id'])
+        game = navy_game_dao.get_by_id(in_data["game_id"])
         if not game:
             raise ValidationError("Game doesn't exist.")
 
-        if game.user1_id and game.user2_id:
+        if not (game.status == WAITING_PLAYERS):
             raise ValidationError("Can't delete a game with players.")
-        
+
         if game.user1_id != in_data.get("user_id"):
             raise ValidationError("User is not the host of the game.")
