@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useContext } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import authService from "../../services/auth.service";
 import AccessDenied from "../components/AccessDenied";
@@ -10,6 +10,8 @@ import ActionService from "../services/ActionService";
 import MissileService from "../services/MissileService";
 import NavyGameService from "../services/NavyGameService";
 import ShipService from "../services/ShipService";
+import { SocketContext, socket } from "../context/socketContext";
+import Chat from "../components/Chat";
 
 const NavyBoard = () => {
   const [game, setGame] = useState(null);
@@ -22,9 +24,62 @@ const NavyBoard = () => {
   const [enemyShip, setEnemyShip] = useState(null);
   const [missiles, setMissiles] = useState(null);
   const [action, setAction] = useState(null);
+  const [gameData, setGameData] = useState({});
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+
+    if (!loaded) {
     getGame()
+    const  my_user_id = authService.getCurrentUser().sub
+   console.log(my_user_id)
+    const my_room = {
+      "room": my_user_id
+    }
+    socket.emit('join', my_room);
+    }
+    const receivedMessage2 = (message) => {
+      setGameData(message)
+      setGame(message);
+      setMissiles(message.sight_range.missiles);
+      setAction(
+        {
+              navy_game_id:message.id,
+            ship_id:message.ship.id,
+            missile_type_id: 1,
+            round:message.round,
+            course:message.ship.course,
+        }
+      )
+      setMyShip({
+        name: message.ship.name,
+        hp: message.ship.hp,
+        course: message.ship.course,
+        x: message.ship.pos_x,
+        y: message.ship.pos_y,
+        size: message.ship.size,
+        speed: message.ship.speed,
+      });
+      if (message.sight_range.ships.length !== 0) {
+        setEnemyShip({
+          name: message.sight_range.ships[0].name,
+          hp: message.sight_range.ships[0].hp,
+          course: message.sight_range.ships[0].course,
+          x: message.sight_range.ships[0].pos_x,
+          y: message.sight_range.ships[0].pos_y,
+          size: message.sight_range.ships[0].size,
+          speed: message.sight_range.ships[0].speed,
+        });
+      }
+      console.log("receivedMessage", message);
+    }
+    socket.on('message',receivedMessage2);
+ 
+    return () => {
+      socket.off('message',receivedMessage2);
+ 
+  
+    }
   }, []);
 
   const handleSelectMissile = (missile) => {
@@ -52,11 +107,11 @@ const NavyBoard = () => {
 
   const sendAction = () => {
     ActionService.sendAction(action).then(resp => {
-      console.log(resp)
     })
   }
 
   const getGame = () => {
+    setLoaded(true);
     NavyGameService.getNavyGame(id)
       .then((resp) => {
         const currentUser = authService.getCurrentUser();
@@ -145,6 +200,15 @@ const NavyBoard = () => {
                 <div className="col-8">
                   <EntityDetails title={"My Ship"} data={myShip} />
                 </div>
+                
+              <div className="row chat-navy">
+                <div className="col-12">
+                  <Chat
+                    user={authService.getCurrentUser().username}
+                    game={game}
+                  />
+                </div>
+              </div>
               </div>
             </div>
             <div className="col-6">
@@ -161,6 +225,7 @@ const NavyBoard = () => {
                 </div>
               </div>
               <div className="row justify-content-center mt-5">
+                
                 <div className="col-10">
                   <ActionCard
                     ship={myShip}

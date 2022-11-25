@@ -11,9 +11,31 @@ from app.navy.services.navy_game_service import navy_game_service
 from app.navy.services.ship_service import ship_service
 from app.navy.utils.navy_response import NavyResponse
 from app.navy.utils.navy_utils import utils
-
+from app import io
+from flask_socketio import join_room, leave_room
 from . import navy
 
+
+@io.on('action2')
+def handle_action(data):
+    print('received json: ' + str(data))
+
+@io.on('join')
+def on_join(data):
+    room = data['room']
+    join_room(room)
+
+@io.on('message')
+def handle_message(data):
+    print('received message: ' + str(data))
+    response ={
+        "body": data['body'],
+        "user": data['user']
+    }
+    io.send(response, broadcast=True,to=data['room'])
+
+
+    
 
 @navy.post("/actions")
 @token_auth.login_required
