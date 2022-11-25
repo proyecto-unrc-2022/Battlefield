@@ -88,6 +88,7 @@ class Battlefield:
         if self.player_have_plane(player):
             raise Exception("This player already have a plane")
 
+        print("\n\n\n\n\n Plane: ", obj, " \n\n\n\n\n" )
         fly_obj = FlyingObject(player, obj, x, y, course)
         self.flying_objects.append(fly_obj)
         return fly_obj
@@ -292,7 +293,9 @@ class Battlefield:
             plane.flying_obj.health -= obj.flying_obj.health
 
     def get_status(self):
-        l = []
+        l = {}
+        i = 0
         for f in self.flying_objects:
-            l.append(f.to_dict())
+            l[i] = f.to_dict()
+            i += 1
         return l
