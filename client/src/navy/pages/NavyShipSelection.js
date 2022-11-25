@@ -2,8 +2,9 @@ import React from "react";
 import NavyTitle from "../components/NavyTitle";
 import { useState, useEffect } from "react";
 import ShipService from "../services/ShipService";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import NavyButton from "../components/NavyButton";
+import NavyLogo from "../components/NavyLogo";
 import NavyShipCard from "../components/NavyShipCard";
 import { useNavigate } from "react-router-dom";
 import NavyGameService from "../services/NavyGameService";
@@ -63,13 +64,9 @@ const NavyShipSelection = () => {
       ) : (
         <>
           <div className="row justify-content-between p-2 align-items-center">
-            <Link
-              to={"/navy"}
-              className="navy-text"
-              style={{ textDecoration: "none" }}
-            >
-              Navy Battleship
-            </Link>
+            <div className="row justify-content-between p-2 align-items-center">
+              <NavyLogo size={"small"} />
+            </div>
           </div>
           <div className="row">
             <div className="col-12 text-center">

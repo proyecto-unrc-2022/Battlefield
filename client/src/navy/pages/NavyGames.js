@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import authService from "../../services/auth.service";
 import userService from "../../services/user.service";
 import FiltersComponent from "../components/FiltersComponent";
 import NavyGameCard from "../components/NavyGameCard";
 import NavyTitle from "../components/NavyTitle";
+import NavyLogo from "../components/NavyLogo"
 import NavyGameService from "../services/NavyGameService";
 
 const NavyGames = () => {
@@ -53,13 +53,7 @@ const NavyGames = () => {
   return (
     <div style={{ flexGrow: "1" }} className="container-fluid bg-navy">
       <div className="row justify-content-between p-2 align-items-center">
-        <Link
-          to={"/navy"}
-          className="navy-text"
-          style={{ textDecoration: "none" }}
-        >
-          Navy Battlefield
-        </Link>
+        <NavyLogo size={"small"}/>
         <FiltersComponent filter={filterGames} />
       </div>
       <div className="row">
