@@ -3,6 +3,7 @@ from flask_restx import Api
 from api.v1.navy.docs.navy_games.views import navy_namespace
 from api.v1.navy.docs.actions.views import navy_actions_namespace
 from api.v1.navy.docs.ships.views import ship_namespace
+from api.v1.navy.docs.missiles.views import missile_namespace
 navy_doc = Blueprint("documented_navy_api", __name__)
 
 authorizations = {
@@ -29,6 +30,7 @@ api = Api(app=navy_doc,
     
     
 
+api.add_namespace(missile_namespace)
 api.add_namespace(ship_namespace)
 api.add_namespace(navy_actions_namespace)
 api.add_namespace(navy_namespace)
