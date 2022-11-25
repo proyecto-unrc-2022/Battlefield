@@ -31,7 +31,7 @@ class ActionRequestValidator(Schema):
         round = in_data.get("round")
 
         if not game:
-            raise ValidationError("Game not found")
+            raise ValidationError("Game not found",field_name="navy_game_id")
 
         if game.user1_id != user_id and game.user2_id != user_id:
             raise ValidationError("Invalid game")
