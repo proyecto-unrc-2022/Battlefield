@@ -3,7 +3,7 @@ import "./Rudder.css";
 import rudder from "../assets/rudder.png";
 
 const Rudder = ({ ship, changeCourse }) => {
-  const [course, setCourse] = useState(ship.course);
+  const [course, setCourse] = useState(" ");
 
   const handleShipCourse = (e) => {
     setCourse(e.target.ariaValueText);

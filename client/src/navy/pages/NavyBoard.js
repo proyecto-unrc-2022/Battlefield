@@ -22,7 +22,12 @@ const NavyBoard = () => {
   const [myShip, setMyShip] = useState(null);
   const [enemyShip, setEnemyShip] = useState(null);
   const [missiles, setMissiles] = useState(null);
-  const [action, setAction] = useState(null);
+  const [action, setAction] = useState({
+    course: " ",
+    move: 0,
+    attack: 0
+  });
+  const [move, setMove] = useState(false)
   const [actionSuccess, setActionSuccess] = useState(false);
   const [actionError, setActionError] = useState(false);
   const [winner, setWinner] = useState(null);
@@ -48,9 +53,11 @@ const NavyBoard = () => {
 
   const handleAttack = () => {
     setAction({ ...action, attack: 1, move: 0 });
+    setMove(false)
   };
 
   const handleMove = (quant) => {
+    setMove(true)
     setAction({ ...action, attack: 0, move: quant });
   };
 
@@ -62,6 +69,16 @@ const NavyBoard = () => {
           setActionSuccess(false);
           clearTimeout(timeout);
         }, 2000);
+        setMove(false)
+        setAction({
+          navy_game_id: resp.data.data.navy_game_id,
+          ship_id: resp.data.data.ship_id,
+          missile_type_id: resp.data.data.missile_type_id[0],
+          round: resp.data.data.round + 1,
+          course: resp.data.data.course,
+          move: 0,
+          attack: 0,
+        });
       })
       .catch((err) => {
         setActionError(true);
@@ -75,7 +92,6 @@ const NavyBoard = () => {
   const getGame = () => {
     NavyGameService.getNavyGame(id)
       .then((resp) => {
-        console.log(resp);
         const currentUser = authService.getCurrentUser();
         const accessDenied =
           currentUser.sub !== resp.data.data.user_1.id &&
@@ -103,6 +119,8 @@ const NavyBoard = () => {
             missile_type_id: ship.missile_type_id[0],
             round: resp.data.data.round,
             course: resp.data.data.ship.course,
+            move: 0,
+            attack: 0,
           });
         });
         setMyShip({
@@ -115,7 +133,7 @@ const NavyBoard = () => {
           speed: resp.data.data.ship.speed,
         });
 
-        setEnemyShip(null)
+        setEnemyShip(null);
 
         if (resp.data.data.status !== "FINISHED") {
           if (resp.data.data.sight_range.ships.length !== 0) {
@@ -201,6 +219,8 @@ const NavyBoard = () => {
                     changeCourse={handleNewCourse}
                     changeAttack={handleAttack}
                     changeMove={handleMove}
+                    attack={action.attack === 0 ? false : true}
+                    move={move}
                   />
                 </div>
               </div>
