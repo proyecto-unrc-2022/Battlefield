@@ -24,8 +24,8 @@ def action():
         request.json["user_id"] = utils.get_user_id_from_header(
             request.headers["Authorization"]
         )
-        data = action_service.validate_request(request.json)
-        action_service.add(data)
+        validated_data = action_service.validate_request(request.json)
+        action_service.add(validated_data)
         return (
             NavyResponse(201, data=request.json, message="Action added").to_json(),
             201,
@@ -41,9 +41,12 @@ def new_ship():
         request.json["user_id"] = utils.get_user_id_from_header(
             request.headers["Authorization"]
         )
-        data = ship_service.validate_request(request.json)
-        ship_service.add(data)
-        return NavyResponse(201, data=data, message="Ship added").to_json(), 201
+        validated_data = ship_service.validate_request(request.json)
+        ship_service.add(validated_data)
+        return (
+            NavyResponse(201, data=validated_data, message="Ship added").to_json(),
+            201,
+        )
     except ValidationError as err:
         return jsonify(err.messages), 400
 
@@ -53,8 +56,7 @@ def new_ship():
 def new_navy_game():
     try:
         user1_id = utils.get_user_id_from_header(request.headers["Authorization"])
-        validated_data = navy_game_service.validate_post_request({"user1_id": user1_id})
-        created_game = navy_game_service.add(validated_data)
+        created_game = navy_game_service.add({"user1_id": user1_id})
         return (
             NavyResponse(
                 201, data=NavyGameDTO().dump(created_game), message="Game created."
@@ -124,10 +126,9 @@ def update_navy_game(id):
 def delete_navy_game(id):
     try:
         from app.navy.validators.delete_game_validator import DeleteGameValidator
+
         user_id = utils.get_user_id_from_header(request.headers["Authorization"])
-        validated_data = DeleteGameValidator().load(
-            {"game_id": id, "user_id": user_id}
-        )
+        validated_data = DeleteGameValidator().load({"game_id": id, "user_id": user_id})
         deleted_game = navy_game_service.delete(validated_data["game_id"])
         return (
             NavyResponse(
@@ -137,15 +138,6 @@ def delete_navy_game(id):
         )
     except ValidationError as err:
         return jsonify(err.messages), 400
-
-
-
-@navy.get("/navy_active_games")
-@token_auth.login_required
-def get_navy_active_games():
-    games = navy_game_service.get_active_games()
-    json_games = list(map(lambda game: NavyGameDTO().dump(game), games))
-    return NavyResponse(status=200, data=json_games, message="Ok").to_json(), 200
 
 
 @navy.get("/ship_types")

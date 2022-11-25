@@ -9,6 +9,9 @@ class MissileDTO(SQLAlchemySchema):
         include_relationships = False
         load_instance = True
 
-    course = auto_field()
+    id = auto_field()
+    course = auto_field()  
     pos_x = auto_field()
     pos_y = auto_field()
+    speed = auto_field()
+    damage = auto_field()

@@ -10,7 +10,7 @@ export default class InitAirforce extends Component {
     gameId: ""
   }
 
-  newGameClik = () =>  {
+  handleNewGameClik = () =>  {
     AirForceService.createAirforceGame().then(
       (response) => {
         const status_code = response.status;
@@ -25,7 +25,7 @@ export default class InitAirforce extends Component {
     )
   }
 
-  joinGameClick = () =>  {
+  handleJoinGameClick = () =>  {
     // alert('A name was submitted: ' + this.state.gameId);
     AirForceService.joinAirforceGame(this.state.gameId).then(
       (response) => {
@@ -37,25 +37,9 @@ export default class InitAirforce extends Component {
     )
   }
 
-  // Para que ande este metodo, hay que lograr obtener el id del juego creado arriba, sino tira error
   handleChange(event) {    
     this.setState({gameId: event.target.value});  
   }
-
-  handleClick2 = () => {
-    window.location.reload(false);
-    AirForceService.joinAirforceGame(3).then(
-      (response) => {
-
-        console.log(response);
-        const status_code = response.status;
-        if(status_code === 200){
-          window.location.href = "/airforce/game/lobby"
-        }
-      }
-    )
-  }
-
 
   render() {
     return (
@@ -69,7 +53,7 @@ export default class InitAirforce extends Component {
           <button
               className="create-game" 
               type="button" 
-              onClick={this.newGameClik.bind(this)}>
+              onClick={this.handleNewGameClik.bind(this)}>
               Create new game
           </button>
         </div>
@@ -87,7 +71,7 @@ export default class InitAirforce extends Component {
           <button
             className="join-game" 
             type="button" 
-            onClick={this.joinGameClick.bind(this)}>
+            onClick={this.handleJoinGameClick.bind(this)}>
             Join in game
           </button>
         </div>        

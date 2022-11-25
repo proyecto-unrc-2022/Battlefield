@@ -13,8 +13,8 @@ def add_plane(name, size, speed, health, cant_projectile):
     return plane
 
 
-def get_plane(plane_id):
-    plane = Plane.query.filter_by(id=plane_id).first()
+def get_all_planes():
+    plane = Plane.query.all()
     return plane
 
 

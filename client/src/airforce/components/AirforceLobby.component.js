@@ -1,13 +1,17 @@
 import React, { Component, useState} from "react";
 import AirforceService from "../services/airforce.service";
 
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
+
 
 function withParams(Component) {
     return props => <Component {...props} params={useParams()} />;
   }
 
+
 class AirforceLobby extends Component {    
+
+
 
     state = {
         ready: false,
@@ -24,16 +28,14 @@ class AirforceLobby extends Component {
         
     render() {
         setInterval(() => {
-            AirforceService.airforceGameReady(this.id()).then((response) => {
-                this.state.ready =  response.data.ready;
-            }
-            );
+                AirforceService.airforceGameReady(this.id()).then((response) => {
+                    this.state.ready =  response.data.status;
+                });
             if(this.state.ready){
                 this.redirect(this.id());
             }
           }, 2000 ); 
-            return (
-               
+            return (               
             <div className="airforce-lobby" style={{textAlign: "center", padding:"15rem 15rem"}}>
                 <h1 style={{fontFamily: "Silkscreen"}}>Lobby ID = {this.id()}</h1>
                 <h1 style={{fontFamily: "Silkscreen"}}>
