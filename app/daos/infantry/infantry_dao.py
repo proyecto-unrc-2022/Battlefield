@@ -110,6 +110,8 @@ def move_save(game_id, user_id, direction, velocity):
         user_id (int): id del usuario
         direction (int): direccion a la que se movera la unidad
         velocity (int): cantidad de casillas que se va a mover su unidad
+     Returns:
+        boolean: True si se guardo el movimiento, False si es que sucedio algos
     """
     global players_actions
     success = False 
@@ -138,7 +140,7 @@ def move(game_id, user_id, direction, velocity):
     Returns:
         boolean: (No colisiona con otra figure) y (no excede su limite)
     """
-    is_valid = True
+    collision = False
     figures = figures_id_game(game_id)
     figure = db.session.query(Figure_infantry).filter_by(id_user = user_id, id_game = game_id).first()
     figure_opponent = Figure_infantry.query.filter_by(id_user = find_opponent(game_id, figure.id), id_game = game_id).first()
@@ -148,21 +150,22 @@ def move(game_id, user_id, direction, velocity):
         coor = direc(direction, aux_figure.pos_x, aux_figure.pos_y)
         aux_figure.pos_x = aux_figure.pos_x + (aux_figure.pos_x - coor[0])
         aux_figure.pos_y = aux_figure.pos_y + (aux_figure.pos_y - coor[1])
-        is_valid = False if aux_figure == None else not(intersection([aux_figure.pos_x, aux_figure.pos_y], figures[(figure_opponent.id)-1][1]))
-    if is_valid and not(exceeded_velocity_limit): 
+        collision = False if aux_figure == None else intersection([aux_figure.pos_x, aux_figure.pos_y], figures[(figure_opponent.id)-1][1]) or collision
+    if not(collision) and not(exceeded_velocity_limit): 
         db.session.query(Figure_infantry).filter(
             Figure_infantry.id_user == user_id, Figure_infantry.id_game == game_id).update(
                 {'pos_x' :  aux_figure.pos_x, 'pos_y' : aux_figure.pos_y, 'direccion' : direction})
 
-    elif not(is_valid) and not(exceeded_velocity_limit):
+    elif collision and not(exceeded_velocity_limit):
         db.session.query(Figure_infantry).filter(
-            Figure_infantry.id_user == user_id, Figure_infantry.id_game == game_id).update(
+            Figure_infantry.id == figure.id).update(
                 {'hp' :  figure.hp - figure_opponent.hp})
-        db.session.query(Figure_infantry).filter(
-            Figure_infantry.id_user == user_id, Figure_infantry.id_game == game_id).update(
-                {'hp' :  figure_opponent.hp - figure.hp})
+        if(not(figure.hp - figure_opponent.hp > 0)):    
+            db.session.query(Figure_infantry).filter(
+                Figure_infantry.id == figure_opponent.id).update(
+                    {'hp' :  figure_opponent.hp - figure.hp})
     db.session.commit()
-    return is_valid and not(exceeded_velocity_limit) 
+    return not(collision) and not(exceeded_velocity_limit) 
 
 def find_opponent(game_id, user_id):
     """Encuentra el oponente de la id de la figura dada por parametro
