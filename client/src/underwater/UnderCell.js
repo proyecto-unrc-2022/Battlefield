@@ -2,7 +2,7 @@ import React from 'react';
 import "./css/game-style.css"
 import { GoPrimitiveDot } from "react-icons/go";
 
-export default function UnderCell({placeSubmarine, x, y, type, images}){ 
+export default function UnderCell({placeSubmarine = null, x, y, type, images}){ 
   const rotation = 45 * parseInt([type[type.length-1]]);
 
   const style = {

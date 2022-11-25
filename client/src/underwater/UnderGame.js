@@ -76,7 +76,7 @@ export default function UnderGame() {
       }
       else if(position == null) {
         setLayout({
-          main: <PlaceSubmarine setPosition={setPosition} width={width} height={height} />, 
+          main: <PlaceSubmarine visibleState={visibleState} setPosition={setPosition} width={width} height={height} />, 
           bottom: <h1>Place your submarine</h1>
         });
       }
