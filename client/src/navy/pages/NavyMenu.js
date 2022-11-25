@@ -2,28 +2,27 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import NavyButton from "../components/NavyButton";
 import NavyMenuStars from "../components/NavyMenuStars";
-import NavyTitle from "../components/NavyTitle";
+import NavyLogo from "../components/NavyLogo";
 import NavyGameService from "../services/NavyGameService";
 
 const NavyMenu = () => {
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
-   
   const goToGames = () => {
-    navigate("games")
-  }
+    navigate("games");
+  };
 
   const createGame = () => {
-    NavyGameService.postNavyGame().then(resp => {
-      navigate(`games/${resp.data.data.id}/lobby`)
-    })
-  }
+    NavyGameService.postNavyGame().then((resp) => {
+      navigate(`games/${resp.data.data.id}/lobby`);
+    });
+  };
 
   return (
-    <div style={{flexGrow: "1"}} className="container-fluid bg-navy">
+    <div style={{ flexGrow: "1" }} className="container-fluid bg-navy">
       <div className="row">
         <div className="col-12 text-center">
-          <NavyTitle text="Navy Battleship" size={2}/>
+          <NavyLogo size={"xlarge"} />
         </div>
       </div>
       <div className="row">
@@ -36,7 +35,7 @@ const NavyMenu = () => {
         </div>
       </div>
     </div>
-  )
+  );
 };
 
 export default NavyMenu;

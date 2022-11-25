@@ -1,0 +1,6 @@
+.selected-course {
+  text-shadow: 2px 0 #2DA0ED, -2px 0 #2DA0ED, 0 2px #2DA0ED, 0 -2px #2DA0ED,
+               1px 1px #2DA0ED, -1px -1px #2DA0ED, 1px -1px #2DA0ED, -1px 1px #2DA0ED;
+  transform: scale(1.1);
+  transition: transform 0.2s;
+}

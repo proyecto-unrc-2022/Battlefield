@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import NavyGameService from "../services/NavyGameService";
 import NavyGameCard from "../components/NavyGameCard";
 import NavyTitle from "../components/NavyTitle";
+import NavyLogo from "../components/NavyLogo";
 import authService from "../../services/auth.service";
 import AccessDenied from "../components/AccessDenied";
 
@@ -50,6 +51,9 @@ const NavyLobby = () => {
 
   return (
     <div style={{ flexGrow: "1" }} className="container-fluid bg-navy">
+      <div className="row justify-content-between p-2 align-items-center">
+        <NavyLogo size={"small"} />
+      </div>
       {!game ? (
         <div className="row mt-5">
           <div className="col-12 text-center">
@@ -74,7 +78,11 @@ const NavyLobby = () => {
           <div className="row">
             <div className="col-12 d-flex justify-content-center mt-4">
               {game ? (
-                <NavyGameCard button={"cancel-game"} game={game} key={game.id} />
+                <NavyGameCard
+                  button={"cancel-game"}
+                  game={game}
+                  key={game.id}
+                />
               ) : null}
             </div>
           </div>
