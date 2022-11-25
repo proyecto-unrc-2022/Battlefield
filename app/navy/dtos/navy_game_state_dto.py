@@ -2,17 +2,17 @@ from app.models.user import User, UserSchema
 
 
 class NavyGameStateDTO:
-    def __init__(self, id, user_id) -> None:
+    def __init__(self, id, user_id):
         self.id = id
         self.user_id = user_id
         self.load_state()
 
-    def load_ship(self, user_id):
+    def load_ship(self, user_id, navy_game_id):
         from app.navy.dtos.ship_dto import ShipDTO
         from app.navy.services.ship_service import ship_service
         from app.navy.utils.navy_utils import utils
 
-        ships = ship_service.get_by(user_id=user_id)
+        ships = ship_service.get_by(user_id=user_id, navy_game_id=navy_game_id)
         if ships:
             user_ship = ships[utils.ZERO]
             return ShipDTO().dump(user_ship)
@@ -26,14 +26,16 @@ class NavyGameStateDTO:
 
         self.user_1 = UserSchema().dump(user_1)
         self.user_2 = UserSchema().dump(user_2)
-        self.rows = navy_game.board_rows
-        self.cols = navy_game.board_colums
+        self.rows = navy_game.rows
+        self.cols = navy_game.cols
         self.status = navy_game.status
         self.turn = navy_game.turn
         self.round = navy_game.round
         self.winner = navy_game.winner
-        self.ship = self.load_ship(self.user_id)
-        self.sight_range = navy_game_service.get_visibility(self.id, self.user_id)
+        self.ship = self.load_ship(self.user_id, self.id)
+        self.sight_range = []
+        if navy_game.status == "STARTED":
+            self.sight_range = navy_game_service.get_visibility(self.id, self.user_id)
 
     def dump(self):
         return {
