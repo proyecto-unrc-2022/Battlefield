@@ -1,0 +1,12 @@
+.stats-list {
+  list-style: none;
+  padding: 0;
+}
+
+.stats-card {
+  border: 1px solid black;
+}
+
+hr {
+  border-top: 1px solid black;
+}

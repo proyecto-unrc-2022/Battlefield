@@ -1,0 +1,7 @@
+.grid-ship-place {
+  display: grid;
+	position: relative;
+	margin: 0 auto;
+	grid-template: repeat(10, 2rem) / repeat(10, 2rem);
+	text-align: center;
+}

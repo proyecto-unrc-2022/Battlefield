@@ -1,0 +1,11 @@
+.navy-logo {
+    vertical-align:top !important;
+}
+
+.navy-logo-wing {
+    display:inline-block; 
+    vertical-align:text-top ;
+    height:0.75em; 
+    width:auto; 
+    transform:translate(0, 0.1em)
+}

@@ -8,9 +8,9 @@ import Corvette from "../assets/Corvette.svg";
 import MissileService from "../services/MissileService";
 import "./NavyShip.css";
 
-const NavyShipCard = ({ ship, name, selectShip }) => {
+const NavyShipCard = ({ ship, name, selectShip, selected = false }) => {
   const [missiles, setMissiles] = useState({});
-  
+
   useEffect(() => {
     MissileService.getMissileTypes().then((resp) => {
       const missiles = resp.data.data;
@@ -23,14 +23,7 @@ const NavyShipCard = ({ ship, name, selectShip }) => {
   }, []);
 
   const effectMouseEnterHover = (e) => {
-    e.target.style.transform = "scale(1.1)";
-
-    e.target.style.transition = "transform 0.3s";
     e.target.style.cursor = "pointer";
-  };
-
-  const effectMouseLeaveHover = (e) => {
-    e.target.style.transform = "scale(1)";
   };
 
   const getShipImage = () => {
@@ -50,16 +43,14 @@ const NavyShipCard = ({ ship, name, selectShip }) => {
 
   return (
     <div
-      className="navy-card-ship-container d-flex flex-column align-items-center border border-dark py-4 mt-5 mb-3"
+      className={
+        "navy-card-ship-container d-flex flex-column align-items-center border border-dark py-4 mt-5 mb-3 " +
+        (selected ? "selected" : "")
+      }
       onMouseEnter={effectMouseEnterHover}
-      onMouseLeave={effectMouseLeaveHover}
       onClick={(e) => {
-        //e.target.style.boxShadow = "0 0 10px 5px #000000";
-        selectShip(name);
+        selectShip(name, ship);
       }}
-      /*   onClick={(e) => {
-        e.target.style.boxShadow = "0 0 10px 5px #000000";
-      }} */
     >
       <div className="w-100 d-flex justify-content-center mb-2">
         <NavyTitle text={name} size={8} />
