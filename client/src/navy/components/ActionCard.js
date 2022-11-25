@@ -1,33 +1,25 @@
 import React, { useState } from "react";
 import "./ActionCard.css";
 import Rudder from "./Rudder";
-import attackButton from "../assets/attack-button.png";
-import moveButton from "../assets/move-button.png";
+import attackBtn from "../assets/attack-button.png";
+import moveBtn from "../assets/move-button.png";
 
-const ActionCard = ({ ship, changeCourse, changeAttack, changeMove }) => {
+const ActionCard = ({ ship, changeCourse, changeAttack, changeMove, attack, move }) => {
   const speed = Array(ship.speed + 1).fill(1);
-  const [move, setMove] = useState(false);
-  const [attack, setAttack] = useState(false);
 
   const setCourse = (newCourse) => {
     changeCourse(newCourse);
   };
 
   const handleClickAttack = () => {
-    setMove(false);
-    setAttack(true);
     changeAttack();
   };
 
-  const handleClickMove = (quant) => {
-    setMove(true);
-    setAttack(false);
+  const handleClickMove = (quant=1) => {
     changeMove(parseInt(quant));
   };
 
   const handleChangeMove = (e) => {
-    setMove(true);
-    setAttack(false);
     changeMove(parseInt(e.target.value));
   };
 
@@ -45,7 +37,7 @@ const ActionCard = ({ ship, changeCourse, changeAttack, changeMove }) => {
           <img
             role={"button"}
             onClick={handleClickAttack}
-            src={attackButton}
+            src={attackBtn}
             alt="Attack"
           ></img>
           <p className={"m-0 navy-text " + (attack ? "selected-button" : "")}>
@@ -55,8 +47,8 @@ const ActionCard = ({ ship, changeCourse, changeAttack, changeMove }) => {
         <div className="col-3 text-center">
           <img
             role={"button"}
-            onClick={() => handleClickMove(0)}
-            src={moveButton}
+            onClick={() => handleClickMove()}
+            src={moveBtn}
             alt="Move"
           ></img>
           <p className={"m-0 navy-text " + (move ? "selected-button" : "")}>
