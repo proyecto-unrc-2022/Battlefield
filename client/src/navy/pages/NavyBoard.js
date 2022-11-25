@@ -3,6 +3,7 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import authService from "../../services/auth.service";
 import AccessDenied from "../components/AccessDenied";
 import ActionCard from "../components/ActionCard";
+import Alert from "../components/Alert";
 import EntityDetails from "../components/EntityDetails";
 import GridGame from "../components/GridGame";
 import NavyButton from "../components/NavyButton";
@@ -22,9 +23,11 @@ const NavyBoard = () => {
   const [enemyShip, setEnemyShip] = useState(null);
   const [missiles, setMissiles] = useState(null);
   const [action, setAction] = useState(null);
+  const [actionSuccess, setActionSuccess] = useState(false);
+  const [actionError, setActionError] = useState(false);
 
   useEffect(() => {
-    getGame()
+    getGame();
   }, []);
 
   const handleSelectMissile = (missile) => {
@@ -51,10 +54,20 @@ const NavyBoard = () => {
   };
 
   const sendAction = () => {
-    ActionService.sendAction(action).then(resp => {
-      console.log(resp)
-    })
-  }
+    ActionService.sendAction(action).then((resp) => {
+      setActionSuccess(true)
+      const timeout = setTimeout(() => {
+        setActionSuccess(false)
+        clearTimeout(timeout)
+      }, 2000);
+    }).catch(err => {
+      setActionError(true)
+      const timeout = setTimeout(() => {
+        setActionError(false)
+        clearTimeout(timeout)
+      }, 2000);
+    });
+  };
 
   const getGame = () => {
     NavyGameService.getNavyGame(id)
@@ -110,7 +123,7 @@ const NavyBoard = () => {
         setGame({});
         setAccessDenied(true);
       });
-  }
+  };
 
   return (
     <div style={{ flexGrow: "1" }} className="container-fluid bg-navy">
@@ -160,7 +173,7 @@ const NavyBoard = () => {
                   />
                 </div>
               </div>
-              <div className="row justify-content-center mt-5">
+              <div className="row justify-content-center mt-3">
                 <div className="col-10">
                   <ActionCard
                     ship={myShip}
@@ -170,13 +183,31 @@ const NavyBoard = () => {
                   />
                 </div>
               </div>
-              <div className="row justify-content-center my-3">
+              {actionSuccess ? (
+                <div className="row justify-content-center">
+                  <Alert text={"Action sent successfully"} type={"success"} />
+                </div>
+              ) : null}
+              {actionError ? (
+                <div className="row justify-content-center">
+                  <Alert text={"Error sending the action"} type={"danger"} />
+                </div>
+              ) : null}
+              <div className="row justify-content-center">
                 <div
                   style={{ gap: "1rem" }}
-                  className="col-10 d-flex justify-content-center"
+                  className="col-10 d-flex justify-content-center my-1"
                 >
-                  <NavyButton text={"Send action"} action={sendAction} size={"small"}/>
-                  <NavyButton text={"Refresh"} action={getGame} size={"small"}/>
+                  <NavyButton
+                    text={"Send action"}
+                    action={sendAction}
+                    size={"small"}
+                  />
+                  <NavyButton
+                    text={"Refresh"}
+                    action={getGame}
+                    size={"small"}
+                  />
                 </div>
               </div>
             </div>
@@ -184,7 +215,7 @@ const NavyBoard = () => {
               <div className="col-3">
                 <div className="row justify-content-center">
                   <div className="col-8">
-                    <EntityDetails title={"My Ship"} data={enemyShip} />
+                    <EntityDetails title={"Enemy Ship"} data={enemyShip} />
                   </div>
                 </div>
                 {missileSelected ? (

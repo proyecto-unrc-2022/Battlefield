@@ -36,26 +36,32 @@ const ActionCard = ({ ship, changeCourse, changeAttack, changeMove }) => {
   };
 
   return (
-    <div className="action-card p-3">
+    <div className="action-card p-3 rounded">
       <div className="row align-items-center">
         <div className="col-4">
           <Rudder ship={ship} changeCourse={setCourse} />
         </div>
         <div className="col-3 text-center">
           <img
+            role={"button"}
             onClick={handleClickAttack}
             src={attackButton}
             alt="Attack"
           ></img>
-          <p className={"m-0 navy-text " + (attack ? "selected-button" : "")}>Attack</p>
+          <p className={"m-0 navy-text " + (attack ? "selected-button" : "")}>
+            Attack
+          </p>
         </div>
         <div className="col-3 text-center">
           <img
+            role={"button"}
             onClick={() => handleClickMove(0)}
             src={moveButton}
             alt="Move"
           ></img>
-          <p className={"m-0 navy-text " + (move ? "selected-button" : "")}>Move</p>
+          <p className={"m-0 navy-text " + (move ? "selected-button" : "")}>
+            Move
+          </p>
         </div>
         {move ? (
           <div className="col-2 text-center">
