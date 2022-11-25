@@ -7,13 +7,14 @@ const Rudder = ({ ship, changeCourse }) => {
 
   const handleShipCourse = (e) => {
     setCourse(e.target.ariaValueText);
-    changeCourse(e.target.ariaValueText)
+    changeCourse(e.target.ariaValueText);
   };
 
   return (
     <>
       <div className="row">
         <div
+          role={"button"}
           onClick={handleShipCourse}
           aria-valuetext="NW"
           className={
@@ -24,6 +25,7 @@ const Rudder = ({ ship, changeCourse }) => {
           NW
         </div>
         <div
+          role={"button"}
           onClick={handleShipCourse}
           aria-valuetext="N"
           className={
@@ -34,6 +36,7 @@ const Rudder = ({ ship, changeCourse }) => {
           N
         </div>
         <div
+          role={"button"}
           onClick={handleShipCourse}
           aria-valuetext="NE"
           className={
@@ -46,6 +49,7 @@ const Rudder = ({ ship, changeCourse }) => {
       </div>
       <div className="row">
         <div
+          role={"button"}
           onClick={handleShipCourse}
           aria-valuetext="W"
           className={
@@ -59,6 +63,7 @@ const Rudder = ({ ship, changeCourse }) => {
           <img className="w-100 h-auto" src={rudder} alt="rudder"></img>
         </div>
         <div
+          role={"button"}
           onClick={handleShipCourse}
           aria-valuetext="E"
           className={
@@ -71,6 +76,7 @@ const Rudder = ({ ship, changeCourse }) => {
       </div>
       <div className="row">
         <div
+          role={"button"}
           onClick={handleShipCourse}
           aria-valuetext="SW"
           className={
@@ -81,6 +87,7 @@ const Rudder = ({ ship, changeCourse }) => {
           SW
         </div>
         <div
+          role={"button"}
           onClick={handleShipCourse}
           aria-valuetext="S"
           className={
@@ -91,7 +98,8 @@ const Rudder = ({ ship, changeCourse }) => {
           S
         </div>
         <div
-          onClick={handleShipCourse}  
+          role={"button"}
+          onClick={handleShipCourse}
           aria-valuetext="SE"
           className={
             "col-4 d-flex justify-content-center align-items-center navy-text " +

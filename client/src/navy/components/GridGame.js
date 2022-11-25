@@ -14,7 +14,6 @@ const GridGame = ({
   selectMissile,
 }) => {
   const arr = Array(rows).fill(Array(cols).fill(1));
-  console.log(enemyShip);
 
   const visibleCell = (row, col) => {
     return (
@@ -30,7 +29,7 @@ const GridGame = ({
     let entity = null;
     posMyShip.forEach((pos) => {
       if (row === pos.x && col === pos.y) {
-        entity = { ...pos, type: "my-ship" };
+        entity = { ...pos, type: "my-ship", course: myShip.course };
       }
     });
 
@@ -38,16 +37,18 @@ const GridGame = ({
       const posEnemyShip = ShipService.buildShip(enemyShip);
       posEnemyShip.forEach((pos) => {
         if (row === pos.x && col === pos.y) {
-          entity = { ...pos, type: "enemy-ship" };
+          entity = { ...pos, type: "enemy-ship", course: enemyShip.course };
         }
       });
     }
 
-    missiles.forEach((missile) => {
-      if (row === missile.pos_x && col === missile.pos_y) {
-        entity = { ...missile, type: "missile" };
-      }
-    });
+    if (missiles) {
+      missiles.forEach((missile) => {
+        if (row === missile.pos_x && col === missile.pos_y) {
+          entity = { ...missile, type: "missile" };
+        }
+      });
+    }
 
     return entity;
   };

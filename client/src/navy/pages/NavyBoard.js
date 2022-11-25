@@ -3,6 +3,7 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import authService from "../../services/auth.service";
 import AccessDenied from "../components/AccessDenied";
 import ActionCard from "../components/ActionCard";
+import Alert from "../components/Alert";
 import EntityDetails from "../components/EntityDetails";
 import GridGame from "../components/GridGame";
 import NavyButton from "../components/NavyButton";
@@ -24,62 +25,9 @@ const NavyBoard = () => {
   const [enemyShip, setEnemyShip] = useState(null);
   const [missiles, setMissiles] = useState(null);
   const [action, setAction] = useState(null);
-  const [gameData, setGameData] = useState({});
-  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-
-    if (!loaded) {
     getGame()
-    const  my_user_id = authService.getCurrentUser().sub
-   console.log(my_user_id)
-    const my_room = {
-      "room": my_user_id
-    }
-    socket.emit('join', my_room);
-    }
-    const receivedMessage2 = (message) => {
-      setGameData(message)
-      setGame(message);
-      setMissiles(message.sight_range.missiles);
-      setAction(
-        {
-              navy_game_id:message.id,
-            ship_id:message.ship.id,
-            missile_type_id: 1,
-            round:message.round,
-            course:message.ship.course,
-        }
-      )
-      setMyShip({
-        name: message.ship.name,
-        hp: message.ship.hp,
-        course: message.ship.course,
-        x: message.ship.pos_x,
-        y: message.ship.pos_y,
-        size: message.ship.size,
-        speed: message.ship.speed,
-      });
-      if (message.sight_range.ships.length !== 0) {
-        setEnemyShip({
-          name: message.sight_range.ships[0].name,
-          hp: message.sight_range.ships[0].hp,
-          course: message.sight_range.ships[0].course,
-          x: message.sight_range.ships[0].pos_x,
-          y: message.sight_range.ships[0].pos_y,
-          size: message.sight_range.ships[0].size,
-          speed: message.sight_range.ships[0].speed,
-        });
-      }
-      console.log("receivedMessage", message);
-    }
-    socket.on('message',receivedMessage2);
- 
-    return () => {
-      socket.off('message',receivedMessage2);
- 
-  
-    }
   }, []);
 
   const handleSelectMissile = (missile) => {
@@ -107,6 +55,7 @@ const NavyBoard = () => {
 
   const sendAction = () => {
     ActionService.sendAction(action).then(resp => {
+      console.log(resp)
     })
   }
 
@@ -114,6 +63,7 @@ const NavyBoard = () => {
     setLoaded(true);
     NavyGameService.getNavyGame(id)
       .then((resp) => {
+        console.log(resp);
         const currentUser = authService.getCurrentUser();
         const accessDenied =
           currentUser.sub !== resp.data.data.user_1.id &&
@@ -128,6 +78,11 @@ const NavyBoard = () => {
             navigate(`/navy/games/${id}/lobby`);
           }
         }
+
+        setWinner(resp.data.data.winner);
+        setGame(resp.data.data);
+        setMissiles(resp.data.data.sight_range.missiles);
+
         ShipService.getShipTypes().then((res) => {
           const ship = res.data.data[resp.data.data.ship.name];
           setAction({
@@ -138,8 +93,6 @@ const NavyBoard = () => {
             course: resp.data.data.ship.course,
           });
         });
-        setGame(resp.data.data);
-        setMissiles(resp.data.data.sight_range.missiles);
         setMyShip({
           name: resp.data.data.ship.name,
           hp: resp.data.data.ship.hp,
@@ -149,23 +102,28 @@ const NavyBoard = () => {
           size: resp.data.data.ship.size,
           speed: resp.data.data.ship.speed,
         });
-        if (resp.data.data.sight_range.ships.length !== 0) {
-          setEnemyShip({
-            name: resp.data.data.sight_range.ships[0].name,
-            hp: resp.data.data.sight_range.ships[0].hp,
-            course: resp.data.data.sight_range.ships[0].course,
-            x: resp.data.data.sight_range.ships[0].pos_x,
-            y: resp.data.data.sight_range.ships[0].pos_y,
-            size: resp.data.data.sight_range.ships[0].size,
-            speed: resp.data.data.sight_range.ships[0].speed,
-          });
+
+        setEnemyShip(null)
+
+        if (resp.data.data.status !== "FINISHED") {
+          if (resp.data.data.sight_range.ships.length !== 0) {
+            setEnemyShip({
+              name: resp.data.data.sight_range.ships[0].name,
+              hp: resp.data.data.sight_range.ships[0].hp,
+              course: resp.data.data.sight_range.ships[0].course,
+              x: resp.data.data.sight_range.ships[0].pos_x,
+              y: resp.data.data.sight_range.ships[0].pos_y,
+              size: resp.data.data.sight_range.ships[0].size,
+              speed: resp.data.data.sight_range.ships[0].speed,
+            });
+          }
         }
       })
       .catch((resp) => {
         setGame({});
         setAccessDenied(true);
       });
-  }
+  };
 
   return (
     <div style={{ flexGrow: "1" }} className="container-fluid bg-navy">
@@ -194,6 +152,15 @@ const NavyBoard = () => {
               Navy Battleship
             </Link>
           </div>
+          {winner ? (
+            <div className="mx-auto">
+              <h2 className="navy-text text-center">
+                {winner === authService.getCurrentUser().sub
+                  ? "WINNER!"
+                  : "LOSER  !"}
+              </h2>
+            </div>
+          ) : null}
           <div className="row mt-3">
             <div className="col-3">
               <div className="row justify-content-center">
@@ -213,7 +180,7 @@ const NavyBoard = () => {
             </div>
             <div className="col-6">
               <div className="row justify-content-center">
-                <div className="col-12">
+                <div className="col-12 d-flex justify-content-center">
                   <GridGame
                     rows={game.rows}
                     cols={game.cols}
@@ -225,7 +192,6 @@ const NavyBoard = () => {
                 </div>
               </div>
               <div className="row justify-content-center mt-5">
-                
                 <div className="col-10">
                   <ActionCard
                     ship={myShip}
@@ -235,13 +201,31 @@ const NavyBoard = () => {
                   />
                 </div>
               </div>
-              <div className="row justify-content-center my-3">
+              {actionSuccess ? (
+                <div className="row justify-content-center">
+                  <Alert text={"Action sent successfully"} type={"success"} />
+                </div>
+              ) : null}
+              {actionError ? (
+                <div className="row justify-content-center">
+                  <Alert text={"Error sending the action"} type={"danger"} />
+                </div>
+              ) : null}
+              <div className="row justify-content-center">
                 <div
                   style={{ gap: "1rem" }}
-                  className="col-10 d-flex justify-content-center"
+                  className="col-10 d-flex justify-content-center my-1"
                 >
-                  <NavyButton text={"Send action"} action={sendAction} size={"small"}/>
-                  <NavyButton text={"Refresh"} action={getGame} size={"small"}/>
+                  <NavyButton
+                    text={"Send action"}
+                    action={sendAction}
+                    size={"small"}
+                  />
+                  <NavyButton
+                    text={"Refresh"}
+                    action={getGame}
+                    size={"small"}
+                  />
                 </div>
               </div>
             </div>
@@ -249,7 +233,7 @@ const NavyBoard = () => {
               <div className="col-3">
                 <div className="row justify-content-center">
                   <div className="col-8">
-                    <EntityDetails title={"My Ship"} data={enemyShip} />
+                    <EntityDetails title={"Enemy Ship"} data={enemyShip} />
                   </div>
                 </div>
                 {missileSelected ? (
