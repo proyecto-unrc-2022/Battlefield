@@ -32,7 +32,7 @@ export default function UnderGame() {
       console.log("Message received:", e.data)
       if(e.data == "joined")
         setRoomIsFull(true);
-      else if(e.data == "commands executed")
+      else if(e.data == "commands executed" || e.data == "submarine placed")
         updateVisibleState();
     });
 
