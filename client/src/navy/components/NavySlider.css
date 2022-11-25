@@ -10,26 +10,25 @@
 .navy-slides {
 }
 
+.arrow-slide {
+    font-size: 36px;
+    color: white;
+    cursor: pointer;
+}
+.arrow-slide:hover {
+    color: #82B5EA !important;
+    font-size: 40px;
+    transition: 0.25s;
+}
+
 .right-arrow-slide {
-    position: absolute;
-    top: 50%;
     transform: translate(50%, 0%);
     right: 32px;
-    font-size: 45px;
-    color:white;
-    z-index: 1;
-    cursor: pointer;
 }
 
 .left-arrow-slide {
-    position:absolute;
-    top: 50%;
     transform: translate(-50%, 0%);
     left: 32px;
-    font-size: 45px;
-    color: white;
-    z-index: 1;
-    cursor: pointer;
 }
 
 .dots-container {

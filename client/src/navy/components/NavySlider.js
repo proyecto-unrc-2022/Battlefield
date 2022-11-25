@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import NavySlide1 from "./NavySlide1";
 import NavySlide2 from "./NavySlide2";
 import "./NavySlider.css";
@@ -25,13 +25,15 @@ const NavySlider = () => {
   };
 
   return (
-    <div className="navy-slider-container navy-text">
-      <div>{slides[currentIndex]}</div>
-      <div className="right-arrow-slide" onClick={goToNext}>
-        ❱
-      </div>
-      <div className="left-arrow-slide" onClick={goToPrevious}>
-        ❰
+    <div>
+      <div className="row align-items-center navy-slider-container navy-text">
+        <div className="col-1 arrow-slide left-arrow-slide" onClick={goToPrevious}>
+          ❰
+        </div>
+        <div className="col">{slides[currentIndex]}</div>
+        <div className="col-1 arrow-slide right-arrow-slide" onClick={goToNext}>
+          ❱
+        </div>
       </div>
       <div className="dots-container">
         {slides.map((slide, slideIndex) => (
