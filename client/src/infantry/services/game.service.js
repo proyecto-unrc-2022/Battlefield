@@ -27,6 +27,17 @@ class GameService {
 
     }
 
+    choose_figure(id_game, id_user, type_figure, posX, posY){
+
+
+        return axios.post(API_URL + `/game/${id_game}/user/${id_user}/figure/${type_figure}/create_entity`, 
+        {
+            "pos_x": posX,
+            "pos_y": posY
+        }, 
+        {headers : authHeader()});
+    }
+
 
 }
 
