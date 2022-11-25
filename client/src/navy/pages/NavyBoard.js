@@ -181,7 +181,7 @@ const NavyBoard = () => {
             </div>
             <div className="col-6">
               <div className="row justify-content-center">
-                <div className="col-12">
+                <div className="col-12 d-flex justify-content-center">
                   <GridGame
                     rows={game.rows}
                     cols={game.cols}
