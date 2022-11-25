@@ -4,6 +4,7 @@ import FigureInfantryData from "./figureInfantryData.component";
 import InfantryService from "../services/infantry.service"
 import GameInfantryData from "./gameInfantryData.component";
 import FigureActions from "./figureActions.component";
+import GameOverClass from "./GameOver.component"
 
 export default class GameInfantry extends Component {
   constructor(props) {
@@ -40,6 +41,7 @@ export default class GameInfantry extends Component {
             <GameInfantryData class="col align-self-center" turn={this.state.turn} game_id={this.state.game_id}/> 
             <p class="col"><FigureActions game_id={this.state.game_id} user_id={this.state.player2_id}></FigureActions></p>
           </div>
+            <GameOverClass game_id = {this.state.game_id} id_user1={this.state.player1_id} id_user2={this.state.player2_id}></GameOverClass>
         </div>    
       </div>
     )

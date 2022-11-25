@@ -32,17 +32,17 @@ export default class FigureInfantryData extends Component {
     render(){
         return <div>
             <h3>Jugador {this.state.user_id}</h3>
-            <ul>
-                <li>
+            <ul class="list-group">
+                <li  class="list-group-item">
                     HP: {this.state.hp}
                 </li>
-                <li>
+                <li  class="list-group-item">
                     x : {this.state.pos_x}
                 </li>
-                <li>
+                <li  class="list-group-item">
                     y : {this.state.pos_y}
                 </li>
-                <li>
+                <li  class="list-group-item">
                     acciones disponibles : {this.state.avail_actions}
                 </li>
             </ul>

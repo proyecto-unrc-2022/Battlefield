@@ -64,35 +64,55 @@ export default class FigureActions extends Component {
                 <form onSubmit={ev => {ev.preventDefault();
                 this.action(ev.target.direction.value, ev.target.action.value, ev.target.velocity.value)}}>
                     <div class="form-group">
-                        <div class="row align-items-start">
-                            <input type="radio" class="btn-check" name="direction" id="north west" autocomplete="off" checked value={NORTH_WEST}/>
-                                <label class="btn btn-outline-primary col" for="north west">north west</label>
-                            <input type="radio" class="btn-check" name="direction" id="north" autocomplete="off" checked value={NORTH}/>
-                                <label class="btn btn-outline-primary col" for="north">north</label>
-                            <input type="radio" class="btn-check" name="direction" id="north east" autocomplete="off" checked value={NORTH_EAST}/>
-                                <label class="btn btn-outline-primary col" for="north east">north east</label>
-                        </div>
-                        <div class="row align-items-center">
-                            <input type="radio" class="btn-check" name="direction" id="west" autocomplete="off" checked value={WEST}/>
-                             <label class="btn btn-outline-primary col" for="west">west</label>
-                            <div class="col"></div>
-                            <input type="radio" class="btn-check" name="direction" id="east" autocomplete="off" checked value={EAST}/>
-                                <label class="btn btn-outline-primary col" for="east">east</label>
-                        </div>
-                        <div class="row align-items-end">
-                            <input type="radio" class="btn-check" name="direction" id="south west" autocomplete="off" checked value={SOUTH_WEST}/>
-                                <label class="btn btn-outline-primary col" for="south west">south west</label>
-                            <input type="radio" class="btn-check" name="direction" id="south" autocomplete="off" checked value={SOUTH}/>
-                               <label class="btn btn-outline-primary col " for="south">south</label>
-                            <input type="radio" class="btn-check" name="direction" id="south east" autocomplete="off" checked value={SOUTH_EAST}/>
-                                <label class="btn btn-outline-primary col" for="south east">south east</label>
-                        </div>
+                            <div class="row align-items-start">
+                                <div>
+                                    <input type="radio" class="btn-check col" name="direction" id="north west" autocomplete="off" checked value={NORTH_WEST}/>
+                                    <label class="btn btn-outline-dark col" for="north west">North west</label>
+                            
+                                </div>
+                                <div>
+                                    <input type="radio" class="btn-check col" name="direction" id="north" autocomplete="off" checked value={NORTH}/>
+                                    <label class="btn btn-outline-dark col" for="north">North</label>
+                                </div>
+                                <div>
+                                    <input type="radio" class="btn-check col" name="direction" id="north east" autocomplete="off" checked value={NORTH_EAST}/>
+                                    <label class="btn btn-outline-dark col" for="north east">North east</label>
+                                </div>
+                            </div>
+                            <div class="row align-items-center">
+                                    <div class="position-absolute top-50 start-50 translate-middle">
+                                        <input type="radio" class="btn-check" name="direction" id="west" autocomplete="off" checked value={WEST}/>
+                                         <label class="btn btn-outline-dark" for="west">West</label>
+                                    </div>
+                                    <div class="col"></div>
+                                    <div class="col-7">
+                                        <div class="col aling-self-start">
+                                            <input type="radio" class="btn-check col-md-4 aling-self-end" name="direction" id="east" autocomplete="off" checked value={EAST}/>
+                                            </div>   
+                                        <label class="btn btn-outline-dark col-3" for="east">East</label>
+                                    </div>
+                            </div>
+                            <div class="row align-items-end">
+                                <div>
+                                    <label class="btn btn-outline-dark col" for="south west">South west</label>
+                                    <input type="radio" class="btn-check col" name="direction" id="south west" autocomplete="off" checked value={SOUTH_WEST}/>
+                                </div>
+                                <div>
+                                   <label class="btn btn-outline-dark col " for="south">South</label>
+                                   <input type="radio" class="btn-check col" name="direction" id="south" autocomplete="off" checked value={SOUTH}/>
+                                </div>
+                                <div>
+                                    <label class="btn btn-outline-dark col" for="south east">South east</label>
+                                    <input type="radio" class="btn-check col" name="direction" id="south east" autocomplete="off" checked value={SOUTH_EAST}/>
+                                </div>
+                            </div>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="action" id="move" value={"move"}/>
+                        <p class="aling-text-top"> <input class="form-check-input" type="radio" name="action" id="move" value={"move"}/> </p>
+
                         <label class="form-check-label" for="move">
                             Move
-                            <select class="form-select" id="sel1" name="velocity">
+                                <select class="form-select" id="sel1" name="velocity">
                                 {this.optionsRender()}
                             </select>
                         </label>
@@ -102,7 +122,7 @@ export default class FigureActions extends Component {
                             Shoot                      
                         </label>
                     </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn btn-outline-dark">Enter</button>
                     </form>
             </div>
         ) 

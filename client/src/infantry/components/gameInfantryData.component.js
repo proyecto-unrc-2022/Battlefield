@@ -76,7 +76,7 @@ export default class GameInfantryData extends Component {
     let message
     
     if(this.state.finished_round){
-      message = <h3 class="text-success">finished round!</h3>
+      message =  <h3 class="text-success">finished round!</h3>
       this.updateRound()
     }
     else{
@@ -84,9 +84,13 @@ export default class GameInfantryData extends Component {
     }
     
     return(
-    <div>
-      {message}
-      <button onClick={() =>{this.updateTurn()}} disabled={this.state.finished_round}>Next turn</button>
+    <div class="text-center">
+      <ul class="list-group">
+        <li class="list-group-item">
+            {message}
+            <button onClick={() =>{this.updateTurn()}} disabled={this.state.finished_round} class="btn btn-outline-dark">Next turn</button>
+        </li>
+      </ul>
     </div>)
     
    

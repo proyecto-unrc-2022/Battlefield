@@ -14,9 +14,9 @@ export default class FigureInfantryData extends Component {
             direccion: null,
             avail_actions: null
         }
-        
+
     }
-    updateData(){
+    updateData() {
         let data = InfantryService.getFigure(this.state.user_id, this.state.game_id)
         data.then((datos) => this.setState({
             pos_x: datos["data"].pos_x,
@@ -29,22 +29,24 @@ export default class FigureInfantryData extends Component {
         }))
 
     }
-    render(){
+    render() {
         this.updateData()
         return <div>
-            <h3>Player {this.state.user_id}</h3>
-            <ul>
-                <li>
+            <div class="text-center h4 pb-2 mb-4 text-black border-bottom border-strong-black">
+                <h3>Player {this.state.user_id}</h3>
+            </div>
+            <ul class="list-group">
+                <li class="list-group-item">
                     HP: {this.state.hp}
                 </li>
-                <li>
+                <li class="list-group-item">
                     x : {this.state.pos_x}
                 </li>
-                <li>
+                <li class="list-group-item">
                     y : {this.state.pos_y}
                 </li>
-                <li>
-                    acciones disponibles : {this.state.avail_actions}
+                <li class="list-group-item">
+                    Acciones disponibles: {this.state.avail_actions}
                 </li>
             </ul>
         </div>
