@@ -29,7 +29,8 @@ def action():
             201,
         )
     except ValidationError as err:
-        return jsonify(err.messages), 400
+        return NavyResponse(400, message=err.messages).to_json(), 400
+    
 
 
 @navy.post("/ships")
@@ -46,7 +47,7 @@ def new_ship():
             201,
         )
     except ValidationError as err:
-        return jsonify(err.messages), 400
+        return NavyResponse(400, message=err.messages).to_json(), 400
 
 
 @navy.post("/navy_games")
@@ -62,7 +63,7 @@ def new_navy_game():
             201,
         )
     except ValidationError as err:
-        return jsonify(err.messages), 400
+        return NavyResponse(400, message=err.messages).to_json(), 400
 
 
 @navy.get("/navy_games")
@@ -102,7 +103,7 @@ def update_navy_game(id):
             200,
         )
     except ValidationError as err:
-        return jsonify(err.messages), 400
+        return NavyResponse(400, message=err.messages).to_json(), 400
 
 
 @navy.delete("/navy_games/<int:id>")
@@ -121,7 +122,7 @@ def delete_navy_game(id):
             200,
         )
     except ValidationError as err:
-        return jsonify(err.messages), 400
+        return NavyResponse(400, message=err.messages).to_json(), 400
 
 
 @navy.get("/ship_types")
