@@ -11,7 +11,6 @@ class ShipService {
   }
 
   postShip(ship) {
-    console.log(ship);
     return axios.post(
       API_URL + "/ships",
       {

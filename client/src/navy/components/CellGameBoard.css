@@ -1,9 +1,9 @@
 .cell-game {
-  border: 1px solid black;
+  border: 1px solid rgba(0, 0, 0, 0.344);
 	height: 100%;
 	width: 100%;
 }
 
 .not-visible {
-  background-color: rgba(0, 0, 0, 0.546);
+  background-color: rgba(21, 21, 21, 0.352);
 }

@@ -4,4 +4,9 @@
 	margin: 0 auto;
 	grid-template: repeat(10, 2rem) / repeat(20, 2rem);
 	text-align: center;
+	border: 3px solid black;
+}
+
+.image {
+  background-size: cover;
 }

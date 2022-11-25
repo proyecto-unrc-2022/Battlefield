@@ -196,7 +196,7 @@ class NavyGameService:
         return {"ships": ships_dto, "missiles": missiles_dto}
 
     def get_board(self, navy_game_id):
-        if not self.games.get(navy_game_id) or self.games.get(navy_game_id) == {}:
+        if not self.games.get(navy_game_id):
             self.load_game(navy_game_id=navy_game_id)
         game_dict = self.games[navy_game_id].copy()
         game_dict.pop("ships")

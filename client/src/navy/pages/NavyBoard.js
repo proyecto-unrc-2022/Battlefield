@@ -6,7 +6,10 @@ import ActionCard from "../components/ActionCard";
 import EntityDetails from "../components/EntityDetails";
 import GridGame from "../components/GridGame";
 import NavyButton from "../components/NavyButton";
+import ActionService from "../services/ActionService";
+import MissileService from "../services/MissileService";
 import NavyGameService from "../services/NavyGameService";
+import ShipService from "../services/ShipService";
 
 const NavyBoard = () => {
   const [game, setGame] = useState(null);
@@ -18,11 +21,44 @@ const NavyBoard = () => {
   const [myShip, setMyShip] = useState(null);
   const [enemyShip, setEnemyShip] = useState(null);
   const [missiles, setMissiles] = useState(null);
+  const [action, setAction] = useState(null);
 
   useEffect(() => {
+    getGame()
+  }, []);
+
+  const handleSelectMissile = (missile) => {
+    setMissileSelected(true);
+    setMissile({
+      course: missile.course,
+      x: missile.pos_x,
+      y: missile.pos_y,
+      speed: missile.speed,
+      damage: missile.damage,
+    });
+  };
+
+  const handleNewCourse = (newCourse) => {
+    setAction({ ...action, course: newCourse });
+  };
+
+  const handleAttack = () => {
+    setAction({ ...action, attack: 1, move: 0 });
+  };
+
+  const handleMove = (quant) => {
+    setAction({ ...action, attack: 0, move: quant });
+  };
+
+  const sendAction = () => {
+    ActionService.sendAction(action).then(resp => {
+      console.log(resp)
+    })
+  }
+
+  const getGame = () => {
     NavyGameService.getNavyGame(id)
       .then((resp) => {
-        console.log(resp.data.data);
         const currentUser = authService.getCurrentUser();
         const accessDenied =
           currentUser.sub !== resp.data.data.user_1.id &&
@@ -37,6 +73,16 @@ const NavyBoard = () => {
             navigate(`/navy/games/${id}/lobby`);
           }
         }
+        ShipService.getShipTypes().then((res) => {
+          const ship = res.data.data[resp.data.data.ship.name];
+          setAction({
+            navy_game_id: resp.data.data.id,
+            ship_id: resp.data.data.ship.id,
+            missile_type_id: ship.missile_type_id[0],
+            round: resp.data.data.round,
+            course: resp.data.data.ship.course,
+          });
+        });
         setGame(resp.data.data);
         setMissiles(resp.data.data.sight_range.missiles);
         setMyShip({
@@ -64,17 +110,6 @@ const NavyBoard = () => {
         setGame({});
         setAccessDenied(true);
       });
-  }, []);
-
-  const handleSelectMissile = (missile) => {
-    setMissileSelected(true)
-    setMissile({
-      course: missile.course,
-      x: missile.pos_x,
-      y: missile.pos_y,
-      speed: missile.speed,
-      damage: missile.damage
-    })
   }
 
   return (
@@ -127,13 +162,21 @@ const NavyBoard = () => {
               </div>
               <div className="row justify-content-center mt-5">
                 <div className="col-10">
-                  <ActionCard />
+                  <ActionCard
+                    ship={myShip}
+                    changeCourse={handleNewCourse}
+                    changeAttack={handleAttack}
+                    changeMove={handleMove}
+                  />
                 </div>
               </div>
               <div className="row justify-content-center my-3">
-                <div style={{gap: "1rem"}} className="col-10 d-flex justify-content-center">
-                  <NavyButton text={"Send action"}/>
-                  <NavyButton text={"Refresh"}/>
+                <div
+                  style={{ gap: "1rem" }}
+                  className="col-10 d-flex justify-content-center"
+                >
+                  <NavyButton text={"Send action"} action={sendAction}/>
+                  <NavyButton text={"Refresh"} action={getGame}/>
                 </div>
               </div>
             </div>
