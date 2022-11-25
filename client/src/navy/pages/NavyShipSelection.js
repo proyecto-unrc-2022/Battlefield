@@ -37,7 +37,10 @@ const NavyShipSelection = () => {
           navigate(`/navy/games/${id}/board`);
         } else if (resp.data.data.status === "WAITING_PLAYERS") {
           navigate(`/navy/games/${id}/lobby`);
+        } else if (resp.data.data.status === "FINISHED") {
+          navigate(`/navy/games/${id}/board`);
         }
+
       }
     });
   }, []);

@@ -115,6 +115,8 @@ const NavyBoard = () => {
           speed: resp.data.data.ship.speed,
         });
 
+        setEnemyShip(null)
+
         if (resp.data.data.status !== "FINISHED") {
           if (resp.data.data.sight_range.ships.length !== 0) {
             setEnemyShip({
