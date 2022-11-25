@@ -14,7 +14,8 @@ class UnderBoard:
         board = UnderBoard(height=game.height, width=game.width)
         for obj in game.submarines + game.torpedos:
             for (x, y) in obj.get_positions():
-                board.matrix[x][y] = obj
+                if board.valid((x, y)):
+                    board.matrix[x][y] = obj
         return board
 
     def valid(self, p):
