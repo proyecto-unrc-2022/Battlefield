@@ -175,8 +175,8 @@ const NavyBoard = () => {
                   style={{ gap: "1rem" }}
                   className="col-10 d-flex justify-content-center"
                 >
-                  <NavyButton text={"Send action"} action={sendAction}/>
-                  <NavyButton text={"Refresh"} action={getGame}/>
+                  <NavyButton text={"Send action"} action={sendAction} size={"small"}/>
+                  <NavyButton text={"Refresh"} action={getGame} size={"small"}/>
                 </div>
               </div>
             </div>
