@@ -13,7 +13,7 @@ const GridGame = ({
   missiles,
   selectMissile,
 }) => {
-  const arr = Array(rows).fill(Array(cols).fill(1));  
+  const arr = Array(rows).fill(Array(cols).fill(1));
 
   const visibleCell = (row, col) => {
     return (
@@ -42,11 +42,13 @@ const GridGame = ({
       });
     }
 
-    missiles.forEach((missile) => {
-      if (row === missile.pos_x && col === missile.pos_y) {
-        entity = { ...missile, type: "missile" };
-      }
-    });
+    if (missiles) {
+      missiles.forEach((missile) => {
+        if (row === missile.pos_x && col === missile.pos_y) {
+          entity = { ...missile, type: "missile" };
+        }
+      });
+    }
 
     return entity;
   };

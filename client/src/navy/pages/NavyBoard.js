@@ -25,6 +25,7 @@ const NavyBoard = () => {
   const [action, setAction] = useState(null);
   const [actionSuccess, setActionSuccess] = useState(false);
   const [actionError, setActionError] = useState(false);
+  const [winner, setWinner] = useState(null);
 
   useEffect(() => {
     getGame();
@@ -54,24 +55,27 @@ const NavyBoard = () => {
   };
 
   const sendAction = () => {
-    ActionService.sendAction(action).then((resp) => {
-      setActionSuccess(true)
-      const timeout = setTimeout(() => {
-        setActionSuccess(false)
-        clearTimeout(timeout)
-      }, 2000);
-    }).catch(err => {
-      setActionError(true)
-      const timeout = setTimeout(() => {
-        setActionError(false)
-        clearTimeout(timeout)
-      }, 2000);
-    });
+    ActionService.sendAction(action)
+      .then((resp) => {
+        setActionSuccess(true);
+        const timeout = setTimeout(() => {
+          setActionSuccess(false);
+          clearTimeout(timeout);
+        }, 2000);
+      })
+      .catch((err) => {
+        setActionError(true);
+        const timeout = setTimeout(() => {
+          setActionError(false);
+          clearTimeout(timeout);
+        }, 2000);
+      });
   };
 
   const getGame = () => {
     NavyGameService.getNavyGame(id)
       .then((resp) => {
+        console.log(resp);
         const currentUser = authService.getCurrentUser();
         const accessDenied =
           currentUser.sub !== resp.data.data.user_1.id &&
@@ -86,6 +90,11 @@ const NavyBoard = () => {
             navigate(`/navy/games/${id}/lobby`);
           }
         }
+
+        setWinner(resp.data.data.winner);
+        setGame(resp.data.data);
+        setMissiles(resp.data.data.sight_range.missiles);
+
         ShipService.getShipTypes().then((res) => {
           const ship = res.data.data[resp.data.data.ship.name];
           setAction({
@@ -96,8 +105,6 @@ const NavyBoard = () => {
             course: resp.data.data.ship.course,
           });
         });
-        setGame(resp.data.data);
-        setMissiles(resp.data.data.sight_range.missiles);
         setMyShip({
           name: resp.data.data.ship.name,
           hp: resp.data.data.ship.hp,
@@ -107,16 +114,19 @@ const NavyBoard = () => {
           size: resp.data.data.ship.size,
           speed: resp.data.data.ship.speed,
         });
-        if (resp.data.data.sight_range.ships.length !== 0) {
-          setEnemyShip({
-            name: resp.data.data.sight_range.ships[0].name,
-            hp: resp.data.data.sight_range.ships[0].hp,
-            course: resp.data.data.sight_range.ships[0].course,
-            x: resp.data.data.sight_range.ships[0].pos_x,
-            y: resp.data.data.sight_range.ships[0].pos_y,
-            size: resp.data.data.sight_range.ships[0].size,
-            speed: resp.data.data.sight_range.ships[0].speed,
-          });
+
+        if (resp.data.data.status !== "FINISHED") {
+          if (resp.data.data.sight_range.ships.length !== 0) {
+            setEnemyShip({
+              name: resp.data.data.sight_range.ships[0].name,
+              hp: resp.data.data.sight_range.ships[0].hp,
+              course: resp.data.data.sight_range.ships[0].course,
+              x: resp.data.data.sight_range.ships[0].pos_x,
+              y: resp.data.data.sight_range.ships[0].pos_y,
+              size: resp.data.data.sight_range.ships[0].size,
+              speed: resp.data.data.sight_range.ships[0].speed,
+            });
+          }
         }
       })
       .catch((resp) => {
@@ -152,6 +162,15 @@ const NavyBoard = () => {
               Navy Battleship
             </Link>
           </div>
+          {winner ? (
+            <div className="mx-auto">
+              <h2 className="navy-text text-center">
+                {winner === authService.getCurrentUser().sub
+                  ? "WINNER!"
+                  : "LOSER  !"}
+              </h2>
+            </div>
+          ) : null}
           <div className="row mt-3">
             <div className="col-3">
               <div className="row justify-content-center">
