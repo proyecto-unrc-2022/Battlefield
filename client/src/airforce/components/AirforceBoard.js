@@ -2,22 +2,45 @@
 import airforceService from "../services/airforce.service";
 import "./AirforceBoard.css"
 
-export default function AirforceBoard(p,q){
+export default function AirforceBoard(json){
 
-    var x = p;
-    var y = q;
+    var x = 1;
+    var y = 2;
     var cell;
-    
+    var dict = {};
     useEffect(() => {
-        cell = document.getElementById(`(${x},${y})`)
-        cell.innerHTML = "X";
+
+        for (let i = 1; i <= 10; i++) {
+            for (let j = 1; j <= 20; j++) {
+                x = j;
+                y = i;
+                cell = document.getElementById(`(${x},${y})`)
+                cell.innerHTML = "";
+            }
+        }
+        json = JSON.parse(json);    
+            Object.keys(json).forEach(key => {
+                console.log(key, json[key]);
+                x = json[key].x;
+                y = json[key].y;
+                cell = document.getElementById(`(${x},${y})`)
+                if(cell != null) {
+                    if(json[key].flying_obj_class == "Plane"){
+                        cell.innerHTML = "X";
+                    }else{
+                        cell.innerHTML = "o";
+                    }
+                }    
+            });   
     }, []);
+    
 
-
-
+    // cell = document.getElementById(`(${json.planes.p1.x},${json.planes.p1.y})`)
+    // cell.innerHTML = "X";
+    // cell = document.getElementById(`(${json.planes.p2.x},${json.planes.p2.y})`)
+    // cell.innerHTML = "Y";
     return(
-            
-                <div className="board">
+        <div className="board">
                 <table>
                     <tbody>
                     <tr>
@@ -239,7 +262,7 @@ export default function AirforceBoard(p,q){
                             <td><div id="(8,9)"></div></td>
                             <td><div id="(9,9)"></div></td>
                             <td><div id="(10,9)"></div></td>
-                            <td><div id="(11,)"></div></td>
+                            <td><div id="(11,9)"></div></td>
                             <td><div id="(12,9)"></div></td>
                             <td><div id="(13,9)"></div></td>
                             <td><div id="(14,9)"></div></td>
