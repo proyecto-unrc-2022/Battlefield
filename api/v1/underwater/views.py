@@ -158,6 +158,9 @@ def choose_submarine(session_id):
         return Response('{"error": "%s"}' % str(e), status=409)
     session_dao.save(session)
 
+    msg = format_sse(data="submarine placed")
+    announcers[session_id].announce(msg)
+
     return '{"success": "submarine placed"}'
 
 
@@ -253,7 +256,7 @@ def update_session(session):
         for torpedo in session.game.torpedos:
             session.add_command(AdvanceTorpedo(torpedo))
 
-        msg = format_sse(data=json.dumps({"message": "commands executed"}))
+        msg = format_sse(data="commands executed")
         announcers[session.id].announce(msg)
     else:
         session.next_turn()
