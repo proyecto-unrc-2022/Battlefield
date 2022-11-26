@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import NavyTitle from ".././NavyTitle";
 import Destroyer from "../../assets/Destroyer.png";
 import Cruiser from "../../assets/Cruiser.svg";
 import Battleship from "../../assets/Battleship.svg";
@@ -9,7 +8,7 @@ import "../../../index.css";
 import MissileService from "../../services/MissileService";
 import ".././NavyShip.css";
 
-const ShipCardSlide = ({ ship, name }) => {
+const SlideShipCard = ({ ship, name }) => {
   const [missiles, setMissiles] = useState({});
 
   useEffect(() => {
@@ -89,4 +88,4 @@ const ShipCardSlide = ({ ship, name }) => {
   );
 };
 
-export default ShipCardSlide;
+export default SlideShipCard;

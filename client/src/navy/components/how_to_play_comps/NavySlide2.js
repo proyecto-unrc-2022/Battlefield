@@ -1,4 +1,4 @@
-import ShipCardSlide from "./ShipCardSlide";
+import SlideShipCard from "./SlideShipCard";
 import { useState, useEffect } from "react";
 import ShipService from "../../services/ShipService";
 
@@ -20,7 +20,7 @@ const NavySlide2 = () => {
       </p>
       <div style={{ gap: "40px" }} className="row justify-content-center mb-2">
         {Object.keys(ships).map((key) => (
-          <ShipCardSlide
+          <SlideShipCard
             key={ships[key].ship_id}
             ship={ships[key]}
             name={key}
