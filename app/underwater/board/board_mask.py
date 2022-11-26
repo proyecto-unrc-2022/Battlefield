@@ -12,9 +12,7 @@ class BoardMask(db.Model):
     board_mask = db.Column(db.String)
     submarine_id = db.Column(db.Integer, db.ForeignKey("submarine.id"))
 
-    submarine = relationship(
-        "Submarine", backref=backref("under_board_mask", uselist=False)
-    )
+    submarine = relationship("Submarine", back_populates="under_board_mask")
 
     def __init__(self, game, submarine):
         self.submarine = submarine

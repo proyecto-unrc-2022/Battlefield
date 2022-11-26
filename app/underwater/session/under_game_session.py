@@ -82,6 +82,7 @@ class UnderGameSession(db.Model):
             "game_id": self.game.id,
             "host_id": self.host_id,
             "visitor_id": self.visitor_id,
+            "winner_id": self.game.winner_id,
             "turn": self.turn,
             "order": self.order,
         }

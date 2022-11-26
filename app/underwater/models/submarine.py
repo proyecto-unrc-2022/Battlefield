@@ -18,6 +18,10 @@ class Submarine(SubmergedObject):
     torpedo_speed = db.Column(db.Integer, nullable=False)
     torpedo_damage = db.Column(db.Float, nullable=False)
 
+    under_board_mask = relationship(
+        "BoardMask", back_populates="submarine", uselist=False, cascade="all, delete"
+    )
+
     player = relationship("User", backref=backref("submarine", uselist=False))
     game = relationship("UnderGame", back_populates="submarines")
 

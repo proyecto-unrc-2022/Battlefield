@@ -18,6 +18,7 @@ class UnderGame(db.Model):
 
     host_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     visitor_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    winner_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
     height = db.Column(db.Integer)
     width = db.Column(db.Integer)
@@ -33,9 +34,12 @@ class UnderGame(db.Model):
         backref=backref("under_game_visitor", uselist=False),
         foreign_keys=[visitor_id],
     )
+    winner = relationship("User", foreign_keys=[winner_id])
 
-    submarines = relationship("Submarine", back_populates="game")
-    torpedos = relationship("Torpedo", back_populates="game")
+    submarines = relationship("Submarine", back_populates="game", cascade="all, delete")
+    deleted_submarines = relationship("Submarine", cascade="all, delete")
+    torpedos = relationship("Torpedo", back_populates="game", cascade="all, delete")
+    deleted_torpedos = relationship("Torpedo", cascade="all, delete")
 
     def __init__(self, host, visitor=None, height=10, width=20):
         self.host = host
@@ -156,11 +160,14 @@ class UnderGame(db.Model):
 
         if isinstance(obj, Torpedo):
             self.torpedos.remove(obj)
+            self.deleted_torpedos.append(obj)
 
         elif isinstance(obj, Submarine):
             self.submarines.remove(obj)
+            self.deleted_submarines.append(obj)
             if len(self.submarines) < 2:
                 self.set_state(GameState.FINISHED)
+                self.winner = self.submarines[0].player
 
     def attack(self, sub):
         next_cell = sub.get_next_position()
