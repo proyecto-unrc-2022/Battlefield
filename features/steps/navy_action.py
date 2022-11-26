@@ -91,6 +91,6 @@ def step_impl(context, user1_id, user2_id, course, distance, round, game_id):
 
 @then("the user '{user_id:d}' should see an error message '{error_msg}'")
 def step_impl(context, user_id, error_msg):
-    message = json.loads(context.pages[user_id].text)
+    message = json.loads(context.pages[user_id].text)["message"]
     value = test_utils.EXPECTED_ERRORS[error_msg]
     assert message[value][0] == error_msg
