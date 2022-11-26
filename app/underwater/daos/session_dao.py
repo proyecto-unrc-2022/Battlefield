@@ -19,7 +19,8 @@ class SessionDAO:
         return UnderGameSession.query.all()
 
     def delete(self, sid):
-        UnderGameSession.query.filter_by(id=sid).delete()
+        session = db.session.get(UnderGameSession, sid)
+        db.session.delete(session)
         db.session.commit()
 
     def save(self, session):

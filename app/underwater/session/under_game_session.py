@@ -17,11 +17,13 @@ class UnderGameSession(db.Model):
     host_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     visitor_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
-    game = relationship("UnderGame")
+    game = relationship("UnderGame", cascade="all, delete")
     host = relationship("User", foreign_keys=host_id)
     visitor = relationship("User", foreign_keys=visitor_id)
 
-    commands = relationship("Command", backref="under_game_session")
+    commands = relationship(
+        "Command", backref="under_game_session", cascade="all, delete"
+    )
 
     def __init__(self, game, host, visitor=None):
         self.game = game

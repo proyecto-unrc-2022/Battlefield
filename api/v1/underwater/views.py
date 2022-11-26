@@ -103,7 +103,7 @@ def new_game():
     print(f"Creating announcer for game session {new_session.id}")
     announcers.update({new_session.id: MessageAnnouncer()})
 
-    return '{"session_id": "%d"}' % new_session.id
+    return json.dumps({"game_id": new_session.id})
 
 
 @underwater.post("/game/<int:session_id>/join")
