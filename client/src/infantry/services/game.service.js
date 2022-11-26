@@ -38,6 +38,17 @@ class GameService {
         {headers : authHeader()});
     }
 
+    character_wait(id_game, id_user){
+
+        return axios.post(API_URL + "/ready_to_play", 
+        { 
+            "game_id" : id_game,
+            "user_id" : id_user
+        },
+        {headers : authHeader()});
+
+    }
+
 
 }
 

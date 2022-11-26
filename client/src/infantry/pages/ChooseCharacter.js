@@ -14,7 +14,7 @@ export default function ChooseCharacter(){
     const navigate = useNavigate();
 
     const redirec = () =>{
-        navigate("/home_Infantry");
+        navigate("/home_Infantry/wait_player");
     }
 
     const event = (e) =>{
