@@ -1,32 +1,30 @@
 import React, { useState, useEffect } from 'react'; 
 import "./css/game-style.css"
 
-export default function UnderStats ({stats, enemyStats}) {
-  const [maxHealth, setMaxHealth] = useState(null);
-  const [maxEnemyHealth, setMaxEnemyHealth] = useState(null);
+export default function UnderStats ({visibleState}) {
 
   function MyStats(){
     return (
       <div className="u-stats">
         <div className="u-health-indicator">
           <img className="stat-img" alt="H" src={require("./css/icons/heart.png")} />
-          <span>{stats.health}</span>
+          <span>{visibleState.submarine.health}</span>
         </div>
         <div className="u-stat-indicator">
           <img alt="S" className="stat-img" src={require("./css/icons/speed.png")} />
-          <span>{stats.speed}</span>
+          <span>{visibleState.submarine.speed}</span>
         </div>
         <div className="u-stat-indicator">
           <img alt="D" className="stat-img" src={require("./css/icons/torpedo-damage.png")} />
-          {stats.torpedo_damage}
+          {visibleState.submarine.torpedo_damage}
         </div>
         <div className="u-stat-indicator">
           <img alt="TS" className="stat-img" src={require("./css/icons/torpedo-speed.png")} />
-          {stats.torpedo_speed}
+          {visibleState.submarine.torpedo_speed}
         </div>
         <div className="u-stat-indicator">
           <img alt="RS" className="stat-img" src={require("./css/icons/radar-scope.png")} />
-          {stats.radar_scope}
+          {visibleState.submarine.radar_scope}
         </div>
       </div>
     )
@@ -36,23 +34,23 @@ export default function UnderStats ({stats, enemyStats}) {
     return (
       <div className="u-stats">
         <div className="u-stat-indicator">
-          {stats.radar_scope}
+          {visibleState.enemy_submarine.radar_scope}
           <img alt="RS" className="stat-img" src={require("./css/icons/radar-scope.png")} />
         </div>
         <div className="u-stat-indicator">
-          {stats.torpedo_speed}
+          {visibleState.enemy_submarine.torpedo_speed}
           <img alt="TS" className="stat-img" src={require("./css/icons/torpedo-speed.png")} />
         </div>
         <div className="u-stat-indicator">
-          {stats.torpedo_damage}
+          {visibleState.enemy_submarine.torpedo_damage}
           <img alt="D" className="stat-img" src={require("./css/icons/torpedo-damage.png")} />
         </div>
         <div className="u-stat-indicator">
-          <span>{stats.speed}</span>
+          <span>{visibleState.enemy_submarine.speed}</span>
           <img alt="S" className="stat-img" src={require("./css/icons/speed.png")} />
         </div>
         <div className="u-health-indicator">
-          <span>{enemyStats.health}</span>
+          <span>{visibleState.enemy_submarine.health}</span>
           <img alt="H" className="stat-img" src={require("./css/icons/heart.png")} />
         </div>
       </div>
@@ -69,8 +67,8 @@ export default function UnderStats ({stats, enemyStats}) {
 
   return (
     <div style={style}>
-      { stats != undefined ? <MyStats /> : null }
-      { enemyStats != undefined ? <EnemyStats /> : null }
+      { visibleState.submarine != undefined ? <MyStats /> : null }
+      { visibleState.enemy_submarine != undefined ? <EnemyStats /> : null }
     </div>
   )
 }

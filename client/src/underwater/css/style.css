@@ -5,6 +5,7 @@
   flex-direction: column;
   background-color: #162741;
   width: 100%;
+  color:white;
   flex-grow: 1;
   font-family: 'Glegoo', serif;
 }
