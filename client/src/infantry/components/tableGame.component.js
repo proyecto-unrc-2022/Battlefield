@@ -78,4 +78,5 @@ export default class TableGame extends Component {
     }
     return casillas;
   }
+  
 }

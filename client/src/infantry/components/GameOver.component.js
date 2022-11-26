@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import InfantryService from "../services/infantry.service";
+import gameOver from "../images/gameOver.png";
 
-export default class GameOverClass extends Component {
+export default class GameOver extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -17,18 +18,17 @@ export default class GameOverClass extends Component {
     const f1 = await InfantryService.getFigure(this.state.player1_id, this.state.game_id)
     const f2 = await InfantryService.getFigure(this.state.player2_id, this.state.game_id)
     this.setState({
-      figure1: f1["body"],
-      figure2: f2["body"],
+      figure1: f1["data"],
+      figure2: f2["data"],
     })
   }
 
   GameOver() {
 
     if (this.state.figure1 != null || this.state.figure2 != null) {
-      console.log(this.state.figure1)
       if (this.state.figure1.hp <= 0 || this.state.figure2.hp <= 0) {
         return <div>
-          Game Over
+          <img src={gameOver} />
         </div>
       }
     }

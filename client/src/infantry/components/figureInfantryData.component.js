@@ -35,20 +35,27 @@ export default class FigureInfantryData extends Component {
             <div class="text-center h4 pb-2 mb-4 text-black border-bottom border-strong-black">
                 <h3>Player {this.state.user_id}</h3>
             </div>
-            <ul class="list-group">
-                <li class="list-group-item">
-                    HP: {this.state.hp}
-                </li>
-                <li class="list-group-item">
-                    x : {this.state.pos_x}
-                </li>
-                <li class="list-group-item">
-                    y : {this.state.pos_y}
-                </li>
-                <li class="list-group-item">
-                    Acciones disponibles: {this.state.avail_actions}
-                </li>
-            </ul>
-        </div>
+            <table class="table table-dark table-striped">
+            <tbody>
+                <tr>
+                    <th scope="row">HP:</th>
+                    <td>{this.state.hp}</td>
+                </tr>
+                <tr>
+                    <th scope="row">x:</th>
+                    <td>{this.state.pos_x}</td>
+                </tr>
+                <tr>
+                    <th scope="row">y:</th>
+                    <td colspan="2">{this.state.pos_y}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Acciones Disponibles:</th>
+                    <td colspan="2">{this.state.avail_actions}</td>
+
+                </tr>
+            </tbody>
+        </table>
+        </div >
     }
 }
