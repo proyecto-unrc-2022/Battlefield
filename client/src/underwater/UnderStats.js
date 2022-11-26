@@ -18,15 +18,15 @@ export default function UnderStats ({stats, enemyStats}) {
         </div>
         <div className="u-stat-indicator">
           <img alt="D" className="stat-img" src={require("./css/icons/torpedo-damage.png")} />
-          {stats.torpedo_damage}
+          <span>{stats.torpedo_damage}</span>
         </div>
         <div className="u-stat-indicator">
           <img alt="TS" className="stat-img" src={require("./css/icons/torpedo-speed.png")} />
-          {stats.torpedo_speed}
+          <span>{stats.torpedo_speed}</span>
         </div>
         <div className="u-stat-indicator">
           <img alt="RS" className="stat-img" src={require("./css/icons/radar-scope.png")} />
-          {stats.radar_scope}
+          <span>{stats.radar_scope}</span>
         </div>
       </div>
     )
@@ -36,19 +36,19 @@ export default function UnderStats ({stats, enemyStats}) {
     return (
       <div className="u-stats">
         <div className="u-stat-indicator">
-          {stats.radar_scope}
+          <span>{enemyStats.radar_scope}</span>
           <img alt="RS" className="stat-img" src={require("./css/icons/radar-scope.png")} />
         </div>
         <div className="u-stat-indicator">
-          {stats.torpedo_speed}
+          <span>{enemyStats.torpedo_speed}</span>
           <img alt="TS" className="stat-img" src={require("./css/icons/torpedo-speed.png")} />
         </div>
         <div className="u-stat-indicator">
-          {stats.torpedo_damage}
+          <span>{enemyStats.torpedo_damage}</span>
           <img alt="D" className="stat-img" src={require("./css/icons/torpedo-damage.png")} />
         </div>
         <div className="u-stat-indicator">
-          <span>{stats.speed}</span>
+          <span>{enemyStats.speed}</span>
           <img alt="S" className="stat-img" src={require("./css/icons/speed.png")} />
         </div>
         <div className="u-health-indicator">
