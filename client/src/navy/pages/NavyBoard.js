@@ -6,6 +6,7 @@ import ActionCard from "../components/ActionCard";
 import Alert from "../components/Alert";
 import EntityDetails from "../components/EntityDetails";
 import GridGame from "../components/GridGame";
+import Modal from "../components/Modal";
 import NavyButton from "../components/NavyButton";
 import ActionService from "../services/ActionService";
 import MissileService from "../services/MissileService";
@@ -24,7 +25,16 @@ const NavyBoard = () => {
   const [myShip, setMyShip] = useState(null);
   const [enemyShip, setEnemyShip] = useState(null);
   const [missiles, setMissiles] = useState(null);
-  const [action, setAction] = useState(null);
+  const [action, setAction] = useState({
+    course: " ",
+    move: 0,
+    attack: 0,
+  });
+  const [move, setMove] = useState(false);
+  const [actionSuccess, setActionSuccess] = useState(false);
+  const [actionError, setActionError] = useState(false);
+  const [winner, setWinner] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     getGame()
@@ -47,23 +57,46 @@ const NavyBoard = () => {
 
   const handleAttack = () => {
     setAction({ ...action, attack: 1, move: 0 });
+    setMove(false);
   };
 
   const handleMove = (quant) => {
+    setMove(true);
     setAction({ ...action, attack: 0, move: quant });
   };
 
   const sendAction = () => {
-    ActionService.sendAction(action).then(resp => {
-      console.log(resp)
-    })
-  }
+    ActionService.sendAction(action)
+      .then((resp) => {
+        setActionSuccess(true);
+        const timeout = setTimeout(() => {
+          setActionSuccess(false);
+          clearTimeout(timeout);
+        }, 2000);
+        setMove(false);
+        setAction({
+          navy_game_id: resp.data.data.navy_game_id,
+          ship_id: resp.data.data.ship_id,
+          missile_type_id: resp.data.data.missile_type_id[0],
+          round: resp.data.data.round + 1,
+          course: resp.data.data.course,
+          move: 0,
+          attack: 0,
+        });
+      })
+      .catch((err) => {
+        setActionError(true);
+        const timeout = setTimeout(() => {
+          setActionError(false);
+          clearTimeout(timeout);
+        }, 2000);
+      });
+  };
 
   const getGame = () => {
     setLoaded(true);
     NavyGameService.getNavyGame(id)
       .then((resp) => {
-        console.log(resp);
         const currentUser = authService.getCurrentUser();
         const accessDenied =
           currentUser.sub !== resp.data.data.user_1.id &&
@@ -79,6 +112,9 @@ const NavyBoard = () => {
           }
         }
 
+        if (resp.data.data.winner) {
+          setOpenModal(true);
+        }
         setWinner(resp.data.data.winner);
         setGame(resp.data.data);
         setMissiles(resp.data.data.sight_range.missiles);
@@ -91,6 +127,8 @@ const NavyBoard = () => {
             missile_type_id: ship.missile_type_id[0],
             round: resp.data.data.round,
             course: resp.data.data.ship.course,
+            move: 0,
+            attack: 0,
           });
         });
         setMyShip({
@@ -103,7 +141,7 @@ const NavyBoard = () => {
           speed: resp.data.data.ship.speed,
         });
 
-        setEnemyShip(null)
+        setEnemyShip(null);
 
         if (resp.data.data.status !== "FINISHED") {
           if (resp.data.data.sight_range.ships.length !== 0) {
@@ -143,6 +181,24 @@ const NavyBoard = () => {
         />
       ) : (
         <>
+          <Modal isOpen={openModal}>
+            <div
+              className="d-flex justify-content-end pr-2"
+              role={"button"}
+              onClick={() => setOpenModal(false)}
+            >
+              x
+            </div>
+            <h2 className="navy-text text-center">
+              {winner === authService.getCurrentUser().sub
+                ? "you win!"
+                : "you lose!"}
+            </h2>
+            <p className="navy-text text-center">The game is over.</p>
+            <div className="text-center">
+              <button className="navy-text bg-white" onClick={() => navigate("/navy/games")}>Go to Games</button>
+            </div>
+          </Modal>
           <div className="row justify-content-between p-2 align-items-center">
             <Link
               to={"/navy"}
@@ -152,15 +208,6 @@ const NavyBoard = () => {
               Navy Battleship
             </Link>
           </div>
-          {winner ? (
-            <div className="mx-auto">
-              <h2 className="navy-text text-center">
-                {winner === authService.getCurrentUser().sub
-                  ? "WINNER!"
-                  : "LOSER  !"}
-              </h2>
-            </div>
-          ) : null}
           <div className="row mt-3">
             <div className="col-3">
               <div className="row justify-content-center">
@@ -198,6 +245,8 @@ const NavyBoard = () => {
                     changeCourse={handleNewCourse}
                     changeAttack={handleAttack}
                     changeMove={handleMove}
+                    attack={action.attack === 0 ? false : true}
+                    move={move}
                   />
                 </div>
               </div>
