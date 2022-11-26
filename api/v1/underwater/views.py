@@ -250,6 +250,9 @@ def send_radar_pulse(session_id):
 
     submarine = player.submarine
 
+    if session.current_turn_player() is not player:
+        return Response('{"error": "not your turn"}', status=409)
+
     session.add_command(SendRadarPulse(session.game, submarine))
     update_session(session)
     msg = format_sse(data=json.dumps({"message": "moved", "player_id": player.id}))
