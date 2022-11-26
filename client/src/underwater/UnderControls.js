@@ -52,7 +52,7 @@ export default function UnderControls(props) {
           "steps": parseInt(steps)
         },
         {headers: headers}
-      ).then(_ => {console.log("Submarine advance"); props.updateVisibleState()});
+      ).then(_ => console.log("Submarine advance"));
     }
 
     const style = {
@@ -88,7 +88,7 @@ export default function UnderControls(props) {
           "steps": 0
         },
         {headers: headers}
-      ).then(_ => {console.log("Skipped this turn"); props.updateVisibleState()});
+      ).then(_ => console.log("Skipped this turn"));
     }
 
     function useRadar() {
@@ -96,7 +96,7 @@ export default function UnderControls(props) {
         gameURL + "/send_radar_pulse",
         {},
         {headers: authHeader()}
-      ).then(_ => {console.log("Radar pulse command sent"); props.updateVisibleState()});
+      ).then(_ => console.log("Radar pulse command sent"));
     }
 
     function attack() {
@@ -106,7 +106,7 @@ export default function UnderControls(props) {
         gameURL + "/rotate_and_attack",
         {"direction": props.position.direction},
         {headers: headers}
-      ).then(_ => {console.log("Attack command sent"); props.updateVisibleState()});
+      ).then(_ => console.log("Attack command sent"));
     }
     
     return (
