@@ -200,6 +200,8 @@ def rotate_and_advance(session_id):
     )
 
     update_session(session)
+    msg = format_sse(data=json.dumps({"message": "moved", "player_id": player.id}))
+    announcers[session_id].announce(msg)
     return '{"success": "command enqueued"}'
 
 
@@ -229,6 +231,8 @@ def rotate_and_attack(session_id):
     session.add_command(RotateAndAttack(session.game, submarine, direction=direction))
 
     update_session(session)
+    msg = format_sse(data=json.dumps({"message": "moved", "player_id": player.id}))
+    announcers[session_id].announce(msg)
     return '{"success": "command enqueued"}'
 
 
@@ -248,6 +252,8 @@ def send_radar_pulse(session_id):
 
     session.add_command(SendRadarPulse(session.game, submarine))
     update_session(session)
+    msg = format_sse(data=json.dumps({"message": "moved", "player_id": player.id}))
+    announcers[session_id].announce(msg)
     return '{"success": "command enqueued"}'
 
 
@@ -257,14 +263,16 @@ def get_options():
 
 
 def update_session(session):
+    session.execute_commands()
     if session.everyone_moved():
-        session.execute_commands()
         session.invert_order()
-        for torpedo in session.game.torpedos:
-            session.add_command(AdvanceTorpedo(torpedo))
+        if len(session.game.torpedos) > 0:
+            for torpedo in session.game.torpedos:
+                session.add_command(AdvanceTorpedo(torpedo))
+            session.execute_commands()
 
-        msg = format_sse(data=json.dumps({"message": "commands executed"}))
-        announcers[session.id].announce(msg)
+            msg = format_sse(data=json.dumps({"message": "torpedos moved"}))
+            announcers[session.id].announce(msg)
     else:
         session.next_turn()
     session_dao.save(session)
