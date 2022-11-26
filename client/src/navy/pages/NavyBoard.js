@@ -38,6 +38,7 @@ const NavyBoard = () => {
 
   useEffect(() => {
     getGame()
+   
   }, []);
 
   const handleSelectMissile = (missile) => {
@@ -94,7 +95,6 @@ const NavyBoard = () => {
   };
 
   const getGame = () => {
-    setLoaded(true);
     NavyGameService.getNavyGame(id)
       .then((resp) => {
         const currentUser = authService.getCurrentUser();
@@ -214,14 +214,12 @@ const NavyBoard = () => {
                 <div className="col-8">
                   <EntityDetails title={"My Ship"} data={myShip} />
                 </div>
-                
-              <div className="row chat-navy">
-                <div className="col-12">
+              
+              <div className="col-12 d-flex flex column mt-5" >
                   <Chat
                     user={authService.getCurrentUser().username}
                     game={game}
                   />
-                </div>
               </div>
               </div>
             </div>

@@ -48,7 +48,4 @@ def before_commit(session):
 
             if navy_game_service.should_update(obj.navy_game_id):
                 navy_game_service.play_round(obj.navy_game_id)
-                navy_game = navy_game_service.get_by_id(obj.navy_game_id)
-                io.send(data=NavyGameStateDTO(user_id=navy_game.user1_id, id=obj.navy_game_id).dump(),broadcast=True,to=navy_game.user1_id)
-                io.send(data=NavyGameStateDTO(user_id=navy_game.user2_id, id=obj.navy_game_id).dump(),broadcast=True,to=navy_game.user2_id)
-                
+              
