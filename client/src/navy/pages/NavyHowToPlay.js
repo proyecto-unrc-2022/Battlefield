@@ -1,7 +1,7 @@
 import React from "react";
 import NavyLogo from "../components/NavyLogo";
 import NavyTitle from "../components/NavyTitle";
-import NavySlider from "../components/NavySlider";
+import NavySlider from "../components/how_to_play_comps/NavySlider";
 
 const NavyHowToPlay = () => {
 
