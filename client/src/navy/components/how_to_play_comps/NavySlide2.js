@@ -1,4 +1,16 @@
+import ShipCardSlide from "./ShipCardSlide";
+import { useState, useEffect } from "react";
+import ShipService from "../../services/ShipService";
+
 const NavySlide2 = () => {
+  const [ships, setShips] = useState({});
+
+  useEffect(() => {
+    ShipService.getShipTypes().then((resp) => {
+      setShips(resp.data.data);
+    });
+  }, []);
+
   return (
     <div className="text-break">
       <p className="text-justify">
@@ -6,7 +18,17 @@ const NavySlide2 = () => {
         the ship has been chosen, you must wait until the other player has made
         his selection.
       </p>
-      <p>aca va la seleccion en miniatura</p>
+      <div style={{ gap: "40px" }} className="row justify-content-center mb-2">
+        {Object.keys(ships).map((key) => (
+          <ShipCardSlide
+            key={ships[key].ship_id}
+            ship={ships[key]}
+            name={key}
+          />
+        ))}
+      </div>
+      <p>{console.log(ships)}</p>
+      <p>{console.log(ships)}</p>
     </div>
   );
 };
