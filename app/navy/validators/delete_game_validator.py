@@ -13,10 +13,10 @@ class DeleteGameValidator(Schema):
 
         game = navy_game_dao.get_by_id(in_data["game_id"])
         if not game:
-            raise ValidationError("Game doesn't exist.")
+            raise ValidationError("Game doesn't exist.",field_name="game_id")
 
         if not (game.status == WAITING_PLAYERS):
-            raise ValidationError("Can't delete a game with players.")
+            raise ValidationError("Can't delete a game with players.",field_name="game_id")
 
         if game.user1_id != in_data.get("user_id"):
-            raise ValidationError("User is not the host of the game.")
+            raise ValidationError("User is not the host of the game.",field_name="user_id")

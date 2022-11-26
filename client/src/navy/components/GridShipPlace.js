@@ -10,6 +10,7 @@ const GridShipPlace = ({ course, size, rows, cols, selectPosition }) => {
 
   const [hovered, setHovered] = useState([]);
   const [invalids, setInvalids] = useState([]);
+  const [selectedPositions, setSelectedPositions] = useState([])
 
   const rowAndColtoIndex = (row, col) => row * 10 + (col + 1);
 
@@ -38,6 +39,7 @@ const GridShipPlace = ({ course, size, rows, cols, selectPosition }) => {
   };
 
   const handleCellClick = (row, col) => {
+    const selected = [(row - 1) * 10 + col];
     let invalid = false;
     let newRow = row;
     let newCol = col;
@@ -48,9 +50,12 @@ const GridShipPlace = ({ course, size, rows, cols, selectPosition }) => {
         newCol + ShipService.compass[ShipService.inverseCoords[course]].y;
       if (ShipService.outOfRange(newRow, newCol)) {
         invalid = true;
+      } else {
+        selected.push((newRow - 1) * 10 + newCol);
       }
     }
     if (!invalid) {
+      setSelectedPositions(selected)
       selectPosition(row, col);
     }
   };
@@ -78,6 +83,7 @@ const GridShipPlace = ({ course, size, rows, cols, selectPosition }) => {
                   action={handleCellClick}
                   hovered={hovered.includes(rowAndColtoIndex(row, col))}
                   invalid={invalids.includes(rowAndColtoIndex(row, col))}
+                  selected={selectedPositions.includes(rowAndColtoIndex(row, col))}
                 />
               );
             });

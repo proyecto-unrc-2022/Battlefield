@@ -61,6 +61,10 @@ export const NavyShipPlace = () => {
   };
 
   const selectPosition = (x, y) => {
+    const currentUser = authService.getCurrentUser();
+    if (currentUser.sub === game.user_2.id) {
+      y += 10;
+    }
     setSelectedPosition({
       x: x,
       y: y,
@@ -76,10 +80,6 @@ export const NavyShipPlace = () => {
       pos_x: selectedPosition.x,
       pos_y: selectedPosition.y,
     };
-    const currentUser = authService.getCurrentUser();
-    if (currentUser.sub === game.user_2.id) {
-      shipToSend.pos_y += 10;
-    }
     ShipService.postShip(shipToSend).then((resp) => {
       console.log(resp);
     });
