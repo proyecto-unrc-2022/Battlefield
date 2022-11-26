@@ -14,6 +14,7 @@ from app.underwater.command import (
 from app.underwater.daos.session_dao import session_dao
 from app.underwater.daos.submarine_dao import submarine_dao
 from app.underwater.daos.under_game_dao import game_dao
+from app.underwater.game_state import GameState
 from app.underwater.message_announcer import MessageAnnouncer, announcers, format_sse
 from app.underwater.models.under_game import UnderGame
 
@@ -123,11 +124,17 @@ def join_game(session_id):
 
     game_session.add_visitor(visitor)
 
-    msg = format_sse(data="joined")
+    msg = format_sse(data=json.dumps({"message": "joined"}))
     announcers[session_id].announce(msg)
 
     session_dao.save(game_session)
     return '{"success": "user joined the game"}'
+
+
+@underwater.post("/game/<int:session_id>/delete")
+def delete_game(session_id):
+    session_dao.delete(session_id)
+    return '{"success": "game deleted"}'
 
 
 @underwater.post("/game/<int:session_id>/choose_submarine")
@@ -158,7 +165,7 @@ def choose_submarine(session_id):
         return Response('{"error": "%s"}' % str(e), status=409)
     session_dao.save(session)
 
-    msg = format_sse(data="submarine placed")
+    msg = format_sse(data=json.dumps({"message": "submarine placed"}))
     announcers[session_id].announce(msg)
 
     return '{"success": "submarine placed"}'
@@ -256,11 +263,15 @@ def update_session(session):
         for torpedo in session.game.torpedos:
             session.add_command(AdvanceTorpedo(torpedo))
 
-        msg = format_sse(data="commands executed")
+        msg = format_sse(data=json.dumps({"message": "commands executed"}))
         announcers[session.id].announce(msg)
     else:
         session.next_turn()
     session_dao.save(session)
+
+    if session.game.state == GameState.FINISHED:
+        msg = format_sse(data=json.dumps({"winner_id": session.game.winner_id}))
+        announcers[session.id].announce(msg)
 
 
 def get_player_from(token):
