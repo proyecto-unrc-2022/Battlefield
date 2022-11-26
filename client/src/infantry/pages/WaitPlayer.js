@@ -7,7 +7,8 @@ import "../Styles.css"
 export default function WaitPlayer(){
 
     const [game, setGame] = useState([])
-    const [state, setState] = useState(null)
+    const [stateP1, setStateP1] = useState(false)
+    const [stateP2, setStateP2] = useState(false)
     
     const navigate = useNavigate();
 
@@ -25,38 +26,37 @@ export default function WaitPlayer(){
 
     }
 
+    const state1 = () =>{
+        gameService.character_wait(game.id, game.id_user1).then(resp =>{
+            setStateP1(resp.data)
+        })
+    }
+
+    const state2 = () =>{
+        gameService.character_wait(game.id, game.id_user2).then(resp =>{
+            setStateP2(resp.data)
+        })
+    }
 
     useEffect(() =>{
-
         getGame()
-        
-
     }, [])
 
     useEffect(() =>{
-        if(game){
-            console.log(game.id)
-            console.log(game.id_user1)
-            console.log(game.id_user2)
-            gameService.character_wait(game.id, game.id_user2).then(resp =>{
-                setState(resp.data)
-            })
-            
-        }
-    },[game])
- 
-    const figure = (id_user) =>{
+        
+        if(game?.id){
 
-        gameService.character_wait(game.id, id_user).then(resp =>{
-            setState(resp)
-        })
-
-        if(state === null){
-            return false
-        }else{
-            return true
+            const timer = setTimeout(() => {
+                state1()
+                state2()
+                if(stateP1 !== false && stateP2 !== false){
+                    redirec()
+                }
+            },8000)
+            return () => clearTimeout(timer);   
         }
-    } 
+    }, [game, stateP1, stateP2])
+
     
     
     

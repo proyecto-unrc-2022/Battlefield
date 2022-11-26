@@ -95,7 +95,7 @@ def ready_to_play():
     game_id = data["game_id"]
     user_id = data["user_id"]
     figure = Figure_infantry.query.filter_by(id_user = user_id, id_game = game_id).first()
-    if figure == None: return False
+    if figure == None: return "false"
     else:
         ready(game_id, user_id)  
         game = db.session.query(Game_Infantry).where(Game_Infantry.id == game_id).first()
