@@ -12,6 +12,7 @@
     background-image: url("./Infantry.png");
     background-position: center 35%;
     background-size: cover;
+    height: 900px;
 
 }
 
@@ -47,4 +48,21 @@
 .carousel-control-next-icon {
     filter: invert(100%);
 }
+
+.bg-War{
+
+    background-image: url("./images/Guerra.png");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size:cover;
+    height: 900px;
     
+}
+
+.bg-gameOver{
+
+    background-image: url("./images/gameOver.png");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size:cover;
+}

@@ -33,9 +33,9 @@ class InfantryService{
         });
     }
 
-    async getGame(game_id){
+    getGame(game_id){
         let data = {game_id: game_id}
-        return await axios.post(
+        return axios.post(
             API_URL + "game",
             data,
             {
@@ -59,6 +59,7 @@ class InfantryService{
                 },
             }
         ).then((response) =>{
+            console.log(response.data)  
             return response.data
         })
     }
@@ -73,6 +74,7 @@ class InfantryService{
                 },
             }
         ).then((response) =>{
+            console.log(response.data)  
             return response.data
         })
     }
@@ -87,6 +89,7 @@ class InfantryService{
                 },
             }
         ).then((response) =>{
+            console.log(response.data)  
             return response.data
         })
     }
@@ -101,6 +104,7 @@ class InfantryService{
                 },
             }
         ).then((response) =>{
+            console.log(response.data)
             return response.data
         })
     }
