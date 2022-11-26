@@ -8,6 +8,7 @@ import PlaceSubmarine from "./PlaceSubmarine";
 import UnderBoard from "./UnderBoard";
 import UnderControls from "./UnderControls";
 import UnderLoading from "./UnderLoading";
+import UnderStats from "./UnderStats"
 import "./css/style.css"
 import "./css/game-style.css"
 import authService from "../services/auth.service";
@@ -124,7 +125,9 @@ export default function UnderGame() {
           }
           setLayout({
             main: <UnderBoard visibleState={visibleState} width={width} height={height} />,
-            bottom: <UnderControls visibleState={visibleState} position={position} setPosition={setPosition}/>
+            bottom: <><UnderStats stats={visibleState.submarine} enemyStats={visibleState.enemy_submarine}/>
+                      <UnderControls visibleState={visibleState} position={position} setPosition={setPosition}/>
+                    </>
           });
         }
       }

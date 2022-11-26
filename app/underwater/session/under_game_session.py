@@ -79,6 +79,9 @@ class UnderGameSession(db.Model):
         }
 
     def get_visible_state(self, player):
+        host = self.game.host
+        visitor = self.game.visitor
+
         d = {
             "session_id": self.id,
             "game_id": self.game.id,
@@ -96,6 +99,22 @@ class UnderGameSession(db.Model):
                     "visible_board": player.submarine.under_board_mask.get_visible_board(),
                 }
             )
+
+        if host is player and visitor:
+            if visitor.submarine:
+                d.update(
+                    {
+                        "enemy_submarine": visitor.submarine.public_dict(),
+                    }
+                )
+        elif visitor is player and host:
+            if host.submarine:
+                d.update(
+                    {
+                        "enemy_submarine": host.submarine.public_dict(),
+                    }
+                )
+
         return d
 
     def has_player(self, player):

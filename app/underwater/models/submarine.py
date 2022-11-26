@@ -73,6 +73,20 @@ class Submarine(SubmergedObject):
             dict.update({"game_id:": self.game.id})
         return dict
 
+    def public_dict(self):
+        dict = {
+            "player_id": self.player_id,
+            "name": self.name,
+            "size": self.size,
+            "speed": self.speed,
+            "visibility": self.visibility,
+            "radar_scope": self.radar_scope,
+            "health": self.health,
+            "torpedo_speed": self.torpedo_speed,
+            "torpedo_damage": self.torpedo_damage,
+        }
+        return dict
+
     def __get_nearest_cells(self, delta):
         positions = []
         min_x = self.x_position - delta
