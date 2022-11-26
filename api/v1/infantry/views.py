@@ -94,7 +94,7 @@ def ready_to_play():
     data = json.loads(request.data)
     game_id = data["game_id"]
     user_id = data["user_id"]
-    figure = Figure_infantry.query.filter_by(id_user = user_id).first()
+    figure = Figure_infantry.query.filter_by(id_user = user_id, id_game = game_id).first()
     if figure == None: return "Aun no has elegido una unidad"
     else:
         ready(game_id, user_id)  
