@@ -36,10 +36,12 @@ class UnderGame(db.Model):
     )
     winner = relationship("User", foreign_keys=[winner_id])
 
-    submarines = relationship("Submarine", back_populates="game", cascade="all, delete")
-    deleted_submarines = relationship("Submarine", cascade="all, delete")
-    torpedos = relationship("Torpedo", back_populates="game", cascade="all, delete")
-    deleted_torpedos = relationship("Torpedo", cascade="all, delete")
+    submarines = relationship(
+        "Submarine", back_populates="game", cascade="all, delete-orphan"
+    )
+    torpedos = relationship(
+        "Torpedo", back_populates="game", cascade="all, delete-orphan"
+    )
 
     def __init__(self, host, visitor=None, height=10, width=20):
         self.host = host
@@ -160,11 +162,9 @@ class UnderGame(db.Model):
 
         if isinstance(obj, Torpedo):
             self.torpedos.remove(obj)
-            self.deleted_torpedos.append(obj)
 
         elif isinstance(obj, Submarine):
             self.submarines.remove(obj)
-            self.deleted_submarines.append(obj)
             if len(self.submarines) < 2:
                 self.set_state(GameState.FINISHED)
                 self.winner = self.submarines[0].player
