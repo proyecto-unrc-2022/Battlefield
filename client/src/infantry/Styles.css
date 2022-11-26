@@ -47,4 +47,19 @@
 .carousel-control-next-icon {
     filter: invert(100%);
 }
-    
+
+.bg-War{
+
+    background-image: url("./images/Guerra.png");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size:cover;
+}
+
+.bg-gameOver{
+
+    background-image: url("./images/gameOver.png");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size:cover;
+}

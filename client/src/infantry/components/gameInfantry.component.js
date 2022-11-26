@@ -4,6 +4,8 @@ import FigureInfantryData from "./figureInfantryData.component";
 import InfantryService from "../services/infantry.service"
 
 import AuthService from "../../services/auth.service";
+import GameOver from "./GameOver.component"
+
 
 const EAST = 2
 const SOUTH = 0
@@ -204,7 +206,7 @@ getMessageTurn() {
     else {
       return (
         <div>
-          <div class="container">
+          <div class="container-fluid bg-War">
             <div class="row align-items-start">
               <div class="col"><FigureInfantryData figure={this.state.figure["data"]} /></div>
               <div> <GameBoard figure={this.state.figure["body"]} figureOpponent={this.state.figureOpponent["body"]} projectiles={this.state.projectile}/></div>
@@ -289,6 +291,7 @@ getMessageTurn() {
               </div>
               <div class="col"></div>
             </div>
+            <p class="col"><GameOver game_id={this.state.game_id} player1_id={this.state.player1_id} player2_id={this.state.player2_id}></GameOver></p>
           </div>    
         </div>
       )
