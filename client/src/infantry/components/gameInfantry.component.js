@@ -46,6 +46,12 @@ export default class GameInfantry extends Component {
       //figurePlayer1 siempre sera el AuthService.getCurrentUser().sub
       let figurePlayer1 = null
       let figurePlayer2 = null
+      let projectiles = InfantryService.getProjectile(this.state.game_id)
+      projectiles.then( result => {
+        this.setState({
+          projectiles: result
+        })
+      })
       if(result["id_user1"] === AuthService.getCurrentUser().sub){
         figurePlayer1 = InfantryService.getFigure(result["id_user1"], this.state.game_id)
         figurePlayer2 = InfantryService.getFigure(result["id_user2"], this.state.game_id)
@@ -204,12 +210,13 @@ getMessageTurn() {
       )
     }
     else {
+      console.log(this.state.projectiles)
       return (
         <div>
           <div class="container-fluid bg-War">
             <div class="row align-items-start">
               <div class="col"><FigureInfantryData figure={this.state.figure["data"]} /></div>
-              <div> <GameBoard figure={this.state.figure["body"]} figureOpponent={this.state.figureOpponent["body"]} projectiles={this.state.projectile}/></div>
+              <div> <GameBoard figure={this.state.figure["body"]} figureOpponent={this.state.figureOpponent["body"]} projectiles={this.state.projectiles}/></div>
               <div class="col"><FigureInfantryData figure={this.state.figureOpponent["data"]} /></div>
             </div>
             <p class="text-center">{this.getMessageTurn()}</p>
@@ -291,7 +298,7 @@ getMessageTurn() {
               </div>
               <div class="col"></div>
             </div>
-            <p class="col"><GameOver game_id={this.state.game_id} player1_id={this.state.player1_id} player2_id={this.state.player2_id}></GameOver></p>
+            <p class="col"><GameOver game_id={this.state.game_id} player1_id={this.state.game["id_user1"]} player2_id={this.state.game["id_user2"]}></GameOver></p>
           </div>    
         </div>
       )
