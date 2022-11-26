@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import AuthService from "../services/auth.service"
@@ -6,6 +6,8 @@ import { CiLocationArrow1} from "react-icons/ci";
 import { GiTorpedo } from "react-icons/gi" ;
 import authHeader from "../services/auth-header";
 export default function UnderControls(props) {
+
+  const [alertMessage, setAlertMessage] = useState(null);
   const params = useParams();
   const sessionId = params["id"];
   const gameURL = "http://localhost:5000/api/v1/underwater/game/" + sessionId;
@@ -37,7 +39,6 @@ export default function UnderControls(props) {
   }
 
   function AdvanceControl() {
-
     const [steps, setSteps] = useState(0);
 
     function advance(event) { 
@@ -52,7 +53,11 @@ export default function UnderControls(props) {
           "steps": parseInt(steps)
         },
         {headers: headers}
-      ).then(_ => console.log("Submarine advance"));
+      ).then(_ => console.log("Submarine advance")
+      ).catch(error => {
+        console.log(error.response.data);
+        setAlertMessage(error.response.data["error"]);
+      });
     }
 
     const style = {
@@ -88,7 +93,11 @@ export default function UnderControls(props) {
           "steps": 0
         },
         {headers: headers}
-      ).then(_ => console.log("Skipped this turn"));
+      ).then(_ => console.log("Skipped this turn")
+      ).catch(error => {
+        console.log(error.response.data);
+        setAlertMessage(error.response.data["error"]);
+      });
     }
 
     function useRadar() {
@@ -96,7 +105,11 @@ export default function UnderControls(props) {
         gameURL + "/send_radar_pulse",
         {},
         {headers: authHeader()}
-      ).then(_ => console.log("Radar pulse command sent"));
+      ).then(_ => console.log("Radar pulse command sent")
+      ).catch(error => {
+        console.log(error.response.data);
+        setAlertMessage(error.response.data["error"]);
+      });
     }
 
     function attack() {
@@ -106,7 +119,12 @@ export default function UnderControls(props) {
         gameURL + "/rotate_and_attack",
         {"direction": props.position.direction},
         {headers: headers}
-      ).then(_ => console.log("Attack command sent"));
+      ).then(_ => {
+        console.log("Attack command sent");
+      }).catch(error => {
+        console.log(error.response.data);
+        setAlertMessage(error.response.data["error"]);
+      });
     }
     
     return (
@@ -118,15 +136,22 @@ export default function UnderControls(props) {
     );
   }
 
+  useEffect(_ => {setAlertMessage(null)},[props.visibleState]);
+  
   return (
-    <div className="u-controls-container">
-      <div className="u-left-controls">
-        <DirectionControl position={props.position} setPosition={props.setPosition} />
-        <AdvanceControl />
+    <div style={{display: 'flex', flexDirection: 'column', width: '97%'}}>
+      <div className="u-controls-container">
+        <div className="u-left-controls">
+          <DirectionControl position={props.position} setPosition={props.setPosition} />
+          <AdvanceControl />
+        </div>
+        <div className="u-right-controls">
+          <ActionButtons />
+        </div>
       </div>
-      <div className="u-right-controls">
-        <ActionButtons />
-      </div>
+        <div>
+          {alertMessage != null ? <p className="u-alert-danger">{alertMessage}</p> : null}
+        </div>
     </div>
   );
 }
