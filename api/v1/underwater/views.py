@@ -1,3 +1,5 @@
+import json
+
 from flask import Response, request
 
 from api import token_auth, verify_token
@@ -12,11 +14,27 @@ from app.underwater.command import (
 from app.underwater.daos.session_dao import session_dao
 from app.underwater.daos.submarine_dao import submarine_dao
 from app.underwater.daos.under_game_dao import game_dao
+from app.underwater.game_state import GameState
+from app.underwater.message_announcer import MessageAnnouncer, announcers, format_sse
 from app.underwater.models.under_game import UnderGame
 
 from . import underwater
 
 # from app.underwater.under_dtos import game_dto
+
+
+@underwater.get("/game/<int:session_id>/listen")
+def listen(session_id):
+
+    announcer = announcers[session_id]
+
+    def stream():
+        messages = announcer.listen()
+        while True:
+            msg = messages.get()
+            yield msg
+
+    return Response(stream(), mimetype="text/event-stream")
 
 
 @underwater.post("/reset")
@@ -82,13 +100,15 @@ def new_game():
     game = game_dao.create(host=host, width=width, height=height)
     new_session = session_dao.start_session_for(game)
 
-    return '{"session_id": "%d"}' % new_session.id
+    print(f"Creating announcer for game session {new_session.id}")
+    announcers.update({new_session.id: MessageAnnouncer()})
+
+    return json.dumps({"game_id": new_session.id})
 
 
 @underwater.post("/game/<int:session_id>/join")
 @token_auth.login_required
 def join_game(session_id):
-    data = request.form.to_dict()
     token = get_token(request)
     visitor = get_player_from(token)
     game_session = session_dao.get_by_id(session_id)
@@ -104,16 +124,24 @@ def join_game(session_id):
 
     game_session.add_visitor(visitor)
 
+    msg = format_sse(data=json.dumps({"message": "joined"}))
+    announcers[session_id].announce(msg)
+
     session_dao.save(game_session)
     return '{"success": "user joined the game"}'
+
+
+@underwater.post("/game/<int:session_id>/delete")
+def delete_game(session_id):
+    session_dao.delete(session_id)
+    return '{"success": "game deleted"}'
 
 
 @underwater.post("/game/<int:session_id>/choose_submarine")
 @token_auth.login_required
 def choose_submarine(session_id):
-    data = request.form.to_dict()
-    for key in data.keys():
-        data[key] = int(data[key])
+    print(request.is_json)
+    data = request.get_json()
 
     token = get_token(request)
     player = get_player_from(token)
@@ -124,7 +152,6 @@ def choose_submarine(session_id):
     if not player:
         return Response('{"error":"player not found"}', status=404)
 
-    print(data)
     try:
         sub = session.game.add_submarine(
             player,
@@ -138,15 +165,16 @@ def choose_submarine(session_id):
         return Response('{"error": "%s"}' % str(e), status=409)
     session_dao.save(session)
 
+    msg = format_sse(data=json.dumps({"message": "submarine placed"}))
+    announcers[session_id].announce(msg)
+
     return '{"success": "submarine placed"}'
 
 
 @underwater.post("/game/<int:session_id>/rotate_and_advance")
 @token_auth.login_required
 def rotate_and_advance(session_id):
-    data = request.form.to_dict()
-    for key in data:
-        data[key] = int(data[key])
+    data = request.json
 
     token = get_token(request)
     player = get_player_from(token)
@@ -178,9 +206,7 @@ def rotate_and_advance(session_id):
 @underwater.post("/game/<int:session_id>/rotate_and_attack")
 @token_auth.login_required
 def rotate_and_attack(session_id):
-    data = request.form.to_dict()
-    for key in data:
-        data[key] = int(data[key])
+    data = request.json
 
     token = get_token(request)
     player = get_player_from(token)
@@ -236,9 +262,16 @@ def update_session(session):
         session.invert_order()
         for torpedo in session.game.torpedos:
             session.add_command(AdvanceTorpedo(torpedo))
+
+        msg = format_sse(data=json.dumps({"message": "commands executed"}))
+        announcers[session.id].announce(msg)
     else:
         session.next_turn()
     session_dao.save(session)
+
+    if session.game.state == GameState.FINISHED:
+        msg = format_sse(data=json.dumps({"winner_id": session.game.winner_id}))
+        announcers[session.id].announce(msg)
 
 
 def get_player_from(token):

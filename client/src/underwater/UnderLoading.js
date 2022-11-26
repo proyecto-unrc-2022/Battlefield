@@ -1,16 +1,9 @@
 import React from 'react';
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { GiSandsOfTime } from "react-icons/gi";
 import "./css/style.css"
 import { motion } from "framer-motion"
 
 export default function UnderLoading() {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    navigate()
-  });
 
   return (
     <div className='u-container'>

@@ -18,6 +18,11 @@ class SessionDAO:
     def get_all(self):
         return UnderGameSession.query.all()
 
+    def delete(self, sid):
+        session = db.session.get(UnderGameSession, sid)
+        db.session.delete(session)
+        db.session.commit()
+
     def save(self, session):
         db.session.add(session)
         db.session.commit()

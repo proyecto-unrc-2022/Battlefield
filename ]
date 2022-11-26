@@ -25,7 +25,6 @@ export default function UnderGame() {
   const [layout, setLayout] = useState(null);
   const [requestWasSent, setRequestWasSent] = useState(false);
   const [visibleState, setVisibleState] = useState(null);
-  const [winner, setWinner] = useState(null);
   const URL = "http://localhost:5000/api/v1/underwater/game/" + sessionId;
 
 
@@ -40,21 +39,21 @@ export default function UnderGame() {
       else if(data.message === "commands executed" || data.message === "submarine placed")
         updateVisibleState();
       else if(data.winner_id !== undefined) {
-        console.log("Game ended");
+        console.log("Game ended")
         axios.get(
           "http://localhost:5000/api/users/" + data.winner_id,
           {headers: authHeader()}
-        ).then(response => {console.log("Fetched user data", response.data); setWinner(response.data);});
+        ).then(response => endGame(response.data))
       }
+
+      return(_ => sse.close())
     });
 
     updateVisibleState();
-    return(_ => sse.close())
   }, [])
 
-  useEffect(_ => {if(winner != null) endGame();}, [winner]);
-
-  function endGame() {
+  function endGame(winner) {
+    setLayout({main: <ShowWinner winner={winner} />, bottom: null});
     console.log(visibleState.host_id, currentUserId);
     if(visibleState.host_id == currentUserId) { // So that only the host sends a delete request
       axios.post(URL + "/delete", {}, {headers: authHeader()}).then(_ => console.log("Game deleted"));
@@ -85,7 +84,7 @@ export default function UnderGame() {
         direction: position.direction
       },
       { headers: headers }
-    ).then(_ => console.log("Submarine chosen"));
+    ).then(_ => {console.log("Submarine chosen"); updateVisibleState()});
   }
 
   function updateVisibleState() {
@@ -101,35 +100,31 @@ export default function UnderGame() {
   }
 
   useEffect(_ => {
-    if(winner !== null)
-      setLayout({main: <ShowWinner winner={winner} />, bottom: null});
-    else {
-      if(roomIsFull) {
-        if(chosenSubmarine == null) {
-          setLayout({
-            main: <ChooseSubmarine setChosenSubmarine={setChosenSubmarine} />,
-            bottom: <h1>Choose your fighter</h1>
-          });
+    if(roomIsFull) {
+      if(chosenSubmarine == null) {
+        setLayout({
+          main: <ChooseSubmarine setChosenSubmarine={setChosenSubmarine} />,
+          bottom: <h1>Choose your fighter</h1>
+        });
+      }
+      else if(position == null) {
+        setLayout({
+          main: <PlaceSubmarine visibleState={visibleState} setPosition={setPosition} width={width} height={height} />, 
+          bottom: <h1>Place your submarine</h1>
+        });
+      }
+      else {
+        if(!requestWasSent) {
+          sendChooseSubmarine();
+          setRequestWasSent(true);
         }
-        else if(position == null) {
-          setLayout({
-            main: <PlaceSubmarine visibleState={visibleState} setPosition={setPosition} width={width} height={height} />, 
-            bottom: <h1>Place your submarine</h1>
-          });
-        }
-        else {
-          if(!requestWasSent) {
-            sendChooseSubmarine();
-            setRequestWasSent(true);
-          }
-          setLayout({
-            main: <UnderBoard visibleState={visibleState} width={width} height={height} />,
-            bottom: <UnderControls visibleState={visibleState} position={position} setPosition={setPosition}/>
-          });
-        }
+        setLayout({
+          main: <UnderBoard visibleState={visibleState} width={width} height={height} />,
+          bottom: <UnderControls visibleState={visibleState} updateVisibleState={updateVisibleState} position={position} setPosition={setPosition}/>
+        });
       }
     }
-  }, [chosenSubmarine, position, visibleState, roomIsFull, winner]);
+  }, [chosenSubmarine, position, visibleState, roomIsFull]);
 
   return (
     <div className="u-container">

@@ -17,11 +17,13 @@ class UnderGameSession(db.Model):
     host_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     visitor_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
-    game = relationship("UnderGame")
+    game = relationship("UnderGame", cascade="all, delete")
     host = relationship("User", foreign_keys=host_id)
     visitor = relationship("User", foreign_keys=visitor_id)
 
-    commands = relationship("Command", backref="under_game_session")
+    commands = relationship(
+        "Command", backref="under_game_session", cascade="all, delete"
+    )
 
     def __init__(self, game, host, visitor=None):
         self.game = game
@@ -80,11 +82,20 @@ class UnderGameSession(db.Model):
         d = {
             "session_id": self.id,
             "game_id": self.game.id,
+            "host_id": self.host_id,
+            "visitor_id": self.visitor_id,
+            "winner_id": self.game.winner_id,
             "turn": self.turn,
             "order": self.order,
-            "submarine": player.submarine.to_dict(),
-            "visible_board": player.submarine.under_board_mask.get_visible_board(),
         }
+        # Show submarine only if it exists
+        if player.submarine:
+            d.update(
+                {
+                    "submarine": player.submarine.to_dict(),
+                    "visible_board": player.submarine.under_board_mask.get_visible_board(),
+                }
+            )
         return d
 
     def has_player(self, player):

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import "./css/game-style.css"
+import AuthService from "../services/auth.service"
 import UnderCell from "./UnderCell";
 
 export default function PlaceSubmarine(props) {
+  const currentUserId = AuthService.getCurrentUser().sub;
   const [cells, setCells] = useState([]);
 
   useEffect(() => {
@@ -22,10 +24,22 @@ export default function PlaceSubmarine(props) {
   }
 
   return (
-    <div className={"u-grid-" + props.width}>
+    <div style={{height: 976/2 + "px"}} className={"u-grid-" + props.width}>
       {cells.map((row, i) => {
         return row.map((_, j) => {
-          return (<UnderCell placeSubmarine={placeSubmarine} key={(i+1)*(j+1)} x={i} y={j} className="u-cell" type="" images={null} />);
+          if(props.visibleState.host_id == currentUserId){
+            if(j< props.width/2){
+              return (<UnderCell placeSubmarine={placeSubmarine} key={(i+1)*(j+1)} x={i} y={j} className="u-cell" type="" images={null} />);
+            } else {
+              return (<UnderCell key={(i+1)*(j+1)} x={i} y={j} className="u-cell" type="nv" images={null} />);
+            }
+          } else if (props.visibleState.visitor_id == currentUserId) {
+            if(j< props.width/2){
+              return (<UnderCell key={(i+1)*(j+1)} x={i} y={j} className="u-cell" type="nv" images={null} />);
+            } else {
+              return (<UnderCell placeSubmarine={placeSubmarine} key={(i+1)*(j+1)} x={i} y={j} className="u-cell" type="" images={null} />);
+            }
+          }
         })
       })}
     </div>

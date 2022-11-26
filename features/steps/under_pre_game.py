@@ -43,14 +43,17 @@ def step_impl(context, username, sub_type, x, y, d):
         "y_position": y,
         "direction": d,
     }
-    headers = {"authorization": context.tokens[player.id]}
+    headers = {
+        "authorization": context.tokens[player.id],
+        "Content-Type": "application/json",
+    }
     context.page = context.client.post(
         url_for(
             "underwater.choose_submarine",
             session_id=context.session.id,
-            player_id=player.id,
         ),
-        data=payload,
+        json=payload,
         headers=headers,
     )
+    print(type(context.client))
     print(context.page.text)
