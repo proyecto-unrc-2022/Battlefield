@@ -34,6 +34,7 @@ export default function UnderStats ({visibleState}) {
     return (
       <div className="u-stats">
         <div className="u-stat-indicator">
+<<<<<<< HEAD
           {visibleState.enemy_submarine.radar_scope}
           <img alt="RS" className="stat-img" src={require("./css/icons/radar-scope.png")} />
         </div>
@@ -47,6 +48,21 @@ export default function UnderStats ({visibleState}) {
         </div>
         <div className="u-stat-indicator">
           <span>{visibleState.enemy_submarine.speed}</span>
+=======
+          <span>{enemyStats.radar_scope}</span>
+          <img alt="RS" className="stat-img" src={require("./css/icons/radar-scope.png")} />
+        </div>
+        <div className="u-stat-indicator">
+          <span>{enemyStats.torpedo_speed}</span>
+          <img alt="TS" className="stat-img" src={require("./css/icons/torpedo-speed.png")} />
+        </div>
+        <div className="u-stat-indicator">
+          <span>{enemyStats.torpedo_damage}</span>
+          <img alt="D" className="stat-img" src={require("./css/icons/torpedo-damage.png")} />
+        </div>
+        <div className="u-stat-indicator">
+          <span>{enemyStats.speed}</span>
+>>>>>>> 730e585bf04d1c945c1c135089af765fb46cb899
           <img alt="S" className="stat-img" src={require("./css/icons/speed.png")} />
         </div>
         <div className="u-health-indicator">

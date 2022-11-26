@@ -52,11 +52,11 @@ class UnderGameSession(db.Model):
         for c in self.commands:
             c.execute()
         self.commands.clear()
-        self.host_moved = False
-        self.visitor_moved = False
 
     def invert_order(self):
         self.order *= -1
+        self.host_moved = False
+        self.visitor_moved = False
 
     def everyone_moved(self):
         return self.host_moved and self.visitor_moved

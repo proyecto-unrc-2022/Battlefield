@@ -4,6 +4,7 @@ from flask import url_for
 from app.underwater.daos.session_dao import session_dao
 from app.underwater.daos.submarine_dao import submarine_dao
 from app.underwater.daos.under_game_dao import game_dao
+from app.underwater.message_announcer import MessageAnnouncer, announcers
 from app.underwater.models.submarine import Submarine
 from app.underwater.models.torpedo import Torpedo
 from app.underwater.session import UnderGameSession
@@ -18,6 +19,7 @@ def step_impl(context, h, w, username1, username2):
     host = context.players[username1]
     visitor = context.players[username2]
     context.game = game_dao.create(host=host, visitor=visitor, height=h, width=w)
+    announcers.update({context.game.id: MessageAnnouncer()})
     context.session = session_dao.start_session_for(context.game)
 
     assert context.game.host is host
@@ -87,7 +89,7 @@ def step_impl(context, username, d):
         json=payload,
         headers=headers,
     )
-    assert context.page
+    assert context.page.status_code == 200
 
 
 @then("fail")

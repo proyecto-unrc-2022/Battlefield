@@ -38,7 +38,7 @@ export default function UnderGame() {
       console.log("Message received:", data)
       if(data.message === "joined")
         setRoomIsFull(true);
-      else if(data.message === "commands executed" || data.message === "submarine placed")
+      else if(data.message === "moved" || data.message === "submarine placed" || data.message === "torpedos moved")
         updateVisibleState();
       else if(data.winner_id !== undefined) {
         console.log("Game ended");
