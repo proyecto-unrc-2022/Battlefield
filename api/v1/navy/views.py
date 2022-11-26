@@ -5,9 +5,11 @@ from api import token_auth
 from app.navy.daos.missile_type_dao import missile_type_dao
 from app.navy.daos.ship_type_dao import ship_type_dao
 from app.navy.dtos.navy_game_dto import NavyGameDTO
+from app.navy.dtos.navy_game_spectate_dto import NavyGameSpectateDTO
 from app.navy.dtos.navy_game_state_dto import NavyGameStateDTO
 from app.navy.services.action_service import action_service
 from app.navy.services.navy_game_service import navy_game_service
+from app.navy.services.spectate_service import spectate_service
 from app.navy.services.ship_service import ship_service
 from app.navy.utils.navy_response import NavyResponse
 from app.navy.utils.navy_utils import utils
@@ -107,6 +109,20 @@ def get_navy_game(id):
         ).to_json(),
         200,
     )
+
+@navy.get("/spectate/<int:id>/<int:round>")
+@token_auth.login_required
+def spectate_navy_game(id,round):
+    try:
+        spectate_service.validate_request({"navy_game_id":id,"round":round}) 
+        return (
+            NavyResponse(
+                status=200, data=NavyGameSpectateDTO(id,round).dump(), message="Ok"
+            ).to_json(),
+            200,
+        )
+    except ValidationError as err:
+        return jsonify(err.messages), 400
 
 
 @navy.patch("/navy_games/<int:id>")
