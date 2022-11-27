@@ -1,4 +1,4 @@
-import SlideBoard from "./SlideBoard";
+import board from "../../assets/board.png"
 
 const NavySlide4 = () => {
   return (
@@ -8,7 +8,7 @@ const NavySlide4 = () => {
         options. On the board we will have a sight range where we will see the
         information of the enemy when it appears in that range.
       </p>
-      <SlideBoard />
+      <img src={board} alt="Board"></img>
     </div>
   );
 };
