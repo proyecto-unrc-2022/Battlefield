@@ -7,7 +7,6 @@ import Loading from "../components/Loading";
 
 export default function CreateGame(){
 
-    
     const [creatGame, setcreatGame] = useState([])
     const [gameWait, setGameWait] = useState([])
     
@@ -46,7 +45,7 @@ export default function CreateGame(){
                 event()
                 localStorage.setItem("id_game", creatGame.id)
             }
-        }, 8000);
+        }, 3000);
         return () => clearTimeout(timer);
     }, [creatGame, gameWait]);
 

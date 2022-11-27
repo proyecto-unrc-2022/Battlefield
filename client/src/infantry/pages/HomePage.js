@@ -4,7 +4,6 @@ import "../Styles.css"
 
 export default function HomePage(){
 
-    
     const navigate = useNavigate();
 
     const navigateCreate_game= () =>{
@@ -14,7 +13,6 @@ export default function HomePage(){
     const navigateJoin_game= () =>{
         navigate("join_game");
     }
-
 
     return(
         <div className="container-fluid bg-HomePage">

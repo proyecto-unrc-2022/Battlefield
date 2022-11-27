@@ -9,6 +9,9 @@ import "../Styles.css"
 export default function JoinGame(){
 
     const [users, setUsers] = useState([])
+    const [games, setGames] = useState([])
+
+    const host = authService.getCurrentUser()    
 
     const navigate = useNavigate();
 
@@ -22,22 +25,21 @@ export default function JoinGame(){
 
     const join= (idGame, idUser) =>{
         gameService.joinGame(idGame, idUser)
-    }
-
-    const [games, setGames] = useState([])
+    }    
 
     const handleJoin = (id) => {
 
         const game = games.filter((game) => game.id === id)
-        join(game[0].id, host.sub)
-        localStorage.setItem("id_game", game[0].id)
-        redirc()
+        if(game[0].id_user1 !== host.sub){
+            join(game[0].id, host.sub)
+            localStorage.setItem("id_game", game[0].id)
+            redirc()
+        }else{
+            alert("No puedes ingresar a tu propia partida")
+        }
+        
 
     }
-
-    
-    
-    
 
     const get_Games = () => {
         
@@ -50,7 +52,7 @@ export default function JoinGame(){
                     
                     <ul className="Scroll list-group w-50">
                         {games.map(game => (  
-                            <li onClick={() => handleJoin(game.id)} key={game.id} className=" list-group-item ">
+                            <li key={game.id} className=" list-group-item ">
 
                                 Games:{game.id} - User: {users.find(elem => elem.id === game.id_user1).username} -  {/* */}
                                 
@@ -72,7 +74,6 @@ export default function JoinGame(){
         gameService.getGames().then((response) =>{
             setGames(response.data);
         })
-        
     }
 
     useEffect(() =>{
@@ -80,28 +81,16 @@ export default function JoinGame(){
         gameService.getUsers().then((response) =>{
             setUsers(response.data);
         })
-
-
     },[])
 
     useEffect(() => {
-        
-        
         if(users[0]){
             get()
         }
-        
-        
-        
     }, [users]);
-
-
-    const host = authService.getCurrentUser()    
 
     return(
 
-        
-        
         <div className="container-fluid bg-HomePage">
                
             <div className="row">
@@ -112,10 +101,6 @@ export default function JoinGame(){
             </div>
             
             {get_Games()}
-
-            
-
-            
             <br></br>
             <br></br>
             <br></br>

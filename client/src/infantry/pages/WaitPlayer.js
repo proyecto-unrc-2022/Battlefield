@@ -10,13 +10,13 @@ export default function WaitPlayer(){
     const [stateP1, setStateP1] = useState(false)
     const [stateP2, setStateP2] = useState(false)
     
+    const id_game = localStorage.getItem('id_game')
+    
     const navigate = useNavigate();
 
     const redirec = () =>{
         navigate("/home_Infantry");
     }
-
-    const id_game = localStorage.getItem('id_game')
 
     const getGame = () =>{
 
@@ -52,7 +52,7 @@ export default function WaitPlayer(){
                 if(stateP1 !== false && stateP2 !== false){
                     redirec()
                 }
-            },8000)
+            },3000)
             return () => clearTimeout(timer);   
         }
     }, [game, stateP1, stateP2])
