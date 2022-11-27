@@ -8,6 +8,8 @@ import "../Styles.css"
 
 export default function JoinGame(){
 
+    const [users, setUsers] = useState([])
+
     const navigate = useNavigate();
 
     const back= () =>{
@@ -33,10 +35,12 @@ export default function JoinGame(){
 
     }
 
-
+    
+    
+    
 
     const get_Games = () => {
-
+        
          return(<div className="row">
                 <div className="col-5"></div>
                 <div className="col">
@@ -46,8 +50,9 @@ export default function JoinGame(){
                     
                     <ul className="Scroll list-group w-50">
                         {games.map(game => (  
-                            <li onClick={() => handleJoin(game.id)} key={game.id} className=" list-group-item ">  
-                                Games:{game.id} - User:{game.id_user1} -  {/* */}
+                            <li onClick={() => handleJoin(game.id)} key={game.id} className=" list-group-item ">
+
+                                Games:{game.id} - User: {users.find(elem => elem.id === game.id_user1).username} -  {/* */}
                                 
                                 <button type="button" className="btn btn-secondary" onClick={() => handleJoin(game.id)}>Join</button>
                             </li>
@@ -67,30 +72,50 @@ export default function JoinGame(){
         gameService.getGames().then((response) =>{
             setGames(response.data);
         })
-
-
+        
     }
 
+    useEffect(() =>{
+
+        gameService.getUsers().then((response) =>{
+            setUsers(response.data);
+        })
+
+
+    },[])
+
     useEffect(() => {
-        get()
         
-    }, []);    
+        
+        if(users[0]){
+            get()
+        }
+        
+        
+        
+    }, [users]);
+
 
     const host = authService.getCurrentUser()    
 
     return(
+
+        
         
         <div className="container-fluid bg-HomePage">
-            
+               
             <div className="row">
                 <div className="col text-white">
                     <button onClick={back} type="button" className="btn btn-secondary m-3">Back</button>
                 </div>
                 
             </div>
-
+            
             {get_Games()}
 
+            
+
+            
             <br></br>
             <br></br>
             <br></br>

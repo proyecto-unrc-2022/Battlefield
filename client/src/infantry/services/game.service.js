@@ -3,6 +3,7 @@ import authHeader from "../../services/auth-header";
 
 
 const API_URL = "http://127.0.0.1:5000/api/v1/infantry"
+const API_USERS = "http://127.0.0.1:5000/api/users"
 
 class GameService {
 
@@ -46,6 +47,11 @@ class GameService {
             "user_id" : id_user
         },
         {headers : authHeader()});
+
+    }
+
+    getUsers(){
+        return axios.get(API_USERS, {headers : authHeader()});
 
     }
 
