@@ -18,9 +18,6 @@ from flask_socketio import join_room, leave_room
 from . import navy
 
 
-@io.on('action2')
-def handle_action(data):
-    print('received json: ' + str(data))
 
 @io.on('join')
 def on_join(data):

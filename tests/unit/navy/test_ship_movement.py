@@ -25,6 +25,5 @@ def test_ship_turn_missile_collision(arrange_navy_game):
         ship_service.update_position(ship, 0)
 
         game = navy_game_service.get_board(1)
-        print(game)
         assert game[(ship.pos_x,ship.pos_y)].course == "W"
         assert game[(ship.pos_x,ship.pos_y)].hp == "30"

@@ -2,7 +2,6 @@ import React from "react";
 import "./EntityDetails.css";
 
 const EntityDetails = ({ data, title }) => {
-  console.log(data)
   return (
     <div
       className={`${

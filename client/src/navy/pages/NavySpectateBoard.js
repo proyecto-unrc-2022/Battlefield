@@ -118,7 +118,6 @@ const NavySpectateBoard = () => {
     getGame(roundPrev).catch((err) => {
       setErrorPrev(true);
       const roundNext = roundPrev+1;
-      console.log("A ver el roundNext",roundNext)
       setRound(roundNext);
       const delay = 500;
       setTimeout(() => {
@@ -134,12 +133,10 @@ const NavySpectateBoard = () => {
     const roundNext = round+1;
     setRound(roundNext);
     setSpecRound(roundNext)
-    console.log(round)
     setErrorNext(false);
 
     getGame(roundNext).catch((err) => {
       setErrorNext(true);
-      console.log("No deberia entrar acá")
       const roundPrev = roundNext-1;
       setRound(roundPrev);
       const delay = 500;

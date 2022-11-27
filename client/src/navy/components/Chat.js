@@ -1,13 +1,10 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import io from "socket.io-client";
-/* import css */
 import "./Chat.css";
 import "./ActionCard.css";
-import NavyTitle from "./NavyTitle";
 const socket = io("http://localhost:5000");
 const Chat = ({ user, game, user2 }) => {
-  /* useContext */
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([
     {
@@ -20,7 +17,6 @@ const Chat = ({ user, game, user2 }) => {
 
   useEffect(() => {
     const receivedMessage = (message) => {
-      console.log(messages);
       setMessages([...messages, message]);
     };
     if (!joinedRoom) {
@@ -65,7 +61,7 @@ const Chat = ({ user, game, user2 }) => {
   };
 
   return (
-    <div className="card action-card p-2">
+    <div className="card action-card p-2 mb-2">
       <div className="card-header text-center">
         <h5 className="navy-text m-0">Navy Chat</h5>
       </div>
@@ -84,7 +80,7 @@ const Chat = ({ user, game, user2 }) => {
                   : message.user + " (spec):"}
               </div>
 
-              <div className={bodyMessageClass(message) }>
+              <div className={bodyMessageClass(message)}>
                 <span className="ml-1">{message.body}</span>
               </div>
             </div>
