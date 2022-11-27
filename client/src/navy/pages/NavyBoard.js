@@ -95,16 +95,24 @@ const NavyBoard = () => {
     const data = await MissileService.getMissileTypes();
     const missiles = data.data.data;
     const missile = missiles[missile_type];
-    const myShip = {...ship, "missile speed": missile.speed, "missile damage": missile.damage}
-    setMyShip(myShip)
+    const myShip = {
+      ...ship,
+      "missile speed": missile.speed,
+      "missile damage": missile.damage,
+    };
+    setMyShip(myShip);
   };
 
   const getEnemyShip = async (missile_type, ship) => {
     const data = await MissileService.getMissileTypes();
     const missiles = data.data.data;
     const missile = missiles[missile_type];
-    const enemyShip = {...ship, "missile speed": missile.speed, "missile damage": missile.damage}
-    setEnemyShip(enemyShip)
+    const enemyShip = {
+      ...ship,
+      "missile speed": missile.speed,
+      "missile damage": missile.damage,
+    };
+    setEnemyShip(enemyShip);
   };
 
   const getGame = async () => {
@@ -154,11 +162,12 @@ const NavyBoard = () => {
             size: resp.data.data.ship.size,
             speed: resp.data.data.ship.speed,
           };
-          getShip(missile_type_id, ship)
+          getShip(missile_type_id, ship);
 
           if (resp.data.data.status !== "FINISHED") {
             if (resp.data.data.sight_range.ships.length !== 0) {
-              const shipType = res.data.data[resp.data.data.sight_range.ships[0].name];
+              const shipType =
+                res.data.data[resp.data.data.sight_range.ships[0].name];
               const missile_type_id = shipType.missile_type_id[0];
               const enemyShip = {
                 name: resp.data.data.sight_range.ships[0].name,
@@ -169,7 +178,7 @@ const NavyBoard = () => {
                 size: resp.data.data.sight_range.ships[0].size,
                 speed: resp.data.data.sight_range.ships[0].speed,
               };
-              getEnemyShip(missile_type_id, enemyShip)
+              getEnemyShip(missile_type_id, enemyShip);
             }
           }
         });
@@ -225,26 +234,35 @@ const NavyBoard = () => {
       ) : (
         <>
           <Modal isOpen={openModal}>
-            <div
-              className="d-flex justify-content-end pr-2"
-              role={"button"}
-              onClick={() => setOpenModal(false)}
-            >
-              x
+            <div>
+              <h4 className="navy-text text-center mt-3 mb-0">The game ended</h4>
+              <hr className="m-0" />
             </div>
-            <h2 className="navy-text text-center">
+            <h4 className="navy-text text-center m-0">
               {winner === authService.getCurrentUser().sub
                 ? "you win!"
                 : "you lose!"}
-            </h2>
-            <p className="navy-text text-center">The game is over.</p>
+            </h4>
             <div className="text-center">
-              <button
-                className="navy-text bg-white"
-                onClick={() => navigate("/navy/games")}
-              >
-                Go to Games
-              </button>
+              <div>
+                <hr className="m-0" />
+
+                <div
+                  style={{ gap: "5px" }}
+                  className="d-flex justify-content-end pr-3 py-2"
+                >
+                  <NavyButton
+                    text={"Close"}
+                    action={() => setOpenModal(false)}
+                    size={"small"}
+                  />
+                  <NavyButton
+                    text={"Go to games"}
+                    action={() => navigate("/navy/games")}
+                    size={"small"}
+                  />
+                </div>
+              </div>
             </div>
           </Modal>
           <div className="row justify-content-between p-2 align-items-center">
