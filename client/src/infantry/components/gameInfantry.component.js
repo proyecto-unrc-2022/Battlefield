@@ -73,7 +73,7 @@ export default class GameInfantry extends Component {
   }
 
   //Siempre esta verificando si el estado de finished_round es True para actualizar la ronda
-  componentDidUpdate(prevState) {
+  componentDidUpdate() {
     if (this.state.finished_round) {
       this.updateRound()
     }
@@ -84,48 +84,45 @@ export default class GameInfantry extends Component {
    * @param {string} action una accion(move o shoot)
    * @param {int} velocity alcance de la accion(solo sirve para la accion mover, o para el proyectil de la artilleria)
    */
-  action(direction, action, velocity) {
+  async action(direction, action, velocity) {
     if (action === "move") {
-      let response = InfantryService.move(this.state.game_id, AuthService.getCurrentUser().sub,
+      let response = await InfantryService.move(this.state.game_id, AuthService.getCurrentUser().sub,
         direction, velocity)
-      response.then(result => {
-        if (result === "Accion invalida") {
+        if (response === "Accion invalida") {
           return alert("Movimiento invalido")
         }
-        this.updateTurn();
+        await this.updateTurn()
         return;
-      })
     }
     if (action === "shoot") {
-      let response = InfantryService.shoot(this.state.game_id, AuthService.getCurrentUser().sub,
+      let response = await InfantryService.shoot(this.state.game_id, AuthService.getCurrentUser().sub,
         direction)
-      response.then(result => {
-        if (result === "Accion invalida") {
+        if (response === "Accion invalida") {
           return alert("Movimiento invalido")
         }
-        this.updateTurn();
+        await this.updateTurn()
         return;
-      })
     }
   }
 
   /**
    * Actualiza el turno, y si acaba la ronda, cambia el estado de finished_round
    */
-  updateTurn() {
-    let data = InfantryService.next_turn(this.state.game_id);
-    data.then(result => {
-      if (result !== "Ronda terminada") {
-        this.setState({
-          turn: result["turn"]
-        });
-      }
-      else {
-        this.setState({
-          finished_round: true
-        });
-      }
-    });
+  async updateTurn() {
+    let message = await InfantryService.next_turn(this.state.game_id);
+    let data = await InfantryService.getGame(this.state.game_id)
+
+    if (message !== "Ronda terminada") {
+      this.setState({
+        game: data
+      });
+    }
+    else {
+      this.setState({
+        game: data,
+        finished_round: true
+      });
+    }
   }
   /**
    * Se actualiza los projectiles y tambien las figuras(llamar solo si la ronda acabo)
@@ -143,7 +140,6 @@ export default class GameInfantry extends Component {
       await timeout(1000)
     }
     //Actualizo las figuras en this.state
-    console.log(this.state.figure)
     let figurePlayer1 = await InfantryService.getFigure(this.state.figure["data"].id_user, this.state.game_id)
     let figurePlayer2 = await InfantryService.getFigure(this.state.figureOpponent["data"].id_user, this.state.game_id)
     let projectiles = await InfantryService.getProjectile(this.state.game_id)
@@ -176,14 +172,12 @@ export default class GameInfantry extends Component {
       message = <h3 class="text-success">finished round!</h3>;
       //this.updateRound();
     }
-    else {
-      if (this.state.game.turn === AuthService.getCurrentUser().sub) {
+    else if (this.state.game.turn === AuthService.getCurrentUser().sub) {
         message = <h3>Your turn</h3>
       }
       else {
         message = <h3>Opponent's turn</h3>
       }
-    }
     return message
   }
 
@@ -210,7 +204,6 @@ export default class GameInfantry extends Component {
       )
     }
     else {
-      console.log(this.state.projectiles)
       return (
         <div>
           <div class="container-fluid bg-War">
