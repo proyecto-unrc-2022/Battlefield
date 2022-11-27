@@ -13,11 +13,10 @@ class MissileService:
         missiles = missile_dao.get_by_navy_game_id(navy_game_id=navy_game_id)
         return missiles
 
-    def create(self, navy_game_id, ship_id, missile_type, course, pos_x, pos_y):
+    def create(self, navy_game_id, pos_x, pos_y, course, missile_type,ship_id):
         from app.navy.daos.missile_type_dao import missile_type_dao
-
         missile_data = missile_type_dao.get_by_id(str(missile_type))
-        missile = Missile(
+        new_missile = Missile(
             missile_data["speed"],
             missile_data["damage"],
             course,
@@ -26,11 +25,17 @@ class MissileService:
             ship_id,
             navy_game_id,
         )
-        navy_game_service.games[navy_game_id]["missiles"].append(missile)
-        return missile
+        return new_missile
 
+        
+    def add(self, navy_game_id, ship_id, missile_type, course, pos_x, pos_y):
+        new_missile = self.create(navy_game_id, pos_x, pos_y, course, missile_type, ship_id)
+        navy_game_service.games[navy_game_id]["missiles"].append(new_missile)
+        return new_missile
+    
+    
     def update_all(self, missiles):
-        missile_dao.load(missiles)
+        missile_dao.update_all(missiles)
 
     def load_to_board(self, missile):
         navy_game_service.load_to_board(

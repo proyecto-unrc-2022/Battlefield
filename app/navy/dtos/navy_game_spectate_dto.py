@@ -10,6 +10,8 @@ class NavyGameSpectateDTO():
         from app.navy.services.navy_game_service import navy_game_service
         from app.navy.services.ship_service import ship_service
         self.game = navy_game_service.get_by_id(self.navy_game_id)
+        if self.round == 0:
+            self.round = self.game.round-1
         ships = spectate_service.get_ships(self.navy_game_id,self.round)
         missiles =  spectate_service.get_missiles(self.navy_game_id,self.round)
         self.ships = [ship_service.get_dto(ship) for ship in ships]

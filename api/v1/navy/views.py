@@ -101,19 +101,26 @@ def get_navy_games():
 @navy.get("/navy_games/<int:id>")
 @token_auth.login_required
 def get_navy_game(id):
-    user_id = utils.get_user_id_from_header(request.headers["Authorization"])
-    game = navy_game_service.get_by_id(id)
-    return (
-        NavyResponse(
-            status=200, data=NavyGameStateDTO(game.id, user_id).dump(), message="Ok"
-        ).to_json(),
-        200,
-    )
-
-@navy.get("/spectate/<int:id>/<int:round>")
-@token_auth.login_required
-def spectate_navy_game(id,round):
+    from app.navy.validators.navy_game_get_validator import NavyGameGetValidator 
     try:
+        user_id = utils.get_user_id_from_header(request.headers["Authorization"])
+        NavyGameGetValidator().load({"navy_game_id": id, "user_id": user_id})
+        return (
+            NavyResponse(
+                status=200, data=NavyGameStateDTO(id, user_id).dump(), message="Ok"
+            ).to_json(),
+            200,
+        )
+    except ValidationError as err:
+        return NavyResponse(400, message=err.messages).to_json(), 400
+
+
+@navy.get("/spectate/<int:id>")
+@token_auth.login_required
+def spectate_navy_game(id):
+    try:
+        round = request.args.get('round')
+        round  = int(round) if round else 0
         spectate_service.validate_request({"navy_game_id":id,"round":round}) 
         return (
             NavyResponse(

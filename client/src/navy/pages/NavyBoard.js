@@ -14,6 +14,7 @@ import NavyGameService from "../services/NavyGameService";
 import ShipService from "../services/ShipService";
 import { SocketContext, socket } from "../context/socketContext";
 import Chat from "../components/Chat";
+import NavyTitle from "../components/NavyTitle";
 
 const NavyBoard = () => {
   const [game, setGame] = useState(null);
@@ -207,7 +208,13 @@ const NavyBoard = () => {
             >
               Navy Battleship
             </Link>
+            
           </div>
+          
+          <div className="text-center">
+            <NavyTitle text={"Round: "+ game.round} />
+            </div>
+
           <div className="row mt-3">
             <div className="col-3">
               <div className="row justify-content-center">

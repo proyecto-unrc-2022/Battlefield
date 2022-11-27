@@ -5,9 +5,9 @@ const EntityDetails = ({ data, title }) => {
   return (
     <div
       className={`${
-        title === "My Ship"
+        title === "My Ship" || title === "Host"
           ? "my-ship-details"
-          : title === "Enemy Ship"
+          : title === "Enemy Ship" || title === "Guest"
           ? "enemy-ship-details"
           : "missile-details"
       } stats-card navy-text rounded`}
@@ -16,7 +16,29 @@ const EntityDetails = ({ data, title }) => {
       <hr></hr>
       <ul className="stats-list pl-2">
         {Object.keys(data).map((key) => {
-          return <li key={key}>{`${key} : ${data[key]}`}</li>;
+          let temp = key
+          if (key === "hp"){
+            if(data[key] == 0){
+              temp = "Destroyed ☠☠"
+            }
+            if(data[key] < 20){
+              temp = "❤"
+            }
+            else if(data[key] < 50 ){
+
+              temp = "❤❤" 
+            }
+            else if(data[key] > 50){
+              temp = "❤❤❤"
+            }
+
+          }
+
+          return <li key={key}>
+            
+            {`${temp}
+             : ${data[key]}`}
+            </li>;
         })}
       </ul>
     </div>

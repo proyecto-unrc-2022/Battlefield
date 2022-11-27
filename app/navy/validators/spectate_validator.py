@@ -19,7 +19,7 @@ class SpectateValidator(Schema):
         if navy_game.status != "STARTED":
             raise ValidationError("Game hasn't started yet.")
         
-        if not navy_game.round - round >= 2 :
+        if round != 0 and not navy_game.round - round >= 1 :
             raise ValidationError("Invalid round") 
 
     round = fields.Integer(required=True)
