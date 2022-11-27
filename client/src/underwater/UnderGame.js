@@ -66,11 +66,22 @@ export default function UnderGame() {
     function onClick() {
       navigate("/underwater/menu")
     }
+    const style={
+      color: 'white',
+      display: 'flex',
+      flexDirection: 'column', 
+      height: '450px', 
+      width: '100%',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '20px',
+    }
+
     return (
-      <>
-      <h1>{winner.username} won!</h1>
-      <button onClick={onClick}>Back to menu</button>
-      </>
+      <div style={style}>
+        <h1>¡{winner.username} won!</h1>
+        <button className="u-button" onClick={onClick}>Back to menu</button>
+      </div>
     )
   }
 
