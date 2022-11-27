@@ -6,7 +6,7 @@ import './Chat.css'
 import './ActionCard.css'
 import NavyTitle from './NavyTitle'
 const socket = io('http://localhost:5000');
-const Chat = ({  user, game}) => {
+const Chat = ({  user, game,user2}) => {
     /* useContext */
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([
@@ -57,12 +57,19 @@ const Chat = ({  user, game}) => {
 
     const bodyMessageClass = (message) => {
         console.log(message)
+        console.log(game)
         if(message.user === "Navy"){
             return "message-body-navy"
-        }else if(message.user === user){
+        }
+        else if(message.user === user){
             return "message-body-me"
-        }else{
+        }
+        else if(message.user === game.user_2.username || message.user === game.user_1.username){
+            
             return "message-body-enemy"
+        }
+        else{
+            return "message-body-spec"
         }
     }
 
@@ -78,7 +85,9 @@ const Chat = ({  user, game}) => {
                         
                         <div className='message-user'>
                             
-                            {message.user === user ? 'Me' : message.user}:
+                            {message.user === user ? 'Me' :
+                             message.user === "Navy" ? 'Navy' :
+                            message.user === game.user_1.username || message.user === game.user_2.username ? message.user+"(Enemy)" : message.user+'(Spec)'}
                             
                             </div>
 
