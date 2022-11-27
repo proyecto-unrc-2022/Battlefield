@@ -16,25 +16,31 @@ class NavyGameService {
     });
   }
 
-  postNavyGame(){
-    return axios.post(API_URL, {},{
+  postNavyGame() {
+    return axios.post(
+      API_URL,
+      {},
+      {
+        headers: authHeader(),
+      }
+    );
+  }
+
+  patchNavyGame(id) {
+    return axios.patch(
+      API_URL + `/${id}`,
+      {},
+      {
+        headers: authHeader(),
+      }
+    );
+  }
+
+  deleteNavyGame(id) {
+    return axios.delete(API_URL + `/${id}`, {
       headers: authHeader(),
     });
   }
-
-  patchNavyGame(id){
-    return axios.patch(API_URL + `/${id}`,{},{
-      headers: authHeader(),
-    });
-  }
-
-  deleteNavyGame(id){
-    return axios.delete(API_URL + `/${id}`,{
-      headers: authHeader(),
-    });
-  }
-
-
 }
 
 export default new NavyGameService();

@@ -17,8 +17,7 @@ const GridGame = ({
   const arr = Array(rows).fill(Array(cols).fill(1));
 
   const visibleCell = (row, col) => {
-    if (spectate)
-      return true
+    if (spectate) return true;
 
     return (
       row <= myShip.x + 5 &&

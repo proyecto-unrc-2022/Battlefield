@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation, useParams, Link } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import NavyButton from "../components/NavyButton";
 import ShipService from "../services/ShipService";
 import NavyGameService from "../services/NavyGameService";
@@ -49,7 +49,7 @@ export const NavyShipPlace = () => {
       if (currentUser.sub === resp.data.data.user_2.id) {
         y += 10;
       }
-      setSelectedPosition({ x: x, y: y })
+      setSelectedPosition({ x: x, y: y });
     });
 
     if (shipPlaced) {
@@ -150,7 +150,11 @@ export const NavyShipPlace = () => {
           <div className="row justify-content-center mt-3">
             {shipPlaced ? (
               <div className="row d-flex flex-column justify-content-center align-items-center">
-                <div style={{color: "black"}} className="spinner-border m-1" role="status">
+                <div
+                  style={{ color: "black" }}
+                  className="spinner-border m-1"
+                  role="status"
+                >
                   <span className="sr-only">Loading...</span>
                 </div>
                 <span className="text-center navy-text">

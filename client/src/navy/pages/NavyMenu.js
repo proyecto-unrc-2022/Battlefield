@@ -35,7 +35,11 @@ const NavyMenu = () => {
           <NavyMenuStars />
           <NavyButton action={goToGames} text="games" size={"large"} />
           <NavyMenuStars />
-          <NavyButton action={goToHowToPlay} text="how to play" size={"large"} />
+          <NavyButton
+            action={goToHowToPlay}
+            text="how to play"
+            size={"large"}
+          />
         </div>
       </div>
     </div>
