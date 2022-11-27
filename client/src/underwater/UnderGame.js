@@ -42,10 +42,7 @@ export default function UnderGame() {
         updateVisibleState();
       else if(data.winner_id !== undefined) {
         console.log("Game ended");
-        axios.get(
-          "http://localhost:5000/api/users/" + data.winner_id,
-          {headers: authHeader()}
-        ).then(response => {console.log("Fetched user data", response.data); setWinner(response.data);});
+        setWinner(data.winner_id == visibleState.host_id ? visibleState.host : visibleState.visitor);
       }
     });
 
@@ -64,7 +61,7 @@ export default function UnderGame() {
 
   function ShowWinner({winner}) {
     function onClick() {
-      navigate("/underwater/menu")
+      navigate("/underwater/menu");
     }
     const style={
       color: 'white',
