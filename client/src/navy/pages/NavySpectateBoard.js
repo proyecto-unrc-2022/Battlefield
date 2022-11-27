@@ -10,6 +10,7 @@ import NavyButton from "../components/NavyButton";
 import Chat from "../components/Chat";
 import NavySpectateGameService from "../services/NavySpectateGameService";
 import NavyTitle from "../components/NavyTitle";
+import userService from "../../services/user.service";
 
 const NavySpectateBoard = () => {
   const [game, setGame] = useState(null);
@@ -55,14 +56,16 @@ const NavySpectateBoard = () => {
           setRound(resp.data.data.game.round - 1);
           setSpecRound(resp.data.data.game.round - 1);
         }
-
-        if (resp.data.data.winner) {
+        console.log("Game round",resp.data.data.game.round);
+        console.log("Spec round",roundToSpec)
+        if (resp.data.data.game.status === "FINISHED" && resp.data.data.game.round === roundToSpec)  {
           setOpenModal(true);
         }
         setWinner(resp.data.data.game.winner);
         setGame(resp.data.data.game);
         setMissiles(resp.data.data.missiles);
-
+        console.log(game)
+            
         setMyShip({
           name: resp.data.data.ships[0].name,
           hp: resp.data.data.ships[0].hp,
@@ -129,7 +132,7 @@ const NavySpectateBoard = () => {
 
   return (
     <div style={{ flexGrow: "1" }} className="container-fluid bg-navy">
-      {!game ? (
+      {false ? (
         <div className="row mt-5">
           <div className="col-12 text-center">
             <div className="spinner-border" role="status">
@@ -139,31 +142,46 @@ const NavySpectateBoard = () => {
         </div>
       ) : accessDenied ? (
         <AccessDenied
-          text={"You can't join to this game"}
+          text={"The game you are trying to spectate its under 3 rounds, please check later"}
+        
           buttonText={"Go to games"}
           redirectTo={"/navy/games"}
         />
+        
       ) : (
         <>
           <Modal isOpen={openModal}>
-            <div
-              className="d-flex justify-content-end pr-2"
-              role={"button"}
-              onClick={() => setOpenModal(false)}
-            ></div>
-            <h2 className="navy-text text-center">
-              {winner === authService.getCurrentUser().sub
-                ? "you win!"
-                : "you lose!"}
-            </h2>
-            <p className="navy-text text-center">The game is over.</p>
+            <div>
+              <h4 className="navy-text text-center mt-3 mb-0">
+                The game ended
+              </h4>
+              <hr className="m-0" />
+            </div>
+            <h4 className="navy-text text-center m-0">
+              <span> {game.winner === game.user_1.id ?
+                  `${game.user_1.username} WON!` :
+                  `${game.user_2.username} WON!`}</span>
+            </h4>
             <div className="text-center">
-              <button
-                className="navy-text bg-white"
-                onClick={() => navigate("/navy/games")}
-              >
-                Go to Games
-              </button>
+              <div>
+                <hr className="m-0" />
+
+                <div
+                  style={{ gap: "5px" }}
+                  className="d-flex justify-content-end pr-3 py-2"
+                >
+                  <NavyButton
+                    text={"Close"}
+                    action={() => setOpenModal(false)}
+                    size={"small"}
+                  />
+                  <NavyButton
+                    text={"Go to games"}
+                    action={() => navigate("/navy/games")}
+                    size={"small"}
+                  />
+                </div>
+              </div>
             </div>
           </Modal>
           <div className="row justify-content-between p-2 align-items-center">
@@ -188,7 +206,8 @@ const NavySpectateBoard = () => {
             <div className="col-3">
               <div className="row justify-content-center">
                 <div className="col-8">
-                  <EntityDetails title={"Host"} data={myShip} />
+                  <EntityDetails title={`${game.user_1.username}`} data={myShip} 
+                    game={game} />
                 </div>
 
                 <div className="col-12 d-flex flex column mt-5">
@@ -205,8 +224,8 @@ const NavySpectateBoard = () => {
                   <GridGame
                     rows={game.rows}
                     cols={game.cols}
-                    myShip={myShip}
-                    enemyShip={enemyShip}
+                    myShip={enemyShip}
+                    enemyShip={myShip}
                     missiles={missiles}
                     selectMissile={handleSelectMissile}
                     spectate={true}
@@ -241,7 +260,10 @@ const NavySpectateBoard = () => {
               <div className="col-3">
                 <div className="row justify-content-center">
                   <div className="col-8">
-                    <EntityDetails title={"Guest"} data={enemyShip} />
+                    <EntityDetails title={`${game.user_2.username}`}
+                    data={enemyShip}
+                    game={game}
+                    />
                   </div>
                 </div>
                 {missileSelected ? (
