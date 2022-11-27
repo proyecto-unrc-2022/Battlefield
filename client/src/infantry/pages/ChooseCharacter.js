@@ -17,6 +17,10 @@ export default function ChooseCharacter(){
         navigate("/home_Infantry/wait_player");
     }
 
+    const home = () =>{
+        navigate("/home_Infantry");
+    }
+
     const event = (e) =>{
         setType(e)
     }
@@ -25,6 +29,8 @@ export default function ChooseCharacter(){
 
         gameService.ready(id_game).then(resp =>{
             setGame(resp.data)
+        }).catch(() =>{
+            home()
         })
 
     }

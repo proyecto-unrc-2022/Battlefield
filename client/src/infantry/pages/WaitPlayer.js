@@ -18,10 +18,17 @@ export default function WaitPlayer(){
         navigate("/infantry/game");
     }
 
+    const home = () =>{
+        navigate("/home_Infantry");
+    }
+
+
     const getGame = () =>{
 
         gameService.ready(id_game).then(resp =>{
             setGame(resp.data)
+        }).catch(() =>{
+            home()
         })
 
     }

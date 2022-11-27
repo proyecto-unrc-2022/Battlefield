@@ -15,6 +15,8 @@ export default function HomePage(){
     }
 
     return(
+
+        
         <div className="container-fluid bg-HomePage">
             <div className="text-center ">
                 <br></br>
@@ -32,7 +34,7 @@ export default function HomePage(){
                         
                         <h1 className="Battlefield-Infantry text-center mt-5 ">Battlefield Infantry</h1>
                         <br></br>
-
+                        {localStorage.removeItem("id_game")}
                         <button onClick={navigateCreate_game} type="button" className="btn btn-secondary mr-3 mb-4">Create Game</button>
                         <button onClick={navigateJoin_game} type="button" className="btn btn-secondary mr-3 mb-4">Join Game</button>
                         <br></br>

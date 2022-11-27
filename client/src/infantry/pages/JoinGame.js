@@ -49,7 +49,7 @@ export default function JoinGame(){
                 <h1 className="mb-4 text-center Battlefield-Infantry">Games Available</h1>
                 <div className="col rounded-5 text-center d-flex justify-content-center">
                     
-                    
+                {localStorage.removeItem("id_game")}
                     <ul className="Scroll list-group w-50">
                         {games.map(game => (  
                             <li key={game.id} className=" list-group-item ">
