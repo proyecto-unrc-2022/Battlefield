@@ -4,6 +4,12 @@ import ShipService from "../../services/ShipService";
 
 const NavySlide2 = () => {
   const [ships, setShips] = useState({});
+  const [shipSelected, setShipSelected] = useState({ });
+  
+  const selectShip = (name, ship) => {
+    const navy_ship = { ...shipSelected, name: name, size: ship.size };
+    setShipSelected(navy_ship);
+  };
 
   useEffect(() => {
     ShipService.getShipTypes().then((resp) => {
@@ -24,11 +30,11 @@ const NavySlide2 = () => {
             key={ships[key].ship_id}
             ship={ships[key]}
             name={key}
+            selectShip={selectShip}
+            selected={shipSelected.name === key}
           />
         ))}
       </div>
-      <p>{console.log(ships)}</p>
-      <p>{console.log(ships)}</p>
     </div>
   );
 };

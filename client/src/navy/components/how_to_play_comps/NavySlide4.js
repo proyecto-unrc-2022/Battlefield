@@ -1,3 +1,5 @@
+import SlideBoard from "./SlideBoard";
+
 const NavySlide4 = () => {
   return (
     <div className="text-break">
@@ -6,7 +8,7 @@ const NavySlide4 = () => {
         options. On the board we will have a sight range where we will see the
         information of the enemy when it appears in that range.
       </p>
-      <p>acá iría el board miniatura.</p>
+      <SlideBoard />
     </div>
   );
 };

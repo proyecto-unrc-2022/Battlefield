@@ -6,10 +6,14 @@ import Corvette from "../../assets/Corvette.svg";
 import "../../../index.css";
 
 import MissileService from "../../services/MissileService";
-import ".././NavyShip.css";
+import "../NavyShip.css";
 
-const SlideShipCard = ({ ship, name }) => {
+const SlideShipCard = ({ ship, name, selectShip, selected = false }) => {
   const [missiles, setMissiles] = useState({});
+
+  const effectMouseEnterHover = (e) => {
+    e.target.style.cursor = "pointer";
+  };
 
   useEffect(() => {
     MissileService.getMissileTypes().then((resp) => {
@@ -38,13 +42,18 @@ const SlideShipCard = ({ ship, name }) => {
   };
 
   return (
-    <div className="navy-card-ship-container-small d-flex flex-column align-items-center border border-dark py-3 mt-1 mb-3 ">
-      <div
-        className="navy-text w-100 d-flex justify-content-center"
-        style={{ fontSize: "14px" }}
-      >
-        {name}
-      </div>
+    <div
+      className={
+        "navy-card-ship-container-small d-flex flex-column align-items-center border border-dark py-3 mt-1 mb-3 " +
+        (selected ? "selected" : "")
+      }
+      style={{ fontSize: "14px" }}
+      onMouseEnter={effectMouseEnterHover}
+      onClick={(e) => {
+        selectShip(name, ship);
+      }}
+    >
+      {name}
 
       <div className="w-75 d-flex justify-content-around align-items-center py-3">
         <img
@@ -55,7 +64,7 @@ const SlideShipCard = ({ ship, name }) => {
       </div>
 
       <div className="w-60 d-flex">
-        <div className="d-flex flex-column align-items-center">
+        <div className="d-flex flex-column align-items-center" style={{fontSize:"10px"}}>
           <p className="navy-text" style={{ margin: "0px" }}>
             Hp: {ship.hp}
           </p>
