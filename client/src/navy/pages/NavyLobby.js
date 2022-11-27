@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import NavyGameService from "../services/NavyGameService";
 import NavyGameCard from "../components/NavyGameCard";
@@ -28,7 +28,7 @@ const NavyLobby = () => {
         if (!accessDenied) {
           if (resp.data.data.status === "WAITING_PICKS") {
             navigate(`/navy/games/${id}/ship_selection`);
-          } else if(resp.data.data.status === "STARTED") {
+          } else if (resp.data.data.status === "STARTED") {
             navigate(`/navy/games/${id}/board`);
           } else {
             interval = setInterval(() => {
@@ -43,8 +43,8 @@ const NavyLobby = () => {
         setGame(resp.data.data);
       })
       .catch((resp) => {
-        setGame({})
-        setAccessDenied(true)
+        setGame({});
+        setAccessDenied(true);
       });
     return () => clearInterval(interval);
   }, []);

@@ -16,11 +16,12 @@ const EntityDetails = ({ data, title }) => {
       <hr className="m-0"></hr>
       <ul className="stats-list pl-2">
         {Object.keys(data).map((key) => {
-          return <li key={key}>
-            
-            {`${key}
+          return (
+            <li key={key}>
+              {`${key}
              : ${data[key]}`}
-            </li>;
+            </li>
+          );
         })}
       </ul>
     </div>

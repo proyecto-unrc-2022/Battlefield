@@ -1,5 +1,5 @@
-import React, { useEffect, useState,useContext } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import authService from "../../services/auth.service";
 import AccessDenied from "../components/AccessDenied";
 import ActionCard from "../components/ActionCard";
@@ -13,7 +13,6 @@ import MissileService from "../services/MissileService";
 import NavyGameService from "../services/NavyGameService";
 import ShipService from "../services/ShipService";
 import NavyLogo from "../components/NavyLogo";
-import { SocketContext, socket } from "../context/socketContext";
 import Chat from "../components/Chat";
 import NavyTitle from "../components/NavyTitle";
 
@@ -39,8 +38,7 @@ const NavyBoard = () => {
   const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
-    getGame()
-   
+    getGame();
   }, []);
 
   const handleSelectMissile = (missile) => {
@@ -240,7 +238,9 @@ const NavyBoard = () => {
         <>
           <Modal isOpen={openModal}>
             <div>
-              <h4 className="navy-text text-center mt-3 mb-0">The game ended</h4>
+              <h4 className="navy-text text-center mt-3 mb-0">
+                The game ended
+              </h4>
               <hr className="m-0" />
             </div>
             <h4 className="navy-text text-center m-0">
@@ -273,10 +273,10 @@ const NavyBoard = () => {
           <div className="row justify-content-between p-2 align-items-center">
             <NavyLogo size={"small"} />
           </div>
-          
+
           <div className="text-center">
-            <NavyTitle text={"Round: "+ game.round} />
-            </div>
+            <NavyTitle text={"Round: " + game.round} />
+          </div>
 
           <div className="row mt-3">
             <div className="col-3">
@@ -284,13 +284,13 @@ const NavyBoard = () => {
                 <div className="col-8">
                   <EntityDetails title={"My Ship"} data={myShip} />
                 </div>
-              
-              <div className="col-12 d-flex flex column mt-3" >
+
+                <div className="col-12 d-flex flex column mt-3">
                   <Chat
                     user={authService.getCurrentUser().username}
                     game={game}
                   />
-              </div>
+                </div>
               </div>
             </div>
             <div className="col-6">

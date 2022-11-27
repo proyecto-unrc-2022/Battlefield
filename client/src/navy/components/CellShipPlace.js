@@ -10,14 +10,17 @@ const CellShipPlace = ({
   invalid,
   handleMouseLeave,
   action,
-  selected
+  selected,
 }) => {
   return (
     <div
       onMouseEnter={() => handleMouseEnter(row, col, index)}
       onMouseLeave={() => handleMouseLeave()}
       className={
-        "cell " + (hovered ? "hovered " : "") + (invalid ? "invalid " : "") + (selected ? "selected-cell " : "")
+        "cell " +
+        (hovered ? "hovered " : "") +
+        (invalid ? "invalid " : "") +
+        (selected ? "selected-cell " : "")
       }
       onClick={() => action(row, col)}
     ></div>

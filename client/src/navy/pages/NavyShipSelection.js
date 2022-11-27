@@ -40,18 +40,17 @@ const NavyShipSelection = () => {
         } else if (resp.data.data.status === "FINISHED") {
           navigate(`/navy/games/${id}/board`);
         }
-
       }
     });
   }, []);
 
   const selectShip = (name, ship) => {
-    const navy_ship = { ...shipSelected, name: name, size: ship.size};
+    const navy_ship = { ...shipSelected, name: name, size: ship.size };
     setShipSelected(navy_ship);
   };
 
   const goToPlaceToBoard = () => {
-    if("name" in shipSelected){
+    if ("name" in shipSelected) {
       navigate("place_ship", { state: { ship_selected: shipSelected } });
     }
   };

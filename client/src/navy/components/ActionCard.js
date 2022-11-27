@@ -1,10 +1,17 @@
-import React, { useState } from "react";
+import React from "react";
 import "./ActionCard.css";
 import Rudder from "./Rudder";
 import attackBtn from "../assets/attack-button.png";
 import moveBtn from "../assets/move-button.png";
 
-const ActionCard = ({ ship, changeCourse, changeAttack, changeMove, attack, move }) => {
+const ActionCard = ({
+  ship,
+  changeCourse,
+  changeAttack,
+  changeMove,
+  attack,
+  move,
+}) => {
   const speed = Array(ship.speed + 1).fill(1);
 
   const setCourse = (newCourse) => {
@@ -15,16 +22,12 @@ const ActionCard = ({ ship, changeCourse, changeAttack, changeMove, attack, move
     changeAttack();
   };
 
-  const handleClickMove = (quant=1) => {
+  const handleClickMove = (quant = 1) => {
     changeMove(parseInt(quant));
   };
 
   const handleChangeMove = (e) => {
     changeMove(parseInt(e.target.value));
-  };
-
-  const effectMouseEnterHover = (e) => {
-    e.target.style.cursor = "pointer";
   };
 
   return (

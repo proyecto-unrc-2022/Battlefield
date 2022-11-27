@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import "./CellGameBoard.css";
 import missile from "../assets/missile.png";
 
