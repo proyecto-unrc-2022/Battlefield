@@ -15,6 +15,7 @@ import NavyShipSelection from "./navy/pages/NavyShipSelection";
 import { NavyShipPlace } from "./navy/pages/NavyShipPlace";
 import NavyLobby from "./navy/pages/NavyLobby"
 import NavyBoard from "./navy/pages/NavyBoard";
+import NavyHowToPlay from "./navy/pages/NavyHowToPlay";
 
 import AirforceAPP from "./airforce/AirforceAPP";
 import ChoosePlane from "./airforce/components/AirforceChoosePlane.component";
@@ -135,6 +136,7 @@ class App extends Component {
 
             <Route path="/navy/games/:id/lobby" element={<NavyLobby />} />
             <Route path="/navy/games/:id/board" element={<NavyBoard />} />
+            <Route path="/navy/how_to_play" element={<NavyHowToPlay />} />
             <Route path= "/airforce/mainMenu" element={<AirforceAPP />}/>
             <Route path= "/airforce/game/lobby/:id" element={<AirforceLobby />}/>
             <Route path= "/airforce/game/:id/choose/plane" element={<ChoosePlane />}/>
