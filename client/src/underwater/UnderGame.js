@@ -125,7 +125,7 @@ export default function UnderGame() {
           }
           setLayout({
             main: <UnderBoard visibleState={visibleState} width={width} height={height} />,
-            bottom: <><UnderStats visibleState={visibleState}/>
+            bottom: <><UnderStats visibleState={visibleState} currentUserId={currentUserId}/>
                       <UnderControls visibleState={visibleState} position={position} setPosition={setPosition}/>
                     </>
           });

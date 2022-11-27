@@ -149,9 +149,9 @@ export default function UnderControls(props) {
           <ActionButtons />
         </div>
       </div>
-        <div>
-          {alertMessage != null ? <p className="u-alert-danger">{alertMessage}</p> : null}
-        </div>
+      <div>
+        {alertMessage != null ? <p className="u-alert-danger">{alertMessage}</p> : null}
+      </div>
     </div>
   );
 }

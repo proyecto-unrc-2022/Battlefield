@@ -6,7 +6,8 @@
   align-self: center;
   padding: 20px;
   border-radius: 25px;
-  margin-top: 40px;
+  margin-top: 20px;
+  color: black;
 }
 
 .u-bottom-div {
@@ -208,6 +209,21 @@
 
 .u-stats {
   display: flex;
+  flex-direction: column;
+}
+
+.u-stats span {
+  font-size: 27px;
+  font-weight: 700;
+}
+
+.u-enemy-stats {
+  align-items: end;
+}
+
+.u-stats-container {
+  display: flex;
+  flex-direction: row;
   align-items: center;
   gap: 10px;
   font-weight: bold;

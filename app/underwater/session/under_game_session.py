@@ -70,23 +70,36 @@ class UnderGameSession(db.Model):
         self.commands.clear()
 
     def to_dict(self):
+        host = self.host and {"id": self.host.id, "username": self.host.username}
+        visitor = self.visitor and {
+            "id": self.visitor.id,
+            "username": self.visitor.username,
+        }
+
         return {
             "turn": self.turn,
             "order": self.order,
             "host_id": self.host_id,
+            "host": host,
             "visitor_id": self.visitor_id,
+            "visitor": visitor,
             "game_state": self.game.state,
         }
 
     def get_visible_state(self, player):
-        host = self.game.host
-        visitor = self.game.visitor
+        host = self.host and {"id": self.host.id, "username": self.host.username}
+        visitor = self.visitor and {
+            "id": self.visitor.id,
+            "username": self.visitor.username,
+        }
 
         d = {
             "session_id": self.id,
             "game_id": self.game.id,
             "host_id": self.host_id,
+            "host": host,
             "visitor_id": self.visitor_id,
+            "visitor": visitor,
             "winner_id": self.game.winner_id,
             "turn": self.turn,
             "order": self.order,
@@ -100,18 +113,18 @@ class UnderGameSession(db.Model):
                 }
             )
 
-        if host is player and visitor:
-            if visitor.submarine:
+        if self.host is player and self.visitor:
+            if self.visitor.submarine:
                 d.update(
                     {
-                        "enemy_submarine": visitor.submarine.public_dict(),
+                        "enemy_submarine": self.visitor.submarine.public_dict(),
                     }
                 )
-        elif visitor is player and host:
-            if host.submarine:
+        elif self.visitor is player and self.host:
+            if self.host.submarine:
                 d.update(
                     {
-                        "enemy_submarine": host.submarine.public_dict(),
+                        "enemy_submarine": self.host.submarine.public_dict(),
                     }
                 )
 
