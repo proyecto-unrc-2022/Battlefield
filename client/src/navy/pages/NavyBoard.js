@@ -54,8 +54,6 @@ const NavyBoard = () => {
       setJoinedRoom(true);
     }
     const receivedMessage = (game) => {
-      console.log("aa")
-      console.log(game);
       setGame(game);
       if (game.winner) {
         setOpenModal(true);
@@ -195,13 +193,18 @@ const NavyBoard = () => {
               }
           }
         }
-
+        console.log("Entre acá")
+        setAction({
+          course: " ",
+          move: 0,
+          attack: 0,
+        })
       
         setActionError(true);
         const timeout = setTimeout(() => {
           setActionError(false);
           clearTimeout(timeout);
-        }, 500);
+        }, 2000);
       });
   };
 
@@ -389,7 +392,7 @@ const NavyBoard = () => {
           </div>
 
           <div className="text-center">
-            <NavyTitle text={"Round: " + game.round} />
+          {game.round ? <NavyTitle text={"Round: " + game.round} /> : null}
           </div>
 
           <div className="row mt-3">

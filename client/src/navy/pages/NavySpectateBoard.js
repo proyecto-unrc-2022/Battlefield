@@ -56,15 +56,12 @@ const NavySpectateBoard = () => {
           setRound(resp.data.data.game.round - 1);
           setSpecRound(resp.data.data.game.round - 1);
         }
-        console.log("Game round",resp.data.data.game.round);
-        console.log("Spec round",roundToSpec)
         if (resp.data.data.game.status === "FINISHED" && resp.data.data.game.round === roundToSpec)  {
           setOpenModal(true);
         }
         setWinner(resp.data.data.game.winner);
         setGame(resp.data.data.game);
         setMissiles(resp.data.data.missiles);
-        console.log(game)
             
         setMyShip({
           name: resp.data.data.ships[0].name,
@@ -224,8 +221,8 @@ const NavySpectateBoard = () => {
                   <GridGame
                     rows={game.rows}
                     cols={game.cols}
-                    myShip={enemyShip}
-                    enemyShip={myShip}
+                    myShip={myShip}
+                    enemyShip={enemyShip}
                     missiles={missiles}
                     selectMissile={handleSelectMissile}
                     spectate={true}
