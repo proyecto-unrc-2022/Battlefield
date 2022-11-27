@@ -20,7 +20,7 @@ const NavyBoard = () => {
   const { id } = useParams();
   const [missileSelected, setMissileSelected] = useState(false);
   const [missile, setMissile] = useState(null);
-  const [myShip, setMyShip] = useState(null);
+  const [myShip, setMyShip] = useState({});
   const [enemyShip, setEnemyShip] = useState(null);
   const [missiles, setMissiles] = useState(null);
   const [action, setAction] = useState({
@@ -91,7 +91,23 @@ const NavyBoard = () => {
       });
   };
 
-  const getGame = () => {
+  const getShip = async (missile_type, ship) => {
+    const data = await MissileService.getMissileTypes();
+    const missiles = data.data.data;
+    const missile = missiles[missile_type];
+    const myShip = {...ship, "missile speed": missile.speed, "missile damage": missile.damage}
+    setMyShip(myShip)
+  };
+
+  const getEnemyShip = async (missile_type, ship) => {
+    const data = await MissileService.getMissileTypes();
+    const missiles = data.data.data;
+    const missile = missiles[missile_type];
+    const enemyShip = {...ship, "missile speed": missile.speed, "missile damage": missile.damage}
+    setEnemyShip(enemyShip)
+  };
+
+  const getGame = async () => {
     NavyGameService.getNavyGame(id)
       .then((resp) => {
         const currentUser = authService.getCurrentUser();
@@ -117,17 +133,47 @@ const NavyBoard = () => {
         setMissiles(resp.data.data.sight_range.missiles);
 
         ShipService.getShipTypes().then((res) => {
-          const ship = res.data.data[resp.data.data.ship.name];
+          const shipType = res.data.data[resp.data.data.ship.name];
+          const missile_type_id = shipType.missile_type_id[0];
           setAction({
             navy_game_id: resp.data.data.id,
             ship_id: resp.data.data.ship.id,
-            missile_type_id: ship.missile_type_id[0],
+            missile_type_id: shipType.missile_type_id[0],
             round: resp.data.data.round,
             course: resp.data.data.ship.course,
             move: 0,
             attack: 0,
           });
+
+          const ship = {
+            name: resp.data.data.ship.name,
+            hp: resp.data.data.ship.hp,
+            course: resp.data.data.ship.course,
+            x: resp.data.data.ship.pos_x,
+            y: resp.data.data.ship.pos_y,
+            size: resp.data.data.ship.size,
+            speed: resp.data.data.ship.speed,
+          };
+          getShip(missile_type_id, ship)
+
+          if (resp.data.data.status !== "FINISHED") {
+            if (resp.data.data.sight_range.ships.length !== 0) {
+              const shipType = res.data.data[resp.data.data.sight_range.ships[0].name];
+              const missile_type_id = shipType.missile_type_id[0];
+              const enemyShip = {
+                name: resp.data.data.sight_range.ships[0].name,
+                hp: resp.data.data.sight_range.ships[0].hp,
+                course: resp.data.data.sight_range.ships[0].course,
+                x: resp.data.data.sight_range.ships[0].pos_x,
+                y: resp.data.data.sight_range.ships[0].pos_y,
+                size: resp.data.data.sight_range.ships[0].size,
+                speed: resp.data.data.sight_range.ships[0].speed,
+              };
+              getEnemyShip(missile_type_id, enemyShip)
+            }
+          }
         });
+
         setMyShip({
           name: resp.data.data.ship.name,
           hp: resp.data.data.ship.hp,
@@ -193,7 +239,12 @@ const NavyBoard = () => {
             </h2>
             <p className="navy-text text-center">The game is over.</p>
             <div className="text-center">
-              <button className="navy-text bg-white" onClick={() => navigate("/navy/games")}>Go to Games</button>
+              <button
+                className="navy-text bg-white"
+                onClick={() => navigate("/navy/games")}
+              >
+                Go to Games
+              </button>
             </div>
           </Modal>
           <div className="row justify-content-between p-2 align-items-center">

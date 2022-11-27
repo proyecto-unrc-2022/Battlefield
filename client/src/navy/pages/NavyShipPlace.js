@@ -17,7 +17,7 @@ export const NavyShipPlace = () => {
   const [accessDenied, setAccessDenied] = useState(true);
   const [game, setGame] = useState(null);
   const [course, setCourse] = useState("N");
-  const [selectedPosition, setSelectedPosition] = useState({ x: 5, y: 5 });
+  const [selectedPosition, setSelectedPosition] = useState({});
 
   useEffect(() => {
     if (!location.state) {
@@ -42,6 +42,13 @@ export const NavyShipPlace = () => {
         setShipPlaced(true);
       }
       setGame(resp.data.data);
+
+      let x = 5;
+      let y = 5;
+      if (currentUser.sub === resp.data.data.user_2.id) {
+        y += 10;
+      }
+      setSelectedPosition({ x: x, y: y })
     });
 
     if (shipPlaced) {
