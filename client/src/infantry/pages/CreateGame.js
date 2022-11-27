@@ -16,6 +16,14 @@ export default function CreateGame(){
         navigate("/home_Infantry/choose_character");
     }
 
+    const back= () =>{
+        navigate("/home_Infantry");
+        gameService.removeGame(creatGame.id).then(resp =>{
+            console.log(resp)
+        })
+
+    }
+
     const host = authService.getCurrentUser()
 
     const newGame = () =>{
@@ -51,6 +59,10 @@ export default function CreateGame(){
 
     return(
         <div className="container-fluid bg-HomePage ">
+
+            <div className="col text-white">
+                    <button onClick={back} type="button" className="btn btn-secondary m-3">Back</button>
+            </div>
             
             <div className="row">
                 

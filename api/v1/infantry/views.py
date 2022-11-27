@@ -160,3 +160,12 @@ def get_all_users():
 
     
 # Routes here
+@infantry.route("/game/remove", methods=["POST"])
+# @token_auth.login_required
+def remove_game():
+
+    data = json.loads(request.data)
+    game_id = data["game_id"]
+    
+    removeGame(game_id)
+    return "ok"

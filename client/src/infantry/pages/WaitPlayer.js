@@ -15,7 +15,7 @@ export default function WaitPlayer(){
     const navigate = useNavigate();
 
     const redirec = () =>{
-        navigate("/home_Infantry");
+        navigate("/infantry/game");
     }
 
     const getGame = () =>{

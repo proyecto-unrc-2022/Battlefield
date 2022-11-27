@@ -792,3 +792,10 @@ def update(game_id):
 
 
 
+def removeGame(game_id):
+
+    game = Game_Infantry.query.filter_by(id = game_id).first()
+    db.session.delete(game)
+    db.session.commit()
+
+    return True
