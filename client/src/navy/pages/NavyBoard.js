@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useContext } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import authService from "../../services/auth.service";
 import AccessDenied from "../components/AccessDenied";
@@ -13,6 +13,9 @@ import MissileService from "../services/MissileService";
 import NavyGameService from "../services/NavyGameService";
 import ShipService from "../services/ShipService";
 import NavyLogo from "../components/NavyLogo";
+import { SocketContext, socket } from "../context/socketContext";
+import Chat from "../components/Chat";
+import NavyTitle from "../components/NavyTitle";
 
 const NavyBoard = () => {
   const [game, setGame] = useState(null);
@@ -36,7 +39,8 @@ const NavyBoard = () => {
   const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
-    getGame();
+    getGame()
+   
   }, []);
 
   const handleSelectMissile = (missile) => {
@@ -269,12 +273,24 @@ const NavyBoard = () => {
           <div className="row justify-content-between p-2 align-items-center">
             <NavyLogo size={"small"} />
           </div>
+          
+          <div className="text-center">
+            <NavyTitle text={"Round: "+ game.round} />
+            </div>
+
           <div className="row mt-3">
             <div className="col-3">
               <div className="row justify-content-center">
                 <div className="col-8">
                   <EntityDetails title={"My Ship"} data={myShip} />
                 </div>
+              
+              <div className="col-12 d-flex flex column mt-5" >
+                  <Chat
+                    user={authService.getCurrentUser().username}
+                    game={game}
+                  />
+              </div>
               </div>
             </div>
             <div className="col-6">
@@ -290,7 +306,7 @@ const NavyBoard = () => {
                   />
                 </div>
               </div>
-              <div className="row justify-content-center mt-3">
+              <div className="row justify-content-center mt-5">
                 <div className="col-10">
                   <ActionCard
                     ship={myShip}

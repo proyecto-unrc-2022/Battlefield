@@ -45,11 +45,12 @@ const NavyGameCard = ({ game,button="join" }) => {
       navigate(`/navy`);
     });};
 
-  const canReJoin = () => {
-    const currentUser = authService.getCurrentUser();
-    return (
-      currentUser.sub === game.user_1.id || currentUser.sub === game.user_2.id
-    );
+  const canSpectate = () => {
+    return game.status === "STARTED" && !canJoin()
+  };
+
+  const spectateGame = () => {
+    navigate(`/navy/games/${game.id}/spectate_board`);
   };
 
   useEffect(() => {
@@ -81,7 +82,15 @@ const NavyGameCard = ({ game,button="join" }) => {
         <div className="text-center mt-2">
           <NavyButton action={cancelGame} text={"Cancel Game"} size={"small"} />
           </div>
-          ) : null}      
+          ) : null} 
+      {canSpectate() ? (
+        <div className="text-center">
+          <NavyButton
+            action={spectateGame} text={"Spectate"} size={"small"}
+          />
+        </div>
+      ) : null}
+
       <div className="d-flex justify-content-end w-75">
         <p className="navy-text m-0 p-0">GAME CODE: {game.id}</p>
       </div>

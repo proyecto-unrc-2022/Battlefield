@@ -1,6 +1,8 @@
 from sqlalchemy import event
 
 from app import db
+from app import io
+from app.navy.dtos.navy_game_state_dto import NavyGameStateDTO
 
 
 class Action(db.Model):
@@ -46,3 +48,4 @@ def before_commit(session):
 
             if navy_game_service.should_update(obj.navy_game_id):
                 navy_game_service.play_round(obj.navy_game_id)
+              
