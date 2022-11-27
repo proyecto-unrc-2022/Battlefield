@@ -57,10 +57,8 @@ class ShipService {
     let newRow = ship.x;
     let newCol = ship.y;
     for (let i = 0; i < ship.size - 1; i++) {
-      newRow =
-        newRow + this.compass[this.inverseCoords[ship.course]].x;
-      newCol =
-        newCol + this.compass[this.inverseCoords[ship.course]].y;
+      newRow = newRow + this.compass[this.inverseCoords[ship.course]].x;
+      newCol = newCol + this.compass[this.inverseCoords[ship.course]].y;
       positions.push({ x: newRow, y: newCol, proa: false });
     }
     return positions;

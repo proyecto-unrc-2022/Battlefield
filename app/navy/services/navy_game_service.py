@@ -105,6 +105,7 @@ class NavyGameService:
         self.save(game)
 
     def finalize_round(self, game):
+        self.is_over(game.id)
         game.round += 1
         game.turn = self.change_turn(game)
 
@@ -119,12 +120,15 @@ class NavyGameService:
     def save(self, game):
         from app.navy.services.missile_service import missile_service
         from app.navy.services.ship_service import ship_service
+        from app.navy.services.spectate_service import spectate_service
 
         ships = self.games[game.id]["ships"]
         missiles = self.games[game.id]["missiles"]
+        
         ship_service.update_all(ships)
         missile_service.update_all(missiles)
         navy_game_dao.update(game)
+        spectate_service.save_round(game, ships, missiles)
 
     def run_missiles(self, game):
         from app.navy.services.missile_service import missile_service
@@ -140,7 +144,7 @@ class NavyGameService:
     def set_winner(self, winner, game):
         game.winner = winner
         game.status = FINISHED
-        navy_game_dao.update(game)
+        #navy_game_dao.update(game)
 
     def is_over(self, navy_game_id):
         game = navy_game_dao.get_by_id(navy_game_id)

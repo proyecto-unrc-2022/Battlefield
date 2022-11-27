@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import authService from "../../services/auth.service";
-import userService from "../../services/user.service";
 import FiltersComponent from "../components/FiltersComponent";
 import NavyGameCard from "../components/NavyGameCard";
 import NavyTitle from "../components/NavyTitle";
-import NavyLogo from "../components/NavyLogo"
+import NavyLogo from "../components/NavyLogo";
 import NavyGameService from "../services/NavyGameService";
 
 const NavyGames = () => {
@@ -23,7 +22,8 @@ const NavyGames = () => {
     setFilteredGames(
       games.filter(
         (game) =>
-          game.user_1.id === currentUser.sub || game.user_2?.id === currentUser.sub
+          game.user_1.id === currentUser.sub ||
+          game.user_2?.id === currentUser.sub
       )
     );
   };
@@ -33,13 +33,17 @@ const NavyGames = () => {
   };
 
   const filterPlayingGames = () => {
-    setFilteredGames(games.filter((game) =>game.status === "STARTED" || game.status === "WAITING_PICKS"));
+    setFilteredGames(
+      games.filter(
+        (game) => game.status === "STARTED" || game.status === "WAITING_PICKS"
+      )
+    );
   };
 
   const filters = {
     "my-games": filterMyGames,
-    "waiting": filterWaitingGames,
-    "playing": filterPlayingGames,
+    waiting: filterWaitingGames,
+    playing: filterPlayingGames,
   };
 
   const filterGames = (key) => {
@@ -53,7 +57,7 @@ const NavyGames = () => {
   return (
     <div style={{ flexGrow: "1" }} className="container-fluid bg-navy">
       <div className="row justify-content-between p-2 align-items-center">
-        <NavyLogo size={"small"}/>
+        <NavyLogo size={"small"} />
         <FiltersComponent filter={filterGames} />
       </div>
       <div className="row">

@@ -44,11 +44,10 @@ def app_with_data(app_with_db):
     db.session.commit()
     
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def arrange_navy_game(app_with_db):
     from app.daos.user_dao import add_user
     from app.navy.services.navy_game_service import navy_game_service 
-    from app.navy.services.ship_service import ship_service
     add_user("user1", "123", "user1@user.com")
     add_user("user2", "321", "user2@user.com")
     user1 = {"user1_id":1}

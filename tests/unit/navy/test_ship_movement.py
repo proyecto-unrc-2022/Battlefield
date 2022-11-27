@@ -1,14 +1,29 @@
 import pytest
+from battlefield import app
 from features.steps.navy.test_utils import test_utils
+from app.navy.services.ship_service import ship_service
+from app.navy.services.navy_game_service import navy_game_service
+  
 
-def test_move(arrange_navy_game):
-    from app.navy.services.ship_service import ship_service
+
+def test_ship_turn_without_collision(arrange_navy_game):
+        navy_game_service.load_game(1)
+        ship = test_utils.add_test_ship("Destroyer", 5, 4, "W",1 , 1, 60, 3, 3, 5, 1)
+        
+        ship_service.turn(ship, "E")
+        ship_service.update_position(ship, 0)
+        
+        game = navy_game_service.get_board(1)
+        assert game[(ship.pos_x,ship.pos_y)].course == "E"
     
-    ship1 = {"name": "Destroyer", "hp": 60, "size": 3, "speed": 3, "visibility": 5, "missile_type_id": 1, "pos_x": 5, "pos_y": 4, "course": "W", "user_id": 1, "navy_game_id": 1}  
-    ship_service.add(ship1)
-    ship = ship_service.get_by_id(1)
     
-    action1 = test_utils.add_action_test(1, 1, "W", 2, 0, 1, 1, 1)
-    ship_service.update_position(ship, action1.move)
-    
-    assert ship.pos_x == 5 and ship.pos_y == 2
+def test_ship_turn_missile_collision(arrange_navy_game):
+        navy_game_service.load_game(1)
+        ship = test_utils.add_test_ship("Destroyer", 5, 5, "N",1 , 1, 60, 3, 3, 5, 1)
+        missile = test_utils.add_test_missile("W", '5', '7', 1, 1, 1, 30, 1)
+        ship_service.turn(ship, "W")
+        ship_service.update_position(ship, 0)
+
+        game = navy_game_service.get_board(1)
+        assert game[(ship.pos_x,ship.pos_y)].course == "W"
+        assert game[(ship.pos_x,ship.pos_y)].hp == "30"
