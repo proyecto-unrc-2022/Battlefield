@@ -57,7 +57,7 @@ const NavySlider = () => {
         {slides.map((slide, slideIndex) => (
           <div
             key={slideIndex}
-            className="dots"
+            className={"dots " + (currentIndex === slideIndex ? "hover-dot" : "")}
             onClick={() => goToSlide(slideIndex)}
           >
             ●

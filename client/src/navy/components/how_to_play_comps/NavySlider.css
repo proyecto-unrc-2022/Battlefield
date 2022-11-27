@@ -39,8 +39,9 @@
     margin: 0 3px;
     cursor: pointer;
     font-size: 20px;
+    color:black
 }
 
-.image {
-    
+.hover-dot {
+    color: #82B5EA;
 }
