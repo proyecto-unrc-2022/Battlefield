@@ -89,7 +89,6 @@ export const NavyShipPlace = () => {
       pos_y: selectedPosition.y,
     };
     ShipService.postShip(shipToSend).then((resp) => {
-      console.log(resp);
     });
   };
 

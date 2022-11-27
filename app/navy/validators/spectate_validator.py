@@ -16,11 +16,15 @@ class SpectateValidator(Schema):
         if not navy_game:
             raise ValidationError("Game doesn't exist.")
 
-        if navy_game.status != "STARTED":
+        if navy_game.round < 3:
+            raise ValidationError("Game unvailable for spectate.")
+        
+        if navy_game.status != "STARTED" and navy_game.status != "FINISHED":
             raise ValidationError("Game hasn't started yet.")
         
-        if round != 0 and not navy_game.round - round >= 1 :
+        if round != 0 and not navy_game.round - round >= 1 and navy_game.status != "FINISHED":
             raise ValidationError("Invalid round") 
+        
 
     round = fields.Integer(required=True)
     navy_game_id = fields.Integer(required=True)
