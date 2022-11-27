@@ -12,6 +12,7 @@ import ActionService from "../services/ActionService";
 import MissileService from "../services/MissileService";
 import NavyGameService from "../services/NavyGameService";
 import ShipService from "../services/ShipService";
+import NavyLogo from "../components/NavyLogo";
 
 const NavyBoard = () => {
   const [game, setGame] = useState(null);
@@ -248,13 +249,7 @@ const NavyBoard = () => {
             </div>
           </Modal>
           <div className="row justify-content-between p-2 align-items-center">
-            <Link
-              to={"/navy"}
-              className="navy-text"
-              style={{ textDecoration: "none" }}
-            >
-              Navy Battleship
-            </Link>
+            <NavyLogo size={"small"} />
           </div>
           <div className="row mt-3">
             <div className="col-3">

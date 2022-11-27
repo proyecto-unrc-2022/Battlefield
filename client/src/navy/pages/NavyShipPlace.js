@@ -7,6 +7,7 @@ import authService from "../../services/auth.service";
 import AccessDenied from "../components/AccessDenied";
 import GridShipPlace from "../components/GridShipPlace";
 import NavyTitle from "../components/NavyTitle";
+import NavyLogo from "../components/NavyLogo";
 
 export const NavyShipPlace = () => {
   const location = useLocation();
@@ -103,13 +104,7 @@ export const NavyShipPlace = () => {
       ) : (
         <>
           <div className="row justify-content-between p-2 align-items-center">
-            <Link
-              to={"/navy"}
-              className="navy-text"
-              style={{ textDecoration: "none" }}
-            >
-              Navy Battleship
-            </Link>
+            <NavyLogo size={"small"}></NavyLogo>
           </div>
           <div className="row">
             <div className="col-12 text-center">
