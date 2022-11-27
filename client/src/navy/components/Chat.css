@@ -11,12 +11,10 @@
     font-size: 1em;
     margin: 0 0 0 0;
     padding: 0 0 0 0;
-    /* put radius */
     border-radius: 5px;
     border: 0.5px solid #000;
     background-color: #2A96DE;
     padding: 3px;
-    /* margin-left */
 }
 .message-body-enemy{
 
@@ -24,24 +22,20 @@ color: rgb(255, 255, 255);
 font-size: 1em;
 margin: 0 0 0 0;
 padding: 0 0 0 0;
-/* put radius */
 border-radius: 5px;
 border: 0.5px solid #000;
 background-color: #D57373;
 padding: 3px;
-/* margin-left */
 }
 .message-body-navy{
     color: rgb(0, 0, 0);
     font-size: 1em;
     margin: 0 0 0 0;
     padding: 0 0 0 0;
-    /* put radius */
     border-radius: 5px;
     border: 0.5px solid #000;
     background-color: rgba(198, 198, 198, 0.861);
     padding: 3px;
-    /* margin-left */
 }
 .message-form{
     margin: 0 0 0 0;
@@ -68,10 +62,8 @@ padding: 3px;
     font-size: 1em;
     margin: 0 0 0 0;
     padding: 0 0 0 0;
-    /* put radius */
     border-radius: 5px;
     border: 0.5px solid #000;
     background-color: rgba(198, 198, 198, 0.861);
     padding: 3px;
-    /* margin-left */
 }
