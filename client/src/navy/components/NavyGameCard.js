@@ -46,7 +46,7 @@ const NavyGameCard = ({ game, button = "join" }) => {
   };
 
   const canSpectate = () => {
-    return game.status === "STARTED" && !canJoin();
+    return (game.status === "STARTED" || game.status === "FINISHED") && !canJoin();
   };
 
   const spectateGame = () => {
