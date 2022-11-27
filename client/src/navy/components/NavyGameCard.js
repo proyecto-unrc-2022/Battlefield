@@ -60,7 +60,7 @@ const NavyGameCard = ({ game,button="join" }) => {
   }, []);
 
   return (
-    <div className="navy-card-container d-flex flex-column align-items-center border border-dark pt-2 pb-4">
+    <div className="navy-card-container d-flex flex-column align-items-center border border-dark pt-2 pb-2">
       <p className="navy-text m-0">{game.status.replace("_", " ")}</p>
       <div className="w-100 d-flex justify-content-center mb-2">
         <img src={wings} alt="Wings" />
@@ -84,7 +84,7 @@ const NavyGameCard = ({ game,button="join" }) => {
           </div>
           ) : null} 
       {canSpectate() ? (
-        <div className="text-center">
+        <div className="text-center mt-2">
           <NavyButton
             action={spectateGame} text={"Spectate"} size={"small"}
           />

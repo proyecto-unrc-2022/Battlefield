@@ -50,7 +50,7 @@ const NavyLobby = () => {
   }, []);
 
   return (
-    <div style={{ flexGrow: "1" }} className="container-fluid bg-navy">
+    <div style={{ flexGrow: "1" }} className="container-fluid bg-menu">
       <div className="row justify-content-between p-2 align-items-center">
         <NavyLogo size={"small"} />
       </div>

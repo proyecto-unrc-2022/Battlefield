@@ -96,7 +96,7 @@ const NavyShipSelection = () => {
               <NavyButton
                 action={goToPlaceToBoard}
                 text="Place Ship"
-                size={"medium"}
+                size={"small"}
               />
             </div>
           </div>

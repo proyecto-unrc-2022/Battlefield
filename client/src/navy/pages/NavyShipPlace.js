@@ -150,10 +150,10 @@ export const NavyShipPlace = () => {
           <div className="row justify-content-center mt-3">
             {shipPlaced ? (
               <div className="row d-flex flex-column justify-content-center align-items-center">
-                <div className="spinner-border m-3" role="status">
+                <div style={{color: "black"}} className="spinner-border m-1" role="status">
                   <span className="sr-only">Loading...</span>
                 </div>
-                <span className="text-center">
+                <span className="text-center navy-text">
                   Waiting for the other player select his ship...
                 </span>
               </div>

@@ -103,7 +103,7 @@ const NavyBoard = () => {
     const myShip = {
       ...ship,
       "missile speed": missile.speed,
-      "missile damage": missile.damage,
+      damage: missile.damage,
     };
     setMyShip(myShip);
   };
@@ -115,7 +115,7 @@ const NavyBoard = () => {
     const enemyShip = {
       ...ship,
       "missile speed": missile.speed,
-      "missile damage": missile.damage,
+      damage: missile.damage,
     };
     setEnemyShip(enemyShip);
   };
@@ -285,7 +285,7 @@ const NavyBoard = () => {
                   <EntityDetails title={"My Ship"} data={myShip} />
                 </div>
               
-              <div className="col-12 d-flex flex column mt-5" >
+              <div className="col-12 d-flex flex column mt-3" >
                   <Chat
                     user={authService.getCurrentUser().username}
                     game={game}
