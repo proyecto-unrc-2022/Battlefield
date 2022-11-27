@@ -28,9 +28,11 @@ class BoardMask(db.Model):
         self.board = self.submarine.game.board
         self.radar_cells = set()
         self.visible_cells = set()
-        for i in self.mask_dict:
-            for j in self.mask_dict[i]:
-                if self.mask_dict[i][j][0] == "r":
+        for si in self.mask_dict:
+            for sj in self.mask_dict[si]:
+                i = int(si)
+                j = int(sj)
+                if self.mask_dict[si][sj][0] == "r":
                     self.radar_cells.add((i, j))
                 else:
                     self.visible_cells.add((i, j))
@@ -75,6 +77,8 @@ class BoardMask(db.Model):
                 break
 
         if i_was_seen:
+            print(enemy_positions)
+            print(self.visible_cells)
             for pos in enemy_positions:
                 if pos in self.visible_cells:
                     continue
