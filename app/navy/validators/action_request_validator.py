@@ -1,6 +1,5 @@
 from marshmallow import Schema, ValidationError, fields, validate, validates_schema
 
-from app.navy.services.missile_service import missile_service
 from app.navy.utils.navy_utils import utils
 
 
@@ -16,7 +15,7 @@ class ActionRequestValidator(Schema):
     )
     round = fields.Integer(required=True)
     missile_type_id = fields.Integer(
-        validate=validate.OneOf(missile_service.MISSILE_TYPES), required=True
+        validate=validate.OneOf(utils.MISSILE_TYPES), required=True
     )
 
     @validates_schema
@@ -31,19 +30,19 @@ class ActionRequestValidator(Schema):
         round = in_data.get("round")
 
         if not game:
-            raise ValidationError("Game not found",field_name="navy_game_id")
+            raise ValidationError("Game not found", field_name="navy_game_id")
 
         if game.user1_id != user_id and game.user2_id != user_id:
-            raise ValidationError("Invalid game",field_name="navy_game_id")
+            raise ValidationError("Invalid game", field_name="navy_game_id")
 
         if game.status == FINISHED:
-            raise ValidationError("Game finished",field_name="navy_game_id")
+            raise ValidationError("Game finished", field_name="navy_game_id")
 
         if not (game.status == STARTED):
-            raise ValidationError("Game not started yet",field_name="navy_game_id")
+            raise ValidationError("Game not started yet", field_name="navy_game_id")
 
         if game.round != round:
-            raise ValidationError("Wrong round",field_name="round")
+            raise ValidationError("Wrong round", field_name="round")
 
         self.validate_move(in_data, **kwargs)
 
@@ -60,11 +59,14 @@ class ActionRequestValidator(Schema):
             mov_ship = ship_type_dao.get_by(ship.name)["speed"]
 
             if in_data.get("move") < 0:
-                raise ValidationError("The move is a negative distance",field_name="move")
+                raise ValidationError(
+                    "The move is a negative distance", field_name="move"
+                )
 
             if in_data.get("move") > mov_ship:
                 raise ValidationError(
-                    "Can't move more than " + str(mov_ship) + " spaces",field_name="move"
+                    "Can't move more than " + str(mov_ship) + " spaces",
+                    field_name="move",
                 )
 
     @validates_schema
@@ -89,9 +91,9 @@ class ActionRequestValidator(Schema):
         ship = ship_dao.get_by_id(in_data.get("ship_id"))
 
         if not ship:
-            raise ValidationError("Ship not found",field_name="ship_id")
+            raise ValidationError("Ship not found", field_name="ship_id")
 
         if ship.user_id != in_data.get("user_id") or ship.navy_game_id != in_data.get(
             "navy_game_id"
         ):
-            raise ValidationError("Invalid ship in game",field_name="ship_id")
+            raise ValidationError("Invalid ship in game", field_name="ship_id")

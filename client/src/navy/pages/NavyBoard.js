@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useLayoutEffect } from "react";
+import React, { useEffect, useState, useLayoutEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import authService from "../../services/auth.service";
 import AccessDenied from "../components/AccessDenied";
@@ -16,8 +16,6 @@ import NavyLogo from "../components/NavyLogo";
 import Chat from "../components/Chat";
 import NavyTitle from "../components/NavyTitle";
 import io from "socket.io-client";
-const socket = io("http://localhost:5000");
-
 
 const NavyBoard = () => {
   const [game, setGame] = useState(null);
@@ -40,37 +38,42 @@ const NavyBoard = () => {
   const [winner, setWinner] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [joinedRoom, setJoinedRoom] = useState(false);
+  const [socket,setSocket] = useState(null);
 
+  useLayoutEffect(() => {
+    setSocket(io("http://localhost:5000"));
+  }, []);
 
 
   useEffect(() => {
-    if(!game){
-    getGame();
+    if (!game) {
+      getGame();
     }
-    if(!joinedRoom){
-      const user_id = authService.getCurrentUser().sub;
-      socket.connect();
-      socket.emit("join", { room: user_id});
-      setJoinedRoom(true);
-    }
-    const receivedMessage = (game) => {
+
+   if (!joinedRoom) {
+    const user_id = authService.getCurrentUser().sub;
+    socket?.emit("join", { room: user_id });
+    setJoinedRoom(true);
+  }
+  const receivedMessage = (game) => {
+    if (true) {
       setGame(game);
       if (game.winner) {
         setOpenModal(true);
       }
       setWinner(game.winner);
-     
+
       setMissiles(game.sight_range.missiles);
 
       ShipService.getShipTypes().then((res) => {
         const shipType = res.data.data[game.ship.name];
         const missile_type_id = shipType.missile_type_id[0];
         setAction({
-          navy_game_id:game.id,
-          ship_id:game.ship.id,
+          navy_game_id: game.id,
+          ship_id: game.ship.id,
           missile_type_id: shipType.missile_type_id[0],
-          round:game.round,
-          course:game.ship.course,
+          round: game.round,
+          course: game.ship.course,
           move: 0,
           attack: 0,
         });
@@ -88,8 +91,7 @@ const NavyBoard = () => {
 
         if (game.status !== "FINISHED") {
           if (game.sight_range.ships.length !== 0) {
-            const shipType =
-              res.data.data[game.sight_range.ships[0].name];
+            const shipType = res.data.data[game.sight_range.ships[0].name];
             const missile_type_id = shipType.missile_type_id[0];
             const enemyShip = {
               name: game.sight_range.ships[0].name,
@@ -129,16 +131,14 @@ const NavyBoard = () => {
           });
         }
       }
-
-    };
-    socket.on("message", receivedMessage);
+    }
+  };
+  socket?.on("message", receivedMessage);
 
     return () => {
-      socket.disconnect();
-    };
-
+      socket?.disconnect();
+    }; 
   }, [socket]);
-
 
   const handleSelectMissile = (missile) => {
     setMissileSelected(true);
@@ -185,21 +185,21 @@ const NavyBoard = () => {
         });
       })
       .catch((err) => {
-        const possibleErrorModal  = err.response?.data?.message?.navy_game_id; 
-        if(possibleErrorModal){
-          if(possibleErrorModal.length > 0){
-              if(possibleErrorModal[0].includes("finished")){
-                setOpenModal(true);
-              }
+        const possibleErrorModal = err.response?.data?.message?.navy_game_id;
+        if (possibleErrorModal) {
+          if (possibleErrorModal.length > 0) {
+            if (possibleErrorModal[0].includes("finished")) {
+              setOpenModal(true);
+            }
           }
         }
-        console.log("Entre acá")
+        console.log("Entre acá");
         setAction({
           course: " ",
           move: 0,
           attack: 0,
-        })
-      
+        });
+
         setActionError(true);
         const timeout = setTimeout(() => {
           setActionError(false);
@@ -232,12 +232,9 @@ const NavyBoard = () => {
     setEnemyShip(enemyShip);
   };
 
-
-
   const getGame = async () => {
     NavyGameService.getNavyGame(id)
       .then((resp) => {
-     
         const currentUser = authService.getCurrentUser();
         const accessDenied =
           currentUser.sub !== resp.data.data.user_1.id &&
@@ -392,7 +389,7 @@ const NavyBoard = () => {
           </div>
 
           <div className="text-center">
-          {game.round ? <NavyTitle text={"Round: " + game.round} /> : null}
+            {game.round ? <NavyTitle text={"Round: " + game.round} /> : null}
           </div>
 
           <div className="row mt-3">
@@ -406,6 +403,7 @@ const NavyBoard = () => {
                   <Chat
                     user={authService.getCurrentUser().username}
                     game={game}
+                    socket={socket}
                   />
                 </div>
               </div>

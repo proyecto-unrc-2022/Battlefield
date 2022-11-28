@@ -22,7 +22,7 @@ def step_impl(context, user_id, course, round, distance, game_id):
         round,
     )
     context.pages[user_id] = context.client.post(
-        url_for("navy.action"), json=body, headers=headers
+        url_for("navy.new_action"), json=body, headers=headers
     )
 
 
@@ -43,7 +43,7 @@ def step_impl(context, user_id, course, round, game_id):
         round,
     )
     context.pages[user_id] = context.client.post(
-        url_for("navy.action"), json=body, headers=headers
+        url_for("navy.new_action"), json=body, headers=headers
     )
 
 
@@ -64,7 +64,7 @@ def step_impl(context, user_id, course, distance, round, game_id):
         round,
     )
     context.pages[user_id] = context.client.post(
-        url_for("navy.action"), json=body, headers=headers
+        url_for("navy.new_action"), json=body, headers=headers
     )
 
 
@@ -85,7 +85,7 @@ def step_impl(context, user1_id, user2_id, course, distance, round, game_id):
         round,
     )
     context.pages[user1_id] = context.client.post(
-        url_for("navy.action"), json=body, headers=headers
+        url_for("navy.new_action"), json=body, headers=headers
     )
 
 

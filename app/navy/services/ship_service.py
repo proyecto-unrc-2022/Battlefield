@@ -6,15 +6,8 @@ from app.navy.utils.navy_utils import utils
 
 class ShipService:
     SHIP_NAMES = ["Destroyer", "Cruiser", "Battleship", "Corvette"]
-    SHIP_SIZES = [3, 3, 4, 2]
 
-    def validate_request(self, request):
-        from app.navy.validators.ship_request_validator import ShipRequestValidator
-
-        ship_data_validated = ShipRequestValidator().load(request)
-        return ship_data_validated
-    
-    def create(self,name, pos_x, pos_y, course, user_id, navy_game_id):
+    def create(self, name, pos_x, pos_y, course, user_id, navy_game_id):
         ship_data = ship_type_dao.get_by(name)
         new_ship = Ship(
             name,
@@ -49,7 +42,6 @@ class ShipService:
     def load_to_board(self, ship):
         from app.navy.services.navy_game_service import navy_game_service
 
-        # TODO: CanLoad to board
         ships_positions = self.build(ship)
         for x, y in ships_positions:
             navy_game_service.load_to_board(ship.navy_game_id, x, y, ship)
@@ -118,6 +110,7 @@ class ShipService:
 
     def can_update(self, ship):
         from app.navy.services.navy_game_service import navy_game_service
+
         game_over = navy_game_service.is_over(ship.navy_game_id)
         return ship.is_alive and not game_over
 
@@ -129,7 +122,7 @@ class ShipService:
             return True
         return False
 
-    def attack(self, ship, *args):
+    def attack(self, ship):
         from app.navy.services.missile_service import missile_service
 
         x, y = utils.get_next_position(ship.pos_x, ship.pos_y, ship.course)
@@ -180,13 +173,6 @@ class ShipService:
             if not utils.out_of_bounds(x, y):
                 res.append((x, y))
         return res
-
-    def get_sight_range(self, ship):
-        border_point_x = ship.pos_x - ship.visibility
-        border_point_y = ship.pos_y - ship.visibility
-        return utils.get_distance(
-            ship.pos_x, ship.pos_y, border_point_x, border_point_y
-        )
 
     def get_dto(self, ship):
         from app.navy.dtos.ship_dto import ShipDTO
