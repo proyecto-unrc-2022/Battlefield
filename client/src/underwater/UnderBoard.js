@@ -2,19 +2,63 @@ import React, {useEffect, useState} from 'react';
 import "./css/game-style.css"
 import UnderCell from './UnderCell';
 
-const baseURL = "http://127.0.0.1:5000/api/v1/underwater";
-
 
 export default function UnderBoard({visibleState, height, width}) {
   const [board, setBoard] = useState([]);
   const images = {
-    "FH": require("./css/FH.png"),
-    "FT": require("./css/FT.png"),
-  };
+    "Saukko": {
+      "F": {
+        "H": require("./css/submarineimages/submarine0HeadF.png"),
+        "T": require("./css/submarineimages/submarine0TailF.png")
+      },
+      "E": {
+        "H": require("./css/submarineimages/submarine0HeadE.png"),
+        "T": require("./css/submarineimages/submarine0TailE.png")
+      },
+    },
+    "Nautilus": {
+      "F": {
+        "H": require("./css/submarineimages/submarine1HeadF.png"),
+        "T": require("./css/submarineimages/submarine1TailF.png")
+      },
+      "E": {
+        "H": require("./css/submarineimages/submarine1HeadE.png"),
+        "T": require("./css/submarineimages/submarine1TailE.png")
+      },
+    },
+    "USS Sturgeon": {
+      "F": {
+        "H": require("./css/submarineimages/submarine2HeadF.png"),
+        "T": require("./css/submarineimages/submarine2TailF.png")
+      },
+      "E": {
+        "H": require("./css/submarineimages/submarine2HeadE.png"),
+        "T": require("./css/submarineimages/submarine2TailE.png")
+      },
+    },
+    "Surcouf": {
+      "F": {
+        "H": require("./css/submarineimages/submarine3HeadF.png"),
+        "T": require("./css/submarineimages/submarine3TailF.png")
+      },
+      "E": {
+        "H": require("./css/submarineimages/submarine3HeadE.png"),
+        "T": require("./css/submarineimages/submarine3TailE.png")
+      },
+    },
+    "Torpedo": {
+      "F": {
+        "*": require("./css/images/torpedoF.png")
+      },
+      "E": {
+        "*": require("./css/images/torpedoE.png")
+      }
+    }
+  }
 
   function getVisibility() {
     if(visibleState == null || visibleState.visible_board == undefined)
-      return
+      return;
     const visibility = visibleState.visible_board;
     const cells = []
     for (let i = 0; i < height; i++) {
@@ -43,7 +87,7 @@ export default function UnderBoard({visibleState, height, width}) {
       {
         board.map((row, i) =>{
           return row.map((col, j) => {
-            return (<UnderCell key={(i+1)*(j+1)} type={col} images={images} />);
+            return (<UnderCell visibleState={visibleState} key={(i+1)*(j+1)} typeString={col} images={images} />);
           })
         })
       }

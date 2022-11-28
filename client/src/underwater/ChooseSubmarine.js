@@ -2,27 +2,44 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import "./css/game-style.css"
 
-const optionsURL = "http://127.0.0.1:5000/api/v1/underwater/game/submarine_options";
+const optionsURL = "http://localhost:5000/api/v1/underwater/game/submarine_options";
 
 function SubmarineCard({id, setChosenSubmarine, stats}) {
   const onClick = () => {
     setChosenSubmarine(parseInt(id));
   }
 
+  function PercentageBar(props) {
+    const {stat, max, value} = props;
+    const percentage = (value / max) * 100;
+
+    return (
+      <div className="u-bar-100">
+        <div className="u-stat-bar" style={{width: percentage + "%"}}></div>
+        <div className="u-stat-bar-text">
+          <span style={{fontSize: "13px"}}>{stat}</span>
+          <span style={{fontSize: "13px"}}>{value}</span>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <a onClick={onClick} id={id} href="#"><div className="card">
-      <img src="https://static-s.aa-cdn.net/img/ios/1451817911/973e1c13fd06634d7de878a801664cc5?v=1" alt="Submarine" />
-      <ul>
-        <li><strong>{stats.name}</strong></li>
-        <li>Size: {stats.size}</li>
-        <li>Speed: {stats.speed}</li>
-        <li>visibility: {stats.visibility}</li>
-        <li>radar_scope: {stats.radar_scope}</li>
-        <li>health: {stats.health}</li>
-        <li>torpedo_speed: {stats.torpedo_speed}</li>
-        <li>torpedo_damage: {stats.torpedo_damage}</li>
-      </ul>
-    </div></a>
+    <div className="card"><a onClick={onClick} id={id} href="#">
+        <div style={{width: "100%", backgroundColor: "#FFF"}}>
+          <img src={require("./css/images/submarine" + id + "Preview.png")} alt="Submarine" />
+          <strong style={{fontSize: "13px", height: "20px"}}>{stats.name}</strong>
+          <div className="u-bars-container">
+            <PercentageBar stat="health" max={80} value={stats.health} />
+            <PercentageBar stat="size" max={4} value={stats.size} />
+            <PercentageBar stat="speed" max={5} value={stats.speed} />
+            <PercentageBar stat="visibility" max={5} value={stats.visibility} />
+            <PercentageBar stat="radar scope" max={15} value={stats.radar_scope} />
+            <PercentageBar stat="torpedo speed" max={5} value={stats.torpedo_speed} />
+            <PercentageBar stat="torpedo damage" max={25} value={stats.torpedo_damage} />
+          </div>
+        </div>
+    </a></div>
   );
 }
 
@@ -35,10 +52,8 @@ export default function ChooseSubmarine({setChosenSubmarine}) {
   }, []);
 
   return (
-    <div className="u-choose-submarine">
-      <div className="cards-container">
-        {options != null ? Object.keys(options).map(key => {return <SubmarineCard key={key} id={key} setChosenSubmarine={setChosenSubmarine} stats={options[key]} />}) : null}
-      </div>
+    <div className="u-cards-container">
+      {options != null ? Object.keys(options).map(key => {return <SubmarineCard key={key} id={key} setChosenSubmarine={setChosenSubmarine} stats={options[key]} />}) : null}
     </div>
   );
 }

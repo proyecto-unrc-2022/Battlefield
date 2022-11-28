@@ -2,22 +2,32 @@ import React from 'react';
 import "./css/game-style.css"
 import { GoPrimitiveDot } from "react-icons/go";
 
-export default function UnderCell({placeSubmarine = null, x, y, type, images}){ 
-  const rotation = 45 * parseInt([type[type.length-1]]);
+export default function UnderCell({visibleState, placeSubmarine = null, x, y, typeString, images}){ 
+  let type = {};
+  if(typeString != undefined && typeString.length == 3) {
+    type = {
+      "team": typeString[0],
+      "object": typeString[1],
+      "direction": parseInt(typeString[2]),
+    }
+    if(type.object == "H" || type.object == "T")
+      type.subName = type.team == "F" ? visibleState.submarine.name : visibleState.enemy_submarine.name;
+    else if(type.object == "*")
+      type.subName = "Torpedo";
+  }
+
+
+  const rotation = type.direction == undefined ? 0 : 45 * type.direction;
 
   const style = {
     transform: "rotate(" + rotation + "deg)",
   }
 
   function image() {
-    if(/H|T/.test(type)) {
-      const typeCode = type.substring(0,2);
-      return <img style={style} src={images[typeCode]} width="100%" />
-    }
-    if(/rP/.test(type))
-      return <GoPrimitiveDot style={{color: "cyan"}} />
+    if(type.object == "H" || type.object == "T" || type.object == "*")
+      return (<img style={style} src={images[type.subName][type.team][type.object]} width="100%" />);
     else return null;
   }
 
-  return (<div onClick={placeSubmarine == null ? null : _ => placeSubmarine(x,y)} className={"u-cell u-cell-" + type} >{image()}</div>)
+  return (<div onClick={placeSubmarine == null ? null : _ => placeSubmarine(x,y)} className={"u-cell u-cell-" + typeString} >{image()}</div>)
 }

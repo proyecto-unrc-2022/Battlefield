@@ -117,13 +117,13 @@ export default function UnderGame() {
         if(chosenSubmarine == null) {
           setLayout({
             main: <ChooseSubmarine setChosenSubmarine={setChosenSubmarine} />,
-            bottom: <h1>Choose your fighter</h1>
+            bottom: <h1 style={{marginTop: "20px"}}>Choose your fighter</h1>
           });
         }
         else if(position == null) {
           setLayout({
             main: <PlaceSubmarine visibleState={visibleState} setPosition={setPosition} width={width} height={height} />, 
-            bottom: <h1>Place your submarine</h1>
+            bottom: <h1 style={{marginTop: "20px"}}>Place your submarine</h1>
           });
         }
         else {
