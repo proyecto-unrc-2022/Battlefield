@@ -13,13 +13,10 @@ from app.navy.services.spectate_service import spectate_service
 from app.navy.services.ship_service import ship_service
 from app.navy.utils.navy_response import NavyResponse
 from app.navy.utils.navy_utils import utils
-<<<<<<< HEAD
 from flask_restx import Namespace, Resource, fields
 
-=======
 from app import io
 from flask_socketio import join_room, leave_room
->>>>>>> develop
 from . import navy
 
 
