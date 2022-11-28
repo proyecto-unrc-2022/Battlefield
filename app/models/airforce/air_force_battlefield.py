@@ -35,7 +35,11 @@ class Battlefield:
         self.check_colision(fly_obj, course)
         try:
             self.flying_objects.index(fly_obj)
-            fly_obj.update_position(course, self.max_x, self.max_y)
+            if (
+                fly_obj.update_position(course, self.max_x, self.max_y)
+                and fly_obj.flying_obj.__class__.__name__ == "Projectile"
+            ):
+                self.flying_objects.remove(fly_obj)
         except:
             None
 
