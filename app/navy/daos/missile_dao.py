@@ -11,7 +11,7 @@ class MissileDAO:
         db.session.commit()
         return missile
 
-    def load(self, missiles):
+    def update_all(self, missiles):
         db.session.add_all(missiles)
 
     def get_by_navy_game_id(self, navy_game_id):

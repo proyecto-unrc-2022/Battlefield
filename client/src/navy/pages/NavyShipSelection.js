@@ -1,9 +1,10 @@
 import React from "react";
 import NavyTitle from "../components/NavyTitle";
-import { useLayoutEffect, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import ShipService from "../services/ShipService";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import NavyButton from "../components/NavyButton";
+import NavyLogo from "../components/NavyLogo";
 import NavyShipCard from "../components/NavyShipCard";
 import { useNavigate } from "react-router-dom";
 import NavyGameService from "../services/NavyGameService";
@@ -15,7 +16,7 @@ const NavyShipSelection = () => {
   const { id } = useParams();
   const [ships, setShips] = useState({});
   const [shipSelected, setShipSelected] = useState({
-    navy_game_id: id /* game.id */,
+    navy_game_id: id,
   });
   const [accessDenied, setAccessDenied] = useState(true);
 
@@ -36,18 +37,22 @@ const NavyShipSelection = () => {
           navigate(`/navy/games/${id}/board`);
         } else if (resp.data.data.status === "WAITING_PLAYERS") {
           navigate(`/navy/games/${id}/lobby`);
+        } else if (resp.data.data.status === "FINISHED") {
+          navigate(`/navy/games/${id}/board`);
         }
       }
     });
   }, []);
 
-  const selectShip = (name) => {
-    const ship = { ...shipSelected, name: name };
-    setShipSelected(ship);
+  const selectShip = (name, ship) => {
+    const navy_ship = { ...shipSelected, name: name, size: ship.size };
+    setShipSelected(navy_ship);
   };
 
   const goToPlaceToBoard = () => {
-    navigate("place_ship", { state: { ship_selected: shipSelected } });
+    if ("name" in shipSelected) {
+      navigate("place_ship", { state: { ship_selected: shipSelected } });
+    }
   };
 
   return (
@@ -61,13 +66,9 @@ const NavyShipSelection = () => {
       ) : (
         <>
           <div className="row justify-content-between p-2 align-items-center">
-            <Link
-              to={"/navy"}
-              className="navy-text"
-              style={{ textDecoration: "none" }}
-            >
-              Navy Battleship
-            </Link>
+            <div className="row justify-content-between p-2 align-items-center">
+              <NavyLogo size={"small"} />
+            </div>
           </div>
           <div className="row">
             <div className="col-12 text-center">
@@ -75,7 +76,7 @@ const NavyShipSelection = () => {
             </div>
           </div>
           <div
-            style={{ gap: "125px" }}
+            style={{ gap: "75px" }}
             className="row justify-content-center mb-3"
           >
             {Object.keys(ships).map((key) => (
@@ -84,16 +85,17 @@ const NavyShipSelection = () => {
                 ship={ships[key]}
                 name={key}
                 selectShip={selectShip}
+                selected={shipSelected.name === key}
               />
             ))}
           </div>
 
           <div className="row">
-            <div className="col-2 text-center mx-auto mt-2">
+            <div className="col-2 text-center mx-auto my-2">
               <NavyButton
                 action={goToPlaceToBoard}
-                text="Start Game"
-                size={"medium"}
+                text="Place Ship"
+                size={"small"}
               />
             </div>
           </div>

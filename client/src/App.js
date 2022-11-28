@@ -15,10 +15,17 @@ import NavyShipSelection from "./navy/pages/NavyShipSelection";
 import { NavyShipPlace } from "./navy/pages/NavyShipPlace";
 import NavyLobby from "./navy/pages/NavyLobby"
 import NavyBoard from "./navy/pages/NavyBoard";
+import NavyHowToPlay from "./navy/pages/NavyHowToPlay";
 
 import AirforceAPP from "./airforce/AirforceAPP";
 import ChoosePlane from "./airforce/components/AirforceChoosePlane.component";
 import AirforceLobby from "./airforce/components/AirforceLobby.component"
+<<<<<<< HEAD
+=======
+import NavySpectateBoard from "./navy/pages/NavySpectateBoard";
+
+import AirforceBoard from "./airforce/components/AirforceBoard";
+>>>>>>> a64fdf4c504dd9dbe1f01e40e1975776a2497e85
 import GameRoom from "./airforce/components/AirforceGameRoom.component";
 
 class App extends Component {
@@ -135,6 +142,8 @@ class App extends Component {
 
             <Route path="/navy/games/:id/lobby" element={<NavyLobby />} />
             <Route path="/navy/games/:id/board" element={<NavyBoard />} />
+            <Route path="/navy/how_to_play" element={<NavyHowToPlay />} />
+            <Route path="/navy/games/:id/spectate_board" element={<NavySpectateBoard />} />
             <Route path= "/airforce/mainMenu" element={<AirforceAPP />}/>
             <Route path= "/airforce/game/lobby/:id" element={<AirforceLobby />}/>
             <Route path= "/airforce/game/:id/choose/plane" element={<ChoosePlane />}/>

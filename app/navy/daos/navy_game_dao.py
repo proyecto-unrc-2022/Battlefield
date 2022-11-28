@@ -17,7 +17,7 @@ class NavyGameDao:
         if commit:
             db.session.commit()
 
-    def get(self):
+    def get_all(self):
         return db.session.query(self.model).all()
 
     def get_by_user(self, user_id):

@@ -1,0 +1,47 @@
+.navy-slider-container {
+    width: 900px !important;
+    height: 500px;
+    border: 2px solid black !important;
+    border-radius: 10px;        
+    background-color: #82B5EA;
+    box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+    box-shadow: -15px 15px 35px 20px rgba(0, 0, 0, 0.2), inset 0px -100px 100px -20px #245E6B;
+}
+
+.arrow-slide {
+    font-size: 36px;
+    color: white;
+    cursor: pointer;
+}
+
+.arrow-slide:hover {
+    color: #82B5EA !important;
+    font-size: 40px;
+    transition: 0.25s;
+}
+
+.right-arrow-slide {
+    transform: translate(50%, 0%);
+    right: 32px;
+}
+
+.left-arrow-slide {
+    transform: translate(-50%, 0%);
+    left: 32px;
+}
+
+.dots-container {
+    display: flex;
+    justify-content: center;
+}
+
+.dots {
+    margin: 0 3px;
+    cursor: pointer;
+    font-size: 20px;
+    color:black
+}
+
+.hover-dot {
+    color: #82B5EA;
+}

@@ -1,6 +1,9 @@
 from hashlib import new
 
 from app.models.airforce.air_force_battlefield import Battlefield
+from app.models.airforce.airforce_filters import get_player_plane
+from app.models.airforce.plane import Projectile
+from app.models.airforce.utils import player_have_plane, position_inside_player_field
 
 
 class AirForceGame:
@@ -68,7 +71,7 @@ class AirForceGame:
             self.player_b_ready = True
 
     def get_player_plane(self, player_id):
-        return self.battlefield.get_player_plane(player_id)
+        return get_player_plane(self.battlefield, player_id)
 
     def player_cant_add_command(self, player):
         if player == self.player_a and self.player_a_ready:
@@ -82,8 +85,8 @@ class AirForceGame:
 
     def game_ended(self):
         if (
-            self.get_player_plane(self.player_a) == []
-            or self.get_player_plane(self.player_b) == []
+            get_player_plane(self.battlefield, self.player_a) == []
+            or get_player_plane(self.battlefield, self.player_b) == []
         ):
             return True
         return False
@@ -146,13 +149,19 @@ class ChoosePlane:
         self.air_force_game = air_force_game
 
     def execute(self):
-        return self.battlefield.add_new_plane(
-            int(self.player),
-            self.plane,
-            int(self.x),
-            int(self.y),
-            int(self.course),
+        if not position_inside_player_field(
+            self.battlefield.max_x,
+            self.x,
+            self.course,
+            self.player,
             self.air_force_game,
+        ):
+            raise Exception("Plane position cant be inside enemy field")
+        if player_have_plane(self.battlefield, self.player):
+            raise Exception("This player already have a plane")
+
+        return self.battlefield.add_new_flying_object(
+            int(self.player), self.plane, int(self.x), int(self.y), int(self.course)
         )
 
 
@@ -169,7 +178,8 @@ class MovePlane:
         self.air_force_game = air_force_game
 
     def execute(self):
-        self.battlefield.fligth(int(self.player), int(self.course))
+        plane = get_player_plane(self.battlefield, self.player)[0]
+        self.battlefield.move(plane, int(self.course))
 
 
 class LaunchProjectile:
@@ -183,7 +193,27 @@ class LaunchProjectile:
         self.battlefield = air_force_game.battlefield
 
     def execute(self):
-        return self.battlefield.add_new_projectile(self.player)
+        plane = get_player_plane(self.battlefield, int(self.player))[0]
+        course = plane.course
+        x = plane.x
+        y = plane.y
+
+        plane_model = plane.flying_obj
+
+        projectile = Projectile.query.filter_by(plane_id=plane_model.id).first()
+
+        if course == 1:
+            y = y - 1
+        elif course == 2:
+            x = x + 1
+        elif course == 3:
+            y = y + 1
+        elif course == 4:
+            x = x - 1
+
+        return self.battlefield.add_new_flying_object(
+            self.player, projectile, x, y, course
+        )
 
 
 class Shoot:
@@ -250,8 +280,8 @@ class PlayersHavePlane:
 
     def execute(self):
         ready = (
-            self.game.battlefield.get_player_plane(self.game.player_a) != []
-            and self.game.battlefield.get_player_plane(self.game.player_b) != []
+            get_player_plane(self.game.battlefield, self.game.player_a) != []
+            and get_player_plane(self.game.battlefield, self.game.player_b) != []
         )
 
         return {"status": ready}

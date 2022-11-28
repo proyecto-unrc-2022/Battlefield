@@ -22,7 +22,7 @@ def step_impl(context, user_id, course, round, distance, game_id):
         round,
     )
     context.pages[user_id] = context.client.post(
-        url_for("navy.action"), json=body, headers=headers
+        url_for("navy.new_action"), json=body, headers=headers
     )
 
 
@@ -43,7 +43,7 @@ def step_impl(context, user_id, course, round, game_id):
         round,
     )
     context.pages[user_id] = context.client.post(
-        url_for("navy.action"), json=body, headers=headers
+        url_for("navy.new_action"), json=body, headers=headers
     )
 
 
@@ -64,7 +64,7 @@ def step_impl(context, user_id, course, distance, round, game_id):
         round,
     )
     context.pages[user_id] = context.client.post(
-        url_for("navy.action"), json=body, headers=headers
+        url_for("navy.new_action"), json=body, headers=headers
     )
 
 
@@ -85,12 +85,12 @@ def step_impl(context, user1_id, user2_id, course, distance, round, game_id):
         round,
     )
     context.pages[user1_id] = context.client.post(
-        url_for("navy.action"), json=body, headers=headers
+        url_for("navy.new_action"), json=body, headers=headers
     )
 
 
 @then("the user '{user_id:d}' should see an error message '{error_msg}'")
 def step_impl(context, user_id, error_msg):
-    message = json.loads(context.pages[user_id].text)
+    message = json.loads(context.pages[user_id].text)["message"]
     value = test_utils.EXPECTED_ERRORS[error_msg]
     assert message[value][0] == error_msg

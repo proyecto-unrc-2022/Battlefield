@@ -62,19 +62,11 @@ class ChoosePlane extends Component {
 
     handleSubmit = (event) => {
         event.preventDefault();
-        console.log(JSON.parse(localStorage.getItem("user")))
-        AirforceService.choosePlaneAndPosition(this.state.id, this.state.course, this.state.coord_x, this.state.coord_y, this.id()).then(
-            (response) => {
-                if (response.status === 200) 
-                localStorage.setItem("id", this.id())
-                localStorage.setItem("coord_x", this.state.coord_x)
-                localStorage.setItem("coord_y", this.state.coord_y)
-                localStorage.setItem("course", this.state.course)
-                window.location.href = "/airforce/game/"+this.id()+"/room"
-                
-
-            }
-        )
+        if(this.id != null) {
+            AirforceService.choosePlaneAndPosition(this.state.id, this.state.course, this.state.coord_x, this.state.coord_y, this.id()).then(
+                console.log("player 1 is ready")
+         )
+        }
     }
     
     planes(){
