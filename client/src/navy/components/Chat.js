@@ -30,6 +30,7 @@ const Chat = ({ user, game }) => {
       socket.on("message", receivedMessage);
       return () => {
         socket.off("message", receivedMessage);
+        socket.disconnect();
       };
     }, // eslint-disable-next-line
     [messages]

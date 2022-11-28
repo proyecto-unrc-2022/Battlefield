@@ -6,15 +6,13 @@ from app.navy.utils.navy_utils import utils
 
 
 class MissileService:
-
-    """ MISSILE_TYPES = [1, 2, 3, 4] """
-
     def get(self, navy_game_id):
         missiles = missile_dao.get_by_navy_game_id(navy_game_id=navy_game_id)
         return missiles
 
-    def create(self, navy_game_id, pos_x, pos_y, course, missile_type,ship_id):
+    def create(self, navy_game_id, pos_x, pos_y, course, missile_type, ship_id):
         from app.navy.daos.missile_type_dao import missile_type_dao
+
         missile_data = missile_type_dao.get_by_id(str(missile_type))
         new_missile = Missile(
             missile_data["speed"],
@@ -27,13 +25,13 @@ class MissileService:
         )
         return new_missile
 
-        
     def add(self, navy_game_id, ship_id, missile_type, course, pos_x, pos_y):
-        new_missile = self.create(navy_game_id, pos_x, pos_y, course, missile_type, ship_id)
+        new_missile = self.create(
+            navy_game_id, pos_x, pos_y, course, missile_type, ship_id
+        )
         navy_game_service.games[navy_game_id]["missiles"].append(new_missile)
         return new_missile
-    
-    
+
     def update_all(self, missiles):
         missile_dao.update_all(missiles)
 

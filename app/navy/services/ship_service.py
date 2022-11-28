@@ -1,23 +1,13 @@
-""" from app.navy.daos.navy_game_dao import navy_game_dao"""
 from app.navy.daos.ship_dao import ship_dao
 from app.navy.daos.ship_type_dao import ship_type_dao
 from app.navy.models.ship import Ship
-#from app.navy.services.navy_game_service import navy_game_service
 from app.navy.utils.navy_utils import utils
 
 
 class ShipService:
     SHIP_NAMES = ["Destroyer", "Cruiser", "Battleship", "Corvette"]
-    """ SHIP_SIZES = [3, 3, 4, 2] """
 
-    """   
-        def validate_request(self, request):
-        from app.navy.validators.ship_request_validator import ShipRequestValidator
-
-        ship_data_validated = ShipRequestValidator().load(request)
-        return ship_data_validated """
-    
-    def create(self,name, pos_x, pos_y, course, user_id, navy_game_id):
+    def create(self, name, pos_x, pos_y, course, user_id, navy_game_id):
         ship_data = ship_type_dao.get_by(name)
         new_ship = Ship(
             name,
@@ -120,6 +110,7 @@ class ShipService:
 
     def can_update(self, ship):
         from app.navy.services.navy_game_service import navy_game_service
+
         game_over = navy_game_service.is_over(ship.navy_game_id)
         return ship.is_alive and not game_over
 
@@ -131,7 +122,7 @@ class ShipService:
             return True
         return False
 
-    def attack(self, ship, *args):
+    def attack(self, ship):
         from app.navy.services.missile_service import missile_service
 
         x, y = utils.get_next_position(ship.pos_x, ship.pos_y, ship.course)

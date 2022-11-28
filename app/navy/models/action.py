@@ -1,7 +1,6 @@
 from sqlalchemy import event
 
-from app import db
-from app import io
+from app import db, io
 from app.navy.dtos.navy_game_state_dto import NavyGameStateDTO
 
 
@@ -48,10 +47,7 @@ def before_commit(session):
 
             if navy_game_service.should_update(obj.navy_game_id):
                 navy_game_service.play_round(obj.navy_game_id)
-                navy_game = navy_game_service.get_by_id(obj.navy_game_id)
-                print(navy_game)
-                print("aaa")
-                io.send("aaa",broadcast=True,to=navy_game.user1_id)
-                io.send("aaa",broadcast=True,to=navy_game.user2_id)
+
+                """navy_game = navy_game_service.get_by_id(obj.navy_game_id)
                 io.send(NavyGameStateDTO(navy_game.id,navy_game.user1_id).dump(),broadcast=True,to=navy_game.user1_id)
-                io.send(NavyGameStateDTO(navy_game.id,navy_game.user2_id).dump(),broadcast=True,to=navy_game.user2_id)
+                io.send(NavyGameStateDTO(navy_game.id,navy_game.user2_id).dump(),broadcast=True,to=navy_game.user2_id) """

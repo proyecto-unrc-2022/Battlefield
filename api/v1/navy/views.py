@@ -1,7 +1,9 @@
 from flask import jsonify, request
+from flask_socketio import join_room
 from marshmallow import ValidationError
 
 from api import token_auth
+from app import io
 from app.navy.daos.missile_type_dao import missile_type_dao
 from app.navy.daos.ship_type_dao import ship_type_dao
 from app.navy.dtos.navy_game_dto import NavyGameDTO
@@ -9,39 +11,38 @@ from app.navy.dtos.navy_game_spectate_dto import NavyGameSpectateDTO
 from app.navy.dtos.navy_game_state_dto import NavyGameStateDTO
 from app.navy.services.action_service import action_service
 from app.navy.services.navy_game_service import navy_game_service
-from app.navy.services.spectate_service import spectate_service
 from app.navy.services.ship_service import ship_service
+from app.navy.services.spectate_service import spectate_service
 from app.navy.utils.navy_response import NavyResponse
 from app.navy.utils.navy_utils import utils
-from app import io
-from flask_socketio import join_room, leave_room
+from app.navy.validators.action_request_validator import ActionRequestValidator
+from app.navy.validators.navy_game_patch_validator import NavyGamePatchValidator
+from app.navy.validators.ship_request_validator import ShipRequestValidator
+from app.navy.validators.spectate_validator import SpectateValidator
+
 from . import navy
 
 
-
-@io.on('join')
+@io.on("join")
 def on_join(data):
-    room = data['room']
+    room = data["room"]
     join_room(room)
 
-@io.on('message')
+
+@io.on("message")
 def handle_message(data):
-    print('received message: ' + str(data))
-    response ={
-        "body": data['body'],
-        "user": data['user']
-    }
-    io.send(response, broadcast=True,to=data['room'])
+    response = {"body": data["body"], "user": data["user"]}
+    io.send(response, broadcast=True, to=data["room"])
 
 
 @navy.post("/actions")
 @token_auth.login_required
-def action():
+def new_action():
     try:
         request.json["user_id"] = utils.get_user_id_from_header(
             request.headers["Authorization"]
         )
-        validated_data = action_service.validate_request(request.json)
+        validated_data = ActionRequestValidator().load(request.json)
         action_service.add(validated_data)
         return (
             NavyResponse(201, data=request.json, message="Action added").to_json(),
@@ -49,7 +50,6 @@ def action():
         )
     except ValidationError as err:
         return NavyResponse(400, message=err.messages).to_json(), 400
-    
 
 
 @navy.post("/ships")
@@ -59,7 +59,7 @@ def new_ship():
         request.json["user_id"] = utils.get_user_id_from_header(
             request.headers["Authorization"]
         )
-        validated_data = ship_service.validate_request(request.json)
+        validated_data = ShipRequestValidator().load(request.json)
         ship_service.add(validated_data)
         return (
             NavyResponse(201, data=validated_data, message="Ship added").to_json(),
@@ -96,7 +96,8 @@ def get_navy_games():
 @navy.get("/navy_games/<int:id>")
 @token_auth.login_required
 def get_navy_game(id):
-    from app.navy.validators.navy_game_get_validator import NavyGameGetValidator 
+    from app.navy.validators.navy_game_get_validator import NavyGameGetValidator
+
     try:
         user_id = utils.get_user_id_from_header(request.headers["Authorization"])
         NavyGameGetValidator().load({"navy_game_id": id, "user_id": user_id})
@@ -114,12 +115,12 @@ def get_navy_game(id):
 @token_auth.login_required
 def spectate_navy_game(id):
     try:
-        round = request.args.get('round')
-        round  = int(round) if round else 0
-        spectate_service.validate_request({"navy_game_id":id,"round":round}) 
+        round = request.args.get("round")
+        round = int(round) if round else 0
+        SpectateValidator().load({"navy_game_id": id, "round": round})
         return (
             NavyResponse(
-                status=200, data=NavyGameSpectateDTO(id,round).dump(), message="Ok"
+                status=200, data=NavyGameSpectateDTO(id, round).dump(), message="Ok"
             ).to_json(),
             200,
         )
@@ -132,7 +133,7 @@ def spectate_navy_game(id):
 def update_navy_game(id):
     try:
         user2_id = utils.get_user_id_from_header(request.headers["Authorization"])
-        validated_data = navy_game_service.validate_patch_request(
+        validated_data = NavyGamePatchValidator().load(
             {"user2_id": user2_id, "game_id": id}
         )
         game = navy_game_service.join(validated_data, id)

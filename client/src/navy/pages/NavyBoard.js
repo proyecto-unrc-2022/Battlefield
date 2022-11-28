@@ -1,4 +1,4 @@
-import React, { useEffect, useState,useLayoutEffect } from "react";
+import React, { useEffect, useState, useLayoutEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import authService from "../../services/auth.service";
 import AccessDenied from "../components/AccessDenied";
@@ -16,9 +16,8 @@ import NavyLogo from "../components/NavyLogo";
 import Chat from "../components/Chat";
 import NavyTitle from "../components/NavyTitle";
 import io from "socket.io-client";
+
 const socket = io("http://localhost:5000");
-
-
 const NavyBoard = () => {
   const [game, setGame] = useState(null);
   const [accessDenied, setAccessDenied] = useState(true);
@@ -41,41 +40,69 @@ const NavyBoard = () => {
   const [openModal, setOpenModal] = useState(false);
   const [joinedRoom, setJoinedRoom] = useState(false);
 
-
-
   useEffect(() => {
-    if(!game){
-    getGame();
+    if (!game) {
+      getGame();
     }
-    if(!joinedRoom){
+
+    if (!joinedRoom) {
       const user_id = authService.getCurrentUser().sub;
       socket.connect();
-      socket.emit("join", { room: user_id});
+      socket.emit("join", { room: user_id });
       setJoinedRoom(true);
     }
     const receivedMessage = (game) => {
-      setGame(game);
-      if (game.winner) {
-        setOpenModal(true);
-      }
-      setWinner(game.winner);
-     
-      setMissiles(game.sight_range.missiles);
+      if (game?.status === "STARTED") {
+        setGame(game);
+        if (game.winner) {
+          setOpenModal(true);
+        }
+        setWinner(game.winner);
 
-      ShipService.getShipTypes().then((res) => {
-        const shipType = res.data.data[game.ship.name];
-        const missile_type_id = shipType.missile_type_id[0];
-        setAction({
-          navy_game_id:game.id,
-          ship_id:game.ship.id,
-          missile_type_id: shipType.missile_type_id[0],
-          round:game.round,
-          course:game.ship.course,
-          move: 0,
-          attack: 0,
+        setMissiles(game.sight_range.missiles);
+
+        ShipService.getShipTypes().then((res) => {
+          const shipType = res.data.data[game.ship.name];
+          const missile_type_id = shipType.missile_type_id[0];
+          setAction({
+            navy_game_id: game.id,
+            ship_id: game.ship.id,
+            missile_type_id: shipType.missile_type_id[0],
+            round: game.round,
+            course: game.ship.course,
+            move: 0,
+            attack: 0,
+          });
+
+          const ship = {
+            name: game.ship.name,
+            hp: game.ship.hp,
+            course: game.ship.course,
+            x: game.ship.pos_x,
+            y: game.ship.pos_y,
+            size: game.ship.size,
+            speed: game.ship.speed,
+          };
+          getShip(missile_type_id, ship);
+
+          if (game.status !== "FINISHED") {
+            if (game.sight_range.ships.length !== 0) {
+              const shipType = res.data.data[game.sight_range.ships[0].name];
+              const missile_type_id = shipType.missile_type_id[0];
+              const enemyShip = {
+                name: game.sight_range.ships[0].name,
+                hp: game.sight_range.ships[0].hp,
+                course: game.sight_range.ships[0].course,
+                x: game.sight_range.ships[0].pos_x,
+                y: game.sight_range.ships[0].pos_y,
+                size: game.sight_range.ships[0].size,
+                speed: game.sight_range.ships[0].speed,
+              };
+              getEnemyShip(missile_type_id, enemyShip);
+            }
+          }
         });
-
-        const ship = {
+        setMyShip({
           name: game.ship.name,
           hp: game.ship.hp,
           course: game.ship.course,
@@ -83,15 +110,13 @@ const NavyBoard = () => {
           y: game.ship.pos_y,
           size: game.ship.size,
           speed: game.ship.speed,
-        };
-        getShip(missile_type_id, ship);
+        });
+
+        setEnemyShip(null);
 
         if (game.status !== "FINISHED") {
           if (game.sight_range.ships.length !== 0) {
-            const shipType =
-              res.data.data[game.sight_range.ships[0].name];
-            const missile_type_id = shipType.missile_type_id[0];
-            const enemyShip = {
+            setEnemyShip({
               name: game.sight_range.ships[0].name,
               hp: game.sight_range.ships[0].hp,
               course: game.sight_range.ships[0].course,
@@ -99,46 +124,17 @@ const NavyBoard = () => {
               y: game.sight_range.ships[0].pos_y,
               size: game.sight_range.ships[0].size,
               speed: game.sight_range.ships[0].speed,
-            };
-            getEnemyShip(missile_type_id, enemyShip);
+            });
           }
         }
-      });
-      setMyShip({
-        name: game.ship.name,
-        hp: game.ship.hp,
-        course: game.ship.course,
-        x: game.ship.pos_x,
-        y: game.ship.pos_y,
-        size: game.ship.size,
-        speed: game.ship.speed,
-      });
-
-      setEnemyShip(null);
-
-      if (game.status !== "FINISHED") {
-        if (game.sight_range.ships.length !== 0) {
-          setEnemyShip({
-            name: game.sight_range.ships[0].name,
-            hp: game.sight_range.ships[0].hp,
-            course: game.sight_range.ships[0].course,
-            x: game.sight_range.ships[0].pos_x,
-            y: game.sight_range.ships[0].pos_y,
-            size: game.sight_range.ships[0].size,
-            speed: game.sight_range.ships[0].speed,
-          });
-        }
       }
-
     };
     socket.on("message", receivedMessage);
 
     return () => {
       socket.disconnect();
     };
-
   }, [socket]);
-
 
   const handleSelectMissile = (missile) => {
     setMissileSelected(true);
@@ -185,21 +181,21 @@ const NavyBoard = () => {
         });
       })
       .catch((err) => {
-        const possibleErrorModal  = err.response?.data?.message?.navy_game_id; 
-        if(possibleErrorModal){
-          if(possibleErrorModal.length > 0){
-              if(possibleErrorModal[0].includes("finished")){
-                setOpenModal(true);
-              }
+        const possibleErrorModal = err.response?.data?.message?.navy_game_id;
+        if (possibleErrorModal) {
+          if (possibleErrorModal.length > 0) {
+            if (possibleErrorModal[0].includes("finished")) {
+              setOpenModal(true);
+            }
           }
         }
-        console.log("Entre acá")
+        console.log("Entre acá");
         setAction({
           course: " ",
           move: 0,
           attack: 0,
-        })
-      
+        });
+
         setActionError(true);
         const timeout = setTimeout(() => {
           setActionError(false);
@@ -232,12 +228,9 @@ const NavyBoard = () => {
     setEnemyShip(enemyShip);
   };
 
-
-
   const getGame = async () => {
     NavyGameService.getNavyGame(id)
       .then((resp) => {
-     
         const currentUser = authService.getCurrentUser();
         const accessDenied =
           currentUser.sub !== resp.data.data.user_1.id &&
@@ -392,7 +385,7 @@ const NavyBoard = () => {
           </div>
 
           <div className="text-center">
-          {game.round ? <NavyTitle text={"Round: " + game.round} /> : null}
+            {game.round ? <NavyTitle text={"Round: " + game.round} /> : null}
           </div>
 
           <div className="row mt-3">
