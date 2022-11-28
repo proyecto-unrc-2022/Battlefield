@@ -22,43 +22,77 @@
   width: 100%;
 }
 
-.cards-container {
+.u-cards-container {
+  width: 100%;
   display: flex;
+  flex-direction: row;
   justify-content: center;
+
 }
 
 .card {
-  width: 250px;
+  flex: 1;
   display: flex;
-  direction: column;
   align-items: center;
   text-align: center;
-  margin: 60px 0;
-  padding: 0px 30px;
-  background: #FFF0;
+  background-color: transparent;
   border: 0px;
   box-shadow: none;
+  color: black;
+  margin: 0;
 }
 
 .card:hover {
-  width: 270px;
+  flex: 1.1;
 }
 
-.card ul {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  background: white;
-}
-
-.card li {
-  list-style: none;
+.card a {
+  text-decoration: none;
   color: black;
-  font-size: 11px;
 }
 
 .card img {
   width: 100%;
+}
+
+.u-bars-container {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  width: 100%;
+  padding: 10px;
+}
+
+.u-bar-100 {
+  box-sizing: border-box;
+  width: 100%;
+  height: 20px;
+  background-color: #D9D9D9;
+  position: relative;
+}
+
+.u-stat-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: #2BDA27;
+}
+
+.u-stat-bar-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  padding: 0 5px;
+  color: #000C;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  white-space: nowrap;
 }
 
 .u-grid {
