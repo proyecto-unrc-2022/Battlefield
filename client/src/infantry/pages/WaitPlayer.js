@@ -4,6 +4,10 @@ import Loading from "../components/Loading";
 import gameService from "../services/game.service";
 import "../Styles.css"
 
+/*
+    Pagina que espera que los dos jugadores hayan elegidos sus personajes
+*/
+
 export default function WaitPlayer(){
 
     const [game, setGame] = useState([])
@@ -22,7 +26,7 @@ export default function WaitPlayer(){
         navigate("/home_Infantry");
     }
 
-
+    //Consulta los jugadores del game
     const getGame = () =>{
 
         gameService.ready(id_game).then(resp =>{
@@ -33,22 +37,26 @@ export default function WaitPlayer(){
 
     }
 
+    //Consulta en la api si se creo correctamente la figura para el game para el jugador 1
     const state1 = () =>{
         gameService.character_wait(game.id, game.id_user1).then(resp =>{
             setStateP1(resp.data)
         })
     }
 
+    //Consulta en la api si se creo correctamente la figura para el game para el jugador 2
     const state2 = () =>{
         gameService.character_wait(game.id, game.id_user2).then(resp =>{
             setStateP2(resp.data)
         })
     }
 
+
     useEffect(() =>{
         getGame()
     }, [])
 
+    //Consulta cada 3 segundos el estado de los jugadores correspondiente al game
     useEffect(() =>{
         
         if(game?.id){
@@ -66,7 +74,7 @@ export default function WaitPlayer(){
 
     
     
-    
+    //Renderizacion de la pagina
     return(
 
         <div className="container-xl mt-5 ">
