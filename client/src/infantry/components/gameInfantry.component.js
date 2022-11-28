@@ -2,10 +2,11 @@ import React, { Component } from "react";
 import GameBoard from "./gameBoard.component";
 import FigureInfantryData from "./figureInfantryData.component";
 import InfantryService from "../services/infantry.service"
-import {Link, Navigate} from "react-router-dom";
+
 import AuthService from "../../services/auth.service";
 import gameOver from "../images/gameOver.png"
 import gameService from "../services/game.service";
+
 
 
 const EAST = 2
@@ -18,6 +19,8 @@ const NORTH = 4
 const NORTH_EAST = 3
 
 
+
+
 function timeout(delay) {
   return new Promise(res => setTimeout(res, delay));
 }
@@ -28,7 +31,7 @@ export default class GameInfantry extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      game_id: 1,
+      game_id: localStorage.getItem("id_game"),
       game: null,
       figure: null,
       figureOpponent: null,
@@ -38,6 +41,14 @@ export default class GameInfantry extends Component {
     }
     this.timer = null;
   }
+
+  timer_(id){
+    setTimeout( () => {
+      
+      window.location.href = "/home_Infantry"
+      gameService.removeGame(id)
+    },100000);
+  } 
 
   /**
    * Inicializa el juego y las figuras
@@ -320,8 +331,13 @@ export default class GameInfantry extends Component {
     } else if (this.GameOver()) {
       return (<div class="text-center bg-War">
         <img src={gameOver} />
-        <p>{this.state.figure["data"].hp <= 0 ? this.state.figure["data"].id_user: 
-                                                this.state.figureOpponent["data"].id_user}</p>
+        <div className="d-flex justify-content-center ">
+          
+          <p className="display-4 bg-white w-25 rounded-pill p-3">Win Player {this.state.figure["data"].hp <= 0 ? this.state.figure["data"].id_user : 
+                                                  this.state.figureOpponent["data"].id_user}</p>
+        </div>
+        {this.timer_(this.state.game_id)}
+         
       </div>)
 
     }
