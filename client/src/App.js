@@ -20,14 +20,10 @@ import NavyHowToPlay from "./navy/pages/NavyHowToPlay";
 import AirforceAPP from "./airforce/AirforceAPP";
 import ChoosePlane from "./airforce/components/AirforceChoosePlane.component";
 import AirforceLobby from "./airforce/components/AirforceLobby.component"
-<<<<<<< HEAD
-=======
 import NavySpectateBoard from "./navy/pages/NavySpectateBoard";
 
-import AirforceBoard from "./airforce/components/AirforceBoard";
->>>>>>> a64fdf4c504dd9dbe1f01e40e1975776a2497e85
+import AirforceBoard from "./airforce/components/AirforceBoard.component";
 import GameRoom from "./airforce/components/AirforceGameRoom.component";
-
 class App extends Component {
   constructor(props) {
     super(props);
@@ -156,3 +152,4 @@ class App extends Component {
 }
 
 export default App;
+
