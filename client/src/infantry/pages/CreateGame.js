@@ -7,7 +7,6 @@ import Loading from "../components/Loading";
 
 export default function CreateGame(){
 
-    
     const [creatGame, setcreatGame] = useState([])
     const [gameWait, setGameWait] = useState([])
     
@@ -15,6 +14,14 @@ export default function CreateGame(){
 
     const event= () =>{
         navigate("/home_Infantry/choose_character");
+    }
+
+    const back= () =>{
+        navigate("/home_Infantry");
+        gameService.removeGame(creatGame.id).then(resp =>{
+            console.log(resp)
+        })
+
     }
 
     const host = authService.getCurrentUser()
@@ -46,12 +53,16 @@ export default function CreateGame(){
                 event()
                 localStorage.setItem("id_game", creatGame.id)
             }
-        }, 8000);
+        }, 3000);
         return () => clearTimeout(timer);
     }, [creatGame, gameWait]);
 
     return(
         <div className="container-fluid bg-HomePage ">
+
+            <div className="col text-white">
+                    <button onClick={back} type="button" className="btn btn-secondary m-3">Back</button>
+            </div>
             
             <div className="row">
                 

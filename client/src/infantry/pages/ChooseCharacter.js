@@ -17,6 +17,10 @@ export default function ChooseCharacter(){
         navigate("/home_Infantry/wait_player");
     }
 
+    const home = () =>{
+        navigate("/home_Infantry");
+    }
+
     const event = (e) =>{
         setType(e)
     }
@@ -25,6 +29,8 @@ export default function ChooseCharacter(){
 
         gameService.ready(id_game).then(resp =>{
             setGame(resp.data)
+        }).catch(() =>{
+            home()
         })
 
     }
@@ -39,7 +45,6 @@ export default function ChooseCharacter(){
 
             if(game.id_user1 === host.sub){
 
-                alert("user- 1")
                 if(0 > posX || posX > 9){
                     alert("Su posicion en X debe ser entre 0 o 9")
                     setType(null)
@@ -48,7 +53,6 @@ export default function ChooseCharacter(){
             }
             if(game.id_user2 === host.sub){
                 
-                alert("user- 2")
                 if(11 > posX || posX > 20){
                     alert("Su posicion en X debe ser entre 11 o 20")
                     setType(null)
@@ -95,7 +99,7 @@ export default function ChooseCharacter(){
 
         <div className="container">
 
-            <div className="row jumbotron text-center">
+            <div className="row jumbotron text-center mt-3">
                 
                 <div className="col">
                     <div className="">

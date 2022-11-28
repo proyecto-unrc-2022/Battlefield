@@ -8,6 +8,11 @@ import "../Styles.css"
 
 export default function JoinGame(){
 
+    const [users, setUsers] = useState([])
+    const [games, setGames] = useState([])
+
+    const host = authService.getCurrentUser()    
+
     const navigate = useNavigate();
 
     const back= () =>{
@@ -20,34 +25,36 @@ export default function JoinGame(){
 
     const join= (idGame, idUser) =>{
         gameService.joinGame(idGame, idUser)
-    }
-
-    const [games, setGames] = useState([])
+    }    
 
     const handleJoin = (id) => {
 
         const game = games.filter((game) => game.id === id)
-        join(game[0].id, host.sub)
-        localStorage.setItem("id_game", game[0].id)
-        redirc()
+        if(game[0].id_user1 !== host.sub){
+            join(game[0].id, host.sub)
+            localStorage.setItem("id_game", game[0].id)
+            redirc()
+        }else{
+            alert("No puedes ingresar a tu propia partida")
+        }
+        
 
     }
 
-
-
     const get_Games = () => {
-
+        
          return(<div className="row">
                 <div className="col-5"></div>
                 <div className="col">
                 <h1 className="mb-4 text-center Battlefield-Infantry">Games Available</h1>
                 <div className="col rounded-5 text-center d-flex justify-content-center">
                     
-                    
+                {localStorage.removeItem("id_game")}
                     <ul className="Scroll list-group w-50">
                         {games.map(game => (  
-                            <li onClick={() => handleJoin(game.id)} key={game.id} className=" list-group-item ">  
-                                Games:{game.id} - User:{game.id_user1} -  {/* */}
+                            <li key={game.id} className=" list-group-item ">
+
+                                Games:{game.id} - User: {users.find(elem => elem.id === game.id_user1).username} -  {/* */}
                                 
                                 <button type="button" className="btn btn-secondary" onClick={() => handleJoin(game.id)}>Join</button>
                             </li>
@@ -67,30 +74,33 @@ export default function JoinGame(){
         gameService.getGames().then((response) =>{
             setGames(response.data);
         })
-
-
     }
 
-    useEffect(() => {
-        get()
-        
-    }, []);    
+    useEffect(() =>{
 
-    const host = authService.getCurrentUser()    
+        gameService.getUsers().then((response) =>{
+            setUsers(response.data);
+        })
+    },[])
+
+    useEffect(() => {
+        if(users[0]){
+            get()
+        }
+    }, [users]);
 
     return(
-        
+
         <div className="container-fluid bg-HomePage">
-            
+               
             <div className="row">
                 <div className="col text-white">
                     <button onClick={back} type="button" className="btn btn-secondary m-3">Back</button>
                 </div>
                 
             </div>
-
+            
             {get_Games()}
-
             <br></br>
             <br></br>
             <br></br>
