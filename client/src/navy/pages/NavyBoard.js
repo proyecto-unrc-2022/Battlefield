@@ -39,8 +39,6 @@ const NavyBoard = () => {
   const [actionError, setActionError] = useState(false);
   const [winner, setWinner] = useState(null);
   const [openModal, setOpenModal] = useState(false);
-  const [joinedRoom, setJoinedRoom] = useState(false);
-  const [socket, setSocket] = useState(null);
 
 
   useEffect(() => {
