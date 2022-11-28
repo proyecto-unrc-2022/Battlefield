@@ -15,8 +15,6 @@ export default class FigureInfantryData extends Component {
         let user
         if(this.state.figure.id_user === AuthService.getCurrentUser().sub){
             user = "You"
-        }else{
-            user = "Opponent"
         }
         return <div>
         <div class="text-center h4 pb-2 mb-4 text-black border-bottom border-strong-black">
