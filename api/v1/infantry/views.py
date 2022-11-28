@@ -53,8 +53,9 @@ def get_figure():
     user_id = data["user_id"]
     figures = figures_id_game(game_id)
     figure = Figure_infantry.query.filter_by(id_user = user_id, id_game = game_id).first()
-    #print(figure)
-    return jsonify({"data" : (figure_schema.dump(figures[figure.id-1][0])), "body" : figures[figure.id-1][1]})
+    if(figures[0][0].id_user == user_id): index = 0
+    else: index = 1
+    return jsonify({"data" : (figure_schema.dump(figures[index][0])), "body" : figures[index][1]})
 
 @infantry.route("/next_turn", methods=['POST'])
 def next_turn_game():
