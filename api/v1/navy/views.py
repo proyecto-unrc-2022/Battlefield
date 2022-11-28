@@ -34,8 +34,6 @@ def handle_message(data):
     io.send(response, broadcast=True,to=data['room'])
 
 
-    
-
 @navy.post("/actions")
 @token_auth.login_required
 def action():

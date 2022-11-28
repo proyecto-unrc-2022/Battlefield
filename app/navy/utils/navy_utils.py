@@ -25,6 +25,7 @@ class NavyUtils:
         "NE": "SW",
     }
     DIRECTIONS = ["N", "S", "E", "W", "SE", "SW", "NE", "NW"]
+    #MissileTypes constant
     # ---------- END CLASS CONSTANTS --------- #
 
     # ---------- CLASS METHODS --------- #

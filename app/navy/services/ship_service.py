@@ -1,20 +1,21 @@
-from app.navy.daos.navy_game_dao import navy_game_dao
+""" from app.navy.daos.navy_game_dao import navy_game_dao"""
 from app.navy.daos.ship_dao import ship_dao
 from app.navy.daos.ship_type_dao import ship_type_dao
 from app.navy.models.ship import Ship
-from app.navy.services.navy_game_service import navy_game_service
+#from app.navy.services.navy_game_service import navy_game_service
 from app.navy.utils.navy_utils import utils
 
 
 class ShipService:
     SHIP_NAMES = ["Destroyer", "Cruiser", "Battleship", "Corvette"]
-    SHIP_SIZES = [3, 3, 4, 2]
+    """ SHIP_SIZES = [3, 3, 4, 2] """
 
-    def validate_request(self, request):
+    """   
+        def validate_request(self, request):
         from app.navy.validators.ship_request_validator import ShipRequestValidator
 
         ship_data_validated = ShipRequestValidator().load(request)
-        return ship_data_validated
+        return ship_data_validated """
     
     def create(self,name, pos_x, pos_y, course, user_id, navy_game_id):
         ship_data = ship_type_dao.get_by(name)
@@ -51,7 +52,6 @@ class ShipService:
     def load_to_board(self, ship):
         from app.navy.services.navy_game_service import navy_game_service
 
-        # TODO: CanLoad to board
         ships_positions = self.build(ship)
         for x, y in ships_positions:
             navy_game_service.load_to_board(ship.navy_game_id, x, y, ship)
@@ -182,13 +182,6 @@ class ShipService:
             if not utils.out_of_bounds(x, y):
                 res.append((x, y))
         return res
-
-    def get_sight_range(self, ship):
-        border_point_x = ship.pos_x - ship.visibility
-        border_point_y = ship.pos_y - ship.visibility
-        return utils.get_distance(
-            ship.pos_x, ship.pos_y, border_point_x, border_point_y
-        )
 
     def get_dto(self, ship):
         from app.navy.dtos.ship_dto import ShipDTO

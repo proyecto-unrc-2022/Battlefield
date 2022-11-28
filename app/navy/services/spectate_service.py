@@ -25,9 +25,10 @@ class SpectateService():
     def get_missiles(self,game_id,round):
         return self.games_spec[game_id][round]["missiles"]
 
-    def validate_request(self, request):
+    """ 
+       def validate_request(self, request):
         from app.navy.validators.spectate_validator import SpectateValidator
-        return SpectateValidator().load(request)
+        return SpectateValidator().load(request) """
     
     def process_ship(self,ship):
         from app.navy.services.ship_service import ship_service
@@ -41,7 +42,6 @@ class SpectateService():
         from app.navy.services.missile_service import missile_service
         from app.navy.services.ship_service import ship_service
         missile_type_id = ship_service.get_by_id(missile.ship_id).missile_type_id
-        print("Missile typeid",missile_type_id)
         missile_temp = missile_service.create(navy_game_id=missile.navy_game_id,ship_id=missile.ship_id,missile_type=missile_type_id,pos_x=missile.pos_x,pos_y=missile.pos_y,course=missile.course)
         missile_temp.id = missile.id
         missile_temp.is_alive = missile.is_alive

@@ -7,7 +7,7 @@ from app.navy.utils.navy_utils import utils
 
 class MissileService:
 
-    MISSILE_TYPES = [1, 2, 3, 4]
+    """ MISSILE_TYPES = [1, 2, 3, 4] """
 
     def get(self, navy_game_id):
         missiles = missile_dao.get_by_navy_game_id(navy_game_id=navy_game_id)
