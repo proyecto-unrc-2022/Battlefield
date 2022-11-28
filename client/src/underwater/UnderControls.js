@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import axios from "axios";
-import AuthService from "../services/auth.service"
-import { CiLocationArrow1} from "react-icons/ci";
-import { GiTorpedo } from "react-icons/gi" ;
-import authHeader from "../services/auth-header";
-export default function UnderControls(props) {
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
+import { CiLocationArrow1 } from 'react-icons/ci';
+import { GiTorpedo } from 'react-icons/gi';
+import AuthService from '../services/auth.service';
+import authHeader from '../services/auth-header';
 
+export default function UnderControls(props) {
   const [alertMessage, setAlertMessage] = useState(null);
   const params = useParams();
-  const sessionId = params["id"];
-  const gameURL = "http://localhost:5000/api/v1/underwater/game/" + sessionId;
+  const sessionId = params.id;
+  const gameURL = `http://localhost:5000/api/v1/underwater/game/${sessionId}`;
 
   function DirectionControl(props) {
     const rotation = 45 * props.position.direction;
 
     const style = {
-      transform: "rotate(" + rotation + "deg)",
-    }
+      transform: `rotate(${rotation}deg)`,
+    };
 
     function setDirection(dir) {
       props.setPosition({ x: props.position.x, y: props.position.y, direction: dir });
@@ -30,9 +30,9 @@ export default function UnderControls(props) {
       <div style={{ position: 'relative', height: 157, width: 157 }}>
         <img style={style} className="u-overlap-1" src={require('./css/images/direc.png')} width="100%" />
         <div className="u-overlap-2 u-direction-grid">
-          {array1.map(i => { return (<div key={i} style={{ height: "100%", width: "100%" }} onClick={_ => setDirection(i)}></div>) })}
-          <div style={{ height: '100%', width: '100%' }}></div>
-          {array2.map(i => { return (<div key={i} style={{ height: "100%", width: "100%" }} onClick={_ => setDirection(i)}></div>) })}
+          {array1.map((i) => (<div key={i} style={{ height: '100%', width: '100%' }} onClick={(_) => setDirection(i)} />))}
+          <div style={{ height: '100%', width: '100%' }} />
+          {array2.map((i) => (<div key={i} style={{ height: '100%', width: '100%' }} onClick={(_) => setDirection(i)} />))}
         </div>
       </div>
     );
@@ -41,107 +41,104 @@ export default function UnderControls(props) {
   function AdvanceControl() {
     const [steps, setSteps] = useState(0);
 
-    function advance(event) { 
+    function advance(event) {
       event.preventDefault();
 
-      let headers = authHeader();
-      headers["Content-Type"] = "application/json";
+      const headers = authHeader();
+      headers['Content-Type'] = 'application/json';
       axios.post(
-        gameURL + "/rotate_and_advance",
+        `${gameURL}/rotate_and_advance`,
         {
-          "direction": props.position.direction,
-          "steps": parseInt(steps)
+          direction: props.position.direction,
+          steps: parseInt(steps),
         },
-        {headers: headers}
-      ).then(_ => console.log("Submarine advance")
-      ).catch(error => {
+        { headers },
+      ).then((_) => console.log('Submarine advance')).catch((error) => {
         console.log(error.response.data);
-        setAlertMessage(error.response.data["error"]);
+        setAlertMessage(error.response.data.error);
       });
     }
 
     const style = {
-      display: "flex",
-      gap: "20px",
-      alignItems: "center"
-    }
-    
+      display: 'flex',
+      gap: '20px',
+      alignItems: 'center',
+    };
+
     return (
-      <form onSubmit={advance}> 
+      <form onSubmit={advance}>
         <div style={style}>
-          <button className="u-control-button" title="advance"><img src={require("./css/buttons/advancebutton.png")} width="60" height="60"/></button>
-          <input className="u-number-input" type="number" min="0" value={steps} onChange={event => {setSteps(event.target.value)}}></input>
+          <button className="u-control-button" title="advance"><img src={require('./css/buttons/advancebutton.png')} width="60" height="60" /></button>
+          <input className="u-number-input" type="number" min="0" value={steps} onChange={(event) => { setSteps(event.target.value); }} />
         </div>
       </form>
     );
   }
-  
+
   function ActionButtons() {
     function skip() { // Implemented as advancing 0 steps
-      let headers = authHeader();
-      headers["Content-Type"] = "application/json";
+      const headers = authHeader();
+      headers['Content-Type'] = 'application/json';
       axios.post(
-        gameURL + "/rotate_and_advance",
+        `${gameURL}/rotate_and_advance`,
         {
-          "direction": props.visibleState.submarine.direction,
-          "steps": 0
+          direction: props.visibleState.submarine.direction,
+          steps: 0,
         },
-        {headers: headers}
-      ).then(_ => console.log("Skipped this turn")
-      ).catch(error => {
+        { headers },
+      ).then((_) => console.log('Skipped this turn')).catch((error) => {
         console.log(error.response.data);
-        setAlertMessage(error.response.data["error"]);
+        setAlertMessage(error.response.data.error);
       });
     }
 
     function useRadar() {
       axios.post(
-        gameURL + "/send_radar_pulse",
+        `${gameURL}/send_radar_pulse`,
         {},
-        {headers: authHeader()}
-      ).then(_ => console.log("Radar pulse command sent")
-      ).catch(error => {
+        { headers: authHeader() },
+      ).then((_) => console.log('Radar pulse command sent')).catch((error) => {
         console.log(error.response.data);
-        setAlertMessage(error.response.data["error"]);
+        setAlertMessage(error.response.data.error);
       });
     }
 
     function attack() {
-      let headers = authHeader();
-      headers["Content-Type"] = "application/json";
+      const headers = authHeader();
+      headers['Content-Type'] = 'application/json';
       axios.post(
-        gameURL + "/rotate_and_attack",
-        {"direction": props.position.direction},
-        {headers: headers}
-      ).then(_ => {
-        console.log("Attack command sent");
-      }).catch(error => {
+        `${gameURL}/rotate_and_attack`,
+        { direction: props.position.direction },
+        { headers },
+      ).then((_) => {
+        console.log('Attack command sent');
+      }).catch((error) => {
         console.log(error.response.data);
-        setAlertMessage(error.response.data["error"]);
+        setAlertMessage(error.response.data.error);
       });
     }
-    
+
     const style = {
-      display: "flex",
-      flexDirection: "row",
-      justifyContent: "center",
-      alignItems: "center",
-      gap: "10px"
-    }
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: '10px',
+    };
 
     return (
       <div style={style}>
-        <button className="u-control-button" onClick={skip} title="skip"><img src={require("./css/buttons/skipbutton.png")} width="60" height="60"/></button>
-        <button className="u-control-button" onClick={useRadar} title="radar pulse"><img src={require("./css/buttons/radarbutton.png")} width="60" height="60"/></button>
-        <button className="u-control-button" onClick={attack} title="attack"><img src={require("./css/buttons/missilebutton.png")} width="60" height="60"/></button>
+        <button className="u-control-button" onClick={skip} title="skip"><img src={require('./css/buttons/skipbutton.png')} width="60" height="60" /></button>
+        <button className="u-control-button" onClick={useRadar} title="radar pulse"><img src={require('./css/buttons/radarbutton.png')} width="60" height="60" /></button>
+        <button className="u-control-button" onClick={attack} title="attack"><img src={require('./css/buttons/missilebutton.png')} width="60" height="60" /></button>
       </div>
     );
   }
 
-  useEffect(_ => {setAlertMessage(null)},[props.visibleState]);
-  
+  useEffect((_) => { setAlertMessage(null); }, [props.visibleState]);
+
   return (
-    <div style={{display: 'flex', flexDirection: 'column', width: '100%'}}>
+    <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
       <div className="u-controls-container">
         <div className="u-left-controls">
           <DirectionControl position={props.position} setPosition={props.setPosition} />
