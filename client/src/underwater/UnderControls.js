@@ -69,7 +69,7 @@ export default function UnderControls(props) {
     return (
       <form onSubmit={advance}> 
         <div style={style}>
-          <button className="u-game-button"> <CiLocationArrow1 size={40} style = {{transform: 'rotate(-45deg)' }}/></button>
+          <button className="u-control-buttons" title="advance"><img src={require("./css/buttons/advancebutton.png")} width="60" height="60"/></button>
           <input style={{width: "3em"}} type="number" min="0" value={steps} onChange={event => {setSteps(event.target.value)}}></input>
         </div>
       </form>
@@ -129,9 +129,9 @@ export default function UnderControls(props) {
     
     return (
       <div style={style}>
-        <button className="u-game-button" onClick={skip}>Skip</button>
-        <button className="u-game-button" onClick={useRadar}>Radar</button>
-        <button className="u-game-button" onClick={attack}><GiTorpedo style={{verticalAlign: "bottom"}} size={40} /></button>
+        <button className="u-control-buttons" onClick={skip} title="skip"><img src={require("./css/buttons/skipbutton.png")} width="60" height="60"/></button>
+        <button className="u-control-buttons" onClick={useRadar} title="radar pulse"><img src={require("./css/buttons/radarbutton.png")} width="60" height="60"/></button>
+        <button className="u-control-buttons" onClick={attack} title="attack"><img src={require("./css/buttons/missilebutton.png")} width="60" height="60"/></button>
       </div>
     );
   }

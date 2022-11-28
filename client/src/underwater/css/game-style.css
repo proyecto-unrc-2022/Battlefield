@@ -262,3 +262,11 @@
   gap: 10px;
   font-weight: bold;
 }
+
+.u-control-buttons {
+  width: 95px;
+  height: 95px;
+  border: none;
+  background: none;
+  border-radius: 50px;
+}
