@@ -225,11 +225,11 @@ def rotate_and_attack(session_id):
     submarine = player.submarine
     direction = data["direction"]
 
-    if direction == (submarine.direction + 4) % 8:
-        return Response('{"error":"submarines cant rotate 180 degrees"}', status=409)
-
     if session.current_turn_player() is not player:
         return Response('{"error": "not your turn"}', status=409)
+
+    if direction == (submarine.direction + 4) % 8:
+        return Response('{"error":"submarines cant rotate 180 degrees"}', status=409)
 
     session.add_command(RotateAndAttack(session.game, submarine, direction=direction))
 
