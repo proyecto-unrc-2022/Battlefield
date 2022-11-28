@@ -10,7 +10,7 @@ class MissileDTO(SQLAlchemySchema):
         load_instance = True
 
     id = auto_field()
-    course = auto_field()  
+    course = auto_field()
     pos_x = auto_field()
     pos_y = auto_field()
     speed = auto_field()

@@ -17,7 +17,7 @@ const NavyLogo = ({ size, role }) => {
     <div
       role={"button"}
       onClick={goToMenu}
-      className={`navy-logo navy-text navy-button-${size} my-1 mx-2`}
+      className={`navy-logo navy-text navy-button-${size} mt-1 mx-2`}
     >
       <img src={right_wing} alt="" className={`navy-logo-wing`} />
       {"Navy Battleship"}

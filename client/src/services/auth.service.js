@@ -1,7 +1,7 @@
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 
-const API_URL = "http://127.0.0.1:5000/auth/";
+const API_URL = "http://192.168.0.177:5000/auth/";
 
 class AuthService {
   login(username, password) {
@@ -19,7 +19,6 @@ class AuthService {
         }
       )
       .then((response) => {
-        console.log(response);
         if (response.data.token) {
           localStorage.setItem("user", JSON.stringify(response.data));
         }

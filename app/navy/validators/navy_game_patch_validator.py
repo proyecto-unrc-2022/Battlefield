@@ -13,7 +13,9 @@ class NavyGamePatchValidator(Schema):
 
         game = navy_game_dao.get_by_id(in_data["game_id"])
         if not (game.status == WAITING_PLAYERS):
-            raise ValidationError("Can't join a game with two players",field_name="game_id")
+            raise ValidationError(
+                "Can't join a game with two players", field_name="game_id"
+            )
 
         if game.user1_id == in_data["user2_id"]:
-            raise ValidationError("Can't join your own game",field_name="user_id")
+            raise ValidationError("Can't join your own game", field_name="user_id")

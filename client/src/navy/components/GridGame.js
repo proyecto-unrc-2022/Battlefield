@@ -12,10 +12,13 @@ const GridGame = ({
   enemyShip,
   missiles,
   selectMissile,
+  spectate = false,
 }) => {
   const arr = Array(rows).fill(Array(cols).fill(1));
 
   const visibleCell = (row, col) => {
+    if (spectate) return true;
+
     return (
       row <= myShip.x + 5 &&
       row >= myShip.x - 5 &&

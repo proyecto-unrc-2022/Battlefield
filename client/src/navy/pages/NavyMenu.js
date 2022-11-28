@@ -18,8 +18,12 @@ const NavyMenu = () => {
     });
   };
 
+  const goToHowToPlay = () => {
+    navigate("how_to_play");
+  };
+
   return (
-    <div style={{ flexGrow: "1" }} className="container-fluid bg-navy">
+    <div style={{ flexGrow: "1" }} className="container-fluid bg-menu">
       <div className="row">
         <div className="col-12 text-center">
           <NavyLogo size={"xlarge"} />
@@ -31,7 +35,11 @@ const NavyMenu = () => {
           <NavyMenuStars />
           <NavyButton action={goToGames} text="games" size={"large"} />
           <NavyMenuStars />
-          <NavyButton text="how to play" size={"large"} />
+          <NavyButton
+            action={goToHowToPlay}
+            text="how to play"
+            size={"large"}
+          />
         </div>
       </div>
     </div>

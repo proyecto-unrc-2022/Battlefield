@@ -1,20 +1,13 @@
-from marshmallow import ValidationError
-
-from app.models.user import User
 from app.navy.daos.navy_game_dao import navy_game_dao
 from app.navy.models.missile import Missile
 from app.navy.models.navy_game import NavyGame
 from app.navy.utils.navy_game_statuses import FINISHED
 from app.navy.utils.navy_utils import utils
-from app.navy.validators.navy_game_patch_validator import NavyGamePatchValidator
 
 
 class NavyGameService:
 
     games = {}
-
-    def validate_patch_request(self, request):
-        return NavyGamePatchValidator().load(request)
 
     def add(self, data):
         new_game = NavyGame(utils.ROWS, utils.COLS, data["user1_id"])
@@ -32,7 +25,7 @@ class NavyGameService:
         if user_id:
             return navy_game_dao.get_by_user(user_id)
         else:
-            return navy_game_dao.get()
+            return navy_game_dao.get_all()
 
     def get_by_id(self, id):
         return navy_game_dao.get_by_id(id)
@@ -86,6 +79,9 @@ class NavyGameService:
     def get_missiles(self, navy_game_id):
         return self.games[navy_game_id]["missiles"]
 
+    def get_ships(self, navy_game_id):
+        return self.games[navy_game_id]["ships"]
+
     def execute_cache(f):
         def proceed(self, navy_game_id):
             if not self.games.get(navy_game_id) or self.games.get(navy_game_id) == {}:
@@ -105,6 +101,7 @@ class NavyGameService:
         self.save(game)
 
     def finalize_round(self, game):
+        self.is_over(game.id)
         game.round += 1
         game.turn = self.change_turn(game)
 
@@ -119,12 +116,15 @@ class NavyGameService:
     def save(self, game):
         from app.navy.services.missile_service import missile_service
         from app.navy.services.ship_service import ship_service
+        from app.navy.services.spectate_service import spectate_service
 
         ships = self.games[game.id]["ships"]
         missiles = self.games[game.id]["missiles"]
+
         ship_service.update_all(ships)
         missile_service.update_all(missiles)
         navy_game_dao.update(game)
+        spectate_service.save_round(game, ships, missiles)
 
     def run_missiles(self, game):
         from app.navy.services.missile_service import missile_service
@@ -140,13 +140,12 @@ class NavyGameService:
     def set_winner(self, winner, game):
         game.winner = winner
         game.status = FINISHED
-        navy_game_dao.update(game)
 
     def is_over(self, navy_game_id):
         game = navy_game_dao.get_by_id(navy_game_id)
         is_game_over = True
         if game.winner:
-            pass
+            return is_game_over
         elif self.user_lost(game.user1_id, navy_game_id):
             self.set_winner(game.user2_id, game=game)
 
@@ -217,9 +216,6 @@ class NavyGameService:
             elif isinstance(entity, Missile):
                 missiles_dto.append(missile_service.get_dto(entity))
         return ships_dto, missiles_dto
-
-    def get_ships(self, navy_game_id):
-        return self.games[navy_game_id]["ships"]
 
 
 navy_game_service = NavyGameService()

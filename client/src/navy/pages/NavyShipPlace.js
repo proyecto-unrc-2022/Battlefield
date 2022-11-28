@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation, useParams, Link } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import NavyButton from "../components/NavyButton";
 import ShipService from "../services/ShipService";
 import NavyGameService from "../services/NavyGameService";
@@ -7,6 +7,7 @@ import authService from "../../services/auth.service";
 import AccessDenied from "../components/AccessDenied";
 import GridShipPlace from "../components/GridShipPlace";
 import NavyTitle from "../components/NavyTitle";
+import NavyLogo from "../components/NavyLogo";
 
 export const NavyShipPlace = () => {
   const location = useLocation();
@@ -17,7 +18,7 @@ export const NavyShipPlace = () => {
   const [accessDenied, setAccessDenied] = useState(true);
   const [game, setGame] = useState(null);
   const [course, setCourse] = useState("N");
-  const [selectedPosition, setSelectedPosition] = useState({ x: 5, y: 5 });
+  const [selectedPosition, setSelectedPosition] = useState({});
 
   useEffect(() => {
     if (!location.state) {
@@ -42,6 +43,13 @@ export const NavyShipPlace = () => {
         setShipPlaced(true);
       }
       setGame(resp.data.data);
+
+      let x = 5;
+      let y = 5;
+      if (currentUser.sub === resp.data.data.user_2.id) {
+        y += 10;
+      }
+      setSelectedPosition({ x: x, y: y });
     });
 
     if (shipPlaced) {
@@ -81,7 +89,6 @@ export const NavyShipPlace = () => {
       pos_y: selectedPosition.y,
     };
     ShipService.postShip(shipToSend).then((resp) => {
-      console.log(resp);
     });
   };
 
@@ -96,13 +103,7 @@ export const NavyShipPlace = () => {
       ) : (
         <>
           <div className="row justify-content-between p-2 align-items-center">
-            <Link
-              to={"/navy"}
-              className="navy-text"
-              style={{ textDecoration: "none" }}
-            >
-              Navy Battleship
-            </Link>
+            <NavyLogo size={"small"}></NavyLogo>
           </div>
           <div className="row">
             <div className="col-12 text-center">
@@ -148,10 +149,14 @@ export const NavyShipPlace = () => {
           <div className="row justify-content-center mt-3">
             {shipPlaced ? (
               <div className="row d-flex flex-column justify-content-center align-items-center">
-                <div className="spinner-border m-3" role="status">
+                <div
+                  style={{ color: "black" }}
+                  className="spinner-border m-1"
+                  role="status"
+                >
                   <span className="sr-only">Loading...</span>
                 </div>
-                <span className="text-center">
+                <span className="text-center navy-text">
                   Waiting for the other player select his ship...
                 </span>
               </div>

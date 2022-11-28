@@ -1,7 +1,8 @@
 import axios from "axios";
 import authHeader from "../../services/auth-header";
+import { API_URL as url } from "../API_URL";
 
-const API_URL = "http://127.0.0.1:5000/api/v1/navy";
+const API_URL = `${url}/api/v1/navy`;
 
 class ShipService {
   getShipTypes() {
@@ -57,10 +58,8 @@ class ShipService {
     let newRow = ship.x;
     let newCol = ship.y;
     for (let i = 0; i < ship.size - 1; i++) {
-      newRow =
-        newRow + this.compass[this.inverseCoords[ship.course]].x;
-      newCol =
-        newCol + this.compass[this.inverseCoords[ship.course]].y;
+      newRow = newRow + this.compass[this.inverseCoords[ship.course]].x;
+      newCol = newCol + this.compass[this.inverseCoords[ship.course]].y;
       positions.push({ x: newRow, y: newCol, proa: false });
     }
     return positions;

@@ -1,7 +1,8 @@
 import axios from "axios";
 import authHeader from "../../services/auth-header";
+import { API_URL as url } from "../API_URL";
 
-const API_URL = "http://127.0.0.1:5000/api/v1/navy/navy_games";
+const API_URL = `${url}/api/v1/navy/navy_games`;
 
 class NavyGameService {
   getNavyGames() {
@@ -16,20 +17,28 @@ class NavyGameService {
     });
   }
 
-  postNavyGame(){
-    return axios.post(API_URL, {},{
-      headers: authHeader(),
-    });
+  postNavyGame() {
+    return axios.post(
+      API_URL,
+      {},
+      {
+        headers: authHeader(),
+      }
+    );
   }
 
-  patchNavyGame(id){
-    return axios.patch(API_URL + `/${id}`,{},{
-      headers: authHeader(),
-    });
+  patchNavyGame(id) {
+    return axios.patch(
+      API_URL + `/${id}`,
+      {},
+      {
+        headers: authHeader(),
+      }
+    );
   }
 
-  deleteNavyGame(id){
-    return axios.delete(API_URL + `/${id}`,{
+  deleteNavyGame(id) {
+    return axios.delete(API_URL + `/${id}`, {
       headers: authHeader(),
     });
   }

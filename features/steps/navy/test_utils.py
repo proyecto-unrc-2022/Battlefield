@@ -12,7 +12,7 @@ class TestUtils:
         "Game finished": "navy_game_id",
         "It's not your turn yet": "_schema",
         "Ship can't be builded out of range": "_schema",
-        "Must be one of: Destroyer, Cruiser, Battleship, Corvette.": "name"
+        "Must be one of: Destroyer, Cruiser, Battleship, Corvette.": "name",
     }
 
     def add_test_game(self, navy_game_id, winner=None, status="STARTED"):
