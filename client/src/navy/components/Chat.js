@@ -1,10 +1,9 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import io from "socket.io-client";
 import "./Chat.css";
 import "./ActionCard.css";
-const socket = io("http://localhost:5000");
-const Chat = ({ user, game }) => {
+
+const Chat = ({ user, game,socket=null}) => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([
     {
@@ -15,6 +14,8 @@ const Chat = ({ user, game }) => {
 
   const [joinedRoom, setJoinedRoom] = useState(false);
 
+
+
   useEffect(
     () => {
       const receivedMessage = (message) => {
@@ -24,12 +25,12 @@ const Chat = ({ user, game }) => {
         const chat_room = {
           room: game.id,
         };
+       
         socket.emit("join", chat_room);
         setJoinedRoom(true);
       }
       socket.on("message", receivedMessage);
       return () => {
-        socket.off("message", receivedMessage);
       };
     }, // eslint-disable-next-line
     [messages]
