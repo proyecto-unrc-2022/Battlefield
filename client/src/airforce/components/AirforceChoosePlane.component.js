@@ -1,15 +1,15 @@
 import React, { Component} from "react";
-import { Routes, Route, useParams, useNavigate} from "react-router-dom";
 import AirforceService from "../services/airforce.service";
-import GameRoom from "./AirforceGameRoom.component"
 import "./AirforceChoosePlane.css"
 
+import { useParams } from "react-router-dom";
+
 function withParams(Component) {
-    return props => <Component {...props} param={useParams()}/>;
+    return props => <Component {...props} params={useParams()} />;
   }
 
 class ChoosePlane extends Component {
- 
+
     
     state = {
         id: null,
@@ -18,9 +18,7 @@ class ChoosePlane extends Component {
         coord_y: null,
         ready: false,
         planes: null,
-        ready: false,
     }
-
     
 
     
@@ -29,6 +27,7 @@ class ChoosePlane extends Component {
         this.setState({
             course: value
         })
+        console.log(this.state.course)
         
     }
     
@@ -37,6 +36,7 @@ class ChoosePlane extends Component {
         this.setState({
             coord_x: value
         })
+        console.log(this.state.coord_x)
         
     }
     
@@ -45,6 +45,7 @@ class ChoosePlane extends Component {
         this.setState({
             coord_y: value
         })
+        console.log(this.state.coord_y)
         
     }
     
@@ -52,13 +53,13 @@ class ChoosePlane extends Component {
         this.setState({
             id: idPlane
         })
+        console.log(this.state.id)
     }
     
     id(){
-        let { id } = this.props.param;
+        let { id } = this.props.params;
         return id;
     }
-
 
     handleSubmit = (event) => {
         event.preventDefault();
@@ -71,14 +72,13 @@ class ChoosePlane extends Component {
     
     planes(){
         AirforceService.getPlanes().then((response) => {
-            console.log( JSON.stringify(response.data))
             localStorage.setItem("planes", JSON.stringify(response.data));
         });
     }
 
     title(key){
         return "Size: " + this.state.planes[key].size + "\nSpeed:" + this.state.planes[key].speed + "\nHealth: " 
-        + this.state.planes[key].health + "\nProjectile: " + this.state.planes[key].cant_projecile;
+        + this.state.planes[key].health + "\nProjectile: " + this.state.planes[key].cant_projectile;
     }
 
     redirect = (id) => {
@@ -102,9 +102,9 @@ class ChoosePlane extends Component {
         // console.log("state " + JSON.parse(localStorage.getItem('planes')).name);
         this.planes();
         this.state.planes = JSON.parse(localStorage.getItem('planes'));
+        console.log("planes " + this.state.planes);
         return (
               <div className="container-choosePlane" style={{textAlign: "center"}}>
-               <link href='https://fonts.googleapis.com/css?family=Silkscreen' rel='stylesheet'></link>
                 <div className="select-plane">
                     <h2 className="subtitle-1">Choose your plane</h2>
                     <div>

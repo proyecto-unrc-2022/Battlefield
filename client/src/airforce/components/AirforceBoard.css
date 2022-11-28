@@ -16,7 +16,7 @@
 .board{
     border: 2px;
     border-color: black;
-    margin-top: 70px;
+    margin-top:  auto;
 }
 
 .board-row {
@@ -44,8 +44,8 @@ td{
     border: 1px solid;
     border-radius: 10px;
     border-color: black;
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
 }
 
 .action-buttons {
@@ -57,8 +57,8 @@ td{
 }
 
 button {
-    color: white;
-    background-color: black;
+    color: black;
+    background-color: transparent;
     border-color: black;
     border-radius: 5px;
     margin-top: 50px;
