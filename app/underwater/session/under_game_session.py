@@ -3,6 +3,7 @@ import json
 from sqlalchemy.orm import relationship
 
 from app import db
+from app.underwater.command.torpedo_commands import TorpedoCommand
 
 
 class UnderGameSession(db.Model):
@@ -39,6 +40,10 @@ class UnderGameSession(db.Model):
     def add_command(self, c):
         self.commands.append(c)
         db.session.add(c)
+
+        if isinstance(c, TorpedoCommand):
+            return
+
         if c.player is self.host:
             self.host_moved = True
         else:
