@@ -11,6 +11,10 @@ export default function ChooseCharacter(){
     const [posY, setPosY] = useState(null)
     const [game, setGame] = useState([])
 
+    const id_game = localStorage.getItem('id_game')
+
+    const host = authService.getCurrentUser()
+
     const navigate = useNavigate();
 
     const redirec = () =>{
@@ -36,6 +40,13 @@ export default function ChooseCharacter(){
     }
 
     const validation = () => {
+
+        if(posX == null || posY == null || posX == "" || posY == ""){
+            alert("Debes seleccionar las posiciones")
+            setType(null)
+            return false
+        }
+
         if(0 > posY || posY > 10){
             alert("Su posicion en Y debe ser entre 0 o 10")
             setType(null)
@@ -65,10 +76,6 @@ export default function ChooseCharacter(){
         
     }
 
-    const id_game = localStorage.getItem('id_game')
-
-    const host = authService.getCurrentUser()
-
     useEffect(() => {
 
         getGame(id_game)
@@ -97,9 +104,9 @@ export default function ChooseCharacter(){
 
     return(
 
-        <div className="container">
+        <div className="container-fluid d-flex justify-content-center">
 
-            <div className="row jumbotron text-center mt-3">
+            <div className="row jumbotron w-75 text-center mt-3">
                 
                 <div className="col">
                     <div className="">
@@ -142,7 +149,7 @@ export default function ChooseCharacter(){
                         <h2>X-position</h2>
                         <form>
                             <div className="form-row">
-                                <div className="col-7">
+                                <div className="col-7 mx-1">
                                     <input type="number" 
                                     className="form-control" 
                                     
@@ -158,7 +165,7 @@ export default function ChooseCharacter(){
                         <h2>Y-position</h2>
                         <form>
                             <div className="form-row">
-                                <div className="col-7">
+                                <div className="col-7 mx-1">
                                     <input type="number" 
                                     className="form-control" 
                                     
