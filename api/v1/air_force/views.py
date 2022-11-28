@@ -83,13 +83,12 @@ def choose_plane_and_position():
 
     plane = Plane.query.filter_by(id=plane).first()
     try:
+        print(plane)
         command = ChoosePlane(
             course=course, plane=plane, x=x, y=y, player=player, air_force_game=game
         )
-        dic = game.execute(command)
-        print("dicc", dic)
-        print("airforce game:", air_force_game)
-        return jsonify(dic.to_dict())  # Response(status=201)
+        game.execute(command)
+        return jsonify(game.battlefield.get_status())  # Response(status=201)
     except Exception as e:
         print(e)
         return Response(str(e), status=400)
