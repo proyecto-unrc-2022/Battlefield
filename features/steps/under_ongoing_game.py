@@ -92,9 +92,9 @@ def step_impl(context, username, d):
     assert context.page.status_code == 200
 
 
-@then("fail")
-def step_impl(context):
-    assert False
+@then("the next player is '{username}'")
+def step_impl(context, username):
+    assert context.session.current_turn_player() is context.players[username]
 
 
 def compare_board(context):

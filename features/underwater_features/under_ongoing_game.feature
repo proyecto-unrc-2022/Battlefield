@@ -125,3 +125,13 @@ Feature: Game in ongoing game state
             |   |   |   |   |   | T |
         When the user 'player1' rotates the submarine with direction '7' and moves '1' positions
         Then the system informs failure with code '409'
+
+    Scenario: Shoot and skip two times
+        Given the submarines are in the following state:
+            | submarine | username | health | x_position | y_position | direction |
+            |   Saukko  | player1  |   10   |     0      |      1     |     2     |
+            |  Nautilus | player2  |   20   |     0      |      4     |     6     |
+        When the user 'player1' rotates the submarine with direction '2' and attacks
+        And the user 'player2' rotates the submarine with direction '6' and moves '0' positions
+        And the user 'player2' rotates the submarine with direction '6' and moves '0' positions
+        Then the next player is 'player1'
