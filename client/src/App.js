@@ -19,8 +19,8 @@ import NavyBoard from "./navy/pages/NavyBoard";
 import AirforceAPP from "./airforce/AirforceAPP";
 import ChoosePlane from "./airforce/components/AirforceChoosePlane.component";
 import AirforceLobby from "./airforce/components/AirforceLobby.component"
-import AirforceBoard from "./airforce/components/AirforceBoard";
 import GameRoom from "./airforce/components/AirforceGameRoom.component";
+
 class App extends Component {
   constructor(props) {
     super(props);
