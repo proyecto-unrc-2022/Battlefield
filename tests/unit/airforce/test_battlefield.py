@@ -322,3 +322,71 @@ def test_projectiles_one_player():
     assert battlefield.flying_objects[3].x == 14
     assert battlefield.flying_objects[3].y == 9
     assert battlefield.flying_objects[3].course == 4
+
+
+def test_hit_big_plane():
+    with app.app_context():
+        plane = Plane(
+            id=0, name="avion", size=3, speed=2, health=100, cant_projectile=2
+        )
+        projectile = Projectile(id=0, speed=5, damage=50, plane_id=plane.id)
+        battlefield = Battlefield()
+        battlefield.add_new_flying_object(0, plane, 7, 5, 2)
+        battlefield.add_new_flying_object(0, plane, 6, 5, 2)
+        battlefield.add_new_flying_object(0, plane, 5, 5, 2)
+        battlefield.add_new_flying_object(1, projectile, 9, 5, 4)
+        battlefield.move_projectile(1)
+        assert battlefield.flying_objects.__len__() == 3
+        assert battlefield.flying_objects[0].flying_obj == plane
+        assert battlefield.flying_objects[1].flying_obj == plane
+        assert battlefield.flying_objects[2].flying_obj == plane
+        assert battlefield.flying_objects[0].x == 7
+        assert battlefield.flying_objects[0].y == 5
+        assert battlefield.flying_objects[0].course == 2
+        assert battlefield.flying_objects[0].flying_obj.health == 50
+        assert battlefield.flying_objects[1].x == 6
+        assert battlefield.flying_objects[1].y == 5
+        assert battlefield.flying_objects[1].course == 2
+        assert battlefield.flying_objects[1].flying_obj.health == 50
+        assert battlefield.flying_objects[2].x == 5
+        assert battlefield.flying_objects[2].y == 5
+        assert battlefield.flying_objects[2].course == 2
+        assert battlefield.flying_objects[2].flying_obj.health == 50
+
+
+def test_destroy_big_plane():
+    with app.app_context():
+        plane = Plane(
+            id=0, name="avion", size=3, speed=2, health=100, cant_projectile=2
+        )
+        projectile = Projectile(id=0, speed=5, damage=50, plane_id=plane.id)
+        battlefield = Battlefield()
+        battlefield.add_new_flying_object(0, plane, 7, 5, 2)
+        battlefield.add_new_flying_object(0, plane, 6, 5, 2)
+        battlefield.add_new_flying_object(0, plane, 5, 5, 2)
+        battlefield.add_new_flying_object(1, projectile, 9, 5, 4)
+        battlefield.add_new_flying_object(1, projectile, 6, 7, 3)
+        battlefield.move_projectile(1)
+        assert battlefield.flying_objects.__len__() == 0
+
+
+def test_big_plane_move():
+    with app.app_context():
+        plane = Plane(
+            id=0, name="avion", size=3, speed=2, health=100, cant_projectile=2
+        )
+        battlefield = Battlefield()
+        battlefield.add_new_flying_object(0, plane, 7, 5, 2)
+        battlefield.add_new_flying_object(0, plane, 6, 5, 2)
+        battlefield.add_new_flying_object(0, plane, 5, 5, 2)
+        battlefield.move(battlefield.flying_objects[0], 2)
+        assert battlefield.flying_objects.__len__() == 3
+        assert battlefield.flying_objects[0].x == 9
+        assert battlefield.flying_objects[0].y == 5
+        assert battlefield.flying_objects[0].course == 2
+        assert battlefield.flying_objects[1].x == 8
+        assert battlefield.flying_objects[1].y == 5
+        assert battlefield.flying_objects[1].course == 2
+        assert battlefield.flying_objects[2].x == 7
+        assert battlefield.flying_objects[2].y == 5
+        assert battlefield.flying_objects[2].course == 2
