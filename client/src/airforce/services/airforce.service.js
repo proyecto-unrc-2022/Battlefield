@@ -89,5 +89,10 @@ class AirForceService {
       return axios
       .get(API_URL + "/get/planes",{},{})
     }
+
+    getBoardStatus(gameId){
+      return axios.
+      get(API_URL + `get_battlefield_status/game_id/${gameId}`);
+    }
 }
 export default new AirForceService();

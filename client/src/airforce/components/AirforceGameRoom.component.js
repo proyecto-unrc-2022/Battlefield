@@ -4,8 +4,10 @@ import { useParams } from "react-router-dom";
 import airforceService from "../services/airforce.service";
 
 const GameRoom = () => {
-    const {id} = useParams()
-    
+    const {id} = useParams();
+    var boardInfo = [];
+
+
     const handleClickMoveNorth = () => {// course 1 north, 2 east, 3 south, 4 west
         airforceService.fligth(id,1);
     }
@@ -22,13 +24,30 @@ const GameRoom = () => {
     const handleClickLaunchProjectile = () => {// course 1 north, 2 east, 3 south, 4 west
         airforceService.createProjectile(id);
     }
+
+    const boardStatus = () => {
+        airforceService.getBoardStatus(id)
+        .then((response) => {
+            localStorage.setItem("boardStatus", JSON.stringify(response.data));
+        });
+        boardInfo = localStorage.getItem("boardStatus");
+        console.log(JSON.parse(boardInfo).status);
+        // if(JSON.parse(boardInfo).status == "end"){
+        //     window.location.href = "/"
+        // }
+
+
+    }
     
         return(
             <div className="battlefield">
                 <div>
-                    
                     <div>
-                        {AirforceBoard(10,10)}
+                        {boardStatus()}
+                    </div>
+                    <div>{
+                            AirforceBoard(boardInfo)
+                        }
                     </div>
                     <div className="board-buttons">
                         <div className="action-buttons">

@@ -79,9 +79,9 @@ def choose_plane_and_position():
     player = verify_token(token).id
     game = air_force_game[int(request.json["id"])]
     plane = request.json["plane"]
-    x = request.json["x"]
-    y = request.json["y"]
-    course = request.json["course"]
+    x = int(request.json["x"])
+    y = int(request.json["y"])
+    course = int(request.json["course"])
 
     plane = Plane.query.filter_by(id=plane).first()
     try:
@@ -104,11 +104,13 @@ def fligth(id, course):
     player = verify_token(token).id
     game = air_force_game[int(id)]
     try:
+        from app.models.airforce.utils import get_player_plane as get
+
+        print("new ", get(game.battlefield, player)[0].course)
         game.execute(CheckCourse(course, player, game))
         command = MovePlane(course, player, game)
+        print("andaaaaa")
         game.add_command(command, player)
-        print("player_a", game.player_a, "player_b", game.player_b)
-        print("comandos en volar: ", game.new_commands)
         return Response(status=201)
     except Exception as e:
         return Response(str(e), status=400)
