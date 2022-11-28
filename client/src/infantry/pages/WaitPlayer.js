@@ -4,6 +4,10 @@ import Loading from "../components/Loading";
 import gameService from "../services/game.service";
 import "../Styles.css"
 
+/*
+    Pagina que espera que los dos jugadores hayan elegidos sus personajes
+*/
+
 export default function WaitPlayer(){
 
     const [game, setGame] = useState([])
