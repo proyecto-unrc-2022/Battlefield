@@ -1,11 +1,4 @@
-from marshmallow import (
-    Schema,
-    ValidationError,
-    fields,
-    validate,
-    validates,
-    validates_schema,
-)
+from marshmallow import Schema, ValidationError, fields, validate, validates_schema
 
 from app.navy.services.ship_service import ship_service
 from app.navy.utils.navy_utils import utils
@@ -20,28 +13,37 @@ class ShipRequestValidator(Schema):
     user_id = fields.Integer()
     navy_game_id = fields.Integer(required=True)
 
-    @validates("navy_game_id")
-    def validate_game(self, navy_game_id):
+    @validates_schema
+    def validate_game(self, in_data, **kwargs):
         from app.navy.daos.navy_game_dao import navy_game_dao
         from app.navy.utils.navy_game_statuses import FINISHED, STARTED, WAITING_PLAYERS
 
-        game = navy_game_dao.get_by_id(navy_game_id)
+        game = navy_game_dao.get_by_id(in_data.get("navy_game_id"))
+        user_id = in_data.get("user_id")
 
         if not game:
-            raise ValidationError("Game doesn't exist.")
+            raise ValidationError("Game doesn't exist.", field_name="navy_game_id")
+
+        if game.user1_id != user_id and game.user2_id != user_id:
+            raise ValidationError("Invalid game", field_name="navy_game_id")
 
         if game.status == FINISHED:
             raise ValidationError(
-                "Can't create a ship when the game has already finished"
+                "Can't create a ship when the game has already finished",
+                field_name="navy_game_id",
             )
 
         if game.status == STARTED:
             raise ValidationError(
-                "Can't create a ship when the game has already started"
+                "Can't create a ship when the game has already started",
+                field_name="navy_game_id",
             )
 
         if game.status == WAITING_PLAYERS:
-            raise ValidationError("Can't create a ship when the game has one player")
+            raise ValidationError(
+                "Can't create a ship when the game has one player",
+                field_name="navy_game_id",
+            )
 
     @validates_schema
     def validate_positions(self, in_data, **kwargs):
@@ -50,9 +52,6 @@ class ShipRequestValidator(Schema):
         navy_game_id = in_data.get("navy_game_id")
         game = navy_game_dao.get_by_id(navy_game_id)
         user_id = in_data.get("user_id")
-
-        if game.user1_id != user_id and game.user2_id != user_id:
-            raise ValidationError("Invalid game")
 
         x = in_data.get("pos_x")
         y = in_data.get("pos_y")
@@ -83,5 +82,6 @@ class ShipRequestValidator(Schema):
         return res
 
     def get_size_by_name(self, name):
+        SHIP_SIZES = [3, 3, 4, 2]
         i = ship_service.SHIP_NAMES.index(name)
-        return ship_service.SHIP_SIZES[i]
+        return SHIP_SIZES[i]

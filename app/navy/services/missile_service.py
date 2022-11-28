@@ -4,43 +4,17 @@ from app.navy.models.ship import Ship
 from app.navy.services.navy_game_service import navy_game_service
 from app.navy.utils.navy_utils import utils
 
-""" Missile Service
-
-    This class is responsible for the logic of the missiles in the game.
-    It is responsible for the creation of missiles, the movement of missiles, the attack of missiles,the deletion of missiles, etc.
-    
-    Attributes:
-        MISSILE_TYPES (list): List of missile types.
-
-    Methods:
-        add(self,navy_Game_id,ship_id,missile_type,pos_x,pos_y)
-        get(self,navy_game_id)
-        delete(self,missile)
-        move(self,missile)
-        mov_is_valid(self,missile,x,y)
-        act_accordingly(self,missile,x,y)
-           |-> act_accordingly_missile(self,other_missile)
-           |-> act_accordingly_ship(self,damage,ship)
-        
-    You can view in github the source code of this class:
-    missile_service: https://github.com/proyecto-unrc-2022/Battlefield/tree/develop/app/navy
-    
-"""
-
 
 class MissileService:
-
-    MISSILE_TYPES = [1, 2, 3, 4]
-
     def get(self, navy_game_id):
         missiles = missile_dao.get_by_navy_game_id(navy_game_id=navy_game_id)
         return missiles
 
-    def create(self, navy_game_id, ship_id, missile_type, course, pos_x, pos_y):
+    def create(self, navy_game_id, pos_x, pos_y, course, missile_type, ship_id):
         from app.navy.daos.missile_type_dao import missile_type_dao
 
         missile_data = missile_type_dao.get_by_id(str(missile_type))
-        missile = Missile(
+        new_missile = Missile(
             missile_data["speed"],
             missile_data["damage"],
             course,
@@ -49,11 +23,17 @@ class MissileService:
             ship_id,
             navy_game_id,
         )
-        navy_game_service.games[navy_game_id]["missiles"].append(missile)
-        return missile
+        return new_missile
+
+    def add(self, navy_game_id, ship_id, missile_type, course, pos_x, pos_y):
+        new_missile = self.create(
+            navy_game_id, pos_x, pos_y, course, missile_type, ship_id
+        )
+        navy_game_service.games[navy_game_id]["missiles"].append(new_missile)
+        return new_missile
 
     def update_all(self, missiles):
-        missile_dao.load(missiles)
+        missile_dao.update_all(missiles)
 
     def load_to_board(self, missile):
         navy_game_service.load_to_board(

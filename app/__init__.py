@@ -3,13 +3,14 @@ import os
 from flask import Flask
 from flask_cors import CORS
 from flask_migrate import Migrate
+from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 
 from config import DevelopmentConfig, config
 
 db = SQLAlchemy(session_options={"expire_on_commit": False})
 migrate = Migrate()
-
+io = SocketIO()
 secret_token = None
 
 
@@ -30,7 +31,7 @@ def create_app(environment="development"):
     from app.navy.models.ship import Ship
 
     secret_token = app.config["SECRET_KEY"]
-
+    io.init_app(app, cors_allowed_origins="*", ping_interval=120, ping_timeout=30)
     from api.auth import auth as auth_blueprint
     from api.users import users_bp as users_blueprint
     from api.v1.air_force import air_force as air_force_blueprint

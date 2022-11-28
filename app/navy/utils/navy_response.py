@@ -1,5 +1,5 @@
 class NavyResponse:
-    def __init__(self, status, message, data):
+    def __init__(self, status=None, message=None, data=None):
         self.status = status
         self.message = message
         self.data = data

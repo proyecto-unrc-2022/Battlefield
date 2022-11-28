@@ -1,0 +1,73 @@
+.cell-game {
+  border: 1px solid rgba(0, 0, 0, 0.344);
+	height: 100%;
+	width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.not-visible {
+  background-color: rgba(21, 21, 21, 0.352);
+}
+
+.N {
+  transform: rotate(180deg);
+  border: none;
+}
+
+.NE {
+  transform: rotate(225deg);
+  border: none;
+}
+
+.NW {
+  transform: rotate(135deg);
+  border: none;
+}
+
+.W {
+  transform: rotate(90deg);
+  border: none;
+}
+
+.E {
+  transform: rotate(270deg);
+  border: none;
+}
+
+.SW {
+  transform: rotate(45deg);
+  border: none;
+}
+
+.SE {
+  transform: rotate(315deg);
+  border: none;
+}
+
+.S {
+  transform: rotate(360deg);
+  border: none;
+}
+
+.enemy, .my-ship {
+  width: 90%;
+  height: 90%;
+  margin: 0;
+  padding: 0;
+}
+
+.enemy {
+  background-color: #E57C7C;
+  box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.5); 
+}
+
+.my-ship {
+  background-color: #05346A;
+  box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.5); 
+}
+
+.proa {
+  clip-path: polygon(50% 100%, 0 0, 100% 0);
+}

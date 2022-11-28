@@ -74,7 +74,7 @@ def ship_change(mapper, connection, target):
         .all()
     )
 
-    if len(ships_user1) >= 1 and len(ships_user2) >= 1:
+    if ships_user1 and ships_user2:
         from app.navy.utils.navy_game_statuses import STARTED
 
         connection.execute(
