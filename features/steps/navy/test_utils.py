@@ -121,26 +121,6 @@ class TestUtils:
 
         return missile_dao.add(missile)
 
-    def add_action_test(
-        self,
-        navy_game_id,
-        ship_id,
-        course,
-        move,
-        attack,
-        missile_type_id,
-        user_id,
-        round,
-    ):
-        from app.navy.daos.action_dao import action_dao
-        from app.navy.models.action import Action
-
-        action = Action(
-            navy_game_id, ship_id, course, move, attack, missile_type_id, user_id, round
-        )
-        action_dao.add_or_update(action)
-        return action
-
     def generate_username_and_email(self, id):
         username = "user" + str(id)
         email = "user" + str(id) + "@user" + str(id) + ".com"
@@ -152,5 +132,18 @@ class TestUtils:
             "Authorization": f'Bearer {token["token"]}',
         }
 
+    def arrange_navy_game(self):
+        from app import db
+        from app.daos.user_dao import add_user
+        from app.navy.services.navy_game_service import navy_game_service 
+        
+        db.drop_all()
+        db.create_all()
+        add_user("user1", "123", "user1@user.com")
+        add_user("user2", "321", "user2@user.com")
+        user1 = {"user1_id":1}
+        user2 = {"user2_id":2}
+        navy_game_service.add(user1)
+        navy_game_service.join(user2,1)
 
 test_utils = TestUtils()

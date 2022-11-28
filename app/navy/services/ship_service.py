@@ -109,7 +109,6 @@ class ShipService:
 
     def can_update(self, ship):
         from app.navy.services.navy_game_service import navy_game_service
-        print(ship)
         game_over = navy_game_service.is_over(ship.navy_game_id)
         return ship.is_alive and not game_over
 
