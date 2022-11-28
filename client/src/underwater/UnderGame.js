@@ -45,15 +45,15 @@ export default function UnderGame() {
 
     updateVisibleState();
     return ((_) => sse.close());
-  }, []);
+  }, [URL]);
 
-  useEffect((_) => { if (visibleState != null && winnerId != null) setWinner(winnerId == visibleState.host_id ? visibleState.host : visibleState.visitor); }, [visibleState, winnerId]);
+  useEffect((_) => { if (visibleState !== null && winnerId !== null) setWinner(winnerId === visibleState.host_id ? visibleState.host : visibleState.visitor); }, [visibleState, winnerId]);
 
   useEffect((_) => { if (winner != null) endGame(); }, [winner]);
 
   function endGame() {
     console.log(visibleState.host_id, currentUserId);
-    if (visibleState.host_id == currentUserId) { // So that only the host sends a delete request
+    if (visibleState.host_id === currentUserId) { // So that only the host sends a delete request
       axios.post(`${URL}/delete`, {}, { headers: authHeader() }).then((_) => console.log('Game deleted'));
     }
   }
@@ -141,7 +141,7 @@ export default function UnderGame() {
         });
       }
     }
-  }, [chosenSubmarine, position, visibleState, roomIsFull, winner]);
+  }, [currentUserId, chosenSubmarine, position, visibleState, roomIsFull, winner]);
 
   return (
     <div className="u-container">

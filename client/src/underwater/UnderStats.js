@@ -7,20 +7,20 @@ export default function UnderStats({ visibleState, currentUserId }) {
   const [turn, setTurn] = useState(0);
 
   useEffect((_) => {
-    if (visibleState.host_id == currentUserId) { // If I am host
+    if (visibleState.host_id === currentUserId) { // If I am host
       setCurrentUser(visibleState.host);
-      if (visibleState.visitor != undefined) setEnemyUser(visibleState.visitor);
+      if (visibleState.visitor !== undefined) setEnemyUser(visibleState.visitor);
     } else { // If I am visitor
-      if (visibleState.visitor != undefined) { setCurrentUser(visibleState.visitor); }
+      if (visibleState.visitor !== undefined) { setCurrentUser(visibleState.visitor); }
       setEnemyUser(visibleState.host);
     }
-    visibleState.turn == 0 ? setTurn(visibleState.host.id) : setTurn(visibleState.visitor.id);
-  }, [visibleState]);
+    visibleState.turn === 0 ? setTurn(visibleState.host.id) : setTurn(visibleState.visitor.id);
+  }, [visibleState, currentUserId]);
 
   function MyStats() {
     return (
       <div className="u-stats">
-        <span>{currentUser == null ? null : currentUser.username + (turn == currentUserId ? ' *' : '')}</span>
+        <span>{currentUser === null ? null : currentUser.username + (turn === currentUserId ? ' *' : '')}</span>
         <div className="u-stats-container">
           <div className="u-health-indicator">
             <img className="stat-img" alt="H" src={require('./css/icons/heart.png')} />
@@ -50,7 +50,7 @@ export default function UnderStats({ visibleState, currentUserId }) {
   function EnemyStats() {
     return (
       <div className="u-stats u-enemy-stats">
-        <span>{enemyUser == null ? null : (turn != currentUserId ? '* ' : '') + enemyUser.username}</span>
+        <span>{enemyUser === null ? null : (turn !== currentUserId ? '* ' : '') + enemyUser.username}</span>
         <div className="u-stats-container">
           <div className="u-stat-indicator">
             <span>{visibleState.enemy_submarine.radar_scope}</span>
@@ -87,8 +87,8 @@ export default function UnderStats({ visibleState, currentUserId }) {
 
   return (
     <div style={style}>
-      { visibleState.submarine != undefined ? <MyStats /> : null }
-      { visibleState.enemy_submarine != undefined ? <EnemyStats /> : null }
+      { visibleState.submarine !== undefined ? <MyStats /> : null }
+      { visibleState.enemy_submarine !== undefined ? <EnemyStats /> : null }
     </div>
   );
 }

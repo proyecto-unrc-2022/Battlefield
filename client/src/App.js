@@ -17,7 +17,6 @@ import UnderGame from "./underwater/UnderGame";
 import UnderHome from "./underwater/UnderHome";
 import UnderNewGame from "./underwater/UnderNewGame";
 import UnderJoinGame from "./underwater/UnderJoinGame";
-import UnderLoading from "./underwater/UnderLoading";
 import NavyShipSelection from "./navy/pages/NavyShipSelection";
 import { NavyShipPlace } from "./navy/pages/NavyShipPlace";
 import NavyLobby from "./navy/pages/NavyLobby"

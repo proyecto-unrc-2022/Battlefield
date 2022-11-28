@@ -26,7 +26,7 @@ export default function UnderHome() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <div className="u-options">
-        <a onClick={onClick} className="u-big-button">New Game</a>
+        <button onClick={onClick} className="u-big-button">New Game</button>
         <Link to="lobby" className="u-big-button">Join Game</Link>
       </div>
       {alertMessage != null ? <span className="u-alert-danger">{alertMessage}</span> : null}

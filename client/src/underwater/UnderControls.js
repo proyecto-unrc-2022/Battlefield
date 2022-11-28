@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { CiLocationArrow1 } from 'react-icons/ci';
-import { GiTorpedo } from 'react-icons/gi';
-import AuthService from '../services/auth.service';
 import authHeader from '../services/auth-header';
 
 export default function UnderControls(props) {
@@ -28,7 +25,7 @@ export default function UnderControls(props) {
 
     return (
       <div style={{ position: 'relative', height: 157, width: 157 }}>
-        <img style={style} className="u-overlap-1" src={require('./css/images/direc.png')} width="100%" />
+        <img alt="direction-compass" style={style} className="u-overlap-1" src={require('./css/images/direc.png')} width="100%" />
         <div className="u-overlap-2 u-direction-grid">
           {array1.map((i) => (<div key={i} style={{ height: '100%', width: '100%' }} onClick={(_) => setDirection(i)} />))}
           <div style={{ height: '100%', width: '100%' }} />
@@ -68,7 +65,7 @@ export default function UnderControls(props) {
     return (
       <form onSubmit={advance}>
         <div style={style}>
-          <button className="u-control-button" title="advance"><img src={require('./css/buttons/advancebutton.png')} width="60" height="60" /></button>
+          <button className="u-control-button" title="advance"><img alt='advance' src={require('./css/buttons/advancebutton.png')} width="60" height="60" /></button>
           <input className="u-number-input" type="number" min="0" value={steps} onChange={(event) => { setSteps(event.target.value); }} />
         </div>
       </form>
@@ -128,9 +125,9 @@ export default function UnderControls(props) {
 
     return (
       <div style={style}>
-        <button className="u-control-button" onClick={skip} title="skip"><img src={require('./css/buttons/skipbutton.png')} width="60" height="60" /></button>
-        <button className="u-control-button" onClick={useRadar} title="radar pulse"><img src={require('./css/buttons/radarbutton.png')} width="60" height="60" /></button>
-        <button className="u-control-button" onClick={attack} title="attack"><img src={require('./css/buttons/missilebutton.png')} width="60" height="60" /></button>
+        <button className="u-control-button" onClick={skip} title="skip"><img alt='skip' src={require('./css/buttons/skipbutton.png')} width="60" height="60" /></button>
+        <button className="u-control-button" onClick={useRadar} title="radar pulse"><img alt='radar' src={require('./css/buttons/radarbutton.png')} width="60" height="60" /></button>
+        <button className="u-control-button" onClick={attack} title="attack"><img alt='attack' src={require('./css/buttons/missilebutton.png')} width="60" height="60" /></button>
       </div>
     );
   }
