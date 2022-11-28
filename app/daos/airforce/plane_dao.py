@@ -6,7 +6,11 @@ from app.models.airforce.plane import Machine_gun, Plane, Projectile
 
 def add_plane(name, size, speed, health, cant_projectile):
     plane = Plane(
-        name=name, size=size, speed=speed, health=health, cant_projecile=cant_projectile
+        name=name,
+        size=size,
+        speed=speed,
+        health=health,
+        cant_projectile=cant_projectile,
     )
     db.session.add(plane)
     db.session.commit()

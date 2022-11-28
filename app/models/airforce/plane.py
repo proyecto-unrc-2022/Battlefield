@@ -13,7 +13,7 @@ class Plane(db.Model):
     size = db.Column(db.Integer, nullable=False)
     speed = db.Column(db.Integer, nullable=False)
     health = db.Column(db.Integer, nullable=False)
-    cant_projecile = db.Column(db.Integer, nullable=False)
+    cant_projectile = db.Column(db.Integer, nullable=False)
 
     projectile = relationship("Projectile")
 
@@ -47,7 +47,7 @@ class PlaneSchema(SQLAlchemySchema):
     size = auto_field()
     speed = auto_field()
     health = auto_field()
-    cant_projecile = auto_field()
+    cant_projectile = auto_field()
 
 
 class Machine_gun(db.Model):
