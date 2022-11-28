@@ -172,7 +172,6 @@ def step_impl(context, user_id):
 @then("the user '{user_id:d}' should be the winner in the NavyGame '{game_id:d}'")
 def step_impl(context, user_id, game_id):
     current_game = json.loads(context.pages[user_id].text)["data"]
-    print(current_game)
     assert context.pages[user_id].status_code == 200
     assert current_game["id"] == game_id
     assert current_game["winner"] == user_id

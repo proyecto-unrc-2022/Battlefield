@@ -1,0 +1,30 @@
+.stats-list {
+  list-style: none;
+  padding: 0;
+}
+
+.stats-card {
+  border: 1px solid black;
+}
+
+hr {
+  border-top: 1px solid black;
+}
+
+.enemy-ship-details {
+  background-color: #D57373;
+  box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.5); 
+  filter: drop-shadow(0px 0px 20px #000000);
+}
+
+.my-ship-details {
+  background-color: #2A96DE;
+  box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.5); 
+  filter: drop-shadow(0px 0px 20px #000000);
+}
+
+.missile-details {
+  background-color: #DFF203;
+  box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.5); 
+  filter: drop-shadow(0px 0px 20px #000000);
+}

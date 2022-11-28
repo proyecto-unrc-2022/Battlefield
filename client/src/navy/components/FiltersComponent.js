@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 const FiltersComponent = ({ filter }) => {
   const [option, setOption] = useState(null);

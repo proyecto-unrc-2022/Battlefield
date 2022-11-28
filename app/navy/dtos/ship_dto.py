@@ -10,6 +10,7 @@ class ShipDTO(SQLAlchemySchema):
         load_instance = True
 
     id = auto_field()
+    user_id = auto_field()
     name = auto_field()
     hp = auto_field()
     size = auto_field()

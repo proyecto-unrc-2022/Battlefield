@@ -7,8 +7,7 @@ import authService from "../../services/auth.service";
 import NavyGameService from "../services/NavyGameService";
 import { useNavigate } from "react-router-dom";
 
-const NavyGameCard = ({ game,button="join" }) => {
-  const [user1, setUser1] = useState({});
+const NavyGameCard = ({ game, button = "join" }) => {
   const [user2, setUser2] = useState({});
   const navigate = useNavigate();
   const currentUser = authService.getCurrentUser();
@@ -43,23 +42,29 @@ const NavyGameCard = ({ game,button="join" }) => {
   const cancelGame = () => {
     NavyGameService.deleteNavyGame(game.id).then((res) => {
       navigate(`/navy`);
-    });};
-
-  const canReJoin = () => {
-    const currentUser = authService.getCurrentUser();
-    return (
-      currentUser.sub === game.user_1.id || currentUser.sub === game.user_2.id
-    );
+    });
   };
 
-  useEffect(() => {
-    if (game.user_2) {
-      setUser2(game.user_2);
-    }
-  }, []);
+  const canSpectate = () => {
+    return (game.status === "STARTED" || game.status === "FINISHED") && !canJoin();
+  };
+
+  const spectateGame = () => {
+    navigate(`/navy/games/${game.id}/spectate_board`);
+  };
+
+  useEffect(
+    () => {
+      if (game.user_2) {
+        setUser2(game.user_2);
+      }
+    },
+    // eslint-disable-next-line
+    []
+  );
 
   return (
-    <div className="navy-card-container d-flex flex-column align-items-center border border-dark pt-2 pb-4">
+    <div className="navy-card-container d-flex flex-column align-items-center border border-dark pt-2 pb-2">
       <p className="navy-text m-0">{game.status.replace("_", " ")}</p>
       <div className="w-100 d-flex justify-content-center mb-2">
         <img src={wings} alt="Wings" />
@@ -80,8 +85,14 @@ const NavyGameCard = ({ game,button="join" }) => {
       {button === "cancel-game" ? (
         <div className="text-center mt-2">
           <NavyButton action={cancelGame} text={"Cancel Game"} size={"small"} />
-          </div>
-          ) : null}      
+        </div>
+      ) : null}
+      {canSpectate() ? (
+        <div className="text-center mt-2">
+          <NavyButton action={spectateGame} text={"Spectate"} size={"small"} />
+        </div>
+      ) : null}
+
       <div className="d-flex justify-content-end w-75">
         <p className="navy-text m-0 p-0">GAME CODE: {game.id}</p>
       </div>

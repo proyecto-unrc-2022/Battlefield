@@ -13,23 +13,34 @@ class ShipService:
 
         ship_data_validated = ShipRequestValidator().load(request)
         return ship_data_validated
-
-    def add(self, data):
-        ship_data = ship_type_dao.get_by(data["name"])
+    
+    def create(self,name, pos_x, pos_y, course, user_id, navy_game_id):
+        ship_data = ship_type_dao.get_by(name)
         new_ship = Ship(
-            data["name"],
+            name,
             ship_data["hp"],
             ship_data["size"],
             ship_data["speed"],
             ship_data["visibility"],
             ship_data["missile_type_id"][0],
+            pos_x,
+            pos_y,
+            course,
+            user_id,
+            navy_game_id,
+        )
+        return new_ship
+
+    def add(self, data):
+        ship = self.create(
+            data["name"],
             data["pos_x"],
             data["pos_y"],
             data["course"],
             data["user_id"],
             data["navy_game_id"],
         )
-        added_ship = ship_dao.add(new_ship)
+        added_ship = ship_dao.add(ship)
         return added_ship
 
     def update_all(self, ships):
@@ -107,7 +118,6 @@ class ShipService:
 
     def can_update(self, ship):
         from app.navy.services.navy_game_service import navy_game_service
-
         game_over = navy_game_service.is_over(ship.navy_game_id)
         return ship.is_alive and not game_over
 
@@ -123,7 +133,7 @@ class ShipService:
         from app.navy.services.missile_service import missile_service
 
         x, y = utils.get_next_position(ship.pos_x, ship.pos_y, ship.course)
-        created_missile = missile_service.create(
+        created_missile = missile_service.add(
             ship.navy_game_id, ship.id, ship.missile_type_id, ship.course, x, y
         )
         if utils.free_valid_poisition(x, y, ship.navy_game_id):

@@ -1,8 +1,9 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import NavyGameService from "../services/NavyGameService";
 import NavyGameCard from "../components/NavyGameCard";
 import NavyTitle from "../components/NavyTitle";
+import NavyLogo from "../components/NavyLogo";
 import authService from "../../services/auth.service";
 import AccessDenied from "../components/AccessDenied";
 
@@ -27,7 +28,7 @@ const NavyLobby = () => {
         if (!accessDenied) {
           if (resp.data.data.status === "WAITING_PICKS") {
             navigate(`/navy/games/${id}/ship_selection`);
-          } else if(resp.data.data.status === "STARTED") {
+          } else if (resp.data.data.status === "STARTED") {
             navigate(`/navy/games/${id}/board`);
           } else {
             interval = setInterval(() => {
@@ -42,14 +43,17 @@ const NavyLobby = () => {
         setGame(resp.data.data);
       })
       .catch((resp) => {
-        setGame({})
-        setAccessDenied(true)
+        setGame({});
+        setAccessDenied(true);
       });
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <div style={{ flexGrow: "1" }} className="container-fluid bg-navy">
+    <div style={{ flexGrow: "1" }} className="container-fluid bg-menu">
+      <div className="row justify-content-between p-2 align-items-center">
+        <NavyLogo size={"small"} />
+      </div>
       {!game ? (
         <div className="row mt-5">
           <div className="col-12 text-center">
@@ -74,7 +78,11 @@ const NavyLobby = () => {
           <div className="row">
             <div className="col-12 d-flex justify-content-center mt-4">
               {game ? (
-                <NavyGameCard button={"cancel-game"} game={game} key={game.id} />
+                <NavyGameCard
+                  button={"cancel-game"}
+                  game={game}
+                  key={game.id}
+                />
               ) : null}
             </div>
           </div>
