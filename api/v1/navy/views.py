@@ -1,5 +1,5 @@
 from flask import jsonify, request
-from flask_socketio import join_room
+from flask_socketio import join_room,leave_room
 from marshmallow import ValidationError
 
 from api import token_auth
@@ -27,6 +27,11 @@ from . import navy
 def on_join(data):
     room = data["room"]
     join_room(room)
+
+@io.on("leave")
+def on_leave(data):
+    room = data["room"]
+    leave_room(room)
 
 
 @io.on("message")
