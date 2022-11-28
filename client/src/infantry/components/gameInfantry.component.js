@@ -16,9 +16,6 @@ const NORTH_WEST = 5
 const NORTH = 4
 const NORTH_EAST = 3
 
-function timeout(delay) {
-  return new Promise(res => setTimeout(res, delay));
-}
 /**
  * Renderiza la partida del juego actual
  */
