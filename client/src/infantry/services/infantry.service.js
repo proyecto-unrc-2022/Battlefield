@@ -5,7 +5,7 @@ const API_URL = "http://127.0.0.1:5000/api/v1/infantry/";
 class InfantryService{
 
     async getFigure(user_id, game_id){
-    let data = {game_id: game_id, user_id, user_id}
+    let data = {game_id: game_id, user_id: user_id}
     return await axios.post(
         API_URL + "figure", 
             data,
@@ -58,8 +58,7 @@ class InfantryService{
                     "Content-Type": "application/json",
                 },
             }
-        ).then((response) =>{
-            console.log(response.data)  
+        ).then( (response) =>{
             return response.data
         })
     }
@@ -74,7 +73,6 @@ class InfantryService{
                 },
             }
         ).then((response) =>{
-            console.log(response.data)  
             return response.data
         })
     }
@@ -89,7 +87,6 @@ class InfantryService{
                 },
             }
         ).then((response) =>{
-            console.log(response.data)  
             return response.data
         })
     }
@@ -104,7 +101,6 @@ class InfantryService{
                 },
             }
         ).then((response) =>{
-            console.log(response.data)
             return response.data
         })
     }
@@ -119,7 +115,6 @@ class InfantryService{
                 },
             }
         ).then((response) =>{
-            console.log(response.data)
             return response.data
         })
     }
