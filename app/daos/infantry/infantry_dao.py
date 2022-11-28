@@ -412,19 +412,19 @@ def next_turn(game):
 
     global queue_turn
     round = False
-    figure_user1 = Figure_infantry.query.filter_by(id_user = game.id_user1).first()
-    figure_user2 = Figure_infantry.query.filter_by(id_user = game.id_user2).first()
+    figure_user1 = Figure_infantry.query.filter_by(id_user = game.id_user1, id_game = game.id).first()
+    figure_user2 = Figure_infantry.query.filter_by(id_user = game.id_user2, id_game = game.id).first()
     assis_server_restart(game)
-    current_figure = Figure_infantry.query.filter_by(id_user = game.turn).first()
+    current_figure = Figure_infantry.query.filter_by(id_user = game.turn, id_game = game.id).first()
     if queue_turn.empty() and (current_figure.avail_actions == 0 or current_figure.avail_actions == None):
         #Cuando ya no hay mas turnos en la ronda
         queue_turn.put(find_opponent(game.id, User.query.filter_by(id = game.turn).first().id))
         round = True
         db.session.query(Figure_infantry).filter(
-            Figure_infantry.id_user == figure_user1.id, Figure_infantry.id_game == game.id).update(
+            Figure_infantry.id_user == figure_user1.id_user, Figure_infantry.id_game == game.id).update(
                 {'avail_actions' : 1})
         db.session.query(Figure_infantry).filter(
-            Figure_infantry.id_user == figure_user2.id, Figure_infantry.id_game == game.id).update(
+            Figure_infantry.id_user == figure_user2.id_user, Figure_infantry.id_game == game.id).update(
                 {'avail_actions' : 1})
         db.session.query(Game_Infantry).filter(
             Game_Infantry.id == game.id).update(
