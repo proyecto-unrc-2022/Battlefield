@@ -112,7 +112,7 @@ export default class GameInfantry extends Component {
           //equalsFigureOpponentBody es true si this.state.figureOpponent === nextFigureOpponent, en caso contrario es false
           let equalsFigureOpponentBody = this.state.figureOpponent["body"].every((value, index) => {
             return (value[0] === nextFigurerOpponent["body"][index][0] 
-            && value[1] === nextFigurerOpponent["body"][index][1] )
+            && value[1] === nextFigurerOpponent["body"][index][1])
           })
           //Esta condicion es para cuando el otro jugador hace una accion y termina con la ronda,
           //sirve para poder actualizar los elementos del tablero al terminar la ronda
@@ -204,10 +204,10 @@ export default class GameInfantry extends Component {
   async updateLocalRound(){
     let nextProjectiles = await InfantryService.getProjectile(this.state.game_id)
     let nextFigure = await InfantryService.getFigure(this.state.figure["data"].id_user, this.state.game_id)
-    let nextFigurerOpponent = await InfantryService.getFigure(this.state.figureOpponent["data"].id_user, this.state.game_id)
+    let nextFigureOpponent = await InfantryService.getFigure(this.state.figureOpponent["data"].id_user, this.state.game_id)
     this.setState({
       figure: nextFigure,
-      figureOpponent: nextFigurerOpponent,
+      figureOpponent: nextFigureOpponent,
       projectiles: nextProjectiles,
       finished_round: false
     })
@@ -229,12 +229,12 @@ export default class GameInfantry extends Component {
       
     }
     //Actualizo las figuras y proyectiles en los estados
-    let figurePlayer1 = await InfantryService.getFigure(this.state.figure["data"].id_user, this.state.game_id)
-    let figurePlayer2 = await InfantryService.getFigure(this.state.figureOpponent["data"].id_user, this.state.game_id)
+    let nextFigure = await InfantryService.getFigure(this.state.figure["data"].id_user, this.state.game_id)
+    let nextFigureOpponent = await InfantryService.getFigure(this.state.figureOpponent["data"].id_user, this.state.game_id)
     let projectiles = await InfantryService.getProjectile(this.state.game_id)
     this.setState({
-      figure: figurePlayer1,
-      figureOpponent: figurePlayer2,
+      figure: nextFigure,
+      figureOpponent: nextFigureOpponent,
       finished_round: false,
       next_turn: false,
       projectiles: projectiles
@@ -269,9 +269,9 @@ export default class GameInfantry extends Component {
       else {
         message = (<div>
                       <h3>waiting opponent's turn</h3>
-              <div class="spinner-border" role="status">
-        <span class="sr-only"></span>
-      </div></div>
+                      <div class="spinner-border" role="status">
+                        <span class="sr-only"></span>
+                      </div></div>
                   )
       }
     return message
