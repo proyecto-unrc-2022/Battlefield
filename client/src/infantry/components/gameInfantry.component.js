@@ -217,7 +217,7 @@ export default class GameInfantry extends Component {
             <div class="row align-items-start">
               <div class="col"><FigureInfantryData figure={this.state.figure["data"]} /></div>
               <div> <GameBoard figure={this.state.figure["body"]} figureOpponent={this.state.figureOpponent["body"]} projectiles={this.state.projectiles}/></div>
-              <div class="col"><FigureInfantryData figure={this.state.figureOpponent["data"]} /></div>
+  
             </div>
             <p class="text-center">{this.getMessageTurn()}</p>
             <div class="row align-items-center">
