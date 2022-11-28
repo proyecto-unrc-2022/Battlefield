@@ -124,8 +124,8 @@ export default class GameInfantry extends Component {
                 next_turn: true
               })
           }
-        }, 3000);
-        
+        }
+      }, 3000); 
     }else{clearTimeout(this.timer);}
     if (this.state.finished_round && this.state.game.turn === AuthService.getCurrentUser().sub) {
       //Si es tu turno y finalizaste la ronda
