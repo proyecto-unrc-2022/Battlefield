@@ -75,16 +75,18 @@ class App extends Component {
               </Link>
             </li>
 
-            <li className="nav-item">
-              <Link to={"/underwater/menu"} className="nav-link">
-                Underwater
-              </Link>
-            </li>
-
             {currentUser && (
               <li className="nav-item">
                 <Link to={"/user"} className="nav-link">
                   User
+                </Link>
+              </li>
+            )}
+
+            {currentUser && (
+              <li className="nav-item">
+                <Link to={"/underwater/menu"} className="nav-link">
+                  Underwater
                 </Link>
               </li>
             )}
