@@ -20,8 +20,9 @@ class SessionDAO:
 
     def delete(self, sid):
         session = db.session.get(UnderGameSession, sid)
-        db.session.delete(session)
-        db.session.commit()
+        if session:
+            db.session.delete(session)
+            db.session.commit()
 
     def save(self, session):
         db.session.add(session)

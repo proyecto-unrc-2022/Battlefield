@@ -19,13 +19,11 @@ class BoardMask(db.Model):
         self.mask_dict = {}
         self.radar_cells = set()
         self.visible_cells = set()
-        self.board = game.board
         self.update()
 
     @reconstructor
     def retreive_mask(self):
         self.mask_dict = json.loads(self.board_mask)
-        self.board = self.submarine.game.board
         self.radar_cells = set()
         self.visible_cells = set()
         for si in self.mask_dict:
@@ -60,7 +58,9 @@ class BoardMask(db.Model):
 
         for pos in radar_scope:
             if not pos in vision_scope:
-                code = self.__encode(self.board.get_cell_content(pos), pos, radar=True)
+                code = self.__encode(
+                    self.submarine.game.board.get_cell_content(pos), pos, radar=True
+                )
                 self.__add(pos, code)
                 self.radar_cells.add(pos)
 
@@ -109,7 +109,7 @@ class BoardMask(db.Model):
         self.radar_cells.clear()
 
     def __set_cell_visible(self, cell):
-        code = self.__encode(self.board.get_cell_content(cell), cell)
+        code = self.__encode(self.submarine.game.board.get_cell_content(cell), cell)
         self.__add(cell, code)
         if not cell in self.visible_cells:
             self.visible_cells.add(cell)

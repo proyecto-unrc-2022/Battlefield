@@ -25,7 +25,7 @@ export default function UnderCell({visibleState, placeSubmarine = null, x, y, ty
 
   function image() {
     if(type.object == "H" || type.object == "T" || type.object == "*")
-      return (<img style={style} src={images[type.subName][type.team][type.object]} width="100%" />);
+      return (type.subName == undefined ? null : <img style={style} src={images[type.subName][type.team][type.object]} width="100%" />);
     else return null;
   }
 

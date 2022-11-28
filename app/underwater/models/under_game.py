@@ -118,7 +118,7 @@ class UnderGame(db.Model):
         new_cells = obj.get_tail_positions(direction=direction)
         found_objects = self.board.objects_in_positions(new_cells)
         for other in found_objects:
-            if self.is_ongoing():
+            if self.is_ongoing() and obj.in_game():
                 self.solve_conflict(obj, other)
 
         if obj.in_game():
@@ -129,6 +129,9 @@ class UnderGame(db.Model):
         self.update_visibilites()
 
     def advance_object(self, obj, n=None):
+        if self.is_finished() or n == 0:
+            return
+
         if isinstance(obj, Torpedo):
             n = obj.speed
 
@@ -170,6 +173,9 @@ class UnderGame(db.Model):
                 self.winner = self.submarines[0].player
 
     def attack(self, sub):
+        if self.is_finished():
+            return
+
         next_cell = sub.get_next_position()
 
         if self.board.valid(next_cell) and self.is_ongoing():
@@ -186,6 +192,9 @@ class UnderGame(db.Model):
             self.update_visibilites()
 
     def send_radar_pulse(self, sub):
+        if self.is_finished():
+            return
+
         sub.under_board_mask.get_radar_pulse()
         for s in self.submarines:
             if not sub.player is s.player:

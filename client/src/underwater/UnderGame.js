@@ -26,6 +26,7 @@ export default function UnderGame() {
   const [layout, setLayout] = useState(null);
   const [requestWasSent, setRequestWasSent] = useState(false);
   const [visibleState, setVisibleState] = useState(null);
+  const [winnerId, setWinnerId] = useState(null);
   const [winner, setWinner] = useState(null);
   const URL = "http://localhost:5000/api/v1/underwater/game/" + sessionId;
 
@@ -42,13 +43,15 @@ export default function UnderGame() {
         updateVisibleState();
       else if(data.winner_id !== undefined) {
         console.log("Game ended");
-        setWinner(data.winner_id == visibleState.host_id ? visibleState.host : visibleState.visitor);
+        setWinnerId(data.winner_id);
       }
     });
 
     updateVisibleState();
     return(_ => sse.close())
   }, [])
+
+  useEffect(_ => {if(visibleState != null && winnerId != null) setWinner(winnerId == visibleState.host_id ? visibleState.host : visibleState.visitor)}, [visibleState, winnerId]);
 
   useEffect(_ => {if(winner != null) endGame();}, [winner]);
 
@@ -98,6 +101,7 @@ export default function UnderGame() {
   }
 
   function updateVisibleState() {
+    if(winner != null) return;
     axios.get(
       URL,
       {headers: authHeader()}

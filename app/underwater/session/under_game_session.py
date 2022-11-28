@@ -22,7 +22,7 @@ class UnderGameSession(db.Model):
     visitor = relationship("User", foreign_keys=visitor_id)
 
     commands = relationship(
-        "Command", backref="under_game_session", cascade="all, delete"
+        "Command", back_populates="under_game_session", cascade="all, delete"
     )
 
     def __init__(self, game, host, visitor=None):
