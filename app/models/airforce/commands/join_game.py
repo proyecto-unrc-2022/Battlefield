@@ -11,6 +11,8 @@ class JoinGame:
             self.air_force_game.player_a = self.player
             self.air_force_game.turn = self.player
         elif self.air_force_game.player_b == "":
+            if self.air_force_game.player_a == self.player:
+                raise Exception("Players must be differents")
             self.air_force_game.player_b = self.player
         else:
             raise Exception("The game is full!")

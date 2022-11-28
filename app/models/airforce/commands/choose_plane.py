@@ -19,7 +19,7 @@ class ChoosePlane:
         self.plane = plane
         self.air_force_game = air_force_game
 
-    def execute(self):
+    def restrictions(self):
         if not position_inside_player_field(
             self.battlefield.max_x,
             self.x,
@@ -31,6 +31,38 @@ class ChoosePlane:
         if player_have_plane(self.battlefield, self.player):
             raise Exception("This player already have a plane")
 
-        return self.battlefield.add_new_flying_object(
-            int(self.player), self.plane, int(self.x), int(self.y), int(self.course)
-        )
+    def execute(self):
+        self.restrictions()
+        for i in range(0, self.plane.size):
+            if self.course == 2:
+                self.battlefield.add_new_flying_object(
+                    int(self.player),
+                    self.plane,
+                    int(self.x) - i,
+                    int(self.y),
+                    int(self.course),
+                )
+            elif self.course == 4:
+                self.battlefield.add_new_flying_object(
+                    int(self.player),
+                    self.plane,
+                    int(self.x) + i,
+                    int(self.y),
+                    int(self.course),
+                )
+            elif self.course == 1:
+                self.battlefield.add_new_flying_object(
+                    int(self.player),
+                    self.plane,
+                    int(self.x),
+                    int(self.y) - i,
+                    int(self.course),
+                )
+            else:
+                self.battlefield.add_new_flying_object(
+                    int(self.player),
+                    self.plane,
+                    int(self.x),
+                    int(self.y) + i,
+                    int(self.course),
+                )
