@@ -27,7 +27,7 @@
 
 .u-background-image {
   flex-grow: 1;
-  background-image: url('sub-background.jpg');
+  background-image: url('./images/sub-background.jpg');
   background-size: 100% 100%;
 }
 
