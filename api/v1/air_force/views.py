@@ -10,18 +10,16 @@ from app.daos.airforce.plane_dao import (
     add_projectile,
     get_all_planes,
 )
-from app.models.airforce.air_force_game import (
-    AirForceGame,
-    CheckCourse,
-    ChoosePlane,
-    GameReady,
-    GetBattlefieldStatus,
-    GetPlayers,
-    JoinGame,
-    LaunchProjectile,
-    MovePlane,
-    PlayersHavePlane,
-)
+from app.models.airforce.air_force_game import AirForceGame
+from app.models.airforce.commands.check_course import CheckCourse
+from app.models.airforce.commands.choose_plane import ChoosePlane
+from app.models.airforce.commands.game_ready import GameReady
+from app.models.airforce.commands.get_battlefield_status import GetBattlefieldStatus
+from app.models.airforce.commands.get_players import GetPlayers
+from app.models.airforce.commands.join_game import JoinGame
+from app.models.airforce.commands.launch_projectile import LaunchProjectile
+from app.models.airforce.commands.move_plane import MovePlane
+from app.models.airforce.commands.players_have_plane import PlayersHavePlane
 from app.models.airforce.plane import Plane, PlaneSchema, ProjectileSchema
 
 from . import air_force
