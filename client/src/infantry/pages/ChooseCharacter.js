@@ -4,9 +4,13 @@ import authService from "../../services/auth.service";
 import gameService from "../services/game.service";
 import "../Styles.css"
 
+
+{/*
+    //Pagina que te permite seleccionar un personaje para una partida
+*/}
 export default function ChooseCharacter(){
 
-    const [type, setType] = useState(null)
+    const [type, setType] = useState(null) 
     const [posX, setPosX] = useState(null)
     const [posY, setPosY] = useState(null)
     const [game, setGame] = useState([])
@@ -29,6 +33,7 @@ export default function ChooseCharacter(){
         setType(e)
     }
 
+    //Trae de la api los datos del juego
     const getGame = (id_game) =>{
 
         gameService.ready(id_game).then(resp =>{
@@ -39,6 +44,7 @@ export default function ChooseCharacter(){
 
     }
 
+    // validaciones a la hora de elegir una posicion para el personaje
     const validation = () => {
 
         if(posX == null || posY == null || posX == "" || posY == ""){
@@ -76,6 +82,7 @@ export default function ChooseCharacter(){
         
     }
 
+    //Crea una figura y la guarda en la base de datos
     useEffect(() => {
 
         getGame(id_game)
@@ -102,6 +109,7 @@ export default function ChooseCharacter(){
         setPosY(e.target.value)
     }
 
+    //renderizacion de la pagina
     return(
 
         <div className="container-fluid d-flex justify-content-center">

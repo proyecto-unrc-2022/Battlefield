@@ -14,6 +14,7 @@ export default function HomePage(){
         navigate("join_game");
     }
 
+    //Renderizaciones de la pagina
     return(
 
         

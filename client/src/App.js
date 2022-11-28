@@ -15,7 +15,6 @@ import HomePage from "./infantry/pages/HomePage";
 import CreateGame from "./infantry/pages/CreateGame"
 import JoinGame from "./infantry/pages/JoinGame"
 import GameInfantry from "./infantry/components/gameInfantry.component";
-import InitGameInfantry from "./infantry/pages/InfantryGame";
 import ChooseCharacter from "./infantry/pages/ChooseCharacter";
 import WaitPlayer from "./infantry/pages/WaitPlayer";
 
@@ -114,7 +113,7 @@ class App extends Component {
             <Route path="/home_Infantry/join_game" element={<JoinGame/>} />
             <Route path="/home_Infantry/choose_character" element={<ChooseCharacter/>} />
             <Route path="/home_Infantry/wait_player" element={<WaitPlayer/>} />
-            <Route path="/infantry/game" element={<InitGameInfantry/>} />
+            <Route path="/infantry/game" element={<GameInfantry/>} />
             <Route path="/login" element={<Login />} />
             {/* <Route path="/profile" element={<Profile />} /> */}
             <Route path="/board" element={<Board />} />
