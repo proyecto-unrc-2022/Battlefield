@@ -26,24 +26,27 @@ export default function CreateGame(){
 
     const host = authService.getCurrentUser()
 
+    //Crea un nuevo juego en la base de datos
     const newGame = () =>{
         gameService.createGame(host.sub).then(response =>{
             setcreatGame(response.data)
         })
     }
 
+    //Consulta a la api el estado del juego
     function wait(id){
         gameService.ready(id).then(response =>{
             setGameWait(response.data)
         })
     }
 
+
     useEffect(() => {
         newGame()
         
     },[])
 
-
+    //Cada 3 seg consulta a la base de datos si un jugador se unió
     useEffect(() => {
         
         const timer = setTimeout(() => {
@@ -57,6 +60,7 @@ export default function CreateGame(){
         return () => clearTimeout(timer);
     }, [creatGame, gameWait]);
 
+    //renderizacion de la pagina
     return(
         <div className="container-fluid bg-HomePage ">
 

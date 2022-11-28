@@ -23,6 +23,7 @@ export default function JoinGame(){
         navigate("/home_Infantry/choose_character");
     }
 
+    //Realiza una post para que un jugador se una al game
     const join= (idGame, idUser) =>{
         gameService.joinGame(idGame, idUser)
     }    
@@ -41,6 +42,7 @@ export default function JoinGame(){
 
     }
 
+    //Muestra los games disponibles, con su usuario creador
     const get_Games = () => {
         
          return(<div className="row">
@@ -69,6 +71,7 @@ export default function JoinGame(){
 
     }
 
+    //Trae de la api todos los games
     const get = () => {
 
         gameService.getGames().then((response) =>{
@@ -76,6 +79,7 @@ export default function JoinGame(){
         })
     }
 
+    //Trae de la api todos los users
     useEffect(() =>{
 
         gameService.getUsers().then((response) =>{
@@ -89,6 +93,7 @@ export default function JoinGame(){
         }
     }, [users]);
 
+    //Renderizacion de la pagina 
     return(
 
         <div className="container-fluid bg-HomePage">
