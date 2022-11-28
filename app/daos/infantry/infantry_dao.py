@@ -381,10 +381,10 @@ def ready(game_id, user_id):
     if queue_turn == None: queue_turn = queue.Queue()
     if game.turn == None :
         turn_list = list(queue_turn.queue)
-        if (user_id in turn_list) and len(turn_list) > 0:
+        if len(turn_list) > 0 and (user_id in turn_list):
             turn_list.remove(user_id)
             queue_turn.queue = queue.deque(turn_list)
-        if len(turn_list) == 0: 
+        if len(turn_list) == 0: #cuando los dos pusieron que estan listo
             queue_turn = queue.Queue()
             game.turn = game.id_user1
             next_turn(game)
@@ -661,7 +661,7 @@ def reduce_action(figure_id):
         figure_id (int): figura a la que se le reducira la accion
     """
     db.session.query(Figure_infantry).filter(
-            Figure_infantry.id_user == figure_id).update(
+            Figure_infantry.id == figure_id).update(
                 {'avail_actions' : 0})
     db.session.commit()
     
