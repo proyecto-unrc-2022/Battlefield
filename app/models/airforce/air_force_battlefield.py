@@ -14,10 +14,14 @@ class Battlefield:
         self.max_y = 10
 
     def add_new_flying_object(self, player, obj, x, y, course):
-        if not self.position_inside_map(x, y):
+        if get_player_plane(self, player) != [] and obj.__class__.__name__ == "Plane":
+            fly_obj = FlyingObject(player, obj, x, y, course)
+            self.flying_objects.append(fly_obj)
+        elif not self.position_inside_map(x, y):
             raise Exception("Invalid position")
-        fly_obj = FlyingObject(player, obj, x, y, course)
-        self.flying_objects.append(fly_obj)
+        else:
+            fly_obj = FlyingObject(player, obj, x, y, course)
+            self.flying_objects.append(fly_obj)
         return fly_obj
 
     def position_inside_map(self, x, y):
@@ -35,7 +39,12 @@ class Battlefield:
         self.check_colision(fly_obj, course)
         try:
             self.flying_objects.index(fly_obj)
-            fly_obj.update_position(course, self.max_x, self.max_y)
+            if fly_obj.flying_obj.__class__.__name__ == "Projectile":
+                if fly_obj.update_position(course, self.max_x, self.max_y):
+                    self.flying_objects.remove(fly_obj)
+            elif fly_obj.flying_obj.__class__.__name__ == "Plane":
+                for p in self.get_plane_parts(fly_obj):
+                    p.update_position(course, self.max_x, self.max_y)
         except:
             None
 
@@ -116,12 +125,27 @@ class Battlefield:
             crashing.flying_obj.health <= 0
         ) else True
 
+    def damage_plane(self, plane, damage):
+        plane.flying_obj.health -= damage
+
+    def destroy_plane(self, plane):
+        if plane.flying_obj.health <= 0:
+            plane_parts = self.get_plane_parts(plane)
+            for p in plane_parts:
+                self.flying_objects.remove(p)
+
+    def get_plane_parts(self, plane):
+        return list(
+            filter(
+                lambda p: p.flying_obj == plane.flying_obj and p.player == plane.player,
+                self.flying_objects,
+            )
+        )
+
     def projectile_collision(self, projectile, fly_obj):
         if fly_obj.flying_obj.__class__.__name__ == "Plane":
-            fly_obj.flying_obj.health -= projectile.flying_obj.damage
-            self.flying_objects.remove(fly_obj) if (
-                fly_obj.flying_obj.health <= 0
-            ) else True
+            self.damage_plane(fly_obj, projectile.flying_obj.damage)
+            self.destroy_plane(fly_obj)
         else:
             self.flying_objects.remove(fly_obj)
         self.flying_objects.remove(projectile)

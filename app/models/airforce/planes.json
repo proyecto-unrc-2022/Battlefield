@@ -13,7 +13,24 @@
             "speed": 3,
             "health": 20,
             "cant_projectile": 4
+        },
+        {
+            "name": "Douglas A-20 Havoc",
+            "size": 3,
+            "speed": 2,
+            "health": 40,
+            "cant_projectile": 4
+        },
+        {
+            "name": "Boeing B-17 Flying Fortress",
+            "size": 4,
+            "speed": 1,
+            "health": 80,
+            "cant_projectile": 4
         }
+
+        
+        
     ],
     "projectile": [
         {
@@ -25,6 +42,16 @@
             "speed": 5,
             "damage":10,
             "plane": "Hawker Tempest"
+        },
+        {
+            "speed": 2,
+            "damage":25,
+            "plane": "Boeing B-17 Flying Fortress"
+        },
+        {
+            "speed": 3,
+            "damage":15,
+            "plane": "Douglas A-20 Havoc"
         }    
     ],
     "users": [
