@@ -1,5 +1,5 @@
 from flask import jsonify, request
-from flask_socketio import join_room,leave_room
+from flask_socketio import join_room, leave_room
 from marshmallow import ValidationError
 
 from api import token_auth
@@ -15,32 +15,12 @@ from app.navy.services.ship_service import ship_service
 from app.navy.services.spectate_service import spectate_service
 from app.navy.utils.navy_response import NavyResponse
 from app.navy.utils.navy_utils import utils
-
-from app import io
-from flask_socketio import join_room, leave_room
 from app.navy.validators.action_request_validator import ActionRequestValidator
 from app.navy.validators.navy_game_patch_validator import NavyGamePatchValidator
 from app.navy.validators.ship_request_validator import ShipRequestValidator
 from app.navy.validators.spectate_validator import SpectateValidator
 
 from . import navy
-
-
-@io.on("join")
-def on_join(data):
-    room = data["room"]
-    join_room(room)
-
-@io.on("leave")
-def on_leave(data):
-    room = data["room"]
-    leave_room(room)
-
-
-@io.on("message")
-def handle_message(data):
-    response = {"body": data["body"], "user": data["user"]}
-    io.send(response, broadcast=True, to=data["room"])
 
 
 @navy.post("/actions")
@@ -186,3 +166,21 @@ def ship_types():
 def missile_types():
     missiles = missile_type_dao.MISSILE_TYPES
     return NavyResponse(status=200, data=missiles, message="Ok").to_json(), 200
+
+
+@io.on("join")
+def on_join(data):
+    room = data["room"]
+    join_room(room)
+
+
+@io.on("leave")
+def on_leave(data):
+    room = data["room"]
+    leave_room(room)
+
+
+@io.on("message")
+def handle_message(data):
+    response = {"body": data["body"], "user": data["user"]}
+    io.send(response, to=data["room"])

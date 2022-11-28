@@ -1,19 +1,21 @@
-from flask_restx import Namespace, Resource, fields
 from flask import url_for
-navy_actions_namespace = Namespace("Actions", path="/", description="Routes")
+from flask_restx import Namespace, Resource, fields
+
+navy_actions_namespace = Namespace("Action", path="/api/v1/navy", description="Routes")
 
 
 navy_action_post_model = navy_actions_namespace.model(
     "NavyActionPost",
     {
-            "missile_type_id": fields.Integer(required=True),
-            "navy_game_id": fields.Integer(required=True),
-            "course": fields.String(required=True),
-            "ship_id": fields.Integer(required=True),
-            "move": fields.Integer(required=True),
-            "attack": fields.Integer(required=True),
-            "round": fields.Integer(required=True),
-        })
+        "missile_type_id": fields.Integer(required=True),
+        "navy_game_id": fields.Integer(required=True),
+        "course": fields.String(required=True),
+        "ship_id": fields.Integer(required=True),
+        "move": fields.Integer(required=True),
+        "attack": fields.Integer(required=True),
+        "round": fields.Integer(required=True),
+    },
+)
 
 
 @navy_actions_namespace.route("/actions")
@@ -26,7 +28,6 @@ class NavyAction(Resource):
             404: "Not Found",
             500: "Internal Server Error",
         },
-  
     )
     @navy_actions_namespace.expect(navy_action_post_model)
     def post(self):

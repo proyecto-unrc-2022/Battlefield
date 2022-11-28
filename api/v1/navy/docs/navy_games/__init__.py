@@ -1,4 +1,5 @@
 from flask import Blueprint
+
 navy_game_sw = Blueprint("navy_game_sw", __name__)
 
 

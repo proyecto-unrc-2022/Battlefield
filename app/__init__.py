@@ -5,13 +5,14 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
-
+from flask_restx import Api
 from config import DevelopmentConfig, config
 
 db = SQLAlchemy(session_options={"expire_on_commit": False})
 migrate = Migrate()
 io = SocketIO()
 secret_token = None
+api = Api()
 
 
 def create_app(environment="development"):
@@ -39,6 +40,7 @@ def create_app(environment="development"):
     from api.v1.navy import navy as navy_blueprint
     from api.v1.underwater import underwater as underwater_blueprint
     from api.v1.navy.docs import navy_doc as navy_doc_blueprint
+
     from app.models.user import User
 
     app.register_blueprint(navy_blueprint, url_prefix="/api/v1/navy")
@@ -47,7 +49,8 @@ def create_app(environment="development"):
     app.register_blueprint(air_force_blueprint, url_prefix="/api/v1/air_force")
     app.register_blueprint(underwater_blueprint, url_prefix="/api/v1/underwater")
     app.register_blueprint(infantry_blueprint, url_prefix="/api/v1/infantry")
-    app.register_blueprint(navy_doc_blueprint, url_prefix="/api/v1/navy")
+    api.init_app(app=app)
+
     @app.get("/")
     def index():
         return "index"

@@ -17,6 +17,8 @@ import Chat from "../components/Chat";
 import NavyTitle from "../components/NavyTitle";
 import io from "socket.io-client";
 
+
+const socket = io("http://localhost:5000");
 const NavyBoard = () => {
   const [game, setGame] = useState(null);
   const [accessDenied, setAccessDenied] = useState(true);
@@ -38,105 +40,19 @@ const NavyBoard = () => {
   const [winner, setWinner] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [joinedRoom, setJoinedRoom] = useState(false);
-  const [socket,setSocket] = useState(null);
 
-  useLayoutEffect(() => {
-    setSocket(io("http://localhost:5000"));
-  }, []);
 
 
   useEffect(() => {
     if (!game) {
       getGame();
-    }
-
-   if (!joinedRoom) {
-    const user_id = authService.getCurrentUser().sub;
-    socket?.emit("join", { room: user_id });
-    setJoinedRoom(true);
-  }
-  const receivedMessage = (game) => {
-    if (true) {
-      setGame(game);
-      if (game.winner) {
-        setOpenModal(true);
-      }
-      setWinner(game.winner);
-
-      setMissiles(game.sight_range.missiles);
-
-      ShipService.getShipTypes().then((res) => {
-        const shipType = res.data.data[game.ship.name];
-        const missile_type_id = shipType.missile_type_id[0];
-        setAction({
-          navy_game_id: game.id,
-          ship_id: game.ship.id,
-          missile_type_id: shipType.missile_type_id[0],
-          round: game.round,
-          course: game.ship.course,
-          move: 0,
-          attack: 0,
-        });
-
-        const ship = {
-          name: game.ship.name,
-          hp: game.ship.hp,
-          course: game.ship.course,
-          x: game.ship.pos_x,
-          y: game.ship.pos_y,
-          size: game.ship.size,
-          speed: game.ship.speed,
-        };
-        getShip(missile_type_id, ship);
-
-        if (game.status !== "FINISHED") {
-          if (game.sight_range.ships.length !== 0) {
-            const shipType = res.data.data[game.sight_range.ships[0].name];
-            const missile_type_id = shipType.missile_type_id[0];
-            const enemyShip = {
-              name: game.sight_range.ships[0].name,
-              hp: game.sight_range.ships[0].hp,
-              course: game.sight_range.ships[0].course,
-              x: game.sight_range.ships[0].pos_x,
-              y: game.sight_range.ships[0].pos_y,
-              size: game.sight_range.ships[0].size,
-              speed: game.sight_range.ships[0].speed,
-            };
-            getEnemyShip(missile_type_id, enemyShip);
-          }
-        }
-      });
-      setMyShip({
-        name: game.ship.name,
-        hp: game.ship.hp,
-        course: game.ship.course,
-        x: game.ship.pos_x,
-        y: game.ship.pos_y,
-        size: game.ship.size,
-        speed: game.ship.speed,
-      });
-
-      setEnemyShip(null);
-
-      if (game.status !== "FINISHED") {
-        if (game.sight_range.ships.length !== 0) {
-          setEnemyShip({
-            name: game.sight_range.ships[0].name,
-            hp: game.sight_range.ships[0].hp,
-            course: game.sight_range.ships[0].course,
-            x: game.sight_range.ships[0].pos_x,
-            y: game.sight_range.ships[0].pos_y,
-            size: game.sight_range.ships[0].size,
-            speed: game.sight_range.ships[0].speed,
-          });
-        }
+      if(socket.disconnect){
+      socket.connect();
       }
     }
-  };
-  socket?.on("message", receivedMessage);
 
     return () => {
-      socket?.disconnect();
+      socket.close();
     }; 
   }, [socket]);
 
@@ -398,14 +314,19 @@ const NavyBoard = () => {
                 <div className="col-8">
                   <EntityDetails title={"My Ship"} data={myShip} />
                 </div>
+                {
+                  socket ? (
+                    <div className="col-12 d-flex flex column mt-3">
+                    <Chat
+                      user={authService.getCurrentUser().username}
+                      game={game}
+                      socket={socket}
+                    />
+                  </div> ) : null
 
-                <div className="col-12 d-flex flex column mt-3">
-                  <Chat
-                    user={authService.getCurrentUser().username}
-                    game={game}
-                    socket={socket}
-                  />
-                </div>
+
+                }
+               
               </div>
             </div>
             <div className="col-6">

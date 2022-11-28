@@ -1,33 +1,50 @@
+from flask import url_for
 from flask_restx import Namespace, Resource, fields
-from flask import url_for 
-missile_namespace = Namespace("Missile", path="/",description="Routes")
+
+missile_namespace = Namespace("Missile", path="/api/v1/navy", description="Routes")
 
 missile_types_response_model = missile_namespace.model(
     "MissileTypesResponse",
     {
-    "1": fields.Nested(missile_namespace.model("MissileTypeModel",{
-        "damage": fields.Integer(description="The missile damage"),
-        "speed": fields.Integer(description="The missile speed"),
-    })),
-    "2": fields.Nested(missile_namespace.model("MissileTypeModel",{
-        "damage": fields.Integer(description="The missile damage"),
-        "speed": fields.Integer(description="The missile speed"),
-    })),
-    
-    "3": fields.Nested(missile_namespace.model("MissileTypeModel",{
-        "damage": fields.Integer(description="The missile damage"),
-        "speed": fields.Integer(description="The missile speed"),
-    })),
-
-    "4": fields.Nested(missile_namespace.model("MissileTypeModel",{
-        "damage": fields.Integer(description="The missile damage"),
-        "speed": fields.Integer(description="The missile speed"),
-    })),
-
-
-    }
-
+        "1": fields.Nested(
+            missile_namespace.model(
+                "MissileTypeModel",
+                {
+                    "damage": fields.Integer(description="The missile damage"),
+                    "speed": fields.Integer(description="The missile speed"),
+                },
+            )
+        ),
+        "2": fields.Nested(
+            missile_namespace.model(
+                "MissileTypeModel",
+                {
+                    "damage": fields.Integer(description="The missile damage"),
+                    "speed": fields.Integer(description="The missile speed"),
+                },
+            )
+        ),
+        "3": fields.Nested(
+            missile_namespace.model(
+                "MissileTypeModel",
+                {
+                    "damage": fields.Integer(description="The missile damage"),
+                    "speed": fields.Integer(description="The missile speed"),
+                },
+            )
+        ),
+        "4": fields.Nested(
+            missile_namespace.model(
+                "MissileTypeModel",
+                {
+                    "damage": fields.Integer(description="The missile damage"),
+                    "speed": fields.Integer(description="The missile speed"),
+                },
+            )
+        ),
+    },
 )
+
 
 @missile_namespace.route("/missile_types", methods=["GET"])
 class MissileType(Resource):
@@ -41,4 +58,4 @@ class MissileType(Resource):
         """
         Get all missile types
         """
-        return url_for('api.v1.missile_types', _external=True)
+        return url_for("api.v1.missile_types", _external=True)

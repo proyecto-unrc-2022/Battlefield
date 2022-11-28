@@ -1,47 +1,73 @@
+from flask import url_for
 from flask_restx import Namespace, Resource, fields
-from flask import url_for 
-ship_namespace = Namespace("Ships", path="/",description="Routes")
 
+ship_namespace = Namespace("Ship", path="/api/v1/navy", description="Routes")
 
 
 ship_types_response_model = ship_namespace.model(
     "ShipTypesResponse",
-
     {
-    "Battleship": fields.Nested(ship_namespace.model("ShipTypeModel",{
-        "hp": fields.Integer(description="The ship hp"),
-        "missile_type_id": fields.List(fields.Integer,description="The ship missile_type_id"),
-        "ship_id": fields.Integer(description="The ship id"),
-        "size": fields.Integer(description="The ship size"),
-        "speed": fields.Integer(description="The ship speed"),
-        "visibility": fields.Integer(description="The ship visibility"),
-     })),
-    "Corvette": fields.Nested(ship_namespace.model("ShipTypeModel",{
-        "hp": fields.Integer(description="The ship hp"),
-        "missile_type_id": fields.List(fields.Integer,description="The ship missile_type_id"),
-        "ship_id": fields.Integer(description="The ship id"),
-        "size": fields.Integer(description="The ship size"),
-        "speed": fields.Integer(description="The ship speed"),
-        "visibility": fields.Integer(description="The ship visibility"),
-    })),
-    "Cruiser": fields.Nested(ship_namespace.model("ShipTypeModel",{
-        "hp": fields.Integer(description="The ship hp"),
-        "missile_type_id": fields.List(fields.Integer,description="The ship missile_type_id"),
-        "ship_id": fields.Integer(description="The ship id"),
-        "size": fields.Integer(description="The ship size"),
-        "speed": fields.Integer(description="The ship speed"),
-        "visibility": fields.Integer(description="The ship visibility"),
-    })),
-    "Destroyer": fields.Nested(ship_namespace.model("ShipTypeModel",{
-        "hp": fields.Integer(description="The ship hp"),
-        "missile_type_id": fields.List(fields.Integer,description="The ship missile_type_id"),
-        "ship_id": fields.Integer(description="The ship id"),
-        "size": fields.Integer(description="The ship size"),
-        "speed": fields.Integer(description="The ship speed"),
-        "visibility": fields.Integer(description="The ship visibility"),
-        })),
-    }
-   
+        "Battleship": fields.Nested(
+            ship_namespace.model(
+                "ShipTypeModel",
+                {
+                    "hp": fields.Integer(description="The ship hp"),
+                    "missile_type_id": fields.List(
+                        fields.Integer, description="The ship missile_type_id"
+                    ),
+                    "ship_id": fields.Integer(description="The ship id"),
+                    "size": fields.Integer(description="The ship size"),
+                    "speed": fields.Integer(description="The ship speed"),
+                    "visibility": fields.Integer(description="The ship visibility"),
+                },
+            )
+        ),
+        "Corvette": fields.Nested(
+            ship_namespace.model(
+                "ShipTypeModel",
+                {
+                    "hp": fields.Integer(description="The ship hp"),
+                    "missile_type_id": fields.List(
+                        fields.Integer, description="The ship missile_type_id"
+                    ),
+                    "ship_id": fields.Integer(description="The ship id"),
+                    "size": fields.Integer(description="The ship size"),
+                    "speed": fields.Integer(description="The ship speed"),
+                    "visibility": fields.Integer(description="The ship visibility"),
+                },
+            )
+        ),
+        "Cruiser": fields.Nested(
+            ship_namespace.model(
+                "ShipTypeModel",
+                {
+                    "hp": fields.Integer(description="The ship hp"),
+                    "missile_type_id": fields.List(
+                        fields.Integer, description="The ship missile_type_id"
+                    ),
+                    "ship_id": fields.Integer(description="The ship id"),
+                    "size": fields.Integer(description="The ship size"),
+                    "speed": fields.Integer(description="The ship speed"),
+                    "visibility": fields.Integer(description="The ship visibility"),
+                },
+            )
+        ),
+        "Destroyer": fields.Nested(
+            ship_namespace.model(
+                "ShipTypeModel",
+                {
+                    "hp": fields.Integer(description="The ship hp"),
+                    "missile_type_id": fields.List(
+                        fields.Integer, description="The ship missile_type_id"
+                    ),
+                    "ship_id": fields.Integer(description="The ship id"),
+                    "size": fields.Integer(description="The ship size"),
+                    "speed": fields.Integer(description="The ship speed"),
+                    "visibility": fields.Integer(description="The ship visibility"),
+                },
+            )
+        ),
+    },
 )
 
 """
@@ -80,8 +106,8 @@ class Ship(Resource):
         """
         Create a ship
         """
-        return url_for('api.v1.new_ship', _external=True)
-    
+        return url_for("api.v1.new_ship", _external=True)
+
 
 @ship_namespace.route("/ship_types", methods=["GET"])
 class ShipTypes(Resource):
@@ -95,4 +121,4 @@ class ShipTypes(Resource):
         """
         Get all ship types
         """
-        return url_for('api.v1.ship_types', _external=True)
+        return url_for("api.v1.ship_types", _external=True)
