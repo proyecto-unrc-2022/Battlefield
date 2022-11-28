@@ -6,7 +6,7 @@ from app import db
 from app.daos.airforce.plane_dao import add_plane
 from app.daos.user_dao import add_user
 from app.models.airforce.air_force_game import AirForceGame
-from app.models.airforce.utils import init_db_planes
+from app.models.airforce.airforce_db_utils import init_db_planes
 from app.models.user import User
 
 url_for_plane_position = "air_force.choice_plane_and_position"
@@ -182,7 +182,7 @@ def step_impl(context):
 @given("player_b in the game and plane in db")
 def step_impl(context):
 
-    context.x = 13
+    context.x = 19
     context.y = 6
     context.course = 4
     add_user(username="jimmy", email="jimmy@email", password="1234")
