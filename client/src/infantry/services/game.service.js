@@ -55,6 +55,14 @@ class GameService {
 
     }
 
+    removeGame(id_game){
+        return axios.post(API_URL + "/game/remove", 
+        {
+            "game_id" : id_game,
+        },
+        {headers : authHeader()})
+    }
+
 
 }
 
