@@ -143,14 +143,16 @@ def move(game_id, user_id, direction, velocity):
     collision = False
     figures = figures_id_game(game_id)
     figure = db.session.query(Figure_infantry).filter_by(id_user = user_id, id_game = game_id).first()
-    figure_opponent = Figure_infantry.query.filter_by(id_user = find_opponent(game_id, figure.id), id_game = game_id).first()
+    figure_opponent = Figure_infantry.query.filter_by(id_user = find_opponent(game_id, figure.id_user), id_game = game_id).first()
     aux_figure = copy.copy(figure)
     exceeded_velocity_limit = (velocity > figure.velocidad)
     for i in range(velocity):
         coor = direc(direction, aux_figure.pos_x, aux_figure.pos_y)
         aux_figure.pos_x = aux_figure.pos_x + (aux_figure.pos_x - coor[0])
         aux_figure.pos_y = aux_figure.pos_y + (aux_figure.pos_y - coor[1])
-        collision = False if aux_figure == None else intersection([aux_figure.pos_x, aux_figure.pos_y], figures[(figure_opponent.id)-1][1]) or collision
+        if(figures[0][0].id_user == figure_opponent.id_user): index = 0
+        else: index = 1
+        collision = False if aux_figure == None else intersection([aux_figure.pos_x, aux_figure.pos_y], figures[index][1]) or collision
     if not(collision) and not(exceeded_velocity_limit): 
         db.session.query(Figure_infantry).filter(
             Figure_infantry.id_user == user_id, Figure_infantry.id_game == game_id).update(
@@ -185,11 +187,11 @@ def find_opponent(game_id, user_id):
 
 
 def intersection(coord1, coords2):
-    """Verifica la interseccion de un par ordenado con un grupo de par ordenados
+    """Verifica la interseccion de un par coordenado con un grupo de par coordenados
 
     Args:
-        coord1 (list): par de coordenada (x,y)
-        coords2 (list): grupo de par coordenado [(x,y)]
+        coord1 (list): par de coordenadas (x,y)
+        coords2 (list): grupo de par coordenadas [(x,y)]
 
     Returns:
         bool: Si hay interseccion retorna True
