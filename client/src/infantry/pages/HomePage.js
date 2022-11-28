@@ -2,6 +2,10 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../Styles.css"
 
+/*
+    Pagina de inicio del juego
+*/
+
 export default function HomePage(){
 
     const navigate = useNavigate();

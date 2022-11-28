@@ -330,15 +330,6 @@ export default class GameInfantry extends Component {
         <div>
           <div class="container-fluid bg-War">
             <div class="row align-items-start">
-<<<<<<< HEAD
-              <div class="col"><FigureInfantryData figure={this.state.figure["data"]} /></div>
-              <div> <GameBoard figure={this.state.figure["body"]} figureOpponent={this.state.figureOpponent["body"]} projectiles={this.state.projectiles} /></div>
-
-            </div>
-            <p class="text-center">{this.getMessageTurn()}</p>
-            <div class="row align-items-center">
-              <div class="col"></div>
-=======
               <div class="col-4 mx-3 mt-5"><FigureInfantryData figure={this.state.figure["data"]} /></div>
               <div> <GameBoard figure={this.state.figure["body"]} figureOpponent={this.state.figureOpponent["body"]} projectiles={this.state.projectiles}/></div>
   
@@ -346,7 +337,6 @@ export default class GameInfantry extends Component {
             <p class="text-center">{this.getMessageTurn()}</p>
             <div class="row">
           
->>>>>>> 3e9fdd8c0a0cabd5e2de435834e6303cac1d93a1
               <div class="container col">
                 {/* Formulario para que el usuario elija que accion desea realizar */}
                 <form onSubmit={ev => {

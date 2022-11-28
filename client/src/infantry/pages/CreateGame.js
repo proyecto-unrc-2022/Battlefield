@@ -5,6 +5,10 @@ import authService from "../../services/auth.service";
 import "../Styles.css"
 import Loading from "../components/Loading";
 
+/*
+    Pagina que crea un juego
+*/
+
 export default function CreateGame(){
 
     const [creatGame, setcreatGame] = useState([])
@@ -18,9 +22,7 @@ export default function CreateGame(){
 
     const back= () =>{
         navigate("/home_Infantry");
-        gameService.removeGame(creatGame.id).then(resp =>{
-            console.log(resp)
-        })
+        gameService.removeGame(creatGame.id)
 
     }
 

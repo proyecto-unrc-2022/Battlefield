@@ -5,6 +5,10 @@ import gameService from "../services/game.service";
 import authService from "../../services/auth.service";
 import "../Styles.css"
 
+/*
+    Pagina que permite unirse a un game
+ */
+
 
 export default function JoinGame(){
 
