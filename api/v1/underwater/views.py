@@ -152,6 +152,15 @@ def choose_submarine(session_id):
     if not player:
         return Response('{"error":"player not found"}', status=404)
 
+    middle = session.game.width / 2
+
+    if (player is session.host and data["y_position"] >= middle) or (
+        player is session.visitor and data["y_position"] < middle
+    ):
+        return Response(
+            '{"error": "you cannot place your submarine there"}', status=409
+        )
+
     try:
         sub = session.game.add_submarine(
             player,
