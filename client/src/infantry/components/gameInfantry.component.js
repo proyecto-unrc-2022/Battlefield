@@ -2,9 +2,10 @@ import React, { Component } from "react";
 import GameBoard from "./gameBoard.component";
 import FigureInfantryData from "./figureInfantryData.component";
 import InfantryService from "../services/infantry.service"
-
+import {Link, Navigate} from "react-router-dom";
 import AuthService from "../../services/auth.service";
-import GameOver from "./GameOver.component"
+import gameOver from "../images/gameOver.png"
+import gameService from "../services/game.service";
 
 
 const EAST = 2
@@ -16,6 +17,10 @@ const NORTH_WEST = 5
 const NORTH = 4
 const NORTH_EAST = 3
 
+
+function timeout(delay) {
+  return new Promise(res => setTimeout(res, delay));
+}
 /**
  * Renderiza la partida del juego actual
  */
@@ -23,7 +28,7 @@ export default class GameInfantry extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      game_id: localStorage.getItem('id_game'),
+      game_id: 1,
       game: null,
       figure: null,
       figureOpponent: null,
@@ -48,12 +53,12 @@ export default class GameInfantry extends Component {
       let figurePlayer1 = null
       let figurePlayer2 = null
       let projectiles = InfantryService.getProjectile(this.state.game_id)
-      projectiles.then( result => {
+      projectiles.then(result => {
         this.setState({
           projectiles: result
         })
       })
-      if(result["id_user1"] === AuthService.getCurrentUser().sub){
+      if (result["id_user1"] === AuthService.getCurrentUser().sub) {
         figurePlayer1 = InfantryService.getFigure(result["id_user1"], this.state.game_id)
         figurePlayer2 = InfantryService.getFigure(result["id_user2"], this.state.game_id)
       } else {
@@ -74,58 +79,58 @@ export default class GameInfantry extends Component {
   }
 
   componentDidUpdate() {
-    if(this.state.game !== null && this.state.figureOpponent !== null 
-      && this.state.figure !== null){
-        //Cada 3 segundo pregunta sobre el estado del otro jugador y del juego
-        //Esto es util para cuando no es tu turno
-        //Se utiliza un timer para no hacer un llamado masivo a la API
-        this.timer = setTimeout(async () => {
-          let nextGame = await InfantryService.getGame(this.state.game_id)
-          if(AuthService.getCurrentUser().sub === nextGame.turn){
-            //Entra solo cuando el oponente termina con su turno
-            this.setState({
-              game: nextGame,
-              next_turn: false
-            });
-          }
+    if (this.state.game !== null && this.state.figureOpponent !== null
+      && this.state.figure !== null) {
+      //Cada 3 segundo pregunta sobre el estado del otro jugador y del juego
+      //Esto es util para cuando no es tu turno
+      //Se utiliza un timer para no hacer un llamado masivo a la API
+      this.timer = setTimeout(async () => {
+        let nextGame = await InfantryService.getGame(this.state.game_id)
+        if (AuthService.getCurrentUser().sub === nextGame.turn) {
+          //Entra solo cuando el oponente termina con su turno
           this.setState({
             game: nextGame,
+            next_turn: false
           });
-          //Cada tanto revisa las posiciones de las figuras y proyectiles
-          //para saber si el oponente finalizo la ronda
-          let nextFigurerOpponent = await InfantryService.getFigure(this.state.figureOpponent["data"].id_user, this.state.game_id)
-          let nextProjectiles = await InfantryService.getProjectile(this.state.game_id)
-          //Se compara si el estado actual de tus proyectiles y figuras es diferente
-          //al estado actual del juego en la API
-          let equalsProjectiles = true // true si this.state.proyecttiles === nextProyectiles, false en caso contrario
-          if(this.state.projectiles.length === 0 && nextProjectiles.length > 0){
-            equalsProjectiles = false
-          }
-          else if(this.state.projectiles.length > 0 && nextProjectiles.length === 0){
-            equalsProjectiles = false
-          }
-          else if(this.state.projectiles.length > 0 && nextProjectiles.length > 0){
-            equalsProjectiles = this.state.projectiles.every((value, index) => {
-              return (value.pos_x === nextProjectiles[index].pos_x && value.pos_y === nextProjectiles[index].pos_y)
-            })
-          }
-          //equalsFigureOpponentBody es true si this.state.figureOpponent === nextFigureOpponent, en caso contrario es false
-          let equalsFigureOpponentBody = this.state.figureOpponent["body"].every((value, index) => {
-            return (value[0] === nextFigurerOpponent["body"][index][0] 
-            && value[1] === nextFigurerOpponent["body"][index][1] )
+        }
+        this.setState({
+          game: nextGame,
+        });
+        //Cada tanto revisa las posiciones de las figuras y proyectiles
+        //para saber si el oponente finalizo la ronda
+        let nextFigurerOpponent = await InfantryService.getFigure(this.state.figureOpponent["data"].id_user, this.state.game_id)
+        let nextProjectiles = await InfantryService.getProjectile(this.state.game_id)
+        //Se compara si el estado actual de tus proyectiles y figuras es diferente
+        //al estado actual del juego en la API
+        let equalsProjectiles = true // true si this.state.proyecttiles === nextProyectiles, false en caso contrario
+        if (this.state.projectiles.length === 0 && nextProjectiles.length > 0) {
+          equalsProjectiles = false
+        }
+        else if (this.state.projectiles.length > 0 && nextProjectiles.length === 0) {
+          equalsProjectiles = false
+        }
+        else if (this.state.projectiles.length > 0 && nextProjectiles.length > 0) {
+          equalsProjectiles = this.state.projectiles.every((value, index) => {
+            return (value.pos_x === nextProjectiles[index].pos_x && value.pos_y === nextProjectiles[index].pos_y)
           })
-          //Esta condicion es para cuando el otro jugador hace una accion y termina con la ronda,
-          //sirve para poder actualizar los elementos del tablero al terminar la ronda
-          if(this.state.game.turn !== AuthService.getCurrentUser().sub 
-          && !this.state.finished_round && (!equalsFigureOpponentBody || !equalsProjectiles)){
-              this.setState({
-                finished_round: true,
-                next_turn: true
-              })
-          }
-        }, 3000);
-        
-    }else{clearTimeout(this.timer);}
+        }
+        //equalsFigureOpponentBody es true si this.state.figureOpponent === nextFigureOpponent, en caso contrario es false
+        let equalsFigureOpponentBody = this.state.figureOpponent["body"].every((value, index) => {
+          return (value[0] === nextFigurerOpponent["body"][index][0]
+            && value[1] === nextFigurerOpponent["body"][index][1])
+        })
+        //Esta condicion es para cuando el otro jugador hace una accion y termina con la ronda,
+        //sirve para poder actualizar los elementos del tablero al terminar la ronda
+        if (this.state.game.turn !== AuthService.getCurrentUser().sub
+          && !this.state.finished_round && (!equalsFigureOpponentBody || !equalsProjectiles)) {
+          this.setState({
+            finished_round: true,
+            next_turn: true
+          })
+        }
+      }, 3000);
+
+    } else { clearTimeout(this.timer); }
     if (this.state.finished_round && this.state.game.turn === AuthService.getCurrentUser().sub) {
       //Si es tu turno y finalizaste la ronda
       this.updateRound()
@@ -135,16 +140,16 @@ export default class GameInfantry extends Component {
       this.updateLocalRound()
     }
   }
-  shouldComponentUpdate(){
+  shouldComponentUpdate() {
     /**
      * Se hace esto para evitar que cuando quieras elegir una direccion
      * no se ande reiniciando la direccion elegida cada 3 segundos, ya que en
      * componentDidUpdate() se utilizar un timer que provoca que cada 3 segundos
-     * se renderice de nuevo el componente*/ 
-    if(this.state.game !== null && !this.state.finished_round && this.state.figure !== null && this.state.figureOpponent !== null
-      && this.state.game.turn === AuthService.getCurrentUser().sub && !this.state.next_turn){
+     * se renderice de nuevo el componente*/
+    if (this.state.game !== null && !this.state.finished_round && this.state.figure !== null && this.state.figureOpponent !== null
+      && this.state.game.turn === AuthService.getCurrentUser().sub && !this.state.next_turn) {
       return false
-    }else{
+    } else {
       return true
     }
   }
@@ -159,20 +164,20 @@ export default class GameInfantry extends Component {
     if (action === "move") {
       let response = await InfantryService.move(this.state.game_id, AuthService.getCurrentUser().sub,
         direction, velocity)
-        if (response === "Accion invalida") {
-          return alert("Movimiento invalido")
-        }
-        await this.updateTurn()
-        return;
+      if (response === "Accion invalida") {
+        return alert("Movimiento invalido")
+      }
+      await this.updateTurn()
+      return;
     }
     if (action === "shoot") {
       let response = await InfantryService.shoot(this.state.game_id, AuthService.getCurrentUser().sub,
         direction)
-        if (response === "Accion invalida") {
-          return alert("Movimiento invalido")
-        }
-        await this.updateTurn()
-        return;
+      if (response === "Accion invalida") {
+        return alert("Movimiento invalido")
+      }
+      await this.updateTurn()
+      return;
     }
   }
 
@@ -196,12 +201,12 @@ export default class GameInfantry extends Component {
     }
   }
 
-    /**
-     * Se utiliza al final de cada ronda cuando es el oponente 
-     * quien termino la ronda(en caso contrario utilizar updateRound()),
-     * actualiza los proyecttiles y tambien las figuras
-     */
-  async updateLocalRound(){
+  /**
+   * Se utiliza al final de cada ronda cuando es el oponente 
+   * quien termino la ronda(en caso contrario utilizar updateRound()),
+   * actualiza los proyecttiles y tambien las figuras
+   */
+  async updateLocalRound() {
     let nextProjectiles = await InfantryService.getProjectile(this.state.game_id)
     let nextFigure = await InfantryService.getFigure(this.state.figure["data"].id_user, this.state.game_id)
     let nextFigurerOpponent = await InfantryService.getFigure(this.state.figureOpponent["data"].id_user, this.state.game_id)
@@ -226,7 +231,7 @@ export default class GameInfantry extends Component {
     let is_there_actions = ""
     while (is_there_actions !== "no actions in queue") {
       is_there_actions = await InfantryService.update_actions(this.state.game_id)
-      
+
     }
     //Actualizo las figuras y proyectiles en los estados
     let figurePlayer1 = await InfantryService.getFigure(this.state.figure["data"].id_user, this.state.game_id)
@@ -258,23 +263,37 @@ export default class GameInfantry extends Component {
    */
   getMessageTurn() {
     let message;
-    
+
     if (this.state.finished_round) {
       message = <h3 class="text-success">finished round!</h3>;
       //this.updateRound();
     }
     else if (this.state.game.turn === AuthService.getCurrentUser().sub) {
-        message = <h3>Your turn</h3>
-      }
-      else {
-        message = (<div>
-                      <h3>waiting opponent's turn</h3>
-              <div class="spinner-border" role="status">
-        <span class="sr-only"></span>
-      </div></div>
-                  )
-      }
+      message = <h3>Your turn</h3>
+    }
+    else {
+      message = (<div>
+        <h3>waiting opponent's turn</h3>
+        <div class="spinner-border" role="status">
+          <span class="sr-only"></span>
+        </div></div>
+      )
+    }
     return message
+  }
+
+
+  GameOver() {
+    if (this.state.figure !== null && this.state.figureOpponent !== null) {
+      console.log(this.state.figure["data"].hp)
+      console.log(this.state.figureOpponent["data"].hp)
+      if (this.state.figure["data"].hp <= 0 || this.state.figureOpponent["data"].hp <= 0) {
+        console.log("Entre")
+        return true
+      } else {
+        return false
+      }
+    }
   }
 
   render() {
@@ -298,6 +317,13 @@ export default class GameInfantry extends Component {
         </div>
 
       )
+    } else if (this.GameOver()) {
+      return (<div class="text-center bg-War">
+        <img src={gameOver} />
+        <p>{this.state.figure["data"].hp <= 0 ? this.state.figure["data"].id_user: 
+                                                this.state.figureOpponent["data"].id_user}</p>
+      </div>)
+
     }
     else {
       return (
@@ -305,12 +331,12 @@ export default class GameInfantry extends Component {
           <div class="container-fluid bg-War">
             <div class="row align-items-start">
               <div class="col"><FigureInfantryData figure={this.state.figure["data"]} /></div>
-              <div> <GameBoard figure={this.state.figure["body"]} figureOpponent={this.state.figureOpponent["body"]} projectiles={this.state.projectiles}/></div>
-  
+              <div> <GameBoard figure={this.state.figure["body"]} figureOpponent={this.state.figureOpponent["body"]} projectiles={this.state.projectiles} /></div>
+
             </div>
             <p class="text-center">{this.getMessageTurn()}</p>
-            <div class="row ">
-          
+            <div class="row align-items-center">
+              <div class="col"></div>
               <div class="container col">
                 {/* Formulario para que el usuario elija que accion desea realizar */}
                 <form onSubmit={ev => {
@@ -322,8 +348,8 @@ export default class GameInfantry extends Component {
                 }} >
                   {/* botones para seleccionar la direccion */}
                   <br></br>
-                  <div class="form-group ">
-                    <div class="row justify-content-center">
+                  <div class="form-group">
+                    <div class="row align-items-start">
                       <div>
                         <input type="radio" class="btn-check col" name="direction" id="north west" autocomplete="off" checked value={NORTH_WEST} />
                         <label class="btn btn-secondary col" for="north west">North west</label>
@@ -339,24 +365,21 @@ export default class GameInfantry extends Component {
                       </div>
                     </div>
 
-                    <div class="row justify-content-center">
-                      <div class="mx-5">
-                        <input type="radio" class="btn-check mx-3" name="direction" id="west" autocomplete="off" checked value={WEST} />
+                    <div class="row align-items-center">
+                      <div class="position-absolute top-50 start-50 translate-middle">
+                        <input type="radio" class="btn-check" name="direction" id="west" autocomplete="off" checked value={WEST} />
                         <label class="btn btn-secondary" for="west">West</label>
-                      </div>                      
-                      <div className="col-1">
-
                       </div>
-                      <div class="mx-5">
-                          
-                        <label class="btn btn-secondary" for="east">East</label>
-                        <input type="radio" class="btn-check mx-3" name="direction" id="east" autocomplete="off" checked value={EAST} />
+                      <div class="col"></div>
+                      <div class="col-7">
+                        <div class="col aling-self-start">
+                          <input type="radio" class="btn-check col-md-4 aling-self-end" name="direction" id="east" autocomplete="off" checked value={EAST} />
+                        </div>
+                        <label class="btn btn-secondary col-3" for="east">East</label>
                       </div>
-                        
-                      
                     </div>
 
-                    <div class="row justify-content-center">
+                    <div class="row align-items-end">
                       <div>
                         <label class="btn btn-secondary col" for="south west" >South west</label>
                         <input type="radio" class="btn-check col" name="direction" id="south west" autocomplete="off" checked value={SOUTH_WEST} />
@@ -373,32 +396,32 @@ export default class GameInfantry extends Component {
                   </div>
                   {/* botones para seleccionar la accion */}
                   <br></br>
-                  <div className="row justify-content-center">
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="action" id="move" value={"move"} />
-                      <label class="form-check-label text-white" for="move">
-                        Move
-                        <select class="form-select" id="sel1" name="velocity">
-                          {this.optionsRender()}
-                        </select>
-                      </label>
-                      <input class="form-check-input" type="radio" name="action" id="shoot" value={"shoot"} />
-                      <label class="form-check-label text-white" for="shoot">
-                        Shoot
-                      </label>
-                    </div>
+
+                  <div class="form-check align-items-end col">
+                    <input class="form-check-input" type="radio" name="action" id="move" value={"move"} />
+                    <label class="form-check-label text-white" for="move">
+                      Move
+                      <select class="form-select" id="sel1" name="velocity">
+                        {this.optionsRender()}
+                      </select>
+                    </label>
+                    <input class="form-check-input" type="radio" name="action" id="shoot" value={"shoot"} />
+                    <label class="form-check-label text-white" for="shoot">
+                      Shoot
+                    </label>
                   </div>
-                  
                   <br></br><br></br><br></br>
                   <div class="text-center position-absolute top-50 start-50 translate-middle col">
                     <button type="submit" class="btn btn-outline-light" disabled={this.state.finished_round || this.state.game.turn !== AuthService.getCurrentUser().sub}>Next turn</button>
                   </div>
                 </form>
               </div>
-              
+              <div class="col"></div>
             </div>
-            <p class="col"><GameOver game_id={this.state.game_id} player1_id={this.state.game["id_user1"]} player2_id={this.state.game["id_user2"]}></GameOver></p>
-          </div>    
+            <div>
+
+            </div>
+          </div>
         </div>
       )
     }
