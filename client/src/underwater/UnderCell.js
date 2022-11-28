@@ -26,7 +26,9 @@ export default function UnderCell({visibleState, placeSubmarine = null, x, y, ty
   function image() {
     if(type.object == "H" || type.object == "T" || type.object == "*")
       return (type.subName == undefined ? null : <img style={style} src={images[type.subName][type.team][type.object]} width="100%" />);
-    else return null;
+    else if(typeString == "rP")
+            return (<GoPrimitiveDot style={{color: 'cyan'}}/>)
+         else return null;
   }
 
   return (<div onClick={placeSubmarine == null ? null : _ => placeSubmarine(x,y)} className={"u-cell u-cell-" + typeString} >{image()}</div>)
