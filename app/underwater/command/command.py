@@ -14,6 +14,7 @@ class Command(db.Model):
 
     game = relationship("UnderGame")
     player = relationship("User")
+    under_game_session = relationship("UnderGameSession")
 
     __mapper_args__ = {
         "polymorphic_identity": "command",

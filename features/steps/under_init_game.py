@@ -25,7 +25,6 @@ def step_impl(context):
         context.page = context.client.post(
             url_for("auth.login"), json=payload, headers=headers
         )
-        print(context.page.text)
         response = json.loads(context.page.text)
         token = response["token"]
 

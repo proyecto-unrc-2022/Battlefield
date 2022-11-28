@@ -18,6 +18,10 @@ class Submarine(SubmergedObject):
     torpedo_speed = db.Column(db.Integer, nullable=False)
     torpedo_damage = db.Column(db.Float, nullable=False)
 
+    under_board_mask = relationship(
+        "BoardMask", back_populates="submarine", uselist=False, cascade="all, delete"
+    )
+
     player = relationship("User", backref=backref("submarine", uselist=False))
     game = relationship("UnderGame", back_populates="submarines")
 
@@ -37,11 +41,11 @@ class Submarine(SubmergedObject):
         self.torpedo_speed = stats["torpedo_speed"]
         self.torpedo_damage = stats["torpedo_damage"]
 
-        if x_position:
+        if x_position is not None:
             self.x_position = x_position
-        if y_position:
+        if y_position is not None:
             self.y_position = y_position
-        if direction:
+        if direction is not None:
             self.direction = direction
 
     def create_torpedo(self):
@@ -59,14 +63,28 @@ class Submarine(SubmergedObject):
             "torpedo_speed": self.torpedo_speed,
             "torpedo_damage": self.torpedo_damage,
         }
-        if self.x_position:
+        if self.x_position is not None:
             dict.update({"x_position": self.x_position})
-        if self.y_position:
+        if self.y_position is not None:
             dict.update({"y_position": self.y_position})
-        if self.direction:
+        if self.direction is not None:
             dict.update({"direction": self.direction})
         if self.game:
             dict.update({"game_id:": self.game.id})
+        return dict
+
+    def public_dict(self):
+        dict = {
+            "player_id": self.player_id,
+            "name": self.name,
+            "size": self.size,
+            "speed": self.speed,
+            "visibility": self.visibility,
+            "radar_scope": self.radar_scope,
+            "health": self.health,
+            "torpedo_speed": self.torpedo_speed,
+            "torpedo_damage": self.torpedo_damage,
+        }
         return dict
 
     def __get_nearest_cells(self, delta):
