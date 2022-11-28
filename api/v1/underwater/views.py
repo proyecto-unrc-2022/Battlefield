@@ -189,11 +189,14 @@ def rotate_and_advance(session_id):
     direction = data["direction"]
     steps = data["steps"]
 
+    if session.current_turn_player() is not player:
+        return Response('{"error": "not your turn"}', status=409)
+
     if direction == (submarine.direction + 4) % 8:
         return Response('{"error":"submarines cant rotate 180 degrees"}', status=409)
 
-    if session.current_turn_player() is not player:
-        return Response('{"error": "not your turn"}', status=409)
+    if steps > submarine.speed:
+        return Response('{"error":"speed exceeded"}', status=409)
 
     session.add_command(
         RotateAndAdvance(session.game, submarine, direction=direction, steps=steps)
