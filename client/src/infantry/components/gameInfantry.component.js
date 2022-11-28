@@ -26,7 +26,7 @@ export default class GameInfantry extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      game_id: props.game_id,
+      game_id: localStorage.getItem('id_game'),
       game: null,
       figure: null,
       figureOpponent: null,
