@@ -28,7 +28,7 @@ export default function UnderControls(props) {
 
     return (
       <div style={{ position: 'relative', height: 157, width: 157 }}>
-        <img style={style} className="u-overlap-1" src={require('./css/direc.png')} width="100%" />
+        <img style={style} className="u-overlap-1" src={require('./css/images/direc.png')} width="100%" />
         <div className="u-overlap-2 u-direction-grid">
           {array1.map(i => { return (<div key={i} style={{ height: "100%", width: "100%" }} onClick={_ => setDirection(i)}></div>) })}
           <div style={{ height: '100%', width: '100%' }}></div>

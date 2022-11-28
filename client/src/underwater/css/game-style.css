@@ -104,7 +104,7 @@
 
 .u-grid-20,.u-grid-24,.u-grid-28 {
   box-shadow: 3px 3px 10px rgba(156, 230, 234);
-  background-image: url('board-background.png');
+  background-image: url('./images/board-background.png');
   background-size: cover;
   filter: brightness(200%);
   height: 100%;
