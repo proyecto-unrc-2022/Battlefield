@@ -103,45 +103,41 @@ export default class GameInfantry extends Component {
             game: nextGame,
             next_turn: false
           });
-        }
-        this.setState({
-          game: nextGame,
-        });
-        //Cada tanto revisa las posiciones de las figuras y proyectiles
-        //para saber si el oponente finalizo la ronda
-        let nextFigurerOpponent = await InfantryService.getFigure(this.state.figureOpponent["data"].id_user, this.state.game_id)
-        let nextProjectiles = await InfantryService.getProjectile(this.state.game_id)
-        //Se compara si el estado actual de tus proyectiles y figuras es diferente
-        //al estado actual del juego en la API
-        let equalsProjectiles = true // true si this.state.proyecttiles === nextProyectiles, false en caso contrario
-        if (this.state.projectiles.length === 0 && nextProjectiles.length > 0) {
-          equalsProjectiles = false
-        }
-        else if (this.state.projectiles.length > 0 && nextProjectiles.length === 0) {
-          equalsProjectiles = false
-        }
-        else if (this.state.projectiles.length > 0 && nextProjectiles.length > 0) {
-          equalsProjectiles = this.state.projectiles.every((value, index) => {
-            return (value.pos_x === nextProjectiles[index].pos_x && value.pos_y === nextProjectiles[index].pos_y)
-          })
-        }
-        //equalsFigureOpponentBody es true si this.state.figureOpponent === nextFigureOpponent, en caso contrario es false
-        let equalsFigureOpponentBody = this.state.figureOpponent["body"].every((value, index) => {
-          return (value[0] === nextFigurerOpponent["body"][index][0]
+          //Cada tanto revisa las posiciones de las figuras y proyectiles
+          //para saber si el oponente finalizo la ronda
+          let nextFigurerOpponent = await InfantryService.getFigure(this.state.figureOpponent["data"].id_user, this.state.game_id)
+          let nextProjectiles = await InfantryService.getProjectile(this.state.game_id)
+          //Se compara si el estado actual de tus proyectiles y figuras es diferente
+          //al estado actual del juego en la API
+          let equalsProjectiles = true // true si this.state.proyecttiles === nextProyectiles, false en caso contrario
+          if(this.state.projectiles.length === 0 && nextProjectiles.length > 0){
+            equalsProjectiles = false
+          }
+          else if(this.state.projectiles.length > 0 && nextProjectiles.length === 0){
+            equalsProjectiles = false
+          }
+          else if(this.state.projectiles.length > 0 && nextProjectiles.length > 0){
+            equalsProjectiles = this.state.projectiles.every((value, index) => {
+              return (value.pos_x === nextProjectiles[index].pos_x && value.pos_y === nextProjectiles[index].pos_y)
+            })
+          }
+          //equalsFigureOpponentBody es true si this.state.figureOpponent === nextFigureOpponent, en caso contrario es false
+          let equalsFigureOpponentBody = this.state.figureOpponent["body"].every((value, index) => {
+            return (value[0] === nextFigurerOpponent["body"][index][0] 
             && value[1] === nextFigurerOpponent["body"][index][1])
-        })
-        //Esta condicion es para cuando el otro jugador hace una accion y termina con la ronda,
-        //sirve para poder actualizar los elementos del tablero al terminar la ronda
-        if (this.state.game.turn !== AuthService.getCurrentUser().sub
-          && !this.state.finished_round && (!equalsFigureOpponentBody || !equalsProjectiles)) {
-          this.setState({
-            finished_round: true,
-            next_turn: true
           })
-        }
-      }, 3000);
-
-    } else { clearTimeout(this.timer); }
+          //Esta condicion es para cuando el otro jugador hace una accion y termina con la ronda,
+          //sirve para poder actualizar los elementos del tablero al terminar la ronda
+          if(this.state.game.turn !== AuthService.getCurrentUser().sub 
+          && !this.state.finished_round && (!equalsFigureOpponentBody || !equalsProjectiles)){
+              this.setState({
+                finished_round: true,
+                next_turn: true
+              })
+          }
+        }, 3000);
+        
+    }else{clearTimeout(this.timer);}
     if (this.state.finished_round && this.state.game.turn === AuthService.getCurrentUser().sub) {
       //Si es tu turno y finalizaste la ronda
       this.updateRound()
@@ -220,10 +216,10 @@ export default class GameInfantry extends Component {
   async updateLocalRound() {
     let nextProjectiles = await InfantryService.getProjectile(this.state.game_id)
     let nextFigure = await InfantryService.getFigure(this.state.figure["data"].id_user, this.state.game_id)
-    let nextFigurerOpponent = await InfantryService.getFigure(this.state.figureOpponent["data"].id_user, this.state.game_id)
+    let nextFigureOpponent = await InfantryService.getFigure(this.state.figureOpponent["data"].id_user, this.state.game_id)
     this.setState({
       figure: nextFigure,
-      figureOpponent: nextFigurerOpponent,
+      figureOpponent: nextFigureOpponent,
       projectiles: nextProjectiles,
       finished_round: false
     })
@@ -245,12 +241,12 @@ export default class GameInfantry extends Component {
 
     }
     //Actualizo las figuras y proyectiles en los estados
-    let figurePlayer1 = await InfantryService.getFigure(this.state.figure["data"].id_user, this.state.game_id)
-    let figurePlayer2 = await InfantryService.getFigure(this.state.figureOpponent["data"].id_user, this.state.game_id)
+    let nextFigure = await InfantryService.getFigure(this.state.figure["data"].id_user, this.state.game_id)
+    let nextFigureOpponent = await InfantryService.getFigure(this.state.figureOpponent["data"].id_user, this.state.game_id)
     let projectiles = await InfantryService.getProjectile(this.state.game_id)
     this.setState({
-      figure: figurePlayer1,
-      figureOpponent: figurePlayer2,
+      figure: nextFigure,
+      figureOpponent: nextFigureOpponent,
       finished_round: false,
       next_turn: false,
       projectiles: projectiles
@@ -280,16 +276,16 @@ export default class GameInfantry extends Component {
       //this.updateRound();
     }
     else if (this.state.game.turn === AuthService.getCurrentUser().sub) {
-      message = <h3>Your turn</h3>
-    }
-    else {
-      message = (<div>
-        <h3>waiting opponent's turn</h3>
-        <div class="spinner-border" role="status">
-          <span class="sr-only"></span>
-        </div></div>
-      )
-    }
+        message = <h3>Your turn</h3>
+      }
+      else {
+        message = (<div>
+                      <h3>waiting opponent's turn</h3>
+                      <div class="spinner-border" role="status">
+                        <span class="sr-only"></span>
+                      </div></div>
+                  )
+      }
     return message
   }
 
