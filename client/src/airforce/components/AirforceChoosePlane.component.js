@@ -62,9 +62,11 @@ class ChoosePlane extends Component {
 
     handleSubmit = (event) => {
         event.preventDefault();
-        AirforceService.choosePlaneAndPosition(this.state.id, this.state.course, this.state.coord_x, this.state.coord_y, this.id()).then(
-            console.log("player 1 is ready")
-        )
+        if(this.id != null) {
+            AirforceService.choosePlaneAndPosition(this.state.id, this.state.course, this.state.coord_x, this.state.coord_y, this.id()).then(
+                console.log("player 1 is ready")
+         )
+        }
     }
     
     planes(){
