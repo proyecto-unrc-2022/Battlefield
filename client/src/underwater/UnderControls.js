@@ -69,20 +69,14 @@ export default function UnderControls(props) {
     return (
       <form onSubmit={advance}> 
         <div style={style}>
-          <button className="u-control-buttons" title="advance"><img src={require("./css/buttons/advancebutton.png")} width="60" height="60"/></button>
-          <input style={{width: "3em"}} type="number" min="0" value={steps} onChange={event => {setSteps(event.target.value)}}></input>
+          <button className="u-control-button" title="advance"><img src={require("./css/buttons/advancebutton.png")} width="60" height="60"/></button>
+          <input className="u-number-input" type="number" min="0" value={steps} onChange={event => {setSteps(event.target.value)}}></input>
         </div>
       </form>
     );
   }
   
   function ActionButtons() {
-    const style = {
-      display: "flex",
-      alignItems: "center",
-      gap: "20px"
-    }
-
     function skip() { // Implemented as advancing 0 steps
       let headers = authHeader();
       headers["Content-Type"] = "application/json";
@@ -127,11 +121,19 @@ export default function UnderControls(props) {
       });
     }
     
+    const style = {
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+      gap: "10px"
+    }
+
     return (
       <div style={style}>
-        <button className="u-control-buttons" onClick={skip} title="skip"><img src={require("./css/buttons/skipbutton.png")} width="60" height="60"/></button>
-        <button className="u-control-buttons" onClick={useRadar} title="radar pulse"><img src={require("./css/buttons/radarbutton.png")} width="60" height="60"/></button>
-        <button className="u-control-buttons" onClick={attack} title="attack"><img src={require("./css/buttons/missilebutton.png")} width="60" height="60"/></button>
+        <button className="u-control-button" onClick={skip} title="skip"><img src={require("./css/buttons/skipbutton.png")} width="60" height="60"/></button>
+        <button className="u-control-button" onClick={useRadar} title="radar pulse"><img src={require("./css/buttons/radarbutton.png")} width="60" height="60"/></button>
+        <button className="u-control-button" onClick={attack} title="attack"><img src={require("./css/buttons/missilebutton.png")} width="60" height="60"/></button>
       </div>
     );
   }
@@ -139,7 +141,7 @@ export default function UnderControls(props) {
   useEffect(_ => {setAlertMessage(null)},[props.visibleState]);
   
   return (
-    <div style={{display: 'flex', flexDirection: 'column', width: '97%'}}>
+    <div style={{display: 'flex', flexDirection: 'column', width: '100%'}}>
       <div className="u-controls-container">
         <div className="u-left-controls">
           <DirectionControl position={props.position} setPosition={props.setPosition} />

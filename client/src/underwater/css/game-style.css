@@ -15,6 +15,7 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
+  padding: 0px 20px;
 }
 
 .u-screen {
@@ -158,14 +159,6 @@
   background-color: rgba(0, 13, 10, 0.6);
 }
 
-.u-controls-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 0px 20px;
-}
-
 .u-left-controls,.u-right-controls {
   display: flex;
   gap: 20px;
@@ -263,9 +256,24 @@
   font-weight: bold;
 }
 
-.u-control-buttons {
-  width: 95px;
-  height: 95px;
+.u-controls-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.u-number-input {
+  width: 3em;
+  background: none;
+  border: 2px solid black;
+  border-radius: 15px;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.u-control-button {
   border: none;
   background: none;
   border-radius: 50px;
