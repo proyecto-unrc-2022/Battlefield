@@ -51,6 +51,10 @@ def create_app(environment="development"):
     app.register_blueprint(infantry_blueprint, url_prefix="/api/v1/infantry")
     api.init_app(app=app)
 
+    import logging
+    #only debug
+    logging.basicConfig(level=logging.DEBUG)
+
     @app.get("/")
     def index():
         return "index"
