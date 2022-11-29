@@ -15,8 +15,8 @@ class NavyGameService:
         self.games[new_game.id] = {}
         return new_game
 
-    def join(self, data, id):
-        game = navy_game_dao.get_by_id(id)
+    def join(self, data):
+        game = navy_game_dao.get_by_id(data["game_id"])
         game.user2_id = data["user2_id"]
         navy_game_dao.update(game, commit=True)
         return game
