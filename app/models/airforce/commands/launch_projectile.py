@@ -29,11 +29,11 @@ class LaunchProjectile:
         projectile = Projectile.query.filter_by(plane_id=plane_model.id).first()
 
         if course == 1:
-            y = y - 1
+            y = y + 1
         elif course == 2:
             x = x + 1
         elif course == 3:
-            y = y + 1
+            y = y - 1
         elif course == 4:
             x = x - 1
         discount_projectile(self.player, self.battlefield)
