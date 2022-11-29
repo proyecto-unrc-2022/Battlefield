@@ -54,7 +54,8 @@ export default class GameBoard extends Component {
     this.state.figure["body"].map(coor => { if (this.is_it_on_map(coor)) { board[coor[1]][coor[0]] = FIGURE } })
     this.state.figureOpponent["body"].map(coor => { if (this.is_it_on_map(coor)) { board[coor[1]][coor[0]] = FIGUREOPPONENT } })
     if (this.state.projectiles !== undefined) {
-      this.state.projectiles.map(projectile => board[projectile["pos_y"]][projectile["pos_x"]] = PROJECTILE)
+      this.state.projectiles.map( (projectile) => {if(board[projectile["pos_y"]][projectile["pos_x"]] !== FIGURE &&
+      board[projectile["pos_y"]][projectile["pos_x"]] !== FIGUREOPPONENT) board[projectile["pos_y"]][projectile["pos_x"]] = PROJECTILE})
     }
 
     return board
