@@ -343,7 +343,7 @@ export default class GameInfantry extends Component {
           <div class="container-fluid bg-War">
             <div class="row align-items-start">
               <div class="col-4 mx-3 mt-5"><FigureInfantryData figure={this.state.figure["data"]} /></div>
-              <div> <GameBoard figure={this.state.figure["body"]} figureOpponent={this.state.figureOpponent["body"]} projectiles={this.state.projectiles}/></div>
+              <div> <GameBoard figure={this.state.figure} figureOpponent={this.state.figureOpponent} projectiles={this.state.projectiles}/></div>
   
             </div>
             <p class="text-center">{this.getMessageTurn()}</p>
