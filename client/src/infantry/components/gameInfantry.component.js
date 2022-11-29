@@ -365,8 +365,8 @@ export default class GameInfantry extends Component {
                 }} >
                   {/* botones para seleccionar la direccion */}
                   <br></br>
-                  <div class="form-group ">
-                    <div class="row justify-content-center">
+                  <div class="form-group">
+                    <div class="row align-items-start">
                       <div>
                         <input type="radio" class="btn-check col" name="direction" id="north west" autocomplete="off" checked value={NORTH_WEST} />
                         <label class="btn btn-secondary col" for="north west">North west</label>
@@ -382,24 +382,21 @@ export default class GameInfantry extends Component {
                       </div>
                     </div>
 
-                    <div class="row justify-content-center">
-                      <div class="mx-5">
-                        <input type="radio" class="btn-check mx-3" name="direction" id="west" autocomplete="off" checked value={WEST} />
+                    <div class="row align-items-center">
+                      <div class="position-absolute top-50 start-50 translate-middle">
+                        <input type="radio" class="btn-check" name="direction" id="west" autocomplete="off" checked value={WEST} />
                         <label class="btn btn-secondary" for="west">West</label>
-                      </div>                      
-                      <div className="col-1">
-
                       </div>
-                      <div class="mx-5">
-                          
-                        <label class="btn btn-secondary" for="east">East</label>
-                        <input type="radio" class="btn-check mx-3" name="direction" id="east" autocomplete="off" checked value={EAST} />
+                      <div class="col"></div>
+                      <div class="col-7">
+                        <div class="col aling-self-start">
+                          <input type="radio" class="btn-check col-md-4 aling-self-end" name="direction" id="east" autocomplete="off" checked value={EAST} />
+                        </div>
+                        <label class="btn btn-secondary col-3" for="east">East</label>
                       </div>
-                        
-                      
                     </div>
 
-                    <div class="row justify-content-center">
+                    <div class="row align-items-end">
                       <div>
                         <label class="btn btn-secondary col" for="south west" >South west</label>
                         <input type="radio" class="btn-check col" name="direction" id="south west" autocomplete="off" checked value={SOUTH_WEST} />
@@ -416,20 +413,19 @@ export default class GameInfantry extends Component {
                   </div>
                   {/* botones para seleccionar la accion */}
                   <br></br>
-                  <div className="row justify-content-center">
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="action" id="move" value={"move"} />
-                      <label class="form-check-label text-white" for="move">
-                        Move
-                        <select class="form-select" id="sel1" name="velocity">
-                          {this.optionsRender()}
-                        </select>
-                      </label>
-                      <input class="form-check-input" type="radio" name="action" id="shoot" value={"shoot"} />
-                      <label class="form-check-label text-white" for="shoot">
-                        Shoot
-                      </label>
-                    </div>
+
+                  <div class="form-check align-items-end col">
+                    <input class="form-check-input" type="radio" name="action" id="move" value={"move"} />
+                    <label class="form-check-label text-white" for="move">
+                      Move
+                      <select class="form-select" id="sel1" name="velocity">
+                        {this.optionsRender()}
+                      </select>
+                    </label>
+                    <input class="form-check-input" type="radio" name="action" id="shoot" value={"shoot"} />
+                    <label class="form-check-label text-white" for="shoot">
+                      Shoot
+                    </label>
                   </div>
                   <br></br><br></br><br></br>
                   <div class="text-center position-absolute top-50 start-50 translate-middle col">
@@ -437,7 +433,7 @@ export default class GameInfantry extends Component {
                   </div>
                 </form>
               </div>
-              
+              <div class="col"></div>
             </div>
             <div>
 
