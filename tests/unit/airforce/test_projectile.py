@@ -5,22 +5,19 @@ from app.models.airforce.plane import Plane
 
 def test_check_invalid_course():
     with app.app_context():
-        init_db_planes()
-        plane = Plane.query.filter_by(id=0).first()
+        plane = "plane"
         fly_obj = FlyingObject(player=1, flying_obj=plane, x=2, y=2, course=1)
         assert fly_obj.check_invalid_course(3)
 
 def test_check_valid_course():
     with app.app_context():
-        init_db_planes()
-        plane = Plane.query.filter_by(id=0).first()
+        plane = "plane"
         fly_obj = FlyingObject(player=1, flying_obj=plane, x=2, y=2, course=1)
         assert fly_obj.check_invalid_course(4) == False
 
 def test_update_postion_invalid_position():
     with app.app_context():
-        init_db_planes()
-        plane = Plane.query.filter_by(id=0).first()
+        plane = "plane"
         fly_obj = FlyingObject(player=1, flying_obj=plane, x=2, y=2, course=1)
         try:
             fly_obj.update_position(3,20,10)
