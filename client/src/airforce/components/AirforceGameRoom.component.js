@@ -27,6 +27,7 @@ const GameRoom = () => {
         airforceService.createProjectile(id);
     }
 
+
     const boardStatus = () => {
 
         airforceService.getBoardStatus(id)
@@ -41,11 +42,20 @@ const GameRoom = () => {
         })
         userInfo = JSON.parse(localStorage.getItem("playerPlane"));
         console.log(userInfo);
-   
-   
     }
 
-    
+    setInterval(() => {
+        airforceService.getBoardStatus(id).then(
+            (response) => {
+                console.log(response.data.status)
+                if (response.data.status === "end") {
+                    window.location.href = "/airforce/game/"+id+"/winner";
+                    localStorage.setItem("userWinner", response.data.Winner)  
+                } 
+            }
+        )
+    }, 5000);
+   
         return(
             <div className="battlefield">
                 <div>

@@ -30,6 +30,7 @@ import NavySpectateBoard from "./navy/pages/NavySpectateBoard";
 
 import AirforceBoard from "./airforce/components/AirforceBoard.component";
 import GameRoom from "./airforce/components/AirforceGameRoom.component";
+import AirforceWinner from "./airforce/components/AirforceWinner.component";
 class App extends Component {
   constructor(props) {
     super(props);
@@ -167,6 +168,7 @@ class App extends Component {
             <Route path= "/airforce/game/lobby/:id" element={<AirforceLobby />}/>
             <Route path= "/airforce/game/:id/choose/plane" element={<ChoosePlane />}/>
             <Route path= "/airforce/game/:id/gameRoom" element={<GameRoom />}/>
+            <Route path= "/airforce/game/:id/winner" element={<AirforceWinner/>}/>
           </Routes>
         </div>
       </div>
