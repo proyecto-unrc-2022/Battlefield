@@ -303,10 +303,10 @@
 
 #surrender.u-control-button:hover {
   cursor: pointer;
-  background-color: #F00a;
+  background-color: #f00a;
 }
 
 #surrender.u-control-button:active {
   cursor: pointer;
-  background-color: #F00f;
+  background-color: #f00f;
 }

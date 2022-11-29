@@ -161,18 +161,25 @@ export default function UnderControls(props) {
     }
 
     function surrender() {
-      axios.post(
-        `${gameURL}/leave`,
-        {},
-        {
-          headers: authHeader()
-        }
-      ).then(_ => console.log("leaving game"));
+      axios
+        .post(
+          `${gameURL}/leave`,
+          {},
+          {
+            headers: authHeader(),
+          }
+        )
+        .then((_) => console.log("leaving game"));
     }
 
     return (
       <>
-        <div id="surrender" className="u-control-button" onClick={surrender} title="🐔">
+        <div
+          id="surrender"
+          className="u-control-button"
+          onClick={surrender}
+          title="🐔"
+        >
           <img
             alt="surrender"
             src={require("./css/buttons/surrenderbutton.png")}
