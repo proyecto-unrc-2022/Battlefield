@@ -15,8 +15,8 @@ class NavyGameService:
         self.games[new_game.id] = {}
         return new_game
 
-    def join(self, data, id):
-        game = navy_game_dao.get_by_id(id)
+    def join(self, data):
+        game = navy_game_dao.get_by_id(data["game_id"])
         game.user2_id = data["user2_id"]
         navy_game_dao.update(game, commit=True)
         return game
@@ -84,11 +84,11 @@ class NavyGameService:
 
     def execute_cache(f):
         def proceed(self, navy_game_id):
-            if not self.games.get(navy_game_id) or self.games.get(navy_game_id) == {}:
+            if not self.games.get(navy_game_id):
                 self.load_game(navy_game_id)
-                f(self, navy_game_id)
+                return f(self, navy_game_id)
             else:
-                f(self, navy_game_id)
+                return f(self, navy_game_id)
 
         return proceed
 
@@ -194,9 +194,8 @@ class NavyGameService:
         ships_dto, missiles_dto = self.to_dto(entities, user_id)
         return {"ships": ships_dto, "missiles": missiles_dto}
 
+    @execute_cache
     def get_board(self, navy_game_id):
-        if not self.games.get(navy_game_id):
-            self.load_game(navy_game_id=navy_game_id)
         game_dict = self.games[navy_game_id].copy()
         game_dict.pop("ships")
         game_dict.pop("missiles")

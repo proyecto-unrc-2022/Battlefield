@@ -20,7 +20,7 @@ navy_games_model = navy_namespace.model(
 )
 
 
-navy_game_model = navy_namespace.model(
+navy_user_get_model = navy_namespace.model(
     "NavyGame",
     {
         "cols": fields.Integer(description="The game cols"),
@@ -42,7 +42,10 @@ navy_game_model = navy_namespace.model(
                 },
             )
         ),
-        "sight_range": fields.Nested(navy_namespace.model("SightRange", {})),
+        "sight_range": fields.Nested(navy_namespace.model("SightRange", {
+            "missiles" : fields.List(fields.Nested(navy_namespace.model("Missile", {}))),
+            "ships" : fields.List(fields.Nested(navy_namespace.model("Ship", {}))),
+        })),
         "status": fields.String(description="The game status"),
         "turn": fields.Integer(description="The game turn"),
         "user_1": fields.Nested(navy_namespace.model("User", {})),
@@ -52,11 +55,36 @@ navy_game_model = navy_namespace.model(
 )
 
 
+navy_get_model = navy_namespace.model(
+    "NavyUserGame",
+    {
+        "cols": fields.Integer(description="The game cols"),
+        "id": fields.Integer(description="The game id"),
+        "round": fields.Integer(description="The game round"),
+        "rows": fields.Integer(description="The game rows"),
+        "status": fields.String(description="The game status"),
+        "turn": fields.Integer(description="The game turn"),
+        "user_1": fields.Nested(navy_namespace.model("User", {
+            "email": fields.String(description="The user email"),
+            "id": fields.Integer(description="The user id"),
+            "username": fields.String(description="The user username"),
+        })),
+        "user_2": fields.Nested(navy_namespace.model("User", {
+            "email": fields.String(description="The user email"),
+            "id": fields.Integer(description="The user id"),
+            "username": fields.String(description="The user username"),
+        })),
+        "winner": fields.Integer(description="The winner of the game"),
+    },
+)
+
+
+
+
 @navy_namespace.route("/navy_games")
 class NavyGames(Resource):
     @navy_namespace.doc("get all navy games")
-    # return the test-model if 200 occured
-    @navy_namespace.response(200, "Success", model=navy_games_model)
+    @navy_namespace.response(200, "Success", model=navy_get_model)
     @navy_namespace.response(400, "Validation Error")
     @navy_namespace.response(401, "Unauthorized")
     def get(self, **kwargs):
@@ -66,7 +94,7 @@ class NavyGames(Resource):
         return url_for("api.v1.navy_games", _external=True)
 
     @navy_namespace.doc("create a new navy game")
-    @navy_namespace.response(201, "Creation game success", model=navy_games_model)
+    @navy_namespace.response(201, "Creation game success", model=navy_get_model)
     @navy_namespace.response(400, "Validation Error")
     @navy_namespace.response(401, "Unauthorized")
     def post(self, **kwargs):
@@ -79,15 +107,21 @@ class NavyGames(Resource):
 @navy_namespace.route("/navy_games/<int:id>")
 class NavyGame(Resource):
     @navy_namespace.doc("get a navy game")
-    @navy_namespace.response(200, "Success", model=navy_game_model)
+    @navy_namespace.response(200, "Success", model=navy_user_get_model)
     def get(self, id):
         """
         Get a navy game
         """
         return url_for("api.v1.navy_games", _external=True)
 
+
+
     @navy_namespace.doc("update a navy game")
-    @navy_namespace.response(200, "Success", model=navy_game_model)
+    @navy_namespace.response(200, "Success", model=navy_get_model)
+    @navy_namespace.response(400, "Validation Error")
+    @navy_namespace.response(401, "Unauthorized")
+    @navy_namespace.response(404, "Not Found")
+    @navy_namespace.response(500, "Internal Server Error")
     def patch(self, id):
         """
         Join a navy game

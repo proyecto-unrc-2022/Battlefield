@@ -124,7 +124,7 @@ def update_navy_game(id):
         validated_data = NavyGamePatchValidator().load(
             {"user2_id": user2_id, "game_id": id}
         )
-        game = navy_game_service.join(validated_data, id)
+        game = navy_game_service.join(validated_data)
         return (
             NavyResponse(
                 200, data=NavyGameDTO().dump(game), message="Game updated."
