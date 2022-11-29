@@ -159,13 +159,6 @@
   background-color: rgba(0, 13, 10, 0.6);
 }
 
-.u-left-controls,.u-right-controls {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-  height: 135px;
-}
-
 .u-overlap-1 {
   position: absolute;
   left: 0px;
@@ -263,6 +256,12 @@
   width: 100%;
 }
 
+.u-left-controls,.u-right-controls {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
 .u-number-input {
   width: 3em;
   background: none;
@@ -277,4 +276,14 @@
   border: none;
   background: none;
   border-radius: 50px;
+}
+
+.u-control-button:hover {
+  cursor: pointer;
+  background-color: #00F3;
+}
+
+.u-control-button:active {
+  cursor: pointer;
+  background-color: #00FA;
 }

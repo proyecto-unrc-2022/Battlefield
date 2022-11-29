@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import authHeader from '../services/auth-header';
+import "./css/game-style.css"
 
 export default function UnderControls(props) {
   const [alertMessage, setAlertMessage] = useState(null);
@@ -63,12 +64,10 @@ export default function UnderControls(props) {
     };
 
     return (
-      <form onSubmit={advance}>
-        <div style={style}>
-          <button className="u-control-button" title="advance"><img alt='advance' src={require('./css/buttons/advancebutton.png')} width="60" height="60" /></button>
-          <input className="u-number-input" type="number" min="0" value={steps} onChange={(event) => { setSteps(event.target.value); }} />
-        </div>
-      </form>
+      <div style={style}>
+        <div onClick={advance} className="u-control-button" title="advance"><img alt='advance' src={require('./css/buttons/advancebutton.png')} width="60" height="60" /></div>
+        <input className="u-number-input" type="number" min="0" value={steps} onChange={(event) => { setSteps(event.target.value); }} />
+      </div>
     );
   }
 
@@ -115,20 +114,12 @@ export default function UnderControls(props) {
       });
     }
 
-    const style = {
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'center',
-      alignItems: 'center',
-      gap: '10px',
-    };
-
     return (
-      <div style={style}>
-        <button className="u-control-button" onClick={skip} title="skip"><img alt='skip' src={require('./css/buttons/skipbutton.png')} width="60" height="60" /></button>
-        <button className="u-control-button" onClick={useRadar} title="radar pulse"><img alt='radar' src={require('./css/buttons/radarbutton.png')} width="60" height="60" /></button>
-        <button className="u-control-button" onClick={attack} title="attack"><img alt='attack' src={require('./css/buttons/missilebutton.png')} width="60" height="60" /></button>
-      </div>
+      <>
+        <div className="u-control-button" onClick={skip} title="skip"><img alt='skip' src={require('./css/buttons/skipbutton.png')} width="60" height="60" /></div>
+        <div className="u-control-button" onClick={useRadar} title="radar pulse"><img alt='radar' src={require('./css/buttons/radarbutton.png')} width="60" height="60" /></div>
+        <div className="u-control-button" onClick={attack} title="attack"><img alt='attack' src={require('./css/buttons/missilebutton.png')} width="60" height="60" /></div>
+      </>
     );
   }
 
