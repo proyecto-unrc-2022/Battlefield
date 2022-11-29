@@ -1,5 +1,9 @@
 from app.models.airforce.plane import Projectile
-from app.models.airforce.utils import get_player_plane
+from app.models.airforce.utils import (
+    discount_projectile,
+    get_player_plane,
+    projectile_avaible,
+)
 
 
 class LaunchProjectile:
@@ -8,6 +12,8 @@ class LaunchProjectile:
     battlefield = None
 
     def __init__(self, player, air_force_game):
+        if not projectile_avaible(player, air_force_game.battlefield):
+            raise Exception("No enough projectile")
         self.player = player
         self.air_force_game = air_force_game
         self.battlefield = air_force_game.battlefield
@@ -30,7 +36,7 @@ class LaunchProjectile:
             y = y + 1
         elif course == 4:
             x = x - 1
-
+        discount_projectile(self.player, self.battlefield)
         return self.battlefield.add_new_flying_object(
             self.player, projectile, x, y, course
         )

@@ -1,3 +1,4 @@
+import copy
 import json
 
 from flask import Blueprint, Response, jsonify, request
@@ -81,7 +82,8 @@ def choose_plane_and_position():
     y = int(request.json["y"])
     course = int(request.json["course"])
 
-    plane = Plane.query.filter_by(id=plane).first()
+    plane = copy.deepcopy(Plane.query.filter_by(id=plane).first())
+
     try:
         print(plane)
         command = ChoosePlane(
