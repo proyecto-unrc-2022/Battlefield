@@ -19,11 +19,6 @@ const NORTH = 4
 const NORTH_EAST = 3
 
 
-
-
-function timeout(delay) {
-  return new Promise(res => setTimeout(res, delay));
-}
 /**
  * Renderiza la partida del juego actual
  */
@@ -41,14 +36,6 @@ export default class GameInfantry extends Component {
     }
     this.timer = null;
   }
-
-  timer_(id){
-    setTimeout( () => {
-      
-      window.location.href = "/home_Infantry"
-      gameService.removeGame(id)
-    },100000);
-  } 
 
   /**
    * Inicializa el juego y las figuras
@@ -120,7 +107,13 @@ export default class GameInfantry extends Component {
         else if (this.state.projectiles.length > 0 && nextProjectiles.length === 0) {
           equalsProjectiles = false
         }
-        else if (this.state.projectiles.length > 0 && nextProjectiles.length > 0) {
+        else if(this.state.projectiles.length > nextProjectiles.length){
+          equalsProjectiles = false
+        }
+        else if(this.state.projectiles.length < nextProjectiles.length){
+          equalsProjectiles = false
+        }
+        else if (this.state.projectiles.length === nextProjectiles.length) {
           equalsProjectiles = this.state.projectiles.every((value, index) => {
             return (value.pos_x === nextProjectiles[index].pos_x && value.pos_y === nextProjectiles[index].pos_y)
           })
@@ -336,9 +329,7 @@ export default class GameInfantry extends Component {
           
           <p className="display-4 bg-white w-25 rounded-pill p-3">Win Player {this.state.figure["data"].hp <= 0 ? this.state.figure["data"].id_user : 
                                                   this.state.figureOpponent["data"].id_user}</p>
-        </div>
-        {this.timer_(this.state.game_id)}
-         
+        </div>         
       </div>)
 
     }
@@ -348,7 +339,7 @@ export default class GameInfantry extends Component {
           <div class="container-fluid bg-War">
             <div class="row align-items-start">
               <div class="col-4 mx-3 mt-5"><FigureInfantryData figure={this.state.figure["data"]} /></div>
-              <div> <GameBoard figure={this.state.figure} figureOpponent={this.state.figureOpponent} projectiles={this.state.projectiles}/></div>
+              <div> <GameBoard figure={this.state.figure["body"]} figureOpponent={this.state.figureOpponent["body"]} projectiles={this.state.projectiles}/></div>
   
             </div>
             <p class="text-center">{this.getMessageTurn()}</p>
