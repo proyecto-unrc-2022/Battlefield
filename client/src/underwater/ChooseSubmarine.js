@@ -25,7 +25,7 @@ function SubmarineCard({ id, setChosenSubmarine, stats }) {
   }
 
   return (
-    <div className="card">
+    <div className="u-card">
       <a onClick={onClick} id={id} href="#">
         <div style={{ width: '100%', backgroundColor: '#FFF' }}>
           <img src={require(`./css/images/submarine${id}Preview.png`)} alt="Submarine" />

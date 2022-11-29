@@ -1,6 +1,7 @@
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 
+
 const API_URL = "http://localhost:5000/auth/";
 
 class AuthService {
