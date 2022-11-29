@@ -1,5 +1,5 @@
 .u-game-container {
-  background: #E3F5FF;
+  background: #e3f5ff;
   flex-direction: column;
   align-items: center;
   width: 55%;
@@ -28,7 +28,6 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
-
 }
 
 .card {
@@ -68,7 +67,7 @@
   box-sizing: border-box;
   width: 100%;
   height: 20px;
-  background-color: #D9D9D9;
+  background-color: #d9d9d9;
   position: relative;
 }
 
@@ -77,7 +76,7 @@
   top: 0;
   left: 0;
   height: 100%;
-  background-color: #2BDA27;
+  background-color: #2bda27;
 }
 
 .u-stat-bar-text {
@@ -87,7 +86,7 @@
   height: 100%;
   width: 100%;
   padding: 0 5px;
-  color: #000C;
+  color: #000c;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -103,9 +102,11 @@
   grid-template-columns: repeat(20, 1fr);
 }
 
-.u-grid-20,.u-grid-24,.u-grid-28 {
+.u-grid-20,
+.u-grid-24,
+.u-grid-28 {
   box-shadow: 3px 3px 10px rgba(156, 230, 234);
-  background-image: url('./images/board-background.png');
+  background-image: url("./images/board-background.png");
   background-size: cover;
   filter: brightness(200%);
   height: 100%;
@@ -140,7 +141,7 @@
 }
 
 .u-cell:hover {
-  background-color: rgb(61, 108, 132,.15);
+  background-color: rgb(61, 108, 132, 0.15);
 }
 
 .u-cell-nv {
@@ -148,14 +149,16 @@
 }
 
 .u-cell-nv:hover {
-  background-color: rgb(0, 0, 0, .5);
+  background-color: rgb(0, 0, 0, 0.5);
 }
 
-.u-cell-rP, .u-cell-rN {
+.u-cell-rP,
+.u-cell-rN {
   background-color: rgba(0, 13, 10, 0.7);
 }
 
-.u-cell-rP:hover, .u-cell-rN:hover {
+.u-cell-rP:hover,
+.u-cell-rN:hover {
   background-color: rgba(0, 13, 10, 0.6);
 }
 
@@ -185,13 +188,14 @@
   color: white;
   text-align: center;
   border: none;
-  background-color: #2F6ECD;
+  background-color: #2f6ecd;
   border-radius: 5px;
   box-shadow: 3px 3px rgb(14, 28, 105);
 }
 
 .u-game-button:hover {
-  background-color: rgb(62, 102, 180)}
+  background-color: rgb(62, 102, 180);
+}
 
 .u-game-button:active {
   background-color: #1420a1;
@@ -200,7 +204,8 @@
   transform: translateX(3px);
 }
 
-.u-health-indicator, .u-stat-indicator {
+.u-health-indicator,
+.u-stat-indicator {
   display: flex;
   align-items: center;
   border-radius: 5px;
@@ -211,7 +216,7 @@
 .u-health-indicator {
   height: 47.5px;
   border: 1px solid red;
-  color: #A30F0F;
+  color: #a30f0f;
   font-size: 20px;
 }
 
@@ -256,7 +261,8 @@
   width: 100%;
 }
 
-.u-left-controls,.u-right-controls {
+.u-left-controls,
+.u-right-controls {
   display: flex;
   gap: 20px;
   align-items: center;
@@ -280,10 +286,10 @@
 
 .u-control-button:hover {
   cursor: pointer;
-  background-color: #00F3;
+  background-color: #00f3;
 }
 
 .u-control-button:active {
   cursor: pointer;
-  background-color: #00FA;
+  background-color: #00fa;
 }

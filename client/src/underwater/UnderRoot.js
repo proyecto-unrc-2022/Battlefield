@@ -1,5 +1,5 @@
-import { Outlet } from 'react-router-dom';
-import "./css/style.css"
+import { Outlet } from "react-router-dom";
+import "./css/style.css";
 
 export default function UnderRoot() {
   return (
