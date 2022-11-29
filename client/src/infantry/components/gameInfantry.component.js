@@ -37,7 +37,7 @@ export default class GameInfantry extends Component {
     this.timer = null;
   }
 
-   
+
 
 
   /**
@@ -110,10 +110,10 @@ export default class GameInfantry extends Component {
         else if (this.state.projectiles.length > 0 && nextProjectiles.length === 0) {
           equalsProjectiles = false
         }
-        else if(this.state.projectiles.length > nextProjectiles.length){
+        else if (this.state.projectiles.length > nextProjectiles.length) {
           equalsProjectiles = false
         }
-        else if(this.state.projectiles.length < nextProjectiles.length){
+        else if (this.state.projectiles.length < nextProjectiles.length) {
           equalsProjectiles = false
         }
         else if (this.state.projectiles.length === nextProjectiles.length) {
@@ -167,7 +167,7 @@ export default class GameInfantry extends Component {
    * @param {string} action una accion(move o shoot)
    * @param {int} velocity alcance de la accion(solo sirve para la accion mover, o para el proyectil de la artilleria)
    */
-  async action(direction, action, velocity) {
+  async action(direction, action, velocity, velocityShoot) {
     console.log(velocity)
     if (action === "move") {
       let response = await InfantryService.move(this.state.game_id, AuthService.getCurrentUser().sub,
@@ -180,7 +180,7 @@ export default class GameInfantry extends Component {
     }
     if (action === "shoot") {
       let response = await InfantryService.shoot(this.state.game_id, AuthService.getCurrentUser().sub,
-        direction, 0)
+        direction, velocityShoot)
       if (response === "Accion invalida") {
         return alert("Movimiento invalido")
       }
@@ -265,6 +265,14 @@ export default class GameInfantry extends Component {
     }
     return options
   }
+
+  optionsVelocity() {
+    const options = []
+    for (let i = 3; i <= 20; i++) {
+      options.push(<option value={i}>{i}</option>)
+    }
+    return options
+  }
   /**
    * Muestra un mensaje dependiendo de la situacion de la ronda
    * @returns Retorna dos mensajes dependiendo de si acabo la ronda o no
@@ -277,16 +285,16 @@ export default class GameInfantry extends Component {
       //this.updateRound();
     }
     else if (this.state.game.turn === AuthService.getCurrentUser().sub) {
-        message = <h3>Your turn</h3>
-      }
-      else {
-        message = (<div>
-                      <h3>waiting opponent's turn</h3>
-                      <div class="spinner-border" role="status">
-                        <span class="sr-only"></span>
-                      </div></div>
-                  )
-      }
+      message = <h3>Your turn</h3>
+    }
+    else {
+      message = (<div>
+        <h3>waiting opponent's turn</h3>
+        <div class="spinner-border" role="status">
+          <span class="sr-only"></span>
+        </div></div>
+      )
+    }
     return message
   }
 
@@ -297,7 +305,7 @@ export default class GameInfantry extends Component {
       console.log(this.state.figureOpponent["data"].hp)
       if (this.state.figure["data"].hp <= 0 || this.state.figureOpponent["data"].hp <= 0) {
         console.log("Entre")
-        
+
         return true
       } else {
         return false
@@ -330,10 +338,10 @@ export default class GameInfantry extends Component {
       return (<div class="text-center bg-War">
         <img src={gameOver} />
         <div className="d-flex justify-content-center ">
-          
-          <p className="display-4 bg-white w-25 rounded-pill p-3">Win Player {this.state.figure["data"].hp <= 0 ? this.state.figure["data"].id_user : 
-                                                  this.state.figureOpponent["data"].id_user}</p>
-        </div>         
+
+          <p className="display-4 bg-white w-25 rounded-pill p-3">Win Player {this.state.figure["data"].hp <= 0 ? this.state.figureOpponent["data"].id_user :
+            this.state.figure["data"].id_user}</p>
+        </div>
       </div>)
 
     }
@@ -343,12 +351,12 @@ export default class GameInfantry extends Component {
           <div class="container-fluid bg-War">
             <div class="row align-items-start">
               <div class="col-4 mx-3 mt-5"><FigureInfantryData figure={this.state.figure["data"]} /></div>
-              <div> <GameBoard figure={this.state.figure} figureOpponent={this.state.figureOpponent} projectiles={this.state.projectiles}/></div>
-  
+              <div> <GameBoard figure={this.state.figure} figureOpponent={this.state.figureOpponent} projectiles={this.state.projectiles} /></div>
+
             </div>
             <p class="text-center">{this.getMessageTurn()}</p>
             <div class="row">
-          
+
               <div class="container col">
                 {/* Formulario para que el usuario elija que accion desea realizar */}
                 <form onSubmit={ev => {
@@ -356,7 +364,14 @@ export default class GameInfantry extends Component {
                   this.setState({
                     next_turn: true
                   })
-                  this.action(ev.target.direction.value, ev.target.action.value, ev.target.velocity.value)
+                  console.log(ev.target.velocityShoot)
+                  if(ev.target.velocityShoot === undefined){
+                    this.action(ev.target.direction.value, ev.target.action.value, ev.target.velocity.value, 0)  
+
+                  }else{
+                    this.action(ev.target.direction.value, ev.target.action.value, ev.target.velocity.value, ev.target.velocityShoot.value)
+                  }
+                  
                 }} >
                   {/* botones para seleccionar la direccion */}
                   <br></br>
@@ -381,17 +396,17 @@ export default class GameInfantry extends Component {
                       <div class="mx-5">
                         <input type="radio" class="btn-check mx-3" name="direction" id="west" autocomplete="off" checked value={WEST} />
                         <label class="btn btn-secondary" for="west">West</label>
-                      </div>                      
+                      </div>
                       <div className="col-1">
 
                       </div>
                       <div class="mx-5">
-                          
+
                         <label class="btn btn-secondary" for="east">East</label>
                         <input type="radio" class="btn-check mx-3" name="direction" id="east" autocomplete="off" checked value={EAST} />
                       </div>
-                        
-                      
+
+
                     </div>
 
                     <div class="row justify-content-center">
@@ -420,10 +435,25 @@ export default class GameInfantry extends Component {
                           {this.optionsRender()}
                         </select>
                       </label>
-                      <input class="form-check-input" type="radio" name="action" id="shoot" value={"shoot"} />
-                      <label class="form-check-label text-white" for="shoot">
-                        Shoot
-                      </label>
+                      {this.state.figure["data"].figure_type === 4 ?
+                        <div>
+                          <input class="form-check-input" type="radio" name="action" id="shoot" value={"shoot"} />
+                          <label class="form-check-label text-white" for="shoot">
+                            Shoot
+                            <select class="form-select" id="sel1" name="velocityShoot">
+                              {this.optionsVelocity()}
+                            </select>
+                          </label>
+                        </div>
+                        :
+                        <div>
+                          <input class="form-check-input" type="radio" name="action" id="shoot" value={"shoot"} />
+                          <label class="form-check-label text-white" for="shoot">
+                            Shoot
+                          </label>
+                        </div>
+                      }
+
                     </div>
                   </div>
                   <br></br><br></br><br></br>
@@ -432,7 +462,7 @@ export default class GameInfantry extends Component {
                   </div>
                 </form>
               </div>
-              
+
             </div>
             <div>
 
