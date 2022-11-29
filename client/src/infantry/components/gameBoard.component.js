@@ -3,6 +3,7 @@ import "./TableGames.css";
 import InfantryService from "../services/infantry.service"
 
 const FIGURE = 1
+const FIGUREOPPONENT = 11
 const PROJECTILE = 2
 
 
@@ -50,8 +51,8 @@ export default class GameBoard extends Component {
    */
   drawGameBoard() {
     let board = (new Array(10)).fill().map(function () { return new Array(20).fill(0); });
-    this.state.figure.map(coor => { if (this.is_it_on_map(coor)) { board[coor[1]][coor[0]] = FIGURE } })
-    this.state.figureOpponent.map(coor => { if (this.is_it_on_map(coor)) { board[coor[1]][coor[0]] = FIGURE } })
+    this.state.figure["body"].map(coor => { if (this.is_it_on_map(coor)) { board[coor[1]][coor[0]] = FIGURE } })
+    this.state.figureOpponent["body"].map(coor => { if (this.is_it_on_map(coor)) { board[coor[1]][coor[0]] = FIGUREOPPONENT } })
     if (this.state.projectiles !== undefined) {
       this.state.projectiles.map(projectile => board[projectile["pos_y"]][projectile["pos_x"]] = PROJECTILE)
     }
@@ -68,52 +69,68 @@ export default class GameBoard extends Component {
     for (let i = 0; i < board.length; i++) {
       const mapItem = [];
       for (let j = 0; j < board[i].length; j++) {
-        if (board[i][j] === 1) {
+
+        if (board[i][j] === 11 && (board[i][j + 2] === 1 ||
+          board[i][j + 1] === 1 ||
+          board[i][j - 2] === 1 ||
+          board[i][j - 1] === 1 ||
+          i > 0 && board[i - 1][j] === 1 ||
+          i > 1 && board[i - 2][j] === 1 ||
+          i < 7 && board[i + 2][j] === 1 ||
+          i < 8 && board[i + 1][j] === 1 ||
+          i < 8 && board[i + 1][j - 1] === 1 ||
+          i < 8 && board[i + 1][j + 1] === 1 ||
+          i > 0 && board[i - 1][j + 1] === 1 ||
+          i > 0 && board[i - 1][j - 1] === 1 
+           )) {
+          mapItem.push(<li class="square p-3 bg-warning"></li>);
+        }
+
+        else if (board[i][j] === 1 ) {
           mapItem.push(<li class="square p-3 bg-primary"></li>);
         }
+
         else if ((board[i][j] === PROJECTILE)) {
           mapItem.push(<li class="square p-3 bg-danger"></li>);
         }
 
-        else if (board[i][j + 2] === 1) {
+        else if (board[i][j + 2] === 1 ) {
           mapItem.push(<li class="square p-3 bg-white"></li>);
         }
-        else if (board[i][j + 2] === 1) {
+        else if (board[i][j + 1] === 1 ) {
           mapItem.push(<li class="square p-3 bg-white"></li>);
         }
-        else if (board[i][j + 1] === 1) {
+        else if (board[i][j - 2] === 1 ) {
           mapItem.push(<li class="square p-3 bg-white"></li>);
         }
-        else if (board[i][j - 2] === 1) {
+        else if (board[i][j - 1] === 1 ) {
           mapItem.push(<li class="square p-3 bg-white"></li>);
         }
-        else if (board[i][j - 1] === 1) {
+        else if (i > 0 && board[i - 1][j] === 1 ) {
           mapItem.push(<li class="square p-3 bg-white"></li>);
         }
-        else if (i > 0 && board[i - 1][j] === 1) {
+        else if (i > 1 && board[i - 2][j] === 1 ) {
           mapItem.push(<li class="square p-3 bg-white"></li>);
         }
-        else if (i > 1 && board[i - 2][j] === 1) {
+        else if (i < 7 && board[i + 2][j] === 1 ) {
           mapItem.push(<li class="square p-3 bg-white"></li>);
         }
-        else if (i < 7 && board[i + 2][j] === 1) {
+        else if (i < 8 && board[i + 1][j] === 1 ) {
           mapItem.push(<li class="square p-3 bg-white"></li>);
         }
-        else if (i < 8 && board[i + 1][j] === 1) {
+        else if (i < 8 && board[i + 1][j - 1] === 1 ) {
           mapItem.push(<li class="square p-3 bg-white"></li>);
         }
-        else if (i < 8 && board[i + 1][j - 1] === 1) {
+        else if (i < 8 && board[i + 1][j + 1] === 1 ) {
           mapItem.push(<li class="square p-3 bg-white"></li>);
         }
-        else if (i < 8 && board[i + 1][j + 1] === 1) {
+        else if (i > 0 && board[i - 1][j + 1] === 1 ) {
           mapItem.push(<li class="square p-3 bg-white"></li>);
         }
-        else if (i > 0 && board[i - 1][j + 1] === 1) {
+        else if (i > 0 && board[i - 1][j - 1] === 1 ) {
           mapItem.push(<li class="square p-3 bg-white"></li>);
         }
-        else if (i > 0 && board[i - 1][j - 1] === 1) {
-          mapItem.push(<li class="square p-3 bg-white"></li>);
-        }
+        
         else {
           mapItem.push(<li class="square p-3"></li>);
         }
