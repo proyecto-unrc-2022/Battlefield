@@ -18,6 +18,7 @@ class UnderGame(db.Model):
 
     host_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     visitor_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    winner_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
     height = db.Column(db.Integer)
     width = db.Column(db.Integer)
@@ -33,9 +34,14 @@ class UnderGame(db.Model):
         backref=backref("under_game_visitor", uselist=False),
         foreign_keys=[visitor_id],
     )
+    winner = relationship("User", foreign_keys=[winner_id])
 
-    submarines = relationship("Submarine", back_populates="game")
-    torpedos = relationship("Torpedo", back_populates="game")
+    submarines = relationship(
+        "Submarine", back_populates="game", cascade="all, delete-orphan"
+    )
+    torpedos = relationship(
+        "Torpedo", back_populates="game", cascade="all, delete-orphan"
+    )
 
     def __init__(self, host, visitor=None, height=10, width=20):
         self.host = host
@@ -112,7 +118,7 @@ class UnderGame(db.Model):
         new_cells = obj.get_tail_positions(direction=direction)
         found_objects = self.board.objects_in_positions(new_cells)
         for other in found_objects:
-            if self.is_ongoing():
+            if self.is_ongoing() and obj.in_game():
                 self.solve_conflict(obj, other)
 
         if obj.in_game():
@@ -123,6 +129,9 @@ class UnderGame(db.Model):
         self.update_visibilites()
 
     def advance_object(self, obj, n=None):
+        if self.is_finished() or n == 0:
+            return
+
         if isinstance(obj, Torpedo):
             n = obj.speed
 
@@ -161,8 +170,12 @@ class UnderGame(db.Model):
             self.submarines.remove(obj)
             if len(self.submarines) < 2:
                 self.set_state(GameState.FINISHED)
+                self.winner = self.submarines[0].player
 
     def attack(self, sub):
+        if self.is_finished():
+            return
+
         next_cell = sub.get_next_position()
 
         if self.board.valid(next_cell) and self.is_ongoing():
@@ -179,6 +192,9 @@ class UnderGame(db.Model):
             self.update_visibilites()
 
     def send_radar_pulse(self, sub):
+        if self.is_finished():
+            return
+
         sub.under_board_mask.get_radar_pulse()
         for s in self.submarines:
             if not sub.player is s.player:

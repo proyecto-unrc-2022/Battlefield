@@ -43,15 +43,23 @@ def app_with_data(app_with_db):
     db.session.execute(delete(User))
     db.session.commit()
 
+@pytest.fixture
+def app_with_plane_data(app_with_db):
+    from app.models.airforce.plane import Plane, Projectile
+    plane = Plane(name="avion", size=3, speed=2, health=100, cant_projectile=3)
+    db.session.add(plane)
+    db.session.commit()
+    plane = Plane.query.filter_by(name="avion").first()
+    projectile = Projectile(id=0, speed=2, damage=50, plane_id=plane.id)
+    db.session.add(projectile)
+    db.session.commit()
+    yield app_with_db
+    db.session.execute(delete(Projectile))
+    db.session.commit()
+    db.session.execute(delete(Plane))
+    db.session.commit()
 
-@pytest.fixture(scope="session")
-def arrange_navy_game(app_with_db):
-    from app.daos.user_dao import add_user
-    from app.navy.services.navy_game_service import navy_game_service
+    
 
-    add_user("user1", "123", "user1@user.com")
-    add_user("user2", "321", "user2@user.com")
-    user1 = {"user1_id": 1}
-    user2 = {"user2_id": 2}
-    navy_game_service.add(user1)
-    navy_game_service.join(user2, 1)
+
+

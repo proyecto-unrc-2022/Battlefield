@@ -12,27 +12,25 @@ class BoardMask(db.Model):
     board_mask = db.Column(db.String)
     submarine_id = db.Column(db.Integer, db.ForeignKey("submarine.id"))
 
-    submarine = relationship(
-        "Submarine", backref=backref("under_board_mask", uselist=False)
-    )
+    submarine = relationship("Submarine", back_populates="under_board_mask")
 
     def __init__(self, game, submarine):
         self.submarine = submarine
         self.mask_dict = {}
         self.radar_cells = set()
         self.visible_cells = set()
-        self.board = game.board
         self.update()
 
     @reconstructor
     def retreive_mask(self):
         self.mask_dict = json.loads(self.board_mask)
-        self.board = self.submarine.game.board
         self.radar_cells = set()
         self.visible_cells = set()
-        for i in self.mask_dict:
-            for j in self.mask_dict[i]:
-                if self.mask_dict[i][j][0] == "r":
+        for si in self.mask_dict:
+            for sj in self.mask_dict[si]:
+                i = int(si)
+                j = int(sj)
+                if self.mask_dict[si][sj][0] == "r":
                     self.radar_cells.add((i, j))
                 else:
                     self.visible_cells.add((i, j))
@@ -50,6 +48,8 @@ class BoardMask(db.Model):
         for cell in new_visible_cells:
             self.__set_cell_visible(cell)
 
+        self.save()
+
     def get_radar_pulse(self):
         self.__clean_radar()
 
@@ -58,9 +58,13 @@ class BoardMask(db.Model):
 
         for pos in radar_scope:
             if not pos in vision_scope:
-                code = self.__encode(self.board.get_cell_content(pos), pos, radar=True)
+                code = self.__encode(
+                    self.submarine.game.board.get_cell_content(pos), pos, radar=True
+                )
                 self.__add(pos, code)
                 self.radar_cells.add(pos)
+
+        self.save()
 
     def return_radar_pulse(self, enemy_mask):
         my_positions = self.submarine.get_positions()
@@ -73,6 +77,8 @@ class BoardMask(db.Model):
                 break
 
         if i_was_seen:
+            print(enemy_positions)
+            print(self.visible_cells)
             for pos in enemy_positions:
                 if pos in self.visible_cells:
                     continue
@@ -80,15 +86,19 @@ class BoardMask(db.Model):
                     self.__add(pos, "rP")
                     self.radar_cells.add(pos)
 
+        self.save()
+
     def __add(self, pos, code):
-        x, y = pos
+        x = str(pos[0])
+        y = str(pos[1])
         if x in self.mask_dict.keys():
             self.mask_dict[x].update({y: code})
         else:
             self.mask_dict.update({x: {y: code}})
 
     def __remove(self, pos):
-        x, y = pos
+        x = str(pos[0])
+        y = str(pos[1])
         self.mask_dict[x].pop(y)
         if self.mask_dict[x] == {}:
             self.mask_dict.pop(x)
@@ -99,7 +109,7 @@ class BoardMask(db.Model):
         self.radar_cells.clear()
 
     def __set_cell_visible(self, cell):
-        code = self.__encode(self.board.get_cell_content(cell), cell)
+        code = self.__encode(self.submarine.game.board.get_cell_content(cell), cell)
         self.__add(cell, code)
         if not cell in self.visible_cells:
             self.visible_cells.add(cell)

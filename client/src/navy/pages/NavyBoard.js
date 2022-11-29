@@ -16,9 +16,9 @@ import NavyLogo from "../components/NavyLogo";
 import Chat from "../components/Chat";
 import NavyTitle from "../components/NavyTitle";
 import io from "socket.io-client";
+import { API_URL as url } from "../API_URL";
 
-
-const socket = io("http://localhost:5000");
+const socket = io(`${url}`);
 const NavyBoard = () => {
   const [game, setGame] = useState(null);
   const [accessDenied, setAccessDenied] = useState(true);
@@ -40,18 +40,17 @@ const NavyBoard = () => {
   const [winner, setWinner] = useState(null);
   const [openModal, setOpenModal] = useState(false);
 
-
   useEffect(() => {
     if (!game) {
       getGame();
-      if(socket.disconnect){
-      socket.connect();
+      if (socket.disconnect) {
+        socket.connect();
       }
     }
 
     return () => {
       socket.close();
-    }; 
+    };
   }, [socket]);
 
   const handleSelectMissile = (missile) => {
@@ -107,7 +106,6 @@ const NavyBoard = () => {
             }
           }
         }
-        console.log("Entre acá");
         setAction({
           course: " ",
           move: 0,
@@ -192,6 +190,8 @@ const NavyBoard = () => {
             y: resp.data.data.ship.pos_y,
             size: resp.data.data.ship.size,
             speed: resp.data.data.ship.speed,
+            "missile speed": 0,
+            damage: 0,
           };
           getShip(missile_type_id, ship);
 
@@ -208,6 +208,8 @@ const NavyBoard = () => {
                 y: resp.data.data.sight_range.ships[0].pos_y,
                 size: resp.data.data.sight_range.ships[0].size,
                 speed: resp.data.data.sight_range.ships[0].speed,
+                "missile speed": 0,
+                damage: 0,
               };
               getEnemyShip(missile_type_id, enemyShip);
             }
@@ -222,6 +224,8 @@ const NavyBoard = () => {
           y: resp.data.data.ship.pos_y,
           size: resp.data.data.ship.size,
           speed: resp.data.data.ship.speed,
+          "missile speed": 0,
+          damage: 0,
         });
 
         setEnemyShip(null);
@@ -236,6 +240,8 @@ const NavyBoard = () => {
               y: resp.data.data.sight_range.ships[0].pos_y,
               size: resp.data.data.sight_range.ships[0].size,
               speed: resp.data.data.sight_range.ships[0].speed,
+              "missile speed": 0,
+              damage: 0,
             });
           }
         }
@@ -303,7 +309,10 @@ const NavyBoard = () => {
           </div>
 
           <div className="text-center">
-            <div style={{gap: "2rem"}} className="d-flex justify-content-center">
+            <div
+              style={{ gap: "2rem" }}
+              className="d-flex justify-content-center"
+            >
               {game.round ? <NavyTitle text={"Round: " + game.round} /> : null}
               {game.turn ? (
                 <NavyTitle
@@ -324,19 +333,15 @@ const NavyBoard = () => {
                 <div className="col-8">
                   <EntityDetails title={"My Ship"} data={myShip} />
                 </div>
-                {
-                  socket ? (
-                    <div className="col-12 d-flex flex column mt-3">
+                {socket ? (
+                  <div className="col-12 d-flex flex column mt-3">
                     <Chat
                       user={authService.getCurrentUser().username}
                       game={game}
                       socket={socket}
                     />
-                  </div> ) : null
-
-
-                }
-               
+                  </div>
+                ) : null}
               </div>
             </div>
             <div className="col-6">

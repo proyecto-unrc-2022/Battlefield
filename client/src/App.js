@@ -11,6 +11,12 @@ import Home from "./components/home.component";
 import Board from "./components/board.component";
 import NavyMenu from "./navy/pages/NavyMenu";
 import NavyGames from "./navy/pages/NavyGames";
+import UnderRoot from "./underwater/UnderRoot";
+import UnderMenu from "./underwater/UnderMenu";
+import UnderGame from "./underwater/UnderGame";
+import UnderHome from "./underwater/UnderHome";
+import UnderNewGame from "./underwater/UnderNewGame";
+import UnderJoinGame from "./underwater/UnderJoinGame";
 import NavyShipSelection from "./navy/pages/NavyShipSelection";
 import { NavyShipPlace } from "./navy/pages/NavyShipPlace";
 import NavyLobby from "./navy/pages/NavyLobby"
@@ -73,11 +79,18 @@ class App extends Component {
               </Link>
             </li>
 
-
             {currentUser && (
               <li className="nav-item">
                 <Link to={"/user"} className="nav-link">
                   User
+                </Link>
+              </li>
+            )}
+
+            {currentUser && (
+              <li className="nav-item">
+                <Link to={"/underwater/menu"} className="nav-link">
+                  Underwater
                 </Link>
               </li>
             )}
@@ -127,6 +140,16 @@ class App extends Component {
             <Route path="/board" element={<Board />} />
             <Route path="/navy" element={<NavyMenu />} />
             <Route path="/navy/games" element={<NavyGames />} />
+
+            <Route path="/underwater" element={<UnderRoot />}>
+              <Route path="menu" element={<UnderMenu />}>
+                <Route index element={<UnderHome />} />
+                <Route path="new" element={<UnderNewGame />} />
+                <Route path="lobby" element={<UnderJoinGame />} />
+              </Route>
+              <Route path="game/:id" element={<UnderGame />} />
+            </Route>
+
             <Route
               path="/navy/games/:id/ship_selection"
               element={<NavyShipSelection />}

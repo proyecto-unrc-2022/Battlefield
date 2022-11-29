@@ -11,7 +11,10 @@ import Chat from "../components/Chat";
 import NavySpectateGameService from "../services/NavySpectateGameService";
 import NavyTitle from "../components/NavyTitle";
 import userService from "../../services/user.service";
+import { API_URL as url } from "../API_URL";
+import { io } from "socket.io-client";
 
+const socket = io(`${url}`);
 const NavySpectateBoard = () => {
   const [game, setGame] = useState(null);
   const [accessDenied, setAccessDenied] = useState(true);
@@ -29,12 +32,19 @@ const NavySpectateBoard = () => {
   const [openModal, setOpenModal] = useState(false);
   const [specRound, setSpecRound] = useState(0);
 
-  useEffect(
-    () => {
+  useEffect(() => {
+    if (!game) {
+
       getGame();
-    }, //eslint-disable-next-line
-    []
-  );
+      if (socket.disconnect) {
+        socket.connect();
+      }
+    }
+
+    return () => {
+      socket.close();
+    };
+  }, [socket]);
 
   const handleSelectMissile = (missile) => {
     setMissileSelected(true);
@@ -47,7 +57,7 @@ const NavySpectateBoard = () => {
     });
   };
 
-  const getGame = (roundToSpec = 0) => {
+  const getGame = async (roundToSpec = 0) => {
     return NavySpectateGameService.getNavySpectateGames(id, roundToSpec).then(
       (resp) => {
         setAccessDenied(false);
@@ -56,13 +66,20 @@ const NavySpectateBoard = () => {
           setRound(resp.data.data.game.round - 1);
           setSpecRound(resp.data.data.game.round - 1);
         }
-        if (resp.data.data.game.status === "FINISHED" && resp.data.data.game.round === roundToSpec)  {
+        if (
+          resp.data.data.game.status === "FINISHED" &&
+          resp.data.data.game.round === roundToSpec
+        ) {
           setOpenModal(true);
         }
         setWinner(resp.data.data.game.winner);
         setGame(resp.data.data.game);
         setMissiles(resp.data.data.missiles);
-            
+        console.log(resp.data.data.game.user_1.id)
+        console.log(resp.data.data.ships[0].user_id)
+        let user_temp = false
+        if(resp.data.data.game.user_1.id === resp.data.data.ships[0].user_id){
+          user_temp = true
         setMyShip({
           name: resp.data.data.ships[0].name,
           hp: resp.data.data.ships[0].hp,
@@ -72,10 +89,21 @@ const NavySpectateBoard = () => {
           size: resp.data.data.ships[0].size,
           speed: resp.data.data.ships[0].speed,
         });
-
+      }else{
+        setMyShip({
+          name: resp.data.data.ships[1].name,
+          hp: resp.data.data.ships[1].hp,
+          course: resp.data.data.ships[1].course,
+          x: resp.data.data.ships[1].pos_x,
+          y: resp.data.data.ships[1].pos_y,
+          size: resp.data.data.ships[1].size,
+          speed: resp.data.data.ships[1].speed,
+        });
+      }
         setEnemyShip(null);
 
         if (resp.data.data.status !== "FINISHED") {
+          if(user_temp){
           setEnemyShip({
             name: resp.data.data.ships[1].name,
             hp: resp.data.data.ships[1].hp,
@@ -85,7 +113,18 @@ const NavySpectateBoard = () => {
             size: resp.data.data.ships[1].size,
             speed: resp.data.data.ships[1].speed,
           });
+        }else{
+          setEnemyShip({
+            name: resp.data.data.ships[0].name,
+            hp: resp.data.data.ships[0].hp,
+            course: resp.data.data.ships[0].course,
+            x: resp.data.data.ships[0].pos_x,
+            y: resp.data.data.ships[0].pos_y,
+            size: resp.data.data.ships[0].size,
+            speed: resp.data.data.ships[0].speed,
+          });
         }
+      }
       }
     );
   };
@@ -139,12 +178,12 @@ const NavySpectateBoard = () => {
         </div>
       ) : accessDenied ? (
         <AccessDenied
-          text={"The game you are trying to spectate its under 3 rounds, please check later"}
-        
+          text={
+            "The game you are trying to spectate its under 3 rounds, please check later"
+          }
           buttonText={"Go to games"}
           redirectTo={"/navy/games"}
         />
-        
       ) : (
         <>
           <Modal isOpen={openModal}>
@@ -155,9 +194,12 @@ const NavySpectateBoard = () => {
               <hr className="m-0" />
             </div>
             <h4 className="navy-text text-center m-0">
-              <span> {game.winner === game.user_1.id ?
-                  `${game.user_1.username} WON!` :
-                  `${game.user_2.username} WON!`}</span>
+              <span>
+                {" "}
+                {game.winner === game.user_1.id
+                  ? `${game.user_1.username} WON!`
+                  : `${game.user_2.username} WON!`}
+              </span>
             </h4>
             <div className="text-center">
               <div>
@@ -203,21 +245,28 @@ const NavySpectateBoard = () => {
             <div className="col-3">
               <div className="row justify-content-center">
                 <div className="col-8">
-                  <EntityDetails title={`${game.user_1.username}`} data={myShip} 
-                    game={game} />
-                </div>
-
-                <div className="col-12 d-flex flex column mt-5">
-                  <Chat
-                    user={authService.getCurrentUser().username}
+                  <EntityDetails
+                    title={`${game.user_1.username}`}
+                    data={myShip}
                     game={game}
                   />
                 </div>
+
+                {socket ? (
+                  <div className="col-12 d-flex flex column mt-3">
+                    <Chat
+                      user={authService.getCurrentUser().username}
+                      game={game}
+                      socket={socket}
+                    />
+                  </div>
+                ) : null}
               </div>
             </div>
             <div className="col-6">
               <div className="row justify-content-center">
                 <div className="col-12 d-flex justify-content-center">
+                  
                   <GridGame
                     rows={game.rows}
                     cols={game.cols}
@@ -257,9 +306,10 @@ const NavySpectateBoard = () => {
               <div className="col-3">
                 <div className="row justify-content-center">
                   <div className="col-8">
-                    <EntityDetails title={`${game.user_2.username}`}
-                    data={enemyShip}
-                    game={game}
+                    <EntityDetails
+                      title={`${game.user_2.username}`}
+                      data={enemyShip}
+                      game={game}
                     />
                   </div>
                 </div>

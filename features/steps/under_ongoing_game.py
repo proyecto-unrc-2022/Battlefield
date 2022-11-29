@@ -4,6 +4,7 @@ from flask import url_for
 from app.underwater.daos.session_dao import session_dao
 from app.underwater.daos.submarine_dao import submarine_dao
 from app.underwater.daos.under_game_dao import game_dao
+from app.underwater.message_announcer import MessageAnnouncer, announcers
 from app.underwater.models.submarine import Submarine
 from app.underwater.models.torpedo import Torpedo
 from app.underwater.session import UnderGameSession
@@ -18,6 +19,7 @@ def step_impl(context, h, w, username1, username2):
     host = context.players[username1]
     visitor = context.players[username2]
     context.game = game_dao.create(host=host, visitor=visitor, height=h, width=w)
+    announcers.update({context.game.id: MessageAnnouncer()})
     context.session = session_dao.start_session_for(context.game)
 
     assert context.game.host is host
@@ -53,10 +55,13 @@ def step_impl(context, username, d, n):
         "direction": d,
         "steps": n,
     }
-    headers = {"authorization": context.tokens[player.id]}
+    headers = {
+        "authorization": context.tokens[player.id],
+        "Content-Type": "application/json",
+    }
     context.page = context.client.post(
         url_for("underwater.rotate_and_advance", session_id=context.session.id),
-        data=payload,
+        json=payload,
         headers=headers,
     )
 
@@ -75,18 +80,21 @@ def step_impl(context):
 def step_impl(context, username, d):
     player = context.players[username]
     payload = {"direction": d}
-    headers = {"authorization": context.tokens[player.id]}
+    headers = {
+        "authorization": context.tokens[player.id],
+        "Content-Type": "application/json",
+    }
     context.page = context.client.post(
         url_for("underwater.rotate_and_attack", session_id=context.session.id),
-        data=payload,
+        json=payload,
         headers=headers,
     )
-    assert context.page
+    assert context.page.status_code == 200
 
 
-@then("fail")
-def step_impl(context):
-    assert False
+@then("the next player is '{username}'")
+def step_impl(context, username):
+    assert context.session.current_turn_player() is context.players[username]
 
 
 def compare_board(context):
