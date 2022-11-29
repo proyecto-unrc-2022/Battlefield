@@ -107,6 +107,12 @@ class ChoosePlane extends Component {
               <div className="container-choosePlane" style={{textAlign: "center"}}>
                 <div className="select-plane">
                     <h2 className="subtitle-1">Choose your plane</h2>
+                    <div className="planes-logo">
+                        <div className="hawkerTempest"></div>
+                        <div className="mitsubishiA6mZero"></div>
+                        <div className="douglasA20Havoc"></div>
+                        <div className="boeningB17FlyingFortress"></div>
+                    </div>
                     <div>
                     {   Object.keys(this.state.planes).map((key) => (
                         <div className="planes-buttons" style={{display: "inline-block", verticalAlign: "middle", padding: "1rem 1rem"}} onClick={() => this.handleClick(key)}>
