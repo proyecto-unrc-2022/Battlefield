@@ -295,7 +295,7 @@ export default class GameInfantry extends Component {
       console.log(this.state.figureOpponent["data"].hp)
       if (this.state.figure["data"].hp <= 0 || this.state.figureOpponent["data"].hp <= 0) {
         console.log("Entre")
-        gameService.removeGame(this.state.game_id)
+        
         return true
       } else {
         return false
