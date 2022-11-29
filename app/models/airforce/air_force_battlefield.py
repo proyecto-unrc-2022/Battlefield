@@ -124,7 +124,7 @@ class Battlefield:
         crashing.flying_obj.health -= crashed_health
         self.destroy_plane(crashed)
         self.destroy_plane(crashing)
-        
+
     def damage_plane(self, plane, damage):
         plane.flying_obj.health -= damage
 
@@ -172,6 +172,26 @@ class Battlefield:
         l = {}
         i = 0
         for f in self.flying_objects:
+            l[i] = f.to_dict()
+            i += 1
+        return l
+
+    def get_status_player(self, player):
+        from app.models.airforce.airforce_filters import get_player_plane
+
+        plane = get_player_plane(self, player)[0]
+        obj = list(
+            filter(
+                lambda p: p.x <= plane.x + 5
+                and p.x >= plane.x - 5
+                and p.y <= plane.y + 5
+                and p.y >= plane.y - 5,
+                self.flying_objects,
+            )
+        )
+        l = {}
+        i = 0
+        for f in obj:
             l[i] = f.to_dict()
             i += 1
         return l
