@@ -122,13 +122,9 @@ class Battlefield:
         crashed_health = crashed.flying_obj.health
         crashed.flying_obj.health -= crashing.flying_obj.health
         crashing.flying_obj.health -= crashed_health
-        self.flying_objects.remove(crashed) if (
-            crashed.flying_obj.health <= 0
-        ) else True
-        self.flying_objects.remove(crashing) if (
-            crashing.flying_obj.health <= 0
-        ) else True
-
+        self.destroy_plane(crashed)
+        self.destroy_plane(crashing)
+        
     def damage_plane(self, plane, damage):
         plane.flying_obj.health -= damage
 
