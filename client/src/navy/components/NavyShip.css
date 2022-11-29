@@ -1,0 +1,24 @@
+.navy-card-ship-container {
+    background-color: #82B5EA;
+    width: 250px;
+    border-radius: 10px;
+    border: 2px solid #000000 !important;
+    box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+    box-shadow: -15px 15px 35px 20px rgba(0, 0, 0, 0.2), inset 0px -100px 100px -20px #245E6B;
+  }
+
+.navy-card-ship-container-small {
+  background-color: #82B5EA;
+  font-size: 8px;
+  width: 135px;
+  border-radius: 10px;
+  border: 2px solid #000000 !important;
+  box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px;
+  box-shadow: -15px 15px 35px 20px rgba(0, 0, 0, 0.2), inset 0px -100px 100px -20px #245E6B;
+}
+
+.selected {
+  transform: scale(1.1);
+  border: 2px solid #2c6190 !important;
+  transition: transform 0.3s;
+}

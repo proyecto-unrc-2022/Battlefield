@@ -6,6 +6,7 @@ req.txt
 .vscode/
 
 
+
 *.pyc
 __pycache__/
 
@@ -19,3 +20,5 @@ dist/
 build/
 *.egg-info/
 client/node_modules/
+config.py
+app/foo.db

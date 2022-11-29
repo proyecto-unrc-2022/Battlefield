@@ -18,7 +18,7 @@ class DevelopmentConfig(Config):
     DEBUG = True
     ENV = "development"
     SECRET_KEY = os.environ.get("SECRET_KEY")
-    SQLALCHEMY_DATABASE_URI = "sqlite:////tmp/foo.db"
+    SQLALCHEMY_DATABASE_URI = "sqlite:///foo.db"
 
 
 class TestingConfig(Config):

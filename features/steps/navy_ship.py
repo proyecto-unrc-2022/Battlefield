@@ -2,168 +2,79 @@ import json
 
 from behave import *
 from flask import url_for
-
-from app import db
-from app.daos.user_dao import add_user
-from app.models.user import User
-from app.navy.models.ship import Ship
-from app.navy.services.navy_game_service import navy_game_service
+from steps.navy.test_utils import test_utils
 
 
-@given('another user exists as "user2"')
-def step_impl(context):
-    add_user("user2", "123", "user2@user2.com")
-    context.user2 = User.query.filter_by(username="user2").first()
+@given(
+    "the user '{user_id:d}' created a '{ship_name}' in '{pos_x:d}', '{pos_y:d}' with course '{course}' and '{hp:d}' hp in the NavyGame '{game_id:d}'"
+)
+def step_impl(context, user_id, ship_name, pos_x, pos_y, course, hp, game_id):
+    from app.navy.services.ship_service import ship_service
+
+    try:
+        context.ships.update(
+            {
+                user_id: test_utils.add_test_ship(
+                    name=ship_name,
+                    pos_x=pos_x,
+                    pos_y=pos_y,
+                    course=course,
+                    hp=hp,
+                    navy_game_id=game_id,
+                    user_id=user_id,
+                )
+            }
+        )
+    except:
+        context.ships = {}
+        context.ships[user_id] = test_utils.add_test_ship(
+            name=ship_name,
+            pos_x=pos_x,
+            pos_y=pos_y,
+            course=course,
+            hp=hp,
+            navy_game_id=game_id,
+            user_id=user_id,
+        )
+
+    ships_db = ship_service.get_by(navy_game_id=game_id)
+
+    assert context.ships[user_id] in ships_db
 
 
-@given("I've created a Navy Game")
-def step_impl(context):
-    # context.user1 given in backround (step implemented in navy_game steps)
-    data = {"user1_id": context.user1.id}
-    context.game_created = navy_game_service.add(data)
-
-
-@given("another user joins the game I've created")
-def step_impl(context):
-    data = {"user2_id": context.user2.id}
-    id = context.game_created.id
-    context.game_created = navy_game_service.join_second_player(data, id)
-
-
-@when("I try to create a \"Destroyer\" ship in ('2', '3') position, and 'N' direction")
-def step_impl(context):
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f'Bearer {context.token["token"]}',
-    }
-    body = {
-        "name": "Destroyer",
-        "pos_x": 2,
-        "pos_y": 3,
-        "course": "N",
-        "user_id": context.user1.id,
-        "navy_game_id": context.game_created.id,
-    }
-    context.page = context.client.post(
+@when(
+    "the user '{user_id:d}' creates a '{ship_name}' in '{pos_x:d}', '{pos_y:d}' with course '{course}' for the NavyGame '{game_id:d}'"
+)
+def step_impl(context, user_id, ship_name, pos_x, pos_y, course, game_id):
+    headers = test_utils.get_header(context.tokens[user_id])
+    body = test_utils.json_ship(ship_name, pos_x, pos_y, course, user_id, game_id)
+    context.pages[user_id] = context.client.post(
         url_for("navy.new_ship"), json=body, headers=headers
     )
-    assert context.page
+    assert context.pages[user_id]
 
 
-@then("the ship should be created successfully")
-def step_impl(context):
-    assert context.page.status_code == 201
+@then("the ship of user '{user_id:d}' should be created successfully")
+def step_impl(context, user_id):
+    assert context.pages[user_id].status_code == 201
 
 
-@given("another user creates a Navy Game")
-def step_impl(context):
-    data = {"user1_id": context.user2.id}
-    context.game_created = navy_game_service.add(data)
+@then("the ship of user '{user_id:d}' shouldn't be created")
+def step_impl(context, user_id):
+    assert context.pages[user_id].status_code == 400
 
 
-@given("I join the game created by another user")
-def step_impl(context):
-    data = {"user2_id": context.user1.id}
-    id = context.game_created.id
-    context.game_created = navy_game_service.join_second_player(data, id)
+@then(
+    "the user '{user_id:d}' should see his ship with the course '{course}' at '{pos_x:d}', '{pos_y:d}' with '{hp:d}' hp in the NavyGame '{game_id:d}'"
+)
+def step_impl(context, user_id, course, pos_x, pos_y, hp, game_id):
+    current_game = json.loads(context.pages[user_id].text)["data"]
 
-
-@when("I try to create a \"Destroyer\" ship in ('5', '17') coords, and 'N' direction")
-def step_impl(context):
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f'Bearer {context.token["token"]}',
-    }
-    body = {
-        "name": "Destroyer",
-        "pos_x": 5,
-        "pos_y": 17,
-        "course": "N",
-        "user_id": context.user1.id,
-        "navy_game_id": context.game_created.id,
-    }
-    context.page = context.client.post(
-        url_for("navy.new_ship"), json=body, headers=headers
+    assert context.pages[user_id].status_code == 200
+    assert current_game["id"] == game_id
+    assert current_game["ship"]["course"] == course
+    assert (
+        current_game["ship"]["pos_x"] == pos_x
+        and current_game["ship"]["pos_y"] == pos_y
     )
-    print(str(context.game_created))
-    assert context.page
-
-
-@when("I try to create ship with wrong name or course")
-def step_impl(context):
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f'Bearer {context.token["token"]}',
-    }
-    body = {
-        "name": "Dinosaur",
-        "pos_x": 2,
-        "pos_y": 3,
-        "course": "OK",
-        "user_id": context.user1.id,
-        "navy_game_id": context.game_created.id,
-    }
-    context.page = context.client.post(
-        url_for("navy.new_ship"), json=body, headers=headers
-    )
-    assert context.page
-
-
-@when("I try to create ship with ('11', '9') coords")
-def step_impl(context):
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f'Bearer {context.token["token"]}',
-    }
-    body = {
-        "name": "Destroyer",
-        "pos_x": 11,
-        "pos_y": 9,
-        "course": "N",
-        "user_id": context.user1.id,
-        "navy_game_id": context.game_created.id,
-    }
-    context.page = context.client.post(
-        url_for("navy.new_ship"), json=body, headers=headers
-    )
-    assert context.page
-
-
-@when("I try to create ship with ('2', '16') coords")
-def step_impl(context):
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f'Bearer {context.token["token"]}',
-    }
-    body = {
-        "name": "Destroyer",
-        "pos_x": 2,
-        "pos_y": 16,
-        "course": "N",
-        "user_id": context.user1.id,
-        "navy_game_id": context.game_created.id,
-    }
-    context.page = context.client.post(
-        url_for("navy.new_ship"), json=body, headers=headers
-    )
-    assert context.page
-
-
-@when("I try to create ship with ('2', '6') coords")
-def step_impl(context):
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f'Bearer {context.token["token"]}',
-    }
-    body = {
-        "name": "Destroyer",
-        "pos_x": 2,
-        "pos_y": 6,
-        "course": "N",
-        "user_id": context.user1.id,
-        "navy_game_id": context.game_created.id,
-    }
-    context.page = context.client.post(
-        url_for("navy.new_ship"), json=body, headers=headers
-    )
-    assert context.page
+    assert current_game["ship"]["hp"] == hp

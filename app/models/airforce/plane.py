@@ -9,13 +9,11 @@ class Plane(db.Model):
     __tablename__ = "plane"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), nullable=False)
+    name = db.Column(db.String(255), nullable=False, unique=True)
     size = db.Column(db.Integer, nullable=False)
     speed = db.Column(db.Integer, nullable=False)
     health = db.Column(db.Integer, nullable=False)
-    course = db.Column(db.Integer, nullable=False)  # 1 north, 2 east, 3 south, 4 west
-    coor_x = db.Column(db.Integer, nullable=False)
-    coor_y = db.Column(db.Integer, nullable=False)
+    cant_projectile = db.Column(db.Integer, nullable=False)
 
     projectile = relationship("Projectile")
 
@@ -49,9 +47,7 @@ class PlaneSchema(SQLAlchemySchema):
     size = auto_field()
     speed = auto_field()
     health = auto_field()
-    course = auto_field()
-    coor_x = auto_field()
-    coor_y = auto_field()
+    cant_projectile = auto_field()
 
 
 class Machine_gun(db.Model):

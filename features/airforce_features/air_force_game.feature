@@ -1,5 +1,8 @@
 Feature: game logic
-    
+
+    Background: some requirement of this test
+    Given init db
+
     @air_force_game
     Scenario: User start new game
         Given three logged user
@@ -39,6 +42,7 @@ Feature: game logic
 
     @air_force_game
     Scenario: Player_b choose a plane and position at the map
+        Given player_a and plane in db
         Given player_b in the game and plane in db
         When player_b choose a plane and his position
         Then info of the new flying object are returned
@@ -51,35 +55,40 @@ Feature: game logic
 
     @air_force_game
     Scenario: Player_b choose a plane and position in enemy position
+        Given player_a and plane in db
         Given player_b in the game and plane in db
         When choose a plane and position in player_a position   
         Then Error status code are returned
 
     @air_force_game
     Scenario: Player_a move his plane in the same course
-        Given a battlefield with player_a's plane 
-        Given a battlefield with player_b's plane 
+        Given player_a and plane in db
+        Given player_b in the game and plane in db
         When player_a moves his plane in th same course
         And player_b moves his plane in th same course
         Then 201 response code are returned
 
     @air_force_game
     Scenario: Player_a move his plane in new course
-        Given a battlefield with player_a's plane 
-        Given a battlefield with player_b's plane 
+        Given player_a and plane in db
+        Given player_b in the game and plane in db
         When player_a moves his plane in new valid course
         And player_b moves his plane in new valid course
         Then 201 response code are returned
     
     @air_force_game
     Scenario: Player_a move his plane in valid course and colition with a limit
-        Given a battlefield with player_a's plane 
+        Given player_a and plane in db
+        Given player_b in the game and plane in db
         When player_a moves his plane and colition with a limit
+        And player_b moves his plane in new valid course
         Then 201 response code are returned
     
     @air_force_game
     Scenario: Player_a move his plane in invalid course
-        Given a battlefield with player_a's plane 
+        Given player_a and plane in db
+        Given player_b in the game and plane in db
+        When player_b moves his plane in new valid course
         When player_a moves his plane in invalid course
         Then 400 response code are returned
 
@@ -97,6 +106,9 @@ Feature: game logic
         And player_b join in this game
         And player_a choose a plane
         And player_b choose a plane
-        Then info of the battlefield are returned
+        And player_a shoot a missile and player_b move his plane
+        And player_a shoot second missile and player_b move his plane
+        Then game status are ended
+
 
 

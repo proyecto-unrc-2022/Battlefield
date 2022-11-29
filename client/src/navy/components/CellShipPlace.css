@@ -1,0 +1,19 @@
+.cell {
+  border: 1px solid black;
+	height: 100%;
+	width: 100%;
+}
+
+.selected-cell {
+	background-color: #565656cf
+}
+
+.hovered {
+  background-color: rgb(145, 248, 153);
+}
+
+
+.invalid {
+	background-color: rgb(248, 145, 145);
+	cursor: not-allowed;
+}

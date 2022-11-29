@@ -19,7 +19,7 @@ def get_user_by_id(user_id):
 
 
 def get_user_by_username(username):
-    return db.session.query(User).filter_by(username="joel").one_or_none()
+    return db.session.query(User).filter_by(username=username).one_or_none()
 
 
 def hash_password(plaintext_password):

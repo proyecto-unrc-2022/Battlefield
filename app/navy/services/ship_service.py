@@ -6,39 +6,42 @@ from app.navy.utils.navy_utils import utils
 
 class ShipService:
     SHIP_NAMES = ["Destroyer", "Cruiser", "Battleship", "Corvette"]
-    SHIP_SIZES = [3, 3, 4, 2]
 
-    def validate_request(self, request):
-        from app.navy.validators.ship_request_validator import ShipRequestValidator
-
-        ship_data_validated = ShipRequestValidator().load(request)
-        return ship_data_validated
-
-    def add(self, data):
-        ship_data = ship_type_dao.get_by(data["name"])
+    def create(self, name, pos_x, pos_y, course, user_id, navy_game_id):
+        ship_data = ship_type_dao.get_by(name)
         new_ship = Ship(
-            data["name"],
+            name,
             ship_data["hp"],
             ship_data["size"],
             ship_data["speed"],
             ship_data["visibility"],
             ship_data["missile_type_id"][0],
+            pos_x,
+            pos_y,
+            course,
+            user_id,
+            navy_game_id,
+        )
+        return new_ship
+
+    def add(self, data):
+        ship = self.create(
+            data["name"],
             data["pos_x"],
             data["pos_y"],
             data["course"],
             data["user_id"],
             data["navy_game_id"],
         )
+        added_ship = ship_dao.add(ship)
+        return added_ship
 
-        return ship_dao.add_or_update(new_ship)
-
-    def update_db(self, ship):
-        ship_dao.add_or_update(ship)
+    def update_all(self, ships):
+        ship_dao.update_all(ships)
 
     def load_to_board(self, ship):
         from app.navy.services.navy_game_service import navy_game_service
 
-        # TODO: CanLoad to board
         ships_positions = self.build(ship)
         for x, y in ships_positions:
             navy_game_service.load_to_board(ship.navy_game_id, x, y, ship)
@@ -69,29 +72,46 @@ class ShipService:
     def delete_from_board(self, ship):
         from app.navy.services.navy_game_service import navy_game_service
 
-        ships_positions = self.build(ship)
-        for x, y in ships_positions:
-            navy_game_service.delete_from_board(ship.navy_game_id, x, y)
+        if (
+            navy_game_service.get_from_board(ship.navy_game_id, ship.pos_x, ship.pos_y)
+            == ship
+        ):
+            ships_positions = self.build(ship)
+            for x, y in ships_positions:
+                navy_game_service.delete_from_board(ship.navy_game_id, x, y)
 
-    def update_position(self, ship, action):
+    def can_move_one(self, ship):
+        x, y = utils.get_next_position(ship.pos_x, ship.pos_y, ship.course)
+        return ship.is_alive and utils.in_of_bounds(x, y)
+
+    def move_one(self, ship):
+        ship.pos_x, ship.pos_y = utils.get_next_position(
+            ship.pos_x, ship.pos_y, ship.course
+        )
+
+    def act(self, ship):
         from app.navy.services.navy_game_service import navy_game_service
 
+        entity = navy_game_service.get_from_board(
+            ship.navy_game_id, ship.pos_x, ship.pos_y
+        )
+        if entity:
+            self.act_accordingly(ship, entity)
+
+    def update_position(self, ship, dist):
         self.delete_from_board(ship)
-        for _ in range(int(action.move)):
-            x, y = utils.get_next_position(ship.pos_x, ship.pos_y, ship.course)
-            if utils.out_of_bounds(x, y):
-                self.load_to_board(ship)
-                return True
+        while self.can_move_one(ship) and dist > 0:
+            self.move_one(ship)
+            dist -= 1
+            self.act(ship)
 
-            entity = navy_game_service.get_from_board(ship.navy_game_id, x, y)
-            if entity:
-                self.act_accordingly(ship, entity)
-                if not ship.is_alive:
-                    return False
-            ship.pos_x, ship.pos_y = x, y
+        if ship.is_alive:
+            self.load_to_board(ship)
 
-        self.load_to_board(ship)
-        return True
+    def can_update(self, ship):
+        from app.navy.services.navy_game_service import navy_game_service
+        game_over = navy_game_service.is_over(ship.navy_game_id)
+        return ship.is_alive and not game_over
 
     def turn(self, ship, new_course):
         self.delete_from_board(ship)
@@ -105,49 +125,44 @@ class ShipService:
         from app.navy.services.missile_service import missile_service
 
         x, y = utils.get_next_position(ship.pos_x, ship.pos_y, ship.course)
-        created_missile = missile_service.create(
+        created_missile = missile_service.add(
             ship.navy_game_id, ship.id, ship.missile_type_id, ship.course, x, y
         )
-        if not utils.free_valid_poisition(x, y, ship.navy_game_id):
-            missile_service.act_accordingly(created_missile, x, y)
-            return False
-
-        missile_service.load_to_board(created_missile)
-        return True
-
-    def update_hp(self, ship, damage):
-        from app.navy.services.navy_game_service import navy_game_service
-
-        if ship.hp - damage <= utils.ZERO:
-            ship.hp = utils.ZERO
-            self.delete(ship)
-            if navy_game_service.get_from_board(
-                ship.navy_game_id, ship.pos_x, ship.pos_y
-            ):
-                self.delete_from_board(ship)
+        if utils.free_valid_poisition(x, y, ship.navy_game_id):
+            missile_service.load_to_board(created_missile)
         else:
-            ship.hp -= damage
+            missile_service.act_accordingly(created_missile)
 
     def act_accordingly(self, ship, entity):
         from app.navy.models.missile import Missile
 
         if isinstance(entity, Ship):
             self.act_accordingly_to_ship(ship, entity)
-
-        if isinstance(entity, Missile):
+        elif isinstance(entity, Missile):
             self.act_accordingly_to_missile(ship, entity)
 
     def act_accordingly_to_ship(self, ship, other_ship):
         old_hp = ship.hp
-        self.update_hp(ship, other_ship.hp)
-        self.update_hp(other_ship, old_hp)
+        self.hit(ship, other_ship.hp)
+        self.hit(other_ship, old_hp)
+
+    def hit(self, ship, damage):
+        self.update_hp(ship, damage)
+        if self.can_delete(ship):
+            self.delete(ship)
+            self.delete_from_board(ship)
+
+    def update_hp(self, ship, damage):
+        ship.hp -= damage
+
+    def can_delete(self, ship):
+        return self.can_update(ship) and ship.hp <= 0
 
     def act_accordingly_to_missile(self, ship, missile):
         from app.navy.services.missile_service import missile_service
 
-        self.update_hp(ship, missile.damage)
-        missile_service.delete_from_board(missile)
-        missile_service.delete(missile)
+        self.hit(ship, missile.damage)
+        missile_service.hit(missile)
 
     def build(self, ship):
         res = [(ship.pos_x, ship.pos_y)]
@@ -158,17 +173,14 @@ class ShipService:
                 res.append((x, y))
         return res
 
-    def get_sight_range(self, ship):
-        border_point_x = ship.pos_x - ship.visibility
-        border_point_y = ship.pos_y - ship.visibility
-        return utils.get_distance(
-            ship.pos_x, ship.pos_y, border_point_x, border_point_y
-        )
-
     def get_dto(self, ship):
         from app.navy.dtos.ship_dto import ShipDTO
 
         return ShipDTO().dump(ship)
+
+    def pos_in_range(self, ship, pos):
+        pos_x, pos_y = pos[0], pos[1]
+        return utils.in_range(ship.pos_x, ship.pos_y, pos_x, pos_y, ship.visibility)
 
     def get_alives(self, user_id, navy_game_id):
         from app.navy.services.navy_game_service import navy_game_service

@@ -4,45 +4,17 @@ from app.navy.models.ship import Ship
 from app.navy.services.navy_game_service import navy_game_service
 from app.navy.utils.navy_utils import utils
 
-""" Missile Service
-
-    This class is responsible for the logic of the missiles in the game.
-    It is responsible for the creation of missiles, the movement of missiles, the attack of missiles,the deletion of missiles, etc.
-    
-    Attributes:
-        MISSILE_TYPES (list): List of missile types.
-
-    Methods:
-        add(self,navy_Game_id,ship_id,missile_type,pos_x,pos_y)
-        get(self,navy_game_id)
-        delete(self,missile)
-        move(self,missile)
-        mov_is_valid(self,missile,x,y)
-        act_accordingly(self,missile,x,y)
-           |-> act_accordingly_missile(self,other_missile)
-           |-> act_accordingly_ship(self,damage,ship)
-        
-    You can view in github the source code of this class:
-    missile_service: https://github.com/proyecto-unrc-2022/Battlefield/tree/develop/app/navy
-    
-"""
-
 
 class MissileService:
-
-    MISSILE_TYPES = [1, 2, 3, 4]
-
     def get(self, navy_game_id):
         missiles = missile_dao.get_by_navy_game_id(navy_game_id=navy_game_id)
-        missiles.sort(key=lambda x: x.order)
         return missiles
 
-    def create(self, navy_game_id, ship_id, missile_type, course, pos_x, pos_y):
-        from app.navy.daos.missile_dao import missile_dao
+    def create(self, navy_game_id, pos_x, pos_y, course, missile_type, ship_id):
         from app.navy.daos.missile_type_dao import missile_type_dao
 
         missile_data = missile_type_dao.get_by_id(str(missile_type))
-        missile = Missile(
+        new_missile = Missile(
             missile_data["speed"],
             missile_data["damage"],
             course,
@@ -50,24 +22,18 @@ class MissileService:
             pos_y,
             ship_id,
             navy_game_id,
-            self.get_prox_order(navy_game_id),
         )
-        navy_game_service.games[navy_game_id]["missiles"].append(missile)
-        return missile
+        return new_missile
 
-    def get_prox_order(self, navy_game_id):
-        return self.max_by_order(missile_dao.get_by_navy_game_id(navy_game_id)) + 1
+    def add(self, navy_game_id, ship_id, missile_type, course, pos_x, pos_y):
+        new_missile = self.create(
+            navy_game_id, pos_x, pos_y, course, missile_type, ship_id
+        )
+        navy_game_service.games[navy_game_id]["missiles"].append(new_missile)
+        return new_missile
 
-    def max_by_order(self, missiles):
-        if not missiles:
-            return 0
-        temp = missiles[0].order
-        for m in missiles[1:]:
-            temp = max(m.order, temp)
-        return temp
-
-    def update_db(self, missile):
-        missile_dao.add_or_update(missile)
+    def update_all(self, missiles):
+        missile_dao.update_all(missiles)
 
     def load_to_board(self, missile):
         navy_game_service.load_to_board(
@@ -86,53 +52,58 @@ class MissileService:
     def delete(self, missile):
         missile.is_alive = False
 
-    def act_accordingly(self, missile, x_conflict, y_conflict):
-        self.delete(missile)
-
-        if not utils.out_of_bounds(x_conflict, y_conflict):
-
-            entity = navy_game_service.get_from_board(
-                missile.navy_game_id, x_conflict, y_conflict
-            )
-
-            if isinstance(entity, Missile):
-                self.act_accordingly_missile(entity)
-            elif isinstance(entity, Ship):
-                self.act_accordingly_ship(missile, entity)
-
-    def act_accordingly_missile(self, other_missile):
-        navy_game_service.delete_from_board(
-            other_missile.navy_game_id, other_missile.pos_x, other_missile.pos_y
-        )
-        self.delete(other_missile)
-
-    def act_accordingly_ship(self, missile, ship):
+    def act_accordingly(self, missile):
         from app.navy.services.ship_service import ship_service
 
-        ship_service.update_hp(ship, missile.damage)
-
-    def update_position(self, missile):
-        self.delete_from_board(missile)
-
-        for _ in range(missile.speed):
-
-            new_position = utils.next_free_position(
-                missile.pos_x, missile.pos_y, missile.course, missile.navy_game_id
-            )
-            if new_position:
-                missile.pos_x, missile.pos_y = new_position
-                continue
-            x_conflict, y_conflit = utils.get_next_position(
-                x=missile.pos_x, y=missile.pos_y, course=missile.course
-            )
-            self.act_accordingly(missile, x_conflict, y_conflit)
-            return False
-
-        navy_game_service.load_to_board(
-            missile.navy_game_id, missile.pos_x, missile.pos_y, missile
+        self.delete(missile)
+        entity = navy_game_service.get_from_board(
+            missile.navy_game_id, missile.pos_x, missile.pos_y
         )
 
-        return True
+        if isinstance(entity, Missile):
+            self.hit(entity)
+        elif isinstance(entity, Ship):
+            ship_service.hit(entity, missile.damage)
+
+    def hit(self, missile):
+        self.delete_from_board(missile)
+        self.delete(missile)
+
+    def can_update(update_position):
+        def prepare_update(self, missile):
+            game_over = navy_game_service.is_over(missile.navy_game_id)
+            if missile.is_alive and not game_over:
+                update_position(self, missile)
+
+        return prepare_update
+
+    def can_move_one(self, missile):
+        return missile.is_alive
+
+    def move_one(self, missile):
+        missile.pos_x, missile.pos_y = utils.get_next_position(
+            missile.pos_x, missile.pos_y, missile.course
+        )
+        return missile
+
+    def act(self, missile):
+        entity = navy_game_service.get_from_board(
+            missile.navy_game_id, missile.pos_x, missile.pos_y
+        )
+        if entity or utils.out_of_bounds(missile.pos_x, missile.pos_y):
+            self.act_accordingly(missile)
+
+    @can_update
+    def update_position(self, missile):
+        self.delete_from_board(missile)
+        dist = missile.speed
+        while self.can_move_one(missile) and dist > 0:
+            self.move_one(missile)
+            dist -= 1
+            self.act(missile)
+
+        if missile.is_alive:
+            self.load_to_board(missile)
 
     def get_dto(self, missile):
         from app.navy.dtos.missile_dto import MissileDTO

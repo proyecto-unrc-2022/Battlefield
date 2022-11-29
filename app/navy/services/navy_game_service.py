@@ -1,63 +1,31 @@
 from app.navy.daos.navy_game_dao import navy_game_dao
 from app.navy.models.missile import Missile
 from app.navy.models.navy_game import NavyGame
+from app.navy.utils.navy_game_statuses import FINISHED
 from app.navy.utils.navy_utils import utils
-from app.navy.validators.navy_game_patch_validator import NavyGamePatchValidator
-from app.navy.validators.navy_game_post_validator import NavyGamePostValidator
-
-""" Navy Game Service
-    This class is responsible for all the business logic related to the Navy Game
-    Attributes:
-        games (list): List of all the games in the system.
-    Methods:
-        This class provides the following methods:
-        validate_post_request(self, request)
-        validate_patch_request(self, request)
-        add(self,data)
-        join_second_player(self,data,id)
-        get_all(self,user_id=None)
-        get_by_id(self,id)
-        delete(self,id)
-        delete_in_map
-        add_in_map
-        get_from_map
-        update_game
-        change_turn
-        set_winner
-        end_game
-
-    You can view in github the source code of this class:
-    navy_game_service: https://github.com/proyecto-unrc-2022/Battlefield/tree/develop/app/navy
-"""
 
 
 class NavyGameService:
 
     games = {}
 
-    def validate_post_request(self, request):
-        return NavyGamePostValidator().load(request)
-
-    def validate_patch_request(self, request):
-        return NavyGamePatchValidator().load(request)
-
     def add(self, data):
         new_game = NavyGame(utils.ROWS, utils.COLS, data["user1_id"])
-        navy_game_dao.add_or_update(new_game)
+        navy_game_dao.add(new_game)
         self.games[new_game.id] = {}
         return new_game
 
-    def join_second_player(self, data, id):
-        game = navy_game_dao.get_by_id(id)
+    def join(self, data):
+        game = navy_game_dao.get_by_id(data["game_id"])
         game.user2_id = data["user2_id"]
-        navy_game_dao.add_or_update(game)
+        navy_game_dao.update(game, commit=True)
         return game
 
     def get_all(self, user_id=None):
         if user_id:
             return navy_game_dao.get_by_user(user_id)
         else:
-            return navy_game_dao.get()
+            return navy_game_dao.get_all()
 
     def get_by_id(self, id):
         return navy_game_dao.get_by_id(id)
@@ -74,7 +42,10 @@ class NavyGameService:
         self.games[navy_game_id][(x, y)] = entity
 
     def get_from_board(self, navy_game_id, x, y):
-        return self.games[navy_game_id].get((x, y))
+        entity = self.games[navy_game_id].get((x, y))
+        if entity and entity.is_alive:
+            return entity
+        return None
 
     def load_game(self, navy_game_id):
         from app.navy.services.missile_service import missile_service
@@ -108,94 +79,98 @@ class NavyGameService:
     def get_missiles(self, navy_game_id):
         return self.games[navy_game_id]["missiles"]
 
-    def update_game(self, navy_game_id):
-        from app.navy.services.action_service import action_service
-        from app.navy.services.missile_service import missile_service
+    def get_ships(self, navy_game_id):
+        return self.games[navy_game_id]["ships"]
 
-        if not self.games.get(navy_game_id):
-            self.load_game(navy_game_id)
+    def execute_cache(f):
+        def proceed(self, navy_game_id):
+            if not self.games.get(navy_game_id):
+                self.load_game(navy_game_id)
+                return f(self, navy_game_id)
+            else:
+                return f(self, navy_game_id)
 
-        # game = self.games[navy_game_id]
-        game_db = navy_game_dao.get_by_id(navy_game_id)
-        missiles = missile_service.get_alives(navy_game_id)
-        actions = action_service.get_by_round(navy_game_id, game_db.round)
+        return proceed
 
-        if self.update_missiles(missiles):
-            actions.sort(key=lambda x: x.user_id == game_db.turn, reverse=True)
-            for action in actions:
-                if not action_service.execute(action) and self.check_winner(
-                    navy_game_id
-                ):
-                    return
+    @execute_cache
+    def play_round(self, navy_game_id):
+        game = navy_game_dao.get_by_id(navy_game_id)
+        self.run_missiles(game)
+        self.run_actions(game)
+        self.finalize_round(game)
+        self.save(game)
 
-        game = self.change_turn(game=game_db)
+    def finalize_round(self, game):
+        self.is_over(game.id)
         game.round += 1
-        self.update_game_db(game_db.id)
-        navy_game_dao.add_or_update(game)
+        game.turn = self.change_turn(game)
 
-    def update_game_db(self, navy_game_id):
+    def run_actions(self, game):
+        from app.navy.services.action_service import action_service
+
+        actions = action_service.get_by_round(game.id, game.round, game.turn)
+        for action in actions:
+            if action_service.can_execute(action):
+                action_service.execute(action)
+
+    def save(self, game):
         from app.navy.services.missile_service import missile_service
         from app.navy.services.ship_service import ship_service
+        from app.navy.services.spectate_service import spectate_service
 
-        ships = self.games[navy_game_id]["ships"]
-        missiles = self.games[navy_game_id]["missiles"]
-        for ship in ships:
-            ship_service.update_db(ship)
-        for missile in missiles:
-            missile_service.update_db(missile)
+        ships = self.games[game.id]["ships"]
+        missiles = self.games[game.id]["missiles"]
 
-    def update_missiles(self, missiles):
+        ship_service.update_all(ships)
+        missile_service.update_all(missiles)
+        navy_game_dao.update(game)
+        spectate_service.save_round(game, ships, missiles)
+
+    def run_missiles(self, game):
         from app.navy.services.missile_service import missile_service
 
+        missiles = missile_service.get_alives(game.id)
         for missile in missiles:
-            if not missile_service.update_position(missile) and self.check_winner(
-                missile.navy_game_id
-            ):
-                return False
-        return True
+            missile_service.update_position(missile)
 
-    def change_turn(self, navy_game_id=None, game=None):
-        if not game:
-            game = self.get_by_id(navy_game_id)
-
+    def change_turn(self, game):
         game.turn = game.user1_id if game.turn == game.user2_id else game.user2_id
-        return game
+        return game.turn
 
-    def set_winner(self, winner, navy_game_id=None, game=None):
-        if not game:
-            game = self.get_by_id(navy_game_id)
-
+    def set_winner(self, winner, game):
         game.winner = winner
-        navy_game_dao.add_or_update(game)
+        game.status = FINISHED
 
-    def check_winner(self, navy_game_id):
-        from app.navy.services.ship_service import ship_service
-
-        game = self.get_by_id(navy_game_id)
-
-        ships_user1 = ship_service.get_alives(game.user1_id, navy_game_id)
-        ships_user2 = ship_service.get_alives(game.user2_id, navy_game_id)
-
-        if any([ship.is_alive for ship in ships_user1]) and any(
-            [ship.is_alive for ship in ships_user2]
-        ):
-            return False
-
-        if all([not ship.is_alive for ship in ships_user1]):
+    def is_over(self, navy_game_id):
+        game = navy_game_dao.get_by_id(navy_game_id)
+        is_game_over = True
+        if game.winner:
+            return is_game_over
+        elif self.user_lost(game.user1_id, navy_game_id):
             self.set_winner(game.user2_id, game=game)
-        else:
+
+        elif self.user_lost(game.user2_id, navy_game_id):
             self.set_winner(game.user1_id, game=game)
 
-        return True
+        else:
+            is_game_over = False
+
+        return is_game_over
+
+    def user_lost(self, user_id, navy_game_id):
+        from app.navy.services.ship_service import ship_service
+
+        ships = ship_service.get_alives(user_id, navy_game_id)
+        return not ships
 
     def should_update(self, navy_game_id):
         from app.navy.services.action_service import action_service
 
         game = navy_game_dao.get_by_id(navy_game_id)
         actions = action_service.get_by_round(
-            navy_game_id=navy_game_id, round=game.round
+            navy_game_id=navy_game_id, round=game.round, turn=game.turn
         )
-        return len(actions) == 2
+        return len(actions) == utils.CANT_PLAYERS
 
     def get_ship_from_game(self, navy_game_id, ship_id):
         ships = self.games[navy_game_id]["ships"]
@@ -204,54 +179,42 @@ class NavyGameService:
                 return ship
         return None
 
-    def get_active_games(self):
-        keys_games = self.games.keys()
-        games = []
-        for key in keys_games:
-            game = self.get_by_id(key)
-            if not game.winner:
-                games.append(game)
-        return games
-
-    def get_board(self, navy_game_id, user_id):
-        from app.navy.services.missile_service import missile_service
+    def get_visibility(self, navy_game_id, user_id):
         from app.navy.services.ship_service import ship_service
 
-        if not self.games.get(navy_game_id):
-            self.load_game(navy_game_id)
+        game_board = self.get_board(navy_game_id)
+        user_ships = ship_service.get_by(user_id=user_id, navy_game_id=navy_game_id)
+        entities = set([])
 
-        # -------- NavyGameState reemplaza estas 3 lineas -----#
+        for ship in user_ships:
+            for pos in game_board:
+                if ship_service.pos_in_range(ship, pos):
+                    entities.add(game_board[pos])
+
+        ships_dto, missiles_dto = self.to_dto(entities, user_id)
+        return {"ships": ships_dto, "missiles": missiles_dto}
+
+    @execute_cache
+    def get_board(self, navy_game_id):
         game_dict = self.games[navy_game_id].copy()
         game_dict.pop("ships")
         game_dict.pop("missiles")
-        # ------------------------------------------------------#
+        return game_dict
 
-        user_ships = ship_service.get_by(user_id=user_id, navy_game_id=navy_game_id)
-        set_ships = set([])
-        set_missiles = set([])
-
-        for ship in user_ships:
-            sight_range = ship_service.get_sight_range(ship)
-            for x, y in game_dict.keys():
-                if utils.get_distance(ship.pos_x, ship.pos_y, x, y) <= sight_range:
-                    visible_entity = self.get_from_board(ship.navy_game_id, x, y)
-                    self.add_to_set(visible_entity, set_ships, set_missiles, ship.id)
-
-        ships = list(map(ship_service.get_dto, set_ships))
-        missiles = list(map(missile_service.get_dto, set_missiles))
-
-        return {"ships": ships, "missiles": missiles}
-
-    def add_to_set(self, entity, set_ships, set_missiles, ship_id):
+    def to_dto(self, entities, user_id):
         from app.navy.models.ship import Ship
+        from app.navy.services.missile_service import missile_service
+        from app.navy.services.ship_service import ship_service
 
-        if isinstance(entity, Ship) and entity.id != ship_id:
-            set_ships.add(entity)
-        elif isinstance(entity, Missile):
-            set_missiles.add(entity)
+        ships_dto = []
+        missiles_dto = []
 
-    def get_ships(self, navy_game_id):
-        return self.games[navy_game_id]["ships"]
+        for entity in entities:
+            if isinstance(entity, Ship) and entity.user_id != user_id:
+                ships_dto.append(ship_service.get_dto(entity))
+            elif isinstance(entity, Missile):
+                missiles_dto.append(missile_service.get_dto(entity))
+        return ships_dto, missiles_dto
 
 
 navy_game_service = NavyGameService()

@@ -1,0 +1,85 @@
+
+.battlefield{
+    color: white;
+    background-image: url(../images/sky.jpg);
+    align-items: center;
+    text-align: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    position: fixed;
+    padding: auto;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.board{
+    border: 2px;
+    border-color: black;
+    margin-top:  auto;
+}
+
+.board-row {
+    margin: 0;;
+}
+
+table{    
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 65px;
+    border-collapse: separate;
+    border-spacing: 2px;
+}
+
+th{
+    
+    color: white;
+}
+thead {
+    background-color: transparent;
+}
+
+td{
+    color: black;
+    border: 1px solid;
+    border-radius: 10px;
+    border-color: black;
+    width: 30px;
+    height: 30px;
+}
+
+.action-buttons {
+    display: inline;
+    vertical-align: middle;
+    padding: 1rem 1rem;
+    font-size: 18px;
+
+}
+
+button {
+    color: black;
+    background-color: transparent;
+    border-color: black;
+    border-radius: 5px;
+    margin-top: 50px;
+    transition-duration: 0.1s;
+}
+
+button:hover {
+    color: black;
+    background-color: white;
+
+}
+
+
+.square {
+    background: rgb(184, 184, 184);
+    border: 1px solid rgb(0, 0, 0);
+    height: 40px;
+    width: 40px;
+    margin-top: -8px;
+    margin-right: -1px;
+    display: inline-block; 
+    vertical-align: top;
+}
+

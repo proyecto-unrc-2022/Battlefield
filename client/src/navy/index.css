@@ -1,0 +1,21 @@
+.navy-text {
+  font-family: 'Black Ops One', cursive;
+  text-transform: uppercase;
+  text-decoration: none !important;
+  color: black;
+}
+
+.navy-text:hover {
+  color: black;
+}
+
+.bg-menu {
+  background-image: url("./assets/bg-menu.png");
+  background-size: cover;
+}
+
+
+.bg-navy {
+  background-image: url("./assets/bg-navy.jpg");
+  background-size: cover;
+}

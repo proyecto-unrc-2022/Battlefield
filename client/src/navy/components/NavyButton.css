@@ -1,0 +1,28 @@
+.navy-button {
+  border-width: medium !important;
+  border-color: black !important;
+  box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.5); 
+}
+
+.navy-button-xlarge {
+  font-size: 4rem;
+}
+
+.navy-button-large {
+  font-size: 3rem;
+}
+
+.navy-button-small {
+  font-size: 16px;
+  padding: 4px 8px;
+}
+
+.navy-button-medium {
+  font-size: 2rem;
+}
+
+.navy-button:hover {
+  background-color: #2DA0ED;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px -50px 36px -28px inset;
+  transition: 0.5s;
+}

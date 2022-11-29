@@ -1,0 +1,147 @@
+
+.container-choosePlane{
+    background-image: url("../images/airforce-bg-2.jpg"); 
+    background-size: cover;
+    background-repeat: no-repeat;
+    position: fixed;
+    padding: auto;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+ }
+
+.planes-logo{
+   margin-bottom: 100px;
+   justify-content: space-between;
+}
+
+
+.hawkerTempest {
+   background-image: url(".././images/hawker-tempest.png");
+   background-repeat: no-repeat;
+   background-size: cover;
+   display: inline-flex;
+   margin-left: -80px;
+   width: 150px;
+   height: 50px;
+}
+
+.hawkerTempest:hover{
+   -webkit-transform: scale(1.5);
+   transform: scale(1.5)
+}
+
+.mitsubishiA6mZero{
+   background-image: url(".././images/Mitsubishi-A6M-Zero.png");
+   background-repeat: no-repeat;
+   background-size: cover;
+   display: inline-flex;
+   margin-left: 100px;
+   width: 150px;
+   height: 50px;
+}
+
+.mitsubishiA6mZero:hover{
+   -webkit-transform: scale(1.5);
+   transform: scale(1.5)
+}
+.douglasA20Havoc{
+   background-image: url(".././images/Douglas-A-20\ -Havoc.png");
+   background-repeat: no-repeat;
+   background-size: cover;
+   display: inline-flex;
+   margin-left: 150px;
+   margin-right: 10px;
+   width: 180px;
+   height: 70px;
+}
+
+.boeningB17FlyingFortress:hover{
+   -webkit-transform: scale(1.5);
+   transform: scale(1.5)
+}
+
+
+.boeningB17FlyingFortress{
+   background-image: url(".././images/Boeing-B-17-Flying-Fortress.png");
+   background-repeat: no-repeat;
+   background-size: cover;
+   display: inline-flex;
+   margin-left: 150px;
+   width: 175px;
+   height: 50px
+ 
+}
+
+.douglasA20Havoc:hover{
+   -webkit-transform: scale(1.5);
+   transform: scale(1.5)
+}
+
+
+.planes-buttons{
+    margin-top: -150px;
+    margin-bottom: 50px;
+    font-size: 20px;
+    font-family: 'Silkscreen';
+ }
+ 
+ .button-p{
+    transition-duration: 0.1s;
+    background-color: transparent;
+    border: 1px;
+    border-radius: 10px;
+ }
+ 
+ .button-p:hover {
+    color: white;
+    background-color: rgb(0, 0, 0);
+    border:1px solid rgb(0, 0, 0);
+    border-radius: 10px;
+ }
+ 
+ .button-p:focus{
+    background-color: rgb(16, 46, 0);
+    border:1px solid rgb(0, 0, 0);
+    border-radius: 10px;
+ }
+ 
+ 
+ .input-bar{
+    background-color: transparent;
+    border:1px solid black;
+    border-radius: 10px;
+    color: rgb(255, 255, 255);
+    font-family: 'Silkscreen';
+    margin-top: 50px;
+ }
+ 
+ .subtitle-1{
+    color: rgb(0, 0, 0);
+    font-family: 'Silkscreen';
+    margin-top: 15px;
+ }
+ 
+ .subtitle-2{
+    color: rgb(0, 0, 0);
+    font-family: 'Silkscreen';
+ }
+ 
+ .ready-button{
+    color: rgb(0, 0, 0);
+    transition-duration: 0.1s;
+    background-color: transparent;
+    border-color: black;
+    border: 3px;
+    border-radius: 10px;
+    font-family: 'Silkscreen';
+ }
+ 
+ .ready-button:hover {
+    color: black;
+    background-color: white;
+    border:1px solid white;
+    border-radius: 10px;
+    font-family: 'Silkscreen';
+ }
+ 

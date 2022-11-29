@@ -8,11 +8,16 @@ class NavyGameDao:
     def __init__(self, model):
         self.model = model
 
-    def add_or_update(self, navy_game):
+    def add(self, navy_game):
         db.session.add(navy_game)
         db.session.commit()
 
-    def get(self):
+    def update(self, navy_game, commit=False):
+        db.session.add(navy_game)
+        if commit:
+            db.session.commit()
+
+    def get_all(self):
         return db.session.query(self.model).all()
 
     def get_by_user(self, user_id):

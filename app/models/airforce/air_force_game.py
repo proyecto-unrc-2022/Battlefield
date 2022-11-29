@@ -1,6 +1,5 @@
-from hashlib import new
-
 from app.models.airforce.air_force_battlefield import Battlefield
+from app.models.airforce.airforce_filters import get_player_plane
 
 
 class AirForceGame:
@@ -25,7 +24,6 @@ class AirForceGame:
     def add_command(self, command, player):
 
         if self.player_cant_add_command(player):
-            print("a: ", self.player_a_ready, "b", self.player_b_ready)
             raise Exception("only one command per turn")
 
         if player == self.turn:
@@ -39,19 +37,20 @@ class AirForceGame:
             self.update_turn()
 
     def executeList(self):
-        self.battlefield.move_projectile(self.turn)
-
-        if self.turn != self.player_a:
+        if self.turn != self.player_a and not self.game_ended():
             self.battlefield.move_projectile(self.player_a)
-            self.battlefield.move_projectile(self.player_b)
+            if not self.game_ended():
+                self.battlefield.move_projectile(self.player_b)
         else:
-            self.battlefield.move_projectile(self.player_b)
-            self.battlefield.move_projectile(self.player_a)
-
-        for c in self.new_commands.get("first"):
-            c.execute()
-        for c in self.new_commands.get("second"):
-            c.execute()
+            if not self.game_ended():
+                self.battlefield.move_projectile(self.player_b)
+            if not self.game_ended():
+                self.battlefield.move_projectile(self.player_a)
+        if not self.game_ended():
+            for c in self.new_commands.get("first"):
+                c.execute()
+            for c in self.new_commands.get("second"):
+                c.execute()
         self.new_commands.get("first").clear()
         self.new_commands.get("second").clear()
         self.player_a_ready = False
@@ -68,7 +67,7 @@ class AirForceGame:
             self.player_b_ready = True
 
     def get_player_plane(self, player_id):
-        return self.battlefield.get_player_plane(player_id)
+        return get_player_plane(self.battlefield, player_id)
 
     def player_cant_add_command(self, player):
         if player == self.player_a and self.player_a_ready:
@@ -80,120 +79,17 @@ class AirForceGame:
     def update_turn(self):
         self.turn = self.player_b if (self.turn == self.player_a) else self.player_a
 
+    def game_ended(self):
+        if (
+            get_player_plane(self.battlefield, self.player_a) == []
+            or get_player_plane(self.battlefield, self.player_b) == []
+        ):
+            return True
+        return False
 
-class JoinGame:
-    air_force_game = None
-    player = None
-
-    def __init__(self, air_force_game, player):
-        self.air_force_game = air_force_game
-        self.player = player
-
-    def execute(self):
-
-        if self.air_force_game.player_a == "":
-            self.air_force_game.player_a = self.player
-            self.air_force_game.turn = self.player
-        elif self.air_force_game.player_b == "":
-            self.air_force_game.player_b = self.player
-        else:
-            raise Exception("The game is full!")
-
-
-class GetPlayers:
-    air_force_game = None
-
-    def __init__(self, air_force_game):
-        self.air_force_game = air_force_game
-
-    def execute(self):
-        return {
-            "player_a": self.air_force_game.player_a,
-            "player_b": self.air_force_game.player_b,
-        }
-
-
-class ChoosePlane:
-    course = None
-    x = None
-    y = None
-    player = None
-    battlefield = None
-    plane = None
-    air_force_game = None
-
-    def __init__(self, course, x, y, player, plane, air_force_game):
-        self.course = course
-        self.x = x
-        self.y = y
-        self.player = player
-        self.battlefield = air_force_game.battlefield
-        self.plane = plane
-        self.air_force_game = air_force_game
-
-    def execute(self):
-        return self.battlefield.add_new_plane(
-            int(self.player),
-            self.plane,
-            int(self.x),
-            int(self.y),
-            int(self.course),
-            self.air_force_game,
-        )
-
-
-class MovePlane:
-    course = None
-    player = None
-    battlefield = None
-    air_force_game = None
-
-    def __init__(self, course, player, air_force_game):
-        self.course = course
-        self.player = player
-        self.battlefield = air_force_game.battlefield
-        self.air_force_game = air_force_game
-
-    def execute(self):
-        self.battlefield.fligth(int(self.player), int(self.course))
-
-
-class LaunchProjectile:
-    player = None
-    air_force_game = None
-    battlefield = None
-
-    def __init__(self, player, air_force_game):
-        self.player = player
-        self.air_force_game = air_force_game
-        self.battlefield = air_force_game.battlefield
-
-    def execute(self):
-        return self.battlefield.add_new_projectile(self.player)
-
-
-class Shoot:
-    player = None
-    battlefield = None
-
-    def __init__(self, course, player, battlefield):
-        self.course = course
-        self.player = player
-        self.battlefield = battlefield
-
-    def execute(self):
-        raise NotImplementedError()
-
-
-class GetBattlefieldStatus:
-    battlefield = None
-
-    def __init__(self, battlefield):
-        self.battlefield = battlefield
-
-    def execute(self):
-        return self.battlefield.get_status()
-
-    # def __str__(self):
-    #     self.battlefield if self.battlefield is not None else "None"
-    #     # self.battlefield.flying_obj if self.battlefield is not None else ""
+    def winner(self):
+        if self.get_player_plane(self.player_a) == []:
+            return self.player_b
+        elif self.get_player_plane(self.player_b) == []:
+            return self.player_a
+        return None

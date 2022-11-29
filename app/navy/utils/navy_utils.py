@@ -1,6 +1,3 @@
-from math import sqrt
-
-
 class NavyUtils:
     # ---------- CLASS CONSTANTS --------- #
     COMPASS = {
@@ -16,7 +13,6 @@ class NavyUtils:
     X, Y = 0, 1
     ZERO, ONE = 0, 1
     ROWS, COLS = 10, 20
-    TRUE, FALSE = 1, 0
     CANT_PLAYERS = 2
     INVERSE_COORDS = {
         "N": "S",
@@ -29,6 +25,8 @@ class NavyUtils:
         "NE": "SW",
     }
     DIRECTIONS = ["N", "S", "E", "W", "SE", "SW", "NE", "NW"]
+    MISSILE_TYPES = [1, 2, 3, 4]
+
     # ---------- END CLASS CONSTANTS --------- #
 
     # ---------- CLASS METHODS --------- #
@@ -48,14 +46,6 @@ class NavyUtils:
             navy_game_id, x, y
         )
 
-    def next_free_position(self, x, y, course, navy_game_id):
-        from app.navy.services.navy_game_service import navy_game_service
-
-        next_x, next_y = self.get_next_position(x, y, course)
-        if self.free_valid_poisition(next_x, next_y, navy_game_id):
-            return next_x, next_y
-        return None
-
     def get_user_id_from_header(self, header):
         import jwt
 
@@ -64,8 +54,15 @@ class NavyUtils:
         decoded_jwt = jwt.decode(header.split()[1], secret_token, algorithms=["HS256"])
         return decoded_jwt["sub"]
 
-    def get_distance(self, x1, y1, x2, y2):
-        return sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
+    def in_range(self, x1, y1, x2, y2, sight):
+        x_min = x1 - sight
+        y_min = y1 - sight
+        x_max = x1 + sight
+        y_max = y1 + sight
+        return x2 >= x_min and x2 <= x_max and y2 >= y_min and y2 <= y_max
+
+    def in_of_bounds(self, x, y):
+        return not self.out_of_bounds(x, y)
 
     # ---------- END OF CLASS METHODS --------- #
 

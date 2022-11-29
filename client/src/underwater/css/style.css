@@ -1,0 +1,177 @@
+@import url("https://fonts.googleapis.com/css2?family=Glegoo:wght@400;700&display=swap");
+
+.u-container {
+  display: flex;
+  flex-direction: column;
+  background-color: #162741;
+  width: 100%;
+  color: white;
+  flex-grow: 1;
+  font-family: "Glegoo", serif;
+}
+
+.u-centered-container {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+}
+
+.u-container2 {
+  display: flex;
+  flex-direction: column;
+  background-color: #162741;
+  width: 100%;
+  color: white;
+  flex-grow: 1;
+  font-family: "Glegoo", serif;
+  background-image: url(./images/sub-background-blur.png);
+}
+
+.u-container a:hover {
+  text-decoration: none;
+}
+
+.u-background-image {
+  background-image: url("./images/sub-background.jpg");
+  background-size: 100% 100%;
+}
+
+.u-small-container {
+  display: flex;
+  flex-direction: column;
+  width: 40%;
+  height: 30%;
+  margin: 15px 0;
+  padding: 30px;
+  border: 2px solid white;
+  border-radius: 10px;
+}
+
+.u-container-light-blue {
+  display: inline-block;
+  flex-grow: 1;
+  width: 70%;
+  height: 90%;
+
+  margin: 20px auto;
+  background-color: #e3f5ff;
+  border-radius: 20px;
+}
+
+.u-motion-container {
+  display: flex;
+  width: 98%;
+  height: 100%;
+  justify-content: right;
+  margin-top: 230px;
+}
+
+.u-title {
+  margin: 60px 0;
+  text-align: center;
+  font-family: "Glegoo", serif;
+  font-size: 70px;
+}
+
+.u-titlecenter {
+  margin: 220px 220px 70px 220px;
+  text-align: center;
+  font-family: "Glegoo", serif;
+  font-size: 40px;
+}
+
+.u-options {
+  display: flex;
+  justify-content: center;
+}
+
+.u-big-button {
+  color: white;
+  background: none;
+  width: auto;
+  font-family: "Glegoo", serif;
+  font-size: 32px;
+  text-align: center;
+  border: 3px solid white;
+  margin: 30px;
+  padding: 5px 20px;
+  border-radius: 5px;
+}
+
+.u-big-button:hover {
+  background: white;
+  color: rgb(22, 39, 65);
+  border-color: rgb(22, 39, 65);
+  text-decoration: none;
+}
+
+.u-button {
+  background: none;
+  color: white;
+  min-width: 60px;
+  padding: 0 10px;
+  font-size: 32px;
+  text-align: center;
+  border: 2px solid white;
+  border-radius: 5px;
+  margin: 0;
+}
+
+.u-small-button {
+  font-size: inherit;
+}
+
+.u-button:hover {
+  background: white;
+  color: rgb(22, 39, 65);
+  border-color: rgb(22, 39, 65);
+}
+
+.u-input-field {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-grow: 1;
+  font-family: "Glegoo", serif;
+  font-size: 18px;
+}
+
+.inline-block {
+  display: inline-block;
+  margin: 10px 10px;
+}
+
+#play-button {
+  margin-left: auto;
+}
+
+.session-entry {
+  background: rgb(255, 255, 255, 0.2);
+}
+
+.u-list {
+  box-sizing: border-box;
+  list-style-type: none;
+  width: 100%;
+  padding: 0px;
+}
+
+.u-list li {
+  background: #fff3;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 5px 0;
+  padding: 5px;
+  font-size: 24px;
+}
+
+.u-alert-danger {
+  border-radius: 5px;
+  text-align: center;
+  background-color: rgb(31, 33, 43);
+  color: crimson;
+  margin: auto;
+  padding: 2px;
+}
