@@ -518,16 +518,16 @@ def step_impl(context):
     assert context.response.status_code == 201
 
 
-@then("game status are ended")
-def step_impl(context):
-    context.response = context.client.get(
-        url_for("air_force.get_battlefield_status", id=context.game_id)
-    )
+# @then("game status are ended")
+# def step_impl(context):
+#     context.response = context.client.get(
+#         url_for("air_force.get_battlefield_status", id=context.game_id)
+#     )
 
-    raw_response = context.response.json
-    raw_expected = {"Winner": 1, "status": "end"}
+#     raw_response = context.response.json
+#     raw_expected = {"Winner": 1, "status": "end"}
 
-    response, expected = json.dumps(raw_response, sort_keys=True), json.dumps(
-        raw_expected, sort_keys=True
-    )
-    assert response == expected
+#     response, expected = json.dumps(raw_response, sort_keys=True), json.dumps(
+#         raw_expected, sort_keys=True
+#     )
+#     assert response == expected
