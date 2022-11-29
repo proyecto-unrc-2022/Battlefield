@@ -26,17 +26,9 @@ function SessionEntry(props) {
   return (
     <li key={props.id}>
       <span>
-        id:
-        {' '}
-        {props.id}
-        ,
-        host:
-        {' '}
-        {props.session.host_id}
+        {props.id} - host: {props.session.host.username}
       </span>
-      <form onSubmit={sendJoinRequest}>
-        <button type="submit" className="u-button u-small-button">Join</button>
-      </form>
+      <button onClick={sendJoinRequest} className="u-button u-small-button">Join</button>
     </li>
   );
 }
@@ -48,11 +40,9 @@ function GameList({ setAlertMessage, sessions, updateSessionsList }) {
   }, []);
 
   return (
-    <div className="row u-input-field">
-      <ul className="u-list">
-        {Object.keys(sessions).map((key) => <SessionEntry setAlertMessage={setAlertMessage} key={key} id={key} session={sessions[key]} />)}
-      </ul>
-    </div>
+    <ul className="u-list">
+      {Object.keys(sessions).map((key) => <SessionEntry setAlertMessage={setAlertMessage} key={key} id={key} session={sessions[key]} />)}
+    </ul>
   );
 }
 
@@ -71,13 +61,11 @@ export default function UnderJoinGame(props) {
 
   return (
     <div className="u-small-container">
-      <div className="row"><h3>Games</h3></div>
-      <div className="row">
-        <GameList setAlertMessage={setAlertMessage} sessions={sessions} updateSessionsList={updateSessionsList} />
-      </div>
-      <div className="row u-input-field">
+      <h3>Games</h3>
+      <GameList setAlertMessage={setAlertMessage} sessions={sessions} updateSessionsList={updateSessionsList} />
+      <div className="u-input-field">
         <Link to="/underwater/menu" className="u-button">‹</Link>
-        <div onClick={updateSessionsList} id="play-button" className="u-button">Update</div>
+        <button onClick={updateSessionsList} id="play-button" className="u-button">Update</button>
       </div>
       {alertMessage != null ? <span className="u-alert-danger">{alertMessage}</span> : null}
     </div>
