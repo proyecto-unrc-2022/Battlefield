@@ -1,0 +1,14 @@
+.winner{
+    background-image: url("../images/winner-bg.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    position: fixed;
+    padding: 16rem 16rem;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    font-family: "Silkscreen";
+    vertical-align: middle;
+    color: black;
+}
