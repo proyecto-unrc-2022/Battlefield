@@ -31,11 +31,7 @@ export default class GameInfantry extends Component {
   constructor(props) {
     super(props);
     this.state = {
-<<<<<<< HEAD
       game_id: localStorage.getItem("id_game"),
-=======
-      game_id: localStorage.getItem('id_game'),
->>>>>>> c3b850acb0cd2b7e1f21b4222b5b7be1ebe849cc
       game: null,
       figure: null,
       figureOpponent: null,
