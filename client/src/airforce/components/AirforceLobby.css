@@ -1,0 +1,10 @@
+.airforce-lobby{
+    background-image: url("../images/lobby-image.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    position: fixed;
+    padding: auto;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+ }

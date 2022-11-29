@@ -1,4 +1,4 @@
-import AirforceBoard from "./AirforceBoard";
+import AirforceBoard from "./AirforceBoard.component";
 import React, { Component } from "react";
 import { useParams } from "react-router-dom";
 import airforceService from "../services/airforce.service";

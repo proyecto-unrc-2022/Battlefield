@@ -28,7 +28,7 @@ import ChoosePlane from "./airforce/components/AirforceChoosePlane.component";
 import AirforceLobby from "./airforce/components/AirforceLobby.component"
 import NavySpectateBoard from "./navy/pages/NavySpectateBoard";
 
-import AirforceBoard from "./airforce/components/AirforceBoard";
+import AirforceBoard from "./airforce/components/AirforceBoard.component";
 import GameRoom from "./airforce/components/AirforceGameRoom.component";
 class App extends Component {
   constructor(props) {
@@ -175,3 +175,4 @@ class App extends Component {
 }
 
 export default App;
+

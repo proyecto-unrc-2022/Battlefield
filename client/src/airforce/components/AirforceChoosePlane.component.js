@@ -1,5 +1,6 @@
 import React, { Component} from "react";
 import AirforceService from "../services/airforce.service";
+import "./AirforceChoosePlane.css"
 
 import { useParams } from "react-router-dom";
 
@@ -77,7 +78,7 @@ class ChoosePlane extends Component {
 
     title(key){
         return "Size: " + this.state.planes[key].size + "\nSpeed:" + this.state.planes[key].speed + "\nHealth: " 
-        + this.state.planes[key].health + "\nProjectile: " + this.state.planes[key].cant_projecile;
+        + this.state.planes[key].health + "\nProjectile: " + this.state.planes[key].cant_projectile;
     }
 
     redirect = (id) => {
@@ -103,9 +104,15 @@ class ChoosePlane extends Component {
         this.state.planes = JSON.parse(localStorage.getItem('planes'));
         console.log("planes " + this.state.planes);
         return (
-              <div className="container-lobby" style={{textAlign: "center"}}>
+              <div className="container-choosePlane" style={{textAlign: "center"}}>
                 <div className="select-plane">
                     <h2 className="subtitle-1">Choose your plane</h2>
+                    <div className="planes-logo">
+                        <div className="hawkerTempest"></div>
+                        <div className="mitsubishiA6mZero"></div>
+                        <div className="douglasA20Havoc"></div>
+                        <div className="boeningB17FlyingFortress"></div>
+                    </div>
                     <div>
                     {   Object.keys(this.state.planes).map((key) => (
                         <div className="planes-buttons" style={{display: "inline-block", verticalAlign: "middle", padding: "1rem 1rem"}} onClick={() => this.handleClick(key)}>

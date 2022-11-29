@@ -16,7 +16,7 @@
 .board{
     border: 2px;
     border-color: black;
-    margin-top: 70px;
+    margin-top:  auto;
 }
 
 .board-row {
@@ -24,22 +24,28 @@
 }
 
 table{    
-    background-color: black;
     margin-left: auto;
     margin-right: auto;
     margin-top: 65px;
+    border-collapse: separate;
+    border-spacing: 2px;
 }
 
 th{
+    
     color: white;
 }
-
+thead {
+    background-color: transparent;
+}
 
 td{
-    border: 2px solid;
-    border-color: rgb(255, 255, 255);
-    width: 40px;
-    height: 40px;
+    color: black;
+    border: 1px solid;
+    border-radius: 10px;
+    border-color: black;
+    width: 30px;
+    height: 30px;
 }
 
 .action-buttons {
@@ -51,8 +57,8 @@ td{
 }
 
 button {
-    color: white;
-    background-color: black;
+    color: black;
+    background-color: transparent;
     border-color: black;
     border-radius: 5px;
     margin-top: 50px;
