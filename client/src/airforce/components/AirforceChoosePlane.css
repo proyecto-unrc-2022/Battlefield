@@ -10,8 +10,77 @@
     height: 100%;
  }
 
+.planes-logo{
+   margin-bottom: 100px;
+   justify-content: space-between;
+}
+
+
+.hawkerTempest {
+   background-image: url(".././images/hawker-tempest.png");
+   background-repeat: no-repeat;
+   background-size: cover;
+   display: inline-flex;
+   margin-left: -80px;
+   width: 150px;
+   height: 50px;
+}
+
+.hawkerTempest:hover{
+   -webkit-transform: scale(1.5);
+   transform: scale(1.5)
+}
+
+.mitsubishiA6mZero{
+   background-image: url(".././images/Mitsubishi-A6M-Zero.png");
+   background-repeat: no-repeat;
+   background-size: cover;
+   display: inline-flex;
+   margin-left: 100px;
+   width: 150px;
+   height: 50px;
+}
+
+.mitsubishiA6mZero:hover{
+   -webkit-transform: scale(1.5);
+   transform: scale(1.5)
+}
+.douglasA20Havoc{
+   background-image: url(".././images/Douglas-A-20\ -Havoc.png");
+   background-repeat: no-repeat;
+   background-size: cover;
+   display: inline-flex;
+   margin-left: 150px;
+   margin-right: 10px;
+   width: 180px;
+   height: 70px;
+}
+
+.boeningB17FlyingFortress:hover{
+   -webkit-transform: scale(1.5);
+   transform: scale(1.5)
+}
+
+
+.boeningB17FlyingFortress{
+   background-image: url(".././images/Boeing-B-17-Flying-Fortress.png");
+   background-repeat: no-repeat;
+   background-size: cover;
+   display: inline-flex;
+   margin-left: 150px;
+   width: 175px;
+   height: 50px
+ 
+}
+
+.douglasA20Havoc:hover{
+   -webkit-transform: scale(1.5);
+   transform: scale(1.5)
+}
+
+
 .planes-buttons{
-    margin-top: 25px;
+    margin-top: -150px;
     margin-bottom: 50px;
     font-size: 20px;
     font-family: 'Silkscreen';
