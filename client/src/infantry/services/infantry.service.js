@@ -104,8 +104,9 @@ class InfantryService{
             return response.data
         })
     }
-    async shoot(game_id, user_id, course){
-        let data = {velocity: 0}
+    async shoot(game_id, user_id, course, velocity){
+        console.log(velocity)
+        let data = {velocity: velocity}
         return await axios.post(
             API_URL + "game/" + game_id + "/user/" + user_id + "/direccion/" + course +"/shoot",
             data,
