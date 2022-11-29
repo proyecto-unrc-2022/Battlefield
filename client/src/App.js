@@ -23,7 +23,6 @@ import NavyLobby from "./navy/pages/NavyLobby"
 import NavyBoard from "./navy/pages/NavyBoard";
 import NavyHowToPlay from "./navy/pages/NavyHowToPlay";
 
-<<<<<<< HEAD
 //Borrar esto y la route
 import HomePage from "./infantry/pages/HomePage";
 import CreateGame from "./infantry/pages/CreateGame"
@@ -34,7 +33,6 @@ import WaitPlayer from "./infantry/pages/WaitPlayer";
 
 
 
-=======
 import AirforceAPP from "./airforce/AirforceAPP";
 import ChoosePlane from "./airforce/components/AirforceChoosePlane.component";
 import AirforceLobby from "./airforce/components/AirforceLobby.component"
@@ -42,7 +40,6 @@ import NavySpectateBoard from "./navy/pages/NavySpectateBoard";
 
 import AirforceBoard from "./airforce/components/AirforceBoard.component";
 import GameRoom from "./airforce/components/AirforceGameRoom.component";
->>>>>>> develop
 class App extends Component {
   constructor(props) {
     super(props);
@@ -102,10 +99,6 @@ class App extends Component {
 
             {currentUser && (
               <li className="nav-item">
-<<<<<<< HEAD
-                <Link to={"/home_Infantry"} className="nav-link">
-                  Infantry
-=======
                 <Link to={"/underwater/menu"} className="nav-link">
                   Underwater
                 </Link>
@@ -114,9 +107,17 @@ class App extends Component {
 
             {currentUser && (
               <li className="nav-item">
+                <Link to={"/home_Infantry"} className="nav-link">
+                Infantry
+                </Link>
+              </li>
+            )}
+          
+
+            {currentUser && (
+              <li className="nav-item">
                 <Link to={"/navy"} className="nav-link">
                   Navy
->>>>>>> develop
                 </Link>
               </li>
             )}
@@ -146,14 +147,10 @@ class App extends Component {
           )}
         </nav>
 
-<<<<<<< HEAD
-        <div className="container-fluid d-flex flex-column p-0">
-=======
         <div
           style={{ flexGrow: "1" }}
           className="container-fluid d-flex flex-column p-0"
         >
->>>>>>> develop
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/home" element={<Home />} />
