@@ -55,7 +55,7 @@ class ChoosePlane:
                     int(self.player),
                     self.plane,
                     int(self.x),
-                    int(self.y) + i,
+                    int(self.y) - i,
                     int(self.course),
                 )
             else:
@@ -63,6 +63,6 @@ class ChoosePlane:
                     int(self.player),
                     self.plane,
                     int(self.x),
-                    int(self.y) - i,
+                    int(self.y) + i,
                     int(self.course),
                 )

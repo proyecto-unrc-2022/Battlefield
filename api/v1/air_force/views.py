@@ -162,10 +162,15 @@ def get_plane():
     return listPlane
 
 
-@air_force.route("/players/<player>/plane", methods=["GET"])
-def get_player_plane(player):
-    plane = air_force_game.get_player_plane(player)
-    return jsonify(plane)
+@air_force.route("/game/<id>/player/plane", methods=["GET"])
+@token_auth.login_required
+def get_player_plane(id):
+    token = request.headers["authorization"].split()[1]
+    player = verify_token(token).id
+    game = air_force_game[int(id)]
+    from app.models.airforce.utils import get_player_plane as get_plane
+
+    return jsonify(plane_schema.dump(get_plane(game.battlefield, player)[0].flying_obj))
 
 
 @air_force.route("/machine_gun", methods=["POST"])

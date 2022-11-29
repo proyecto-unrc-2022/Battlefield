@@ -1,6 +1,7 @@
 from app.models.airforce.air_force_flying_object import FlyingObject
 from app.models.airforce.airforce_filters import get_player_plane
 from app.models.airforce.plane import Projectile
+from app.models.airforce.utils import rotate_plane
 
 
 class Battlefield:
@@ -43,8 +44,11 @@ class Battlefield:
                 if fly_obj.update_position(course, self.max_x, self.max_y):
                     self.flying_objects.remove(fly_obj)
             elif fly_obj.flying_obj.__class__.__name__ == "Plane":
-                for p in self.get_plane_parts(fly_obj):
-                    p.update_position(course, self.max_x, self.max_y)
+                if fly_obj.course != course:
+                    rotate_plane(course, self, fly_obj.player)
+                else:
+                    for p in self.get_plane_parts(fly_obj):
+                        p.update_position(course, self.max_x, self.max_y)
         except:
             None
 
@@ -118,13 +122,9 @@ class Battlefield:
         crashed_health = crashed.flying_obj.health
         crashed.flying_obj.health -= crashing.flying_obj.health
         crashing.flying_obj.health -= crashed_health
-        self.flying_objects.remove(crashed) if (
-            crashed.flying_obj.health <= 0
-        ) else True
-        self.flying_objects.remove(crashing) if (
-            crashing.flying_obj.health <= 0
-        ) else True
-
+        self.destroy_plane(crashed)
+        self.destroy_plane(crashing)
+        
     def damage_plane(self, plane, damage):
         plane.flying_obj.health -= damage
 
