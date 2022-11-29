@@ -34,6 +34,7 @@ const NavySpectateBoard = () => {
 
   useEffect(() => {
     if (!game) {
+
       getGame();
       if (socket.disconnect) {
         socket.connect();
@@ -56,7 +57,7 @@ const NavySpectateBoard = () => {
     });
   };
 
-  const getGame = (roundToSpec = 0) => {
+  const getGame = async (roundToSpec = 0) => {
     return NavySpectateGameService.getNavySpectateGames(id, roundToSpec).then(
       (resp) => {
         setAccessDenied(false);
@@ -74,7 +75,11 @@ const NavySpectateBoard = () => {
         setWinner(resp.data.data.game.winner);
         setGame(resp.data.data.game);
         setMissiles(resp.data.data.missiles);
-
+        console.log(resp.data.data.game.user_1.id)
+        console.log(resp.data.data.ships[0].user_id)
+        let user_temp = false
+        if(resp.data.data.game.user_1.id === resp.data.data.ships[0].user_id){
+          user_temp = true
         setMyShip({
           name: resp.data.data.ships[0].name,
           hp: resp.data.data.ships[0].hp,
@@ -84,10 +89,21 @@ const NavySpectateBoard = () => {
           size: resp.data.data.ships[0].size,
           speed: resp.data.data.ships[0].speed,
         });
-
+      }else{
+        setMyShip({
+          name: resp.data.data.ships[1].name,
+          hp: resp.data.data.ships[1].hp,
+          course: resp.data.data.ships[1].course,
+          x: resp.data.data.ships[1].pos_x,
+          y: resp.data.data.ships[1].pos_y,
+          size: resp.data.data.ships[1].size,
+          speed: resp.data.data.ships[1].speed,
+        });
+      }
         setEnemyShip(null);
 
         if (resp.data.data.status !== "FINISHED") {
+          if(user_temp){
           setEnemyShip({
             name: resp.data.data.ships[1].name,
             hp: resp.data.data.ships[1].hp,
@@ -97,7 +113,18 @@ const NavySpectateBoard = () => {
             size: resp.data.data.ships[1].size,
             speed: resp.data.data.ships[1].speed,
           });
+        }else{
+          setEnemyShip({
+            name: resp.data.data.ships[0].name,
+            hp: resp.data.data.ships[0].hp,
+            course: resp.data.data.ships[0].course,
+            x: resp.data.data.ships[0].pos_x,
+            y: resp.data.data.ships[0].pos_y,
+            size: resp.data.data.ships[0].size,
+            speed: resp.data.data.ships[0].speed,
+          });
         }
+      }
       }
     );
   };
@@ -239,6 +266,7 @@ const NavySpectateBoard = () => {
             <div className="col-6">
               <div className="row justify-content-center">
                 <div className="col-12 d-flex justify-content-center">
+                  
                   <GridGame
                     rows={game.rows}
                     cols={game.cols}
