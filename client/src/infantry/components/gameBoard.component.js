@@ -25,6 +25,7 @@ export default class GameBoard extends Component {
       || prevProps.projectiles !== this.props.projectiles) {
       this.setState({
         figure: this.props.figure,
+        figureOpponent: this.props.figureOpponent,
         projectiles: this.props.projectiles
       })
     }

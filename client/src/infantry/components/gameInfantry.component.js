@@ -89,7 +89,6 @@ export default class GameInfantry extends Component {
         if (AuthService.getCurrentUser().sub === nextGame.turn) {
           //Entra solo cuando el oponente termina con su turno
           this.setState({
-            game: nextGame,
             next_turn: false
           });
         }
@@ -210,10 +209,10 @@ export default class GameInfantry extends Component {
   async updateLocalRound() {
     let nextProjectiles = await InfantryService.getProjectile(this.state.game_id)
     let nextFigure = await InfantryService.getFigure(this.state.figure["data"].id_user, this.state.game_id)
-    let nextFigurerOpponent = await InfantryService.getFigure(this.state.figureOpponent["data"].id_user, this.state.game_id)
+    let nextFigureOpponent = await InfantryService.getFigure(this.state.figureOpponent["data"].id_user, this.state.game_id)
     this.setState({
       figure: nextFigure,
-      figureOpponent: nextFigurerOpponent,
+      figureOpponent: nextFigureOpponent,
       projectiles: nextProjectiles,
       finished_round: false
     })
@@ -235,12 +234,12 @@ export default class GameInfantry extends Component {
 
     }
     //Actualizo las figuras y proyectiles en los estados
-    let figurePlayer1 = await InfantryService.getFigure(this.state.figure["data"].id_user, this.state.game_id)
-    let figurePlayer2 = await InfantryService.getFigure(this.state.figureOpponent["data"].id_user, this.state.game_id)
+    let nextFigure = await InfantryService.getFigure(this.state.figure["data"].id_user, this.state.game_id)
+    let nextFigureOpponent = await InfantryService.getFigure(this.state.figureOpponent["data"].id_user, this.state.game_id)
     let projectiles = await InfantryService.getProjectile(this.state.game_id)
     this.setState({
-      figure: figurePlayer1,
-      figureOpponent: figurePlayer2,
+      figure: nextFigure,
+      figureOpponent: nextFigureOpponent,
       finished_round: false,
       next_turn: false,
       projectiles: projectiles
@@ -278,16 +277,16 @@ export default class GameInfantry extends Component {
       //this.updateRound();
     }
     else if (this.state.game.turn === AuthService.getCurrentUser().sub) {
-      message = <h3>Your turn</h3>
-    }
-    else {
-      message = (<div>
-        <h3>waiting opponent's turn</h3>
-        <div class="spinner-border" role="status">
-          <span class="sr-only"></span>
-        </div></div>
-      )
-    }
+        message = <h3>Your turn</h3>
+      }
+      else {
+        message = (<div>
+                      <h3>waiting opponent's turn</h3>
+                      <div class="spinner-border" role="status">
+                        <span class="sr-only"></span>
+                      </div></div>
+                  )
+      }
     return message
   }
 

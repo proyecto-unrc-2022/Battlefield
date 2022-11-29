@@ -11,6 +11,15 @@ export default class FigureInfantryData extends Component {
             figure: props.figure
         }
     }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.figure !== this.props.figure) {
+          this.setState({
+            figure: this.props.figure
+          })
+        }
+      }
+
     render(){
         let user
         if(this.state.figure.id_user === AuthService.getCurrentUser().sub){
