@@ -28,6 +28,7 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
+  padding: 15px;
 }
 
 .u-card {
@@ -40,6 +41,7 @@
   box-shadow: none;
   color: black;
   margin: 0;
+  padding: 15px;
 }
 
 .u-card:hover {
@@ -292,4 +294,19 @@
 .u-control-button:active {
   cursor: pointer;
   background-color: #00fa;
+}
+
+#surrender.u-control-button {
+  border: none;
+  background: none;
+}
+
+#surrender.u-control-button:hover {
+  cursor: pointer;
+  background-color: #F00a;
+}
+
+#surrender.u-control-button:active {
+  cursor: pointer;
+  background-color: #F00f;
 }

@@ -75,7 +75,6 @@ export default function UnderGame() {
   );
 
   function endGame() {
-    console.log(visibleState.host_id, currentUserId);
     if (visibleState.host_id === currentUserId) {
       // So that only the host sends a delete request
       axios
