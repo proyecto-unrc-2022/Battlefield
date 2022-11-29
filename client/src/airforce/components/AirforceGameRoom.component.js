@@ -2,17 +2,19 @@ import AirforceBoard from "./AirforceBoard.component";
 import React, { Component } from "react";
 import { useParams } from "react-router-dom";
 import airforceService from "../services/airforce.service";
+import "./AirforceGameRoom.css"
 
 const GameRoom = () => {
     const {id} = useParams();
     var boardInfo = [];
-
+    var round = 0;
+    var userInfo = {};
 
     const handleClickMoveNorth = () => {// course 1 north, 2 east, 3 south, 4 west
-        airforceService.fligth(id,1);
+        airforceService.fligth(id,1)
     }
     const handleClickMoveEast = () => {// course 1 north, 2 east, 3 south, 4 west
-        airforceService.fligth(id,2);
+        airforceService.fligth(id,2)
     }
     const handleClickMoveSouth = () => {// course 1 north, 2 east, 3 south, 4 west
         airforceService.fligth(id,3);
@@ -26,18 +28,23 @@ const GameRoom = () => {
     }
 
     const boardStatus = () => {
+
         airforceService.getBoardStatus(id)
         .then((response) => {
             localStorage.setItem("boardStatus", JSON.stringify(response.data));
         });
+        round = round + 1;
         boardInfo = localStorage.getItem("boardStatus");
-        console.log(JSON.parse(boardInfo).status);
-        // if(JSON.parse(boardInfo).status == "end"){
-        //     window.location.href = "/"
-        // }
-
-
+   
+        airforceService.getPlayerPlane(id).then((response) => {
+            localStorage.setItem("playerPlane", JSON.stringify(response.data));
+        })
+        userInfo = JSON.parse(localStorage.getItem("playerPlane"));
+        console.log(userInfo);
+   
+   
     }
+
     
         return(
             <div className="battlefield">
@@ -45,8 +52,8 @@ const GameRoom = () => {
                     <div>
                         {boardStatus()}
                     </div>
-                    <div>{
-                            AirforceBoard(boardInfo)
+                    <div>{  
+                            AirforceBoard(boardInfo, round)
                         }
                     </div>
                     <div className="board-buttons">
@@ -75,6 +82,17 @@ const GameRoom = () => {
                                 <button onClick = {handleClickLaunchProjectile} > Launch Projectile </button>
                             </form>
                         </div>
+                    </div>
+                </div>
+                <div className="PlaneTitle" >
+                    <div>
+                        Plane = <h className="PlaneInfo">{userInfo.name}</h> 
+                    </div>   
+                    <div>
+                        Health = <h className="PlaneInfo">{userInfo.health}</h> 
+                    </div>
+                    <div>    
+                        Projectiles = <h className="PlaneInfo">{userInfo.cant_projectile}</h> 
                     </div>
                 </div>
             </div>

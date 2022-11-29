@@ -94,6 +94,66 @@ def test_move_west():
         assert battlefield.flying_objects[0].course == 4
 
 
+def test_rotate_north():
+    with app.app_context():
+        plane = Plane(
+            id=0, name="avion", size=3, speed=2, health=100, cant_projectile=2
+        )
+        battlefield = Battlefield()
+        battlefield.add_new_flying_object(0, plane, 5, 5, 2)
+        battlefield.add_new_flying_object(0, plane, 5 - 1, 5, 2)
+        battlefield.add_new_flying_object(0, plane, 5 - 2, 5, 2)
+        assert battlefield.flying_objects[0].x == 5
+        assert battlefield.flying_objects[0].y == 5
+        assert battlefield.flying_objects[0].course == 2
+        assert battlefield.flying_objects[1].x == 4
+        assert battlefield.flying_objects[1].y == 5
+        assert battlefield.flying_objects[1].course == 2
+        assert battlefield.flying_objects[2].x == 3
+        assert battlefield.flying_objects[2].y == 5
+        assert battlefield.flying_objects[2].course == 2
+        battlefield.move(get_player_plane(battlefield, 0)[0], 1)
+        assert battlefield.flying_objects[0].x == 5
+        assert battlefield.flying_objects[0].y == 7
+        assert battlefield.flying_objects[0].course == 1
+        assert battlefield.flying_objects[1].x == 5
+        assert battlefield.flying_objects[1].y == 6
+        assert battlefield.flying_objects[1].course == 1
+        assert battlefield.flying_objects[2].x == 5
+        assert battlefield.flying_objects[2].y == 5
+        assert battlefield.flying_objects[2].course == 1
+
+
+def test_rotate_east():
+    with app.app_context():
+        plane = Plane(
+            id=0, name="avion", size=3, speed=2, health=100, cant_projectile=2
+        )
+        battlefield = Battlefield()
+        battlefield.add_new_flying_object(0, plane, 5, 5, 3)
+        battlefield.add_new_flying_object(0, plane, 5, 5 + 1, 3)
+        battlefield.add_new_flying_object(0, plane, 5, 5 + 2, 3)
+        assert battlefield.flying_objects[0].x == 5
+        assert battlefield.flying_objects[0].y == 5
+        assert battlefield.flying_objects[0].course == 3
+        assert battlefield.flying_objects[1].x == 5
+        assert battlefield.flying_objects[1].y == 6
+        assert battlefield.flying_objects[1].course == 3
+        assert battlefield.flying_objects[2].x == 5
+        assert battlefield.flying_objects[2].y == 7
+        assert battlefield.flying_objects[2].course == 3
+        battlefield.move(get_player_plane(battlefield, 0)[0], 2)
+        assert battlefield.flying_objects[0].x == 7
+        assert battlefield.flying_objects[0].y == 5
+        assert battlefield.flying_objects[0].course == 2
+        assert battlefield.flying_objects[1].x == 6
+        assert battlefield.flying_objects[1].y == 5
+        assert battlefield.flying_objects[1].course == 2
+        assert battlefield.flying_objects[2].x == 5
+        assert battlefield.flying_objects[2].y == 5
+        assert battlefield.flying_objects[2].course == 2
+
+
 def test_move_plane_colision_with_x_limit():
     with app.app_context():
         plane = Plane(

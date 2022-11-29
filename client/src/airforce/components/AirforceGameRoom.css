@@ -1,0 +1,13 @@
+.PlaneTitle{
+    position: absolute;   
+    top: 250px;
+    left: 100px;
+    font-family: 'Silkscreen';
+    font-size: large;;
+}
+
+.PlaneInfo{
+    font-family: 'Silkscreen';
+    font-size: large;
+    color: black;
+}
