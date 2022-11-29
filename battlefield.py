@@ -6,4 +6,4 @@ app = create_app()
 
 
 if __name__ == "__main__":
-    app.run(debug=True,log=None)
+    app.run(debug=True)
