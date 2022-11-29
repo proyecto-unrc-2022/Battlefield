@@ -28,3 +28,25 @@ def projectile_avaible(player, battlefield):
 def discount_projectile(player, battlefield):
     plane = get_player_plane(battlefield, player)[0]
     plane.flying_obj.cant_projectile -= 1
+
+
+def rotate_plane(course, battlefield, player):
+    plane = get_player_plane(battlefield, player)
+    plane[0].update_position(course, battlefield.max_x, battlefield.max_y)
+    for i in range(1, len(plane)):
+        if course == 1:
+            plane[i].x = plane[0].x
+            plane[i].y = plane[0].y - i
+            plane[i].course = plane[0].course
+        elif course == 3:
+            plane[i].x = plane[0].x
+            plane[i].y = plane[0].y + i
+            plane[i].course = plane[0].course
+        elif course == 2:
+            plane[i].x = plane[0].x - i
+            plane[i].y = plane[0].y
+            plane[i].course = plane[0].course
+        elif course == 4:
+            plane[i].x = plane[0].x + i
+            plane[i].y = plane[0].y
+            plane[i].course = plane[0].course
