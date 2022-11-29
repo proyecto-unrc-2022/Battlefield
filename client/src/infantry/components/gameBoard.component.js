@@ -93,6 +93,21 @@ export default class GameBoard extends Component {
            )) {
           mapItem.push(<li class="square p-3 bg-warning"></li>);
         }
+        else if (board[i][j] === PROJECTILE && (board[i][j + 2] === 1 ||
+          board[i][j + 1] === 1 ||
+          board[i][j - 2] === 1 ||
+          board[i][j - 1] === 1 ||
+          i > 0 && board[i - 1][j] === 1 ||
+          i > 1 && board[i - 2][j] === 1 ||
+          i < 7 && board[i + 2][j] === 1 ||
+          i < 8 && board[i + 1][j] === 1 ||
+          i < 8 && board[i + 1][j - 1] === 1 ||
+          i < 8 && board[i + 1][j + 1] === 1 ||
+          i > 0 && board[i - 1][j + 1] === 1 ||
+          i > 0 && board[i - 1][j - 1] === 1 
+        )) {
+          mapItem.push(<li class="square p-3 bg-danger"></li>);
+        }
 
         else if(i === cabX && j === cabY){
           if(board[i][j] === 1){
@@ -104,11 +119,6 @@ export default class GameBoard extends Component {
 
         else if (board[i][j] === 1 ) {
           mapItem.push(<li class="square p-3 bg-primary"></li>);
-        }
-
-        
-        else if ((board[i][j] === PROJECTILE)) {
-          mapItem.push(<li class="square p-3 bg-danger"></li>);
         }
 
         else if (board[i][j + 2] === 1 ) {
