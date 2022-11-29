@@ -66,9 +66,17 @@ export default class GameBoard extends Component {
 
     const casillas = [];
 
+    let cabX = this.state.figure["body"][0][1]
+    let cabY = this.state.figure["body"][0][0]
+
+    console.log(cabX)
+    console.log(cabY)
+
     for (let i = 0; i < board.length; i++) {
       const mapItem = [];
       for (let j = 0; j < board[i].length; j++) {
+
+        
 
         if (board[i][j] === 11 && (board[i][j + 2] === 1 ||
           board[i][j + 1] === 1 ||
@@ -86,10 +94,19 @@ export default class GameBoard extends Component {
           mapItem.push(<li class="square p-3 bg-warning"></li>);
         }
 
+        else if(i === cabX && j === cabY){
+          if(board[i][j] === 1){
+            mapItem.push(<li class="square p-3 bg-info"></li>);
+          }
+        }
+
+        
+
         else if (board[i][j] === 1 ) {
           mapItem.push(<li class="square p-3 bg-primary"></li>);
         }
 
+        
         else if ((board[i][j] === PROJECTILE)) {
           mapItem.push(<li class="square p-3 bg-danger"></li>);
         }
