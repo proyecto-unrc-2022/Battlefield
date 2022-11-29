@@ -35,9 +35,19 @@ const GameRoom = () => {
         // if(JSON.parse(boardInfo).status == "end"){
         //     window.location.href = "/"
         // }
-
-
     }
+
+    setInterval(() => {
+        airforceService.getBoardStatus(id).then(
+            (response) => {
+                console.log(response.data.status)
+                if (response.data.status === "end") {
+                    window.location.href = "/airforce/game/"+id+"/winner";
+                    localStorage.setItem("userWinner", response.data.Winner)
+                } 
+            }
+        )
+      }, 5000);
     
         return(
             <div className="battlefield">
