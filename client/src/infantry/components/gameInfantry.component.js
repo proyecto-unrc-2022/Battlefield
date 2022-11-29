@@ -28,7 +28,7 @@ export default class GameInfantry extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      game_id: 1,
+      game_id: localStorage.getItem('id_game'),
       game: null,
       figure: null,
       figureOpponent: null,
@@ -53,6 +53,7 @@ export default class GameInfantry extends Component {
       let figurePlayer1 = null
       let figurePlayer2 = null
       let projectiles = InfantryService.getProjectile(this.state.game_id)
+      console.log(this.state.game_id)
       projectiles.then(result => {
         this.setState({
           projectiles: result
@@ -160,6 +161,7 @@ export default class GameInfantry extends Component {
    * @param {int} velocity alcance de la accion(solo sirve para la accion mover, o para el proyectil de la artilleria)
    */
   async action(direction, action, velocity) {
+    console.log(velocity)
     if (action === "move") {
       let response = await InfantryService.move(this.state.game_id, AuthService.getCurrentUser().sub,
         direction, velocity)
