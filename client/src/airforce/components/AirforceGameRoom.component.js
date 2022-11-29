@@ -50,7 +50,7 @@ const GameRoom = () => {
                 console.log(response.data.status)
                 if (response.data.status === "end") {
                     window.location.href = "/airforce/game/"+id+"/winner";
-                    localStorage.setItem("userWinner", response.data.Winner)
+                    localStorage.setItem("userWinner", response.data.Winner)  
                 } 
             }
         )
