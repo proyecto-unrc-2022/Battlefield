@@ -25,12 +25,25 @@ export default function AirforceBoard(json){
                 y = json[key].y;
                 cell = document.getElementById(`(${x},${y})`)
                 if(cell != null) {
-                    if(json[key].flying_obj_class == "Plane"){
-                        cell.innerHTML = "X";
+                     if(json[key].flying_obj_class == "Plane"){
+                         switch (json[key].course){
+                             case 1:
+                                 cell.innerHTML = "↟";
+                               break;
+                             case 2:
+                                 cell.innerHTML = "↠";
+                                 break;
+                             case 3:
+                                 cell.innerHTML = "↡"
+                                 break;
+                             case 4:
+                                 cell.innerHTML = "↞";
+                                 break;
+                         }
                     }else{
-                        cell.innerHTML = "o";
+                        cell.innerHTML = "*";
                     }
-                }    
+                }   
             });   
     }, []);
     
