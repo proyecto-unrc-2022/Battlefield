@@ -131,7 +131,33 @@ def join_game(session_id):
     return '{"success": "user joined the game"}'
 
 
+@underwater.post("/game/<int:session_id>/leave")
+@token_auth.login_required
+def leave_game(session_id):
+    token = get_token(request)
+    player = get_player_from(token)
+    session = session_dao.get_by_id(session_id)
+
+    if not session:
+        return Response('{"error":"game not found"}', status=404)
+    if not player:
+        return Response('{"error":"player not found"}', status=404)
+
+    other = session.host if session.visitor == player else session.visitor
+
+    session.game.state = GameState.FINISHED
+    session.game.winner = other
+
+    session_dao.save(session)
+
+    msg = format_sse(data=json.dumps({"winner_id": session.game.winner_id}))
+    announcers[session.id].announce(msg)
+
+    return json.dumps({"message": "success"}), 200
+
+
 @underwater.post("/game/<int:session_id>/delete")
+@token_auth.login_required
 def delete_game(session_id):
     session_dao.delete(session_id)
     return '{"success": "game deleted"}'
