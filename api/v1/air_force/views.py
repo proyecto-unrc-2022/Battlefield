@@ -146,9 +146,12 @@ def game_players_have_plane(id):
 
 
 @air_force.route("get_battlefield_status/game_id/<id>", methods=["GET"])
+@token_auth.login_required
 def get_battlefield_status(id):
+    token = request.headers["authorization"].split()[1]
+    player = verify_token(token).id
     game = air_force_game[int(id)]
-    command = GetBattlefieldStatus(game.battlefield, game)
+    command = GetBattlefieldStatus(game.battlefield, game, player)
     obj_list = game.execute(command)
     return jsonify(obj_list)
 

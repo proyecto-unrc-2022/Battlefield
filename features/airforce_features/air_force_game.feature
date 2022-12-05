@@ -108,7 +108,7 @@ Feature: game logic
         And player_b choose a plane
         And player_a shoot a missile and player_b move his plane
         And player_a shoot second missile and player_b move his plane
-        Then game status are ended
+        #   
 
 
 

@@ -3,7 +3,7 @@ import { json } from "react-router-dom";
 import AuthService from "../../services/auth.service";
 import authHeader from "../../services/auth-header";
 
-const API_URL = "http://127.0.0.1:5000/api/v1/air_force/";
+const API_URL = "http://192.168.0.80:5000/api/v1/air_force/";
 
 
 class AirForceService {
@@ -92,7 +92,10 @@ class AirForceService {
 
     getBoardStatus(gameId){
       return axios.
-      get(API_URL + `get_battlefield_status/game_id/${gameId}`);
+      get(API_URL + `get_battlefield_status/game_id/${gameId}`,
+      {
+        headers: authHeader()
+      });
     }
 
     getPlayerPlane(gameId){
